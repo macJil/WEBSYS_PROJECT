@@ -1,7 +1,8 @@
--- BARANGAY DRRM: SIMPLE DEVELOPMENT DATABASE (v1.0)
+-- BARANGAY DRRM: SIMPLE DEVELOPMENT DATABASE (v1.1)
 -- MySQL 8.0.16+; new development database ONLY.
 -- No sample accounts/data. Never import over SmartSlope's existing database.
--- One barangay, admin and resident roles, no photo uploads.
+-- One barangay, admin and resident roles; incident images stored separately from MySQL.
+-- Fresh installation only. Existing v1.0 databases: use database/migrations/001_phase_2.sql.
 
 CREATE DATABASE IF NOT EXISTS barangay_drrm CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE barangay_drrm;
@@ -30,13 +31,20 @@ CREATE TABLE households (
   registry_reason ENUM('monitored','affected','both') NOT NULL DEFAULT 'monitored',
   hazard_type ENUM('unassessed','landslide','flood','fire','other') NOT NULL DEFAULT 'unassessed',
   hazard_notes VARCHAR(255) NULL,
+  vulnerability_category ENUM('unassessed','no_additional_need_identified','assistance_needed') NOT NULL DEFAULT 'unassessed',
+  vulnerability_notes VARCHAR(255) NULL,
+  vulnerability_assessed_by INT UNSIGNED NULL,
+  vulnerability_assessed_at DATETIME NULL,
   evacuation_status ENUM('at_home','advised','evacuated','returned') NOT NULL DEFAULT 'at_home',
   latitude DECIMAL(10,7) NULL,
   longitude DECIMAL(10,7) NULL,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (vulnerability_assessed_by) REFERENCES users(id) ON DELETE RESTRICT,
   INDEX idx_households_purok (purok),
   INDEX idx_households_representative (representative_name)
 ) ENGINE=InnoDB;
+
+-- Household size is COUNT(household_members.id); do not store a second count.
 
 -- 3. Members: linked household members; no login account required.
 CREATE TABLE household_members (
@@ -49,10 +57,14 @@ CREATE TABLE household_members (
   INDEX idx_members_household (household_id)
 ) ENGINE=InnoDB;
 
--- 4. Incidents: no image/photo field; public map shows only approved statuses.
+-- 4. Incidents: private to staff and the submitting account; verification does not publish.
+-- reported_by is always the logged-in creator, including admin-entered walk-in reports.
 CREATE TABLE incident_reports (
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   reported_by INT UNSIGNED NOT NULL,
+  report_source ENUM('resident','walk_in','admin') NOT NULL DEFAULT 'resident',
+  reporter_name VARCHAR(100) NULL,
+  occurred_at DATETIME NULL,
   incident_type ENUM('landslide','flood','fire','road_obstruction','other') NOT NULL,
   description TEXT NOT NULL,
   location_description VARCHAR(255) NULL,
@@ -60,10 +72,31 @@ CREATE TABLE incident_reports (
   longitude DECIMAL(10,7) NULL,
   contact_phone VARCHAR(20) NULL,
   status ENUM('pending','verified','responding','resolved','rejected') NOT NULL DEFAULT 'pending',
+  reviewed_by INT UNSIGNED NULL,
+  reviewed_at DATETIME NULL,
+  review_notes VARCHAR(255) NULL,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   FOREIGN KEY (reported_by) REFERENCES users(id) ON DELETE RESTRICT,
+  FOREIGN KEY (reviewed_by) REFERENCES users(id) ON DELETE RESTRICT,
   INDEX idx_incidents_status_date (status, created_at)
+) ENGINE=InnoDB;
+
+-- 17. Image metadata only. File contents are kept separately on disk.
+-- PHP generates stored_filename; never use the original filename as a path.
+CREATE TABLE incident_images (
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  incident_id INT UNSIGNED NOT NULL,
+  stored_filename VARCHAR(100) NOT NULL UNIQUE,
+  original_filename VARCHAR(255) NOT NULL,
+  mime_type ENUM('image/jpeg','image/png','image/webp') NOT NULL,
+  file_size INT UNSIGNED NOT NULL,
+  uploaded_by INT UNSIGNED NOT NULL,
+  uploaded_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (incident_id) REFERENCES incident_reports(id) ON DELETE RESTRICT,
+  FOREIGN KEY (uploaded_by) REFERENCES users(id) ON DELETE RESTRICT,
+  CHECK (file_size > 0 AND file_size <= 5242880),
+  INDEX idx_images_incident (incident_id)
 ) ENGINE=InnoDB;
 
 -- 5. Directory of response teams (no separate responder login role).
@@ -94,9 +127,14 @@ CREATE TABLE response_updates (
   incident_id INT UNSIGNED NOT NULL,
   updated_by INT UNSIGNED NOT NULL,
   action_taken TEXT NOT NULL,
+  from_status ENUM('pending','verified','responding','resolved','rejected') NULL,
+  to_status ENUM('pending','verified','responding','resolved','rejected') NULL,
+  assignment_id INT UNSIGNED NULL,
+  assignment_status ENUM('assigned','on_scene','completed','cancelled') NULL,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (incident_id) REFERENCES incident_reports(id) ON DELETE RESTRICT,
   FOREIGN KEY (updated_by) REFERENCES users(id) ON DELETE RESTRICT,
+  FOREIGN KEY (assignment_id) REFERENCES incident_assignments(id) ON DELETE RESTRICT,
   INDEX idx_response_incident_date (incident_id, created_at)
 ) ENGINE=InnoDB;
 
@@ -143,7 +181,8 @@ CREATE TABLE evacuation_records (
     OR (household_member_id IS NULL AND walkin_name IS NOT NULL)
   ),
   CHECK (checked_out_at IS NULL OR checked_out_at >= checked_in_at),
-  INDEX idx_evac_active (center_id, checked_out_at)
+  INDEX idx_evac_active (center_id, checked_out_at),
+  INDEX idx_evac_member_active (household_member_id, checked_out_at)
 ) ENGINE=InnoDB;
 
 -- 11. Relief item catalog and current stock quantity.
@@ -206,6 +245,9 @@ CREATE TABLE relief_stock_movements (
   FOREIGN KEY (distribution_id) REFERENCES relief_distributions(id) ON DELETE RESTRICT,
   FOREIGN KEY (recorded_by) REFERENCES users(id) ON DELETE RESTRICT,
   CHECK (quantity > 0),
+  CHECK ((movement_type = 'distribution' AND distribution_id IS NOT NULL)
+    OR (movement_type IN ('stock_in','stock_out') AND distribution_id IS NULL)),
+  UNIQUE KEY uq_stock_distribution_item (distribution_id, item_id),
   INDEX idx_stock_item_date (item_id, created_at)
 ) ENGINE=InnoDB;
 
@@ -224,4 +266,4 @@ INSERT INTO system_settings (id, barangay_name) VALUES (1, 'Demo Barangay');
 -- Validate coordinates, same-barangay location, uniqueness, and roles server-side.
 -- Prevent duplicate active evacuation records; enforce center capacity in a transaction.
 -- Record inventory distribution using transactions and SELECT ... FOR UPDATE.
--- Use password_hash/password_verify; prepared statements; CSRF protection; access checks.
+-- Use password_hash/password_verify; prepared statements; session/role and ownership checks.
