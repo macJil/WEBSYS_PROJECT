@@ -1,54 +1,27 @@
 <?php
-require_once __DIR__ . '/app/helpers.php';
 require_once __DIR__ . '/app/controllers/UserController.php';
-
-
-$UserController = new UserController();
-
-
+if (!empty($_SESSION['ID'])) { redirect(dashboardPath()); }
+$errors = (new UserController())->handlePost();
+$pageTitle = 'Login and registration';
+require __DIR__ . '/resources/views/components/header.php';
 ?>
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="resources/assets/css/bootstrap.min.css">
-  <title>Login / Register</title>
-</head>
-<body>
-  <div class="container" style="max-width: 32rem; text-align: center">
-    
-    <?= $UserController->login()?>
-    <form action="" method="post" class="card mb-3">
-      <div class="card-header"><h3>Login</h3></div>
-      <div class="card-body">
-        <label for="login-email">Email</label>
-        <input id="login-email" type="email" name="email" class="form-control" required>
-        <label for="login-password">Password</label>
-        <input id="login-password" type="password" name="password" class="form-control" required>
-        <button type="submit" name="login" value="1" class="btn btn-primary mt-3">Login</button>
-      </div>
-    </form>
-
-    <form action="" method="post" class="card">
-      <div class="card-header"><h3>Register</h3></div>
-      <div class="card-body">
-        <label for="full-name">Full Name</label>
-        <input id="full-name" type="text" name="full_name" class="form-control" required>
-        <label for="user-name">User Name</label>
-        <input id="user-name" type="text" name="username" class="form-control" required>
-        <label for="register-email">Email</label>
-        <input id="register-email" type="email" name="email" class="form-control" required>
-        <label for="phone">Contact Number</label>
-        <input id="phone" type="text" name="phone" class="form-control" required>
-        <label for="register-password">Password</label>
-        <input id="register-password" type="password" name="password" class="form-control" required>
-        <button type="submit" name="register" value="1" class="btn btn-success mt-3">Register</button>
-      </div>
-    </form>
-  </div>
-  <script src="resources/assets/js/bootstrap.bundle.min.js"></script>
-
-</body>
-</html>
+<h1 class="mb-4">Barangay DRRM</h1>
+<?php require __DIR__ . '/resources/views/components/errors.php'; ?>
+<div class="row g-4">
+<section class="col-md-5"><h2>Login</h2>
+<form method="post" action="<?= e(url('index.php')) ?>">
+<input type="hidden" name="action" value="login">
+<label for="login-email" class="form-label">Email</label><input id="login-email" class="form-control mb-3" type="email" name="email" required maxlength="254" autocomplete="email" value="<?= input('action') === 'login' ? e(input('email')) : '' ?>">
+<label for="login-password" class="form-label">Password</label><input id="login-password" class="form-control mb-3" type="password" name="password" required autocomplete="current-password">
+<button class="btn btn-primary">Login</button></form></section>
+<section class="col-md-7"><h2>Register as a resident</h2>
+<form method="post" action="<?= e(url('index.php')) ?>">
+<input type="hidden" name="action" value="register">
+<?php foreach (['full_name' => ['Full name', 'text', 100], 'username' => ['Username', 'text', 50], 'email' => ['Email', 'email', 254], 'phone' => ['Contact number', 'tel', 20]] as $key => $field): ?>
+<label for="register-<?= e($key) ?>" class="form-label"><?= e($field[0]) ?></label>
+<input id="register-<?= e($key) ?>" class="form-control mb-3" name="<?= e($key) ?>" type="<?= e($field[1]) ?>" maxlength="<?= $field[2] ?>" required value="<?= input('action') === 'register' ? e(input($key)) : '' ?>">
+<?php endforeach; ?>
+<label for="register-password" class="form-label">Password (at least 8 characters)</label><input id="register-password" class="form-control mb-3" type="password" name="password" minlength="8" required autocomplete="new-password">
+<label for="confirm-password" class="form-label">Confirm password</label><input id="confirm-password" class="form-control mb-3" type="password" name="password_confirmation" required autocomplete="new-password">
+<button class="btn btn-success">Register</button></form></section></div>
+<?php require __DIR__ . '/resources/views/components/footer.php'; ?>

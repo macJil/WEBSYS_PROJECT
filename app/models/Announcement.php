@@ -8,10 +8,10 @@ class AnnouncementModel{
   }
   public function store_announcement($title,$message,$created_by){
     return $this->pdo->prepare("INSERT INTO announcements(title,message,created_by)
-    VALUES(:title,:message,:created_by)")->execute([$title,$message,$created_by]);
+    VALUES(?,?,?)")->execute([$title,$message,$created_by]);
   }
-  public function get_all_announcemnt(){
-    $stmt = $this->pdo->prepare("SELECT * FROM announcements");
+  public function get_all_announcemnt(bool $publishedOnly = false){
+    $stmt = $this->pdo->prepare("SELECT * FROM announcements" . ($publishedOnly ? ' WHERE is_published = 1' : ''));
     $stmt->execute();
     return $stmt->fetchAll();
 

@@ -11,6 +11,10 @@ class ReportController extends Controller
     
   }
 
+  public function get_my_reports(){
+    requireRole('resident');
+    return $this->reports->get_report($_SESSION['ID']);
+  }
   public function store_report(){
     
     if(isset($_POST['store_report'])){
@@ -113,7 +117,8 @@ class ReportController extends Controller
   }
   public function count_type(){
     $reports = $this->get_all_reports();
-    $type = ['fire'=>count($reports['fire']),'landslide'=>count($reports['landslide']),'flood'=>count($reports['flood']),'road_obstruction'=>count($reports['road_obstruction']),'other'=>count($reports['other'])];
+    $type = array_fill_keys(['fire','landslide','flood','road_obstruction','other'], 0);
+    foreach ($reports as $report) { if (isset($type[$report['incident_type']])) { $type[$report['incident_type']]++; } }
     return $type;
   }
 }

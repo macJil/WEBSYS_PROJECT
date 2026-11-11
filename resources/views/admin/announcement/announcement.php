@@ -1,21 +1,27 @@
 <?php
 require_once __DIR__ . '/../../../../app/helpers.php';
+requireRole('admin');
+
+require_once __DIR__ . '/../../../../app/helpers.php';
 
 require_once __DIR__ . '/../../../../app/controllers/AnnouncementController.php';
-require __DIR__ . '/../../components/header.php';
+
 
 $AnnouncementController = new AnnouncementController();
 $announcements= $AnnouncementController->get_announcements();
 $deleteMessage = $_SESSION['FLASH'] ?? null;
 unset($_SESSION['FLASH']);
+$store_announcementMessage = $AnnouncementController->store_announcement();
+$delete_announcementsMessage = $AnnouncementController->delete_announcements();
+require __DIR__ . '/../../components/header.php';
 ?>
-  
+
   <div class="container">
     <h1>Announcement</h1>
     <h3>Create Announcemnt</h3>
-    <?= $AnnouncementController->store_announcement() ?>
-    <?= $AnnouncementController->delete_announcements() ?>
-   
+    <?= $store_announcementMessage ?>
+    <?= $delete_announcementsMessage ?>
+
     <?php if ($deleteMessage !== null): ?>
       <?= $deleteMessage ?>
     <?php endif; ?>
@@ -37,9 +43,9 @@ unset($_SESSION['FLASH']);
           <th>
             <button name="submit_message">Submit Message</button>
           </th>
-          
+
         </tr>
-        
+
       </table>
     </form>
     <div class="container">
@@ -55,7 +61,7 @@ unset($_SESSION['FLASH']);
                 <th>Published</th>
                 <th>Created</th>
                 <th>Action</th>
-                
+
             </tr>
             <?php foreach($announcements as $announcement):?>
               <tr>
@@ -81,5 +87,5 @@ unset($_SESSION['FLASH']);
     </div>
   </div>
 
- 
+
 <?php require __DIR__ . '/../../components/footer.php'; ?>

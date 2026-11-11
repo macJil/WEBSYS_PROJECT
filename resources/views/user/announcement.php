@@ -1,11 +1,16 @@
 <?php
 require_once __DIR__ . '/../../../app/helpers.php';
+requireRole('resident');
+
+require_once __DIR__ . '/../../../app/helpers.php';
 require_once __DIR__ . '/../../../app/controllers/AnnouncementController.php';
 
-require __DIR__ . '/../components/header.php';
+
 
 $AnnouncementController = new AnnouncementController();
 $announcements = $AnnouncementController->get_announcements();
+
+require __DIR__ . '/../components/header.php';
 ?>
   <div class="container">
     <h1>Announcement</h1>
@@ -29,7 +34,7 @@ $announcements = $AnnouncementController->get_announcements();
             <h3>No Announcement Available...</h3>
           <?php endif?>
         <?php endforeach?>
-        
+
       </table>
 
     <?php endif?>

@@ -22,16 +22,18 @@ class AnnouncementController extends Controller{
         $this->announcements->store_announcement($title,$message,$created_by);
         return parent::results_checker("Announcement Added!",1);
       }catch(PDOException $e){
-        return parent::results_checker("ERROR adding announcement! {$e->getMessage()}",0);
+        error_log((string) $e);
+        return parent::results_checker('The request could not be completed.',0);
       }
     }
   }
   public function get_announcements(){
     
   try{
-      return $this->announcements->get_all_announcemnt();
+      return $this->announcements->get_all_announcemnt(($_SESSION['ROLE'] ?? '') !== 'admin');
     }catch(PDOException $e){
-      return parent::results_checker("ERROR getting announcement! {$e->getMessage()}",0);
+      error_log((string) $e);
+        return [];
     }
   }
   public function delete_announcements(){
@@ -64,7 +66,8 @@ class AnnouncementController extends Controller{
     try{
       return $this->announcements->get_by_id($id);
     }catch(PDOException $e){
-      return parent::results_checker("Failed Fetching! {$e->getMessage()}",0);
+      error_log((string) $e);
+        return parent::results_checker('The request could not be completed.',0);
     }
   }
   public function update_announcement(){
@@ -85,7 +88,8 @@ class AnnouncementController extends Controller{
         header('Location: ' . BASE_URL . '/resources/views/admin/announcement/announcement.php');
         exit;
       }catch(PDOException $e){
-        return parent::results_checker("Failed Updating Announcement! {$e->getMessage()}",0);
+        error_log((string) $e);
+        return parent::results_checker('The request could not be completed.',0);
       }
     }
   }

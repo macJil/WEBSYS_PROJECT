@@ -14,3 +14,7 @@ A one-barangay classroom project using simple PHP MVC, PDO/MySQL, sessions, and 
 - [Read-only disaster summary query examples](database/report_queries.sql)
 
 Read the Phase 2 installation instructions before importing SQL. Use fictional development data; do not commit real household records, contacts, uploaded images, or local credentials. The schema and application are separate deliverables: permissions, file handling, and transaction workflows still need PHP implementation.
+
+## PHP foundation setup
+
+See [Phase 3 setup and reusable page pattern](docs/PHASE_3_PHP_FOUNDATIONS.md). Copy `config/local.example.php` to the ignored `config/local.php`, configure your local connection/base URL, and open root `index.php`. The account screens use ordinary forms and PHP sessions.

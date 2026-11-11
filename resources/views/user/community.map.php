@@ -1,5 +1,8 @@
 <?php
 require_once __DIR__ . '/../../../app/helpers.php';
+requireRole('resident');
+
+require_once __DIR__ . '/../../../app/helpers.php';
 
 
 require __DIR__ . '/../components/header.php';

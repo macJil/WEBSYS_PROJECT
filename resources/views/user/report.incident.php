@@ -1,17 +1,23 @@
- <?php 
+<?php
+require_once __DIR__ . '/../../../app/helpers.php';
+requireRole('resident');
+$store_reportMessage = $ReportController->store_report();
+require __DIR__ . '/../components/header.php';
+?>
+ <?php
 require_once __DIR__ . '/../../../app/helpers.php';
 require_once __DIR__ . '/../../../app/controllers/ReportController.php';
 
-require __DIR__ . '/../components/header.php';
+
 
 $ReportController = new ReportController();
 
  ?>
   <div class="container">
-  <?=  $ReportController->store_report() ?>
+  <?= $store_reportMessage ?>
   <h1>Report Incident</h1>
   <form action="" method="post">
-    
+
       <table>
         <tr>
           <th>Incident Type:</th>
