@@ -26,3 +26,7 @@ See [Phase 3 setup and reusable page pattern](docs/PHASE_3_PHP_FOUNDATIONS.md). 
 ## Incident reporting
 
 [Phase 5 setup and workflow](docs/PHASE_5_INCIDENT_REPORTING.md): residents submit incidents and view their own reports; admins enter in-person/phone reports and review incidents. Images require a writable private directory outside the web server document root. Existing databases need `database/migrations/002_phase_5.sql` before using phone reports.
+
+## Emergency response
+
+[Phase 6 guide](docs/PHASE_6_EMERGENCY_RESPONSE.md): admins manage active/inactive response teams, assign teams from incident details, and record actions with history. Dispatch sets an incident to responding; staff close active assignments before resolving it. No additional database migration is required for this phase.

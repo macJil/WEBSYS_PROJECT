@@ -62,6 +62,10 @@ class ReportModel
             $stmt = $this->pdo->prepare('SELECT status FROM incident_reports WHERE id = ? FOR UPDATE');
             $stmt->execute([$id]); $old = $stmt->fetchColumn();
             if ($old === false) { throw new RuntimeException('Incident not found.'); }
+            $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM incident_assignments WHERE incident_id=? AND status IN ('assigned','on_scene')");
+            $stmt->execute([$id]); $active = (int)$stmt->fetchColumn();
+            if ($active > 0 && $status !== 'responding') { throw new DomainException('Complete or cancel all active team assignments before changing the incident out of responding.'); }
+            if ($active === 0 && $status === 'responding' && $old !== 'responding') { throw new DomainException('Verify the incident, then assign a team to start responding.'); }
             $stmt = $this->pdo->prepare('UPDATE incident_reports SET status=?, reviewed_by=?, reviewed_at=CURRENT_TIMESTAMP, review_notes=? WHERE id=?');
             $stmt->execute([$status, $staff, $notes, $id]);
             $stmt = $this->pdo->prepare('INSERT INTO response_updates (incident_id,updated_by,action_taken,from_status,to_status) VALUES (?,?,?,?,?)');

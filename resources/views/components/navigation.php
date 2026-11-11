@@ -5,6 +5,7 @@
 <?php if ($_SESSION['ROLE'] === 'admin'): ?>
 <a href="<?= e(url('resources/views/admin/households.php')) ?>">Households</a>
 <a href="<?= e(url('resources/views/admin/reports/report.php')) ?>">Incidents</a>
+<a href="<?= e(url('resources/views/admin/response/teams.php')) ?>">Response teams</a>
 <a href="<?= e(url('resources/views/admin/announcement/announcement.php')) ?>">Announcements</a>
 <?php else: ?>
 <a href="<?= e(url('resources/views/user/report.incident.php')) ?>">Report incident</a>

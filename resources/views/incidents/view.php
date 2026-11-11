@@ -29,7 +29,9 @@ require __DIR__ . '/../components/errors.php';
 <a href="<?= e(url('resources/views/incidents/image.php?id=' . $image['id'])) ?>"><img style="max-width:100%;max-height:360px" src="<?= e(url('resources/views/incidents/image.php?id=' . $image['id'])) ?>" alt="Image attached to this incident"></a>
 <?php endforeach; ?>
 <?php if ($admin): ?>
+<p class="mt-3"><a class="btn btn-secondary" href="<?= e(url('resources/views/admin/response/incident.php?id=' . $id)) ?>">Manage response teams and actions</a></p>
 <h2 class="mt-4">Staff review</h2>
+<p>Verify before assigning teams. Active assignments keep the incident responding. Complete or cancel them before resolving or rejecting the incident.</p>
 <form method="post">
 <label>Status <select class="form-select" name="status">
 <?php foreach (ReportController::STATUSES as $status): ?><option value="<?= e($status) ?>" <?= (isPost() ? input('status') : $report['status']) === $status ? 'selected' : '' ?>><?= e(ucfirst($status)) ?></option><?php endforeach; ?></select></label>

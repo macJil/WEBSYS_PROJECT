@@ -115,6 +115,7 @@ class ReportController extends Controller
         if (!isPost()) { return []; }
         if (input('action') !== 'review_incident' || !in_array(input('status'), self::STATUSES, true) || input('notes') === '' || strlen(input('notes')) > 255) { return ['Choose a status and enter review notes (maximum 255 bytes).']; }
         try { $this->model->review($id, input('status'), input('notes'), (int)$_SESSION['ID']); }
+        catch (DomainException $error) { return [$error->getMessage()]; }
         catch (Throwable $error) { error_log((string)$error); return ['Review could not be saved. Please try again.']; }
         $this->success('Review saved.', 'resources/views/incidents/view.php?id=' . $id); return [];
     }
