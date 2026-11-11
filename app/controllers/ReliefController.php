@@ -26,8 +26,7 @@ class ReliefController extends Controller
     public function movements(): array
     {
         $type=$this->query('type'); $date=$this->query('date');
-        $parsed=$date!==''?DateTime::createFromFormat('!Y-m-d',$date):null;
-        if (!in_array($type,['','stock_in','stock_out','distribution'],true) || ($date!=='' && (!$parsed || $parsed->format('Y-m-d')!==$date))) { http_response_code(400); exit('Invalid history filter.'); }
+        if (!in_array($type,['','stock_in','stock_out','distribution'],true) || ($date!=='' && !validDateInput($date))) { http_response_code(400); exit('Invalid history filter.'); }
         return $this->model->movements($this->query('q'),$type,$date);
     }
     private function failure(Throwable $e): array

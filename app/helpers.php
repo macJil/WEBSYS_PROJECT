@@ -28,6 +28,13 @@ function input(string $key, bool $trim = true): string
     $value = $_POST[$key] ?? '';
     return is_string($value) ? ($trim ? trim($value) : $value) : '';
 }
+function validDateInput(string $value): bool
+{
+    // Reject malformed bytes before PHP's date parser, which can throw on null bytes.
+    if (!preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/D', $value)) { return false; }
+    $date = DateTimeImmutable::createFromFormat('!Y-m-d', $value);
+    return $date !== false && $date->format('Y-m-d') === $value;
+}
 function flash(string $message, string $type = 'success'): void
 {
     $_SESSION['message'] = ['text' => $message, 'type' => $type === 'success' ? 'success' : 'danger'];

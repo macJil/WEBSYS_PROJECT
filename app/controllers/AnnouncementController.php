@@ -10,8 +10,7 @@ class AnnouncementController extends Controller
     {
         $resident=$_SESSION['ROLE']==='resident';
         $filters=['q'=>$this->query('q'),'date'=>$this->query('date'),'status'=>$resident?'':$this->query('status')];
-        $date=$filters['date']!==''?DateTime::createFromFormat('!Y-m-d',$filters['date']):null;
-        if (!in_array($filters['status'],['','published','draft'],true) || ($filters['date']!=='' && (!$date || $date->format('Y-m-d')!==$filters['date']))) { http_response_code(400); exit('Invalid announcement filter.'); }
+        if (!in_array($filters['status'],['','published','draft'],true) || ($filters['date']!=='' && !validDateInput($filters['date']))) { http_response_code(400); exit('Invalid announcement filter.'); }
         return $this->model->listing($filters,$resident);
     }
     public function find(): array

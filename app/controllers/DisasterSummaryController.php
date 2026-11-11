@@ -13,7 +13,7 @@ class DisasterSummaryController extends Controller
         $values=[]; $dates=[];
         foreach (['from'=>$today->format('Y-m-01'),'to'=>$today->format('Y-m-d')] as $key=>$default) {
             $value=$_GET[$key]??$default;
-            $date=is_string($value)?DateTimeImmutable::createFromFormat('!Y-m-d',$value,$zone):false;
+            $date=is_string($value) && validDateInput($value)?DateTimeImmutable::createFromFormat('!Y-m-d',$value,$zone):false;
             if (!$date || $date->format('Y-m-d')!==$value || $value<'1000-01-01' || $value>'9999-12-30') {
                 http_response_code(400); exit('Enter valid start and end dates in YYYY-MM-DD format.');
             }

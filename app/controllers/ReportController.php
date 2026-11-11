@@ -33,8 +33,7 @@ class ReportController extends Controller
     }
     private function validDate(string $date): bool
     {
-        $parsed = DateTime::createFromFormat('!Y-m-d', $date);
-        return $parsed && $parsed->format('Y-m-d') === $date;
+        return validDateInput($date);
     }
     public function listing(array $filters): array { return $this->model->listing($filters, $this->owner()); }
     public function images(int $id): array { $this->find($id); return $this->model->images($id); }
