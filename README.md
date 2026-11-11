@@ -54,3 +54,7 @@ See [Phase 3 setup and reusable page pattern](docs/PHASE_3_PHP_FOUNDATIONS.md). 
 ## Integration review
 
 [Phase 12 results and repeatable test setup](docs/PHASE_12_INTEGRATION_REVIEW.md): all modules exercised together against isolated MySQL, 189 main HTTP checks passed, upgrade migrations and concurrent stock/capacity protections checked, and issues resolved. Browser visual/print and deployment acceptance checks remain separate.
+
+## Planned revisions
+
+[Shared map, dashboard, and bulk-action revision phases](docs/REVISION_PHASES_MAP_DASHBOARD_BULK_ACTIONS.md) define the agreed demo-area behavior, role-specific map data, location picker, dashboard counts, history-preserving admin actions, checkpoints, and five-member ownership. The revision plan is on `revision-map-dashboard-bulk-actions`; feature implementation follows in later commits.
