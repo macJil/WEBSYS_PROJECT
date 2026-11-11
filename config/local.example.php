@@ -7,4 +7,10 @@ return [
     'database' => 'barangay_drrm',
     'username' => 'root',
     'password' => '',
+    // Absolute private folder OUTSIDE your web server document root; PHP must be able to write here.
+    'incident_upload_dir' => '',
+    // Philippines overview until the team selects a barangay.
+    'map_latitude' => 12.8797,
+    'map_longitude' => 121.7740,
+    'map_zoom' => 6,
 ];

@@ -1,8 +1,9 @@
--- BARANGAY DRRM: SIMPLE DEVELOPMENT DATABASE (v1.1)
+-- BARANGAY DRRM: SIMPLE DEVELOPMENT DATABASE (v1.2)
 -- MySQL 8.0.16+; new development database ONLY.
 -- No sample accounts/data. Never import over SmartSlope's existing database.
 -- One barangay, admin and resident roles; incident images stored separately from MySQL.
--- Fresh installation only. Existing v1.0 databases: use database/migrations/001_phase_2.sql.
+-- Fresh installation only. Existing v1.0 databases: run migrations 001 then 002.
+-- Existing v1.1 databases: run database/migrations/002_phase_5.sql.
 
 CREATE DATABASE IF NOT EXISTS barangay_drrm CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE barangay_drrm;
@@ -62,7 +63,7 @@ CREATE TABLE household_members (
 CREATE TABLE incident_reports (
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   reported_by INT UNSIGNED NOT NULL,
-  report_source ENUM('resident','walk_in','admin') NOT NULL DEFAULT 'resident',
+  report_source ENUM('resident','walk_in','phone','admin') NOT NULL DEFAULT 'resident',
   reporter_name VARCHAR(100) NULL,
   occurred_at DATETIME NULL,
   incident_type ENUM('landslide','flood','fire','road_obstruction','other') NOT NULL,

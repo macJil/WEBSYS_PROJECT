@@ -1,0 +1,43 @@
+<?php
+require_once __DIR__ . '/../../../app/controllers/ReportController.php';
+session_checker();
+$controller = new ReportController($_SESSION['ROLE']);
+$id = $controller->id(); $report = $controller->find($id);
+$admin = $_SESSION['ROLE'] === 'admin';
+if (isPost() && !$admin) { http_response_code(403); exit('Only staff may review incidents.'); }
+$errors = $admin ? $controller->review($id) : [];
+$images = $controller->images($id); $history = $admin ? $controller->history($id) : [];
+$pageTitle = 'Incident #' . $id;
+require __DIR__ . '/../components/header.php';
+require __DIR__ . '/../components/errors.php';
+?>
+<h1><?= e($pageTitle) ?></h1>
+<dl>
+<?php foreach (['incident_type'=>'Type','status'=>'Status','description'=>'Description','reporter_name'=>'Reporter/contact name','contact_phone'=>'Contact number','location_description'=>'Location','latitude'=>'Latitude','longitude'=>'Longitude','report_source'=>'Received through','created_at'=>'Submitted'] as $key=>$label): ?>
+<dt><?= e($label) ?></dt><dd style="white-space:pre-wrap"><?= e($report[$key] ?? 'Not recorded') ?></dd>
+<?php endforeach; ?></dl>
+<?php if ($report['latitude'] !== null && $report['longitude'] !== null): ?>
+<div id="saved-incident-map" style="height:320px" data-lat="<?= e($report['latitude']) ?>" data-lng="<?= e($report['longitude']) ?>"></div>
+<p id="saved-map-status">Saved coordinates are listed above. Map tiles need internet.</p>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="<?= e(url('resources/assets/js/incident-location.js')) ?>"></script>
+<?php endif; ?>
+<h2>Incident images</h2>
+<?php if (!$images): ?><p>No image attached.</p><?php endif; ?>
+<?php foreach ($images as $image): ?>
+<a href="<?= e(url('resources/views/incidents/image.php?id=' . $image['id'])) ?>"><img style="max-width:100%;max-height:360px" src="<?= e(url('resources/views/incidents/image.php?id=' . $image['id'])) ?>" alt="Image attached to this incident"></a>
+<?php endforeach; ?>
+<?php if ($admin): ?>
+<h2 class="mt-4">Staff review</h2>
+<form method="post">
+<label>Status <select class="form-select" name="status">
+<?php foreach (ReportController::STATUSES as $status): ?><option value="<?= e($status) ?>" <?= (isPost() ? input('status') : $report['status']) === $status ? 'selected' : '' ?>><?= e(ucfirst($status)) ?></option><?php endforeach; ?></select></label>
+<label class="d-block my-3">Review notes / action taken<textarea class="form-control" name="notes" maxlength="255" required><?= e(input('notes')) ?></textarea></label>
+<button name="action" value="review_incident" class="btn btn-primary">Save review</button>
+</form>
+<h2 class="mt-4">Staff review history</h2>
+<?php foreach ($history as $entry): ?><p><?= e($entry['created_at']) ?> · <?= e($entry['from_status']) ?> → <?= e($entry['to_status']) ?><br><?= e($entry['action_taken']) ?></p><?php endforeach; ?>
+<?php endif; ?>
+<a class="d-block mt-3" href="<?= e(url('resources/views/incidents/list.php')) ?>">Back to reports</a>
+<?php require __DIR__ . '/../components/footer.php'; ?>

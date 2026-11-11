@@ -1,71 +1,72 @@
 <?php
 require_once __DIR__ . '/../../config/db.php';
-
-class ReportModel{
-  private $pdo;
-  public function __construct(){
-    $db = new DATABASE();
-    $this->pdo = $db->connect();
-  }
-
-  
-
-  public function create_user($full_name, $user_name, $email, $phone, $password){
-    $stmt = $this->pdo->prepare("INSERT INTO users(full_name, user_name, email, phone, password)
-      VALUES (:full_name, :username, :email, :phone, :password)");
-    return $stmt->execute([
-      'full_name' => $full_name,
-      'username' => $user_name,
-      'email' => $email,
-      'phone' => $phone,
-      'password' => $password
-    ]);
-  }
-
-  public function add_report($incident_type, $description, $reported_by){
-    $stmt = $this->pdo->prepare("INSERT INTO incident_reports(incident_type,description,reported_by)
-    VALUES (:incident_type, :description, :reported_by)");
-    return $stmt->execute([
-      'incident_type'=> $incident_type,
-      'description'=> $description,
-      'reported_by'=> $reported_by,
-    ]);
-      
-  }
-  public function get_report($id){
-    $stmt = $this->pdo->prepare("SELECT * FROM incident_reports WHERE reported_by = ?");
-    $stmt->execute([$id]);
-    return $stmt->fetchAll();
-  }
-
-  public function get_report_by_id($id){
-    $stmt = $this->pdo->prepare("SELECT * FROM incident_reports WHERE id = ?");
-    $stmt->execute([$id]);
-    return $stmt->fetch();
-  }
-
-  public function get_all(){
-    $stmt = $this->pdo->prepare("SELECT * FROM incident_reports");
-    $stmt->execute([]);
-    return $stmt->fetchAll();
-  }
-
-  public function delete($id){
-    return $this->pdo->prepare("DELETE FROM incident_reports WHERE id = ?")->execute([$id]);
-  }
-  public function update($incident_type, $description,$location_description,$contact_phone,$status,$created_at,$id){
-    $stmt = $this->pdo->prepare("UPDATE incident_reports SET incident_type = :incident_type, description = :description,
-    location_description = :location_description, contact_phone = :contact_phone, status = :status, updated_at = :updated_at WHERE id = :id")
-
-    ->execute(["incident_type" => $incident_type, "description" => $description, "location_description" => $location_description, "contact_phone" => $contact_phone,
-    "status" => $status, "updated_at" => $created_at,"id"=>$id]);
-  }
-
-  
-  
-
+class ReportModel
+{
+    private PDO $pdo;
+    public function __construct() { $this->pdo = (new DATABASE())->connect(); }
+    public function listing(array $filters, ?int $owner): array
+    {
+        $where = []; $values = [];
+        if ($owner !== null) { $where[] = 'reported_by = ?'; $values[] = $owner; }
+        foreach (['incident_type', 'status'] as $field) {
+            if ($filters[$field] !== '') { $where[] = "$field = ?"; $values[] = $filters[$field]; }
+        }
+        if ($filters['date'] !== '') { $where[] = 'DATE(created_at) = ?'; $values[] = $filters['date']; }
+        foreach (['location' => 'location_description', 'search' => 'description'] as $key => $field) {
+            if ($filters[$key] !== '') {
+                $where[] = "$field LIKE ? ESCAPE '!'";
+                $values[] = '%' . strtr($filters[$key], ['!' => '!!', '%' => '!%', '_' => '!_']) . '%';
+            }
+        }
+        $stmt = $this->pdo->prepare('SELECT * FROM incident_reports' . ($where ? ' WHERE ' . implode(' AND ', $where) : '') . ' ORDER BY created_at DESC, id DESC');
+        $stmt->execute($values); return $stmt->fetchAll();
+    }
+    public function find(int $id, ?int $owner)
+    {
+        $stmt = $this->pdo->prepare('SELECT * FROM incident_reports WHERE id = ?' . ($owner !== null ? ' AND reported_by = ?' : ''));
+        $stmt->execute($owner !== null ? [$id, $owner] : [$id]); return $stmt->fetch();
+    }
+    public function images(int $id): array
+    {
+        $stmt = $this->pdo->prepare('SELECT id FROM incident_images WHERE incident_id = ? ORDER BY id');
+        $stmt->execute([$id]); return $stmt->fetchAll();
+    }
+    public function image(int $id, ?int $owner)
+    {
+        $stmt = $this->pdo->prepare('SELECT i.* FROM incident_images i JOIN incident_reports r ON r.id = i.incident_id WHERE i.id = ?' . ($owner !== null ? ' AND r.reported_by = ?' : ''));
+        $stmt->execute($owner !== null ? [$id, $owner] : [$id]); return $stmt->fetch();
+    }
+    public function history(int $id): array
+    {
+        $stmt = $this->pdo->prepare('SELECT action_taken, from_status, to_status, created_at FROM response_updates WHERE incident_id = ? ORDER BY id');
+        $stmt->execute([$id]); return $stmt->fetchAll();
+    }
+    public function create(array $data, ?array $image): int
+    {
+        $this->pdo->beginTransaction();
+        try {
+            $fields = array_keys($data);
+            $stmt = $this->pdo->prepare('INSERT INTO incident_reports (' . implode(',', $fields) . ') VALUES (' . implode(',', array_fill(0, count($fields), '?')) . ')');
+            $stmt->execute(array_values($data)); $id = (int) $this->pdo->lastInsertId();
+            if ($image) {
+                $stmt = $this->pdo->prepare('INSERT INTO incident_images (incident_id,stored_filename,original_filename,mime_type,file_size,uploaded_by) VALUES (?,?,?,?,?,?)');
+                $stmt->execute([$id, $image['stored_filename'], $image['original_filename'], $image['mime_type'], $image['file_size'], $data['reported_by']]);
+            }
+            $this->pdo->commit(); return $id;
+        } catch (Throwable $error) { $this->pdo->rollBack(); throw $error; }
+    }
+    public function review(int $id, string $status, string $notes, int $staff): void
+    {
+        $this->pdo->beginTransaction();
+        try {
+            $stmt = $this->pdo->prepare('SELECT status FROM incident_reports WHERE id = ? FOR UPDATE');
+            $stmt->execute([$id]); $old = $stmt->fetchColumn();
+            if ($old === false) { throw new RuntimeException('Incident not found.'); }
+            $stmt = $this->pdo->prepare('UPDATE incident_reports SET status=?, reviewed_by=?, reviewed_at=CURRENT_TIMESTAMP, review_notes=? WHERE id=?');
+            $stmt->execute([$status, $staff, $notes, $id]);
+            $stmt = $this->pdo->prepare('INSERT INTO response_updates (incident_id,updated_by,action_taken,from_status,to_status) VALUES (?,?,?,?,?)');
+            $stmt->execute([$id, $staff, $notes, $old, $status]);
+            $this->pdo->commit();
+        } catch (Throwable $error) { $this->pdo->rollBack(); throw $error; }
+    }
 }
-
-
-
-?>
