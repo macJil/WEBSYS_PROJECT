@@ -1,35 +1,31 @@
 <?php
 require_once __DIR__ . '/../../config/db.php';
-class AnnouncementModel{
-  private $pdo;
-  public function __construct(){
-    $db = new DATABASE();
-    $this->pdo = $db->connect();
-  }
-  public function store_announcement($title,$message,$created_by){
-    return $this->pdo->prepare("INSERT INTO announcements(title,message,created_by)
-    VALUES(?,?,?)")->execute([$title,$message,$created_by]);
-  }
-  public function get_all_announcemnt(bool $publishedOnly = false){
-    $stmt = $this->pdo->prepare("SELECT * FROM announcements" . ($publishedOnly ? ' WHERE is_published = 1' : ''));
-    $stmt->execute();
-    return $stmt->fetchAll();
-
-  }
-  public function delete_announcement($id){
-    return $this->pdo->prepare("DELETE FROM announcements WHERE id = ?")->execute([$id]);
-  }
-  public function get_by_id($id){
-    $stmt = $this->pdo->prepare("SELECT * FROM announcements WHERE id = ?");
-    $stmt->execute([$id]);
-    return $stmt->fetch();
-  }
-  public function update($title, $message, $created_at, $is_published,$id){
-    return $this->pdo->prepare('UPDATE announcements SET title = :title, message = :message, created_at = :created_at, is_published = :is_published WHERE id = :id')
-    ->execute(['title' => $title,'message' => $message,'created_at' => $created_at,'is_published' => $is_published, 'id'=>$id]);
-  }
- 
-
+class AnnouncementModel
+{
+    private PDO $pdo;
+    public function __construct() { $this->pdo=(new DATABASE())->connect(); }
+    public function listing(array $filters,bool $resident): array
+    {
+        $where=[]; $args=[];
+        if ($resident) { $where[]='is_published=1'; }
+        elseif ($filters['status']!=='') { $where[]='is_published=?'; $args[]=$filters['status']==='published'?1:0; }
+        if ($filters['q']!=='') { $where[]="title LIKE ? ESCAPE '!'"; $args[]='%'.strtr($filters['q'],['!'=>'!!','%'=>'!%','_'=>'!_']).'%'; }
+        if ($filters['date']!=='') { $where[]='DATE(created_at)=?'; $args[]=$filters['date']; }
+        $stmt=$this->pdo->prepare('SELECT id,title,message,is_published,created_at FROM announcements'.($where?' WHERE '.implode(' AND ',$where):'').' ORDER BY created_at DESC,id DESC');
+        $stmt->execute($args); return $stmt->fetchAll();
+    }
+    public function find(int $id): array
+    {
+        $stmt=$this->pdo->prepare('SELECT * FROM announcements WHERE id=?'); $stmt->execute([$id]); return $stmt->fetch()?:[];
+    }
+    public function save(?int $id,string $title,string $message,int $published,int $staff): void
+    {
+        if ($id===null) {
+            $stmt=$this->pdo->prepare('INSERT INTO announcements (title,message,is_published,created_by) VALUES (?,?,?,?)');
+            $stmt->execute([$title,$message,$published,$staff]);
+        } else {
+            $stmt=$this->pdo->prepare('UPDATE announcements SET title=?,message=?,is_published=? WHERE id=?');
+            $stmt->execute([$title,$message,$published,$id]);
+        }
+    }
 }
-
-?>

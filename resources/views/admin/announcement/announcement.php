@@ -1,91 +1,21 @@
 <?php
-require_once __DIR__ . '/../../../../app/helpers.php';
-requireRole('admin');
-
-require_once __DIR__ . '/../../../../app/helpers.php';
-
 require_once __DIR__ . '/../../../../app/controllers/AnnouncementController.php';
-
-
-$AnnouncementController = new AnnouncementController();
-$announcements= $AnnouncementController->get_announcements();
-$deleteMessage = $_SESSION['FLASH'] ?? null;
-unset($_SESSION['FLASH']);
-$store_announcementMessage = $AnnouncementController->store_announcement();
-$delete_announcementsMessage = $AnnouncementController->delete_announcements();
-require __DIR__ . '/../../components/header.php';
+$controller=new AnnouncementController('admin'); $errors=$controller->save(null);
+$announcements=$controller->listing(); $pageTitle='Manage announcements';
+require __DIR__ . '/../../components/header.php'; require __DIR__ . '/../../components/errors.php';
 ?>
-
-  <div class="container">
-    <h1>Announcement</h1>
-    <h3>Create Announcemnt</h3>
-    <?= $store_announcementMessage ?>
-    <?= $delete_announcementsMessage ?>
-
-    <?php if ($deleteMessage !== null): ?>
-      <?= $deleteMessage ?>
-    <?php endif; ?>
-    <form action="" method="post">
-      <table>
-        <tr>
-          <th>Title</th>
-          <td>
-            <input type="text" name="title">
-          </td>
-        </tr>
-        <tr>
-          <th>Message</th>
-          <td>
-            <textarea name="message" id=""></textarea>
-          </td>
-        </tr>
-        <tr>
-          <th>
-            <button name="submit_message">Submit Message</button>
-          </th>
-
-        </tr>
-
-      </table>
-    </form>
-    <div class="container">
-      <form action="" method="post">
-        <?php if(count($announcements)<1): ?>
-          <h3>No Data Available...</h3>
-        <?php else:?>
-          <table class="table">
-            <tr>
-                <th><button type="submit" name="delete_announcements" value="1" onclick="return confirm('Permanently delete the selected announcements?');">Delete Selected</button></th>
-                <th>Title</th>
-                <th>Message</th>
-                <th>Published</th>
-                <th>Created</th>
-                <th>Action</th>
-
-            </tr>
-            <?php foreach($announcements as $announcement):?>
-              <tr>
-                <td><input type="checkbox" name="announcements[]" value="<?= (int) $announcement['id'] ?>"></td>
-                <td><?= htmlspecialchars($announcement['title']) ?></td>
-                <td><?= htmlspecialchars($announcement['message']) ?></td>
-                <td><?= htmlspecialchars($announcement['is_published']) ? "Published" : "Not Published" ?></td>
-                <td><?= htmlspecialchars($announcement['created_at']) ?></td>
-                <td>
-                  <a href="<?= htmlspecialchars(
-                      BASE_URL . '/resources/views/admin/announcement/announcement.update.php?id='
-                      . urlencode((string) $announcement['id']),
-                      ENT_QUOTES,
-                      'UTF-8'
-                  ) ?>">Update</a>
-                </td>
-              </tr>
-            <?php endforeach ?>
-          </table>
-        <?php endif ?>
-      </form>
-
-    </div>
-  </div>
-
-
+<h1>Emergency announcements</h1>
+<p>Use drafts while preparing a notice. Publishing makes the saved text visible to residents. During classroom development, use clearly labeled fictional contacts only.</p>
+<h2>Create announcement</h2>
+<?php $announcement=['title'=>'','message'=>'','is_published'=>0]; require __DIR__ . '/editor.php'; ?>
+<h2 class="mt-4">Announcement history</h2>
+<form method="get" class="mb-3">
+<label>Title contains <input name="q" value="<?= e($controller->query('q')) ?>"></label>
+<label>Status <select name="status"><?php foreach ([''=>'All','draft'=>'Draft / withdrawn','published'=>'Published'] as $key=>$label): ?><option value="<?= e($key) ?>" <?= $controller->query('status')===$key?'selected':'' ?>><?= e($label) ?></option><?php endforeach; ?></select></label>
+<label>Created date <input type="date" name="date" value="<?= e($controller->query('date')) ?>"></label>
+<button class="btn btn-secondary">Search</button> <a href="<?= e(url('resources/views/admin/announcement/announcement.php')) ?>">Clear</a>
+</form>
+<div class="table-responsive"><table class="table"><thead><tr><th>Title</th><th>Status</th><th>Created</th><th>Action</th></tr></thead><tbody>
+<?php foreach ($announcements as $row): ?><tr><td><?= e($row['title']) ?></td><td><?= $row['is_published']?'Published':'Draft / withdrawn' ?></td><td><?= e($row['created_at']) ?></td><td><a href="<?= e(url('resources/views/admin/announcement/announcement.update.php?id='.$row['id'])) ?>">View / edit / publish / withdraw</a></td></tr><?php endforeach; ?>
+<?php if (!$announcements): ?><tr><td colspan="4">No matching announcements.</td></tr><?php endif; ?></tbody></table></div>
 <?php require __DIR__ . '/../../components/footer.php'; ?>

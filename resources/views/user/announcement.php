@@ -1,42 +1,19 @@
 <?php
-require_once __DIR__ . '/../../../app/helpers.php';
-requireRole('resident');
-
-require_once __DIR__ . '/../../../app/helpers.php';
 require_once __DIR__ . '/../../../app/controllers/AnnouncementController.php';
-
-
-
-$AnnouncementController = new AnnouncementController();
-$announcements = $AnnouncementController->get_announcements();
-
+$controller=new AnnouncementController('resident');
+if (isPost()) { http_response_code(405); exit('Announcements are read-only for residents.'); }
+header('Cache-Control: private, no-store');
+$announcements=$controller->listing(); $pageTitle='Emergency announcements';
 require __DIR__ . '/../components/header.php';
 ?>
-  <div class="container">
-    <h1>Announcement</h1>
-    <?php if(!$announcements):?>
-      <h3>No Announcement Available...</h3>
-    <?php else:?>
-      <table class="table">
-        <tr>
-          <th>Title</th>
-          <th>Message</th>
-          <th>Date</th>
-        </tr>
-        <?php foreach($announcements as $announcement):?>
-          <?php if($announcement['is_published']):?>
-            <tr>
-              <td><?= htmlspecialchars($announcement['title']) ?></td>
-              <td><?= htmlspecialchars($announcement['message']) ?></td>
-              <td><?= htmlspecialchars($announcement['created_at']) ?></td>
-            </tr>
-          <?php else:?>
-            <h3>No Announcement Available...</h3>
-          <?php endif?>
-        <?php endforeach?>
-
-      </table>
-
-    <?php endif?>
-  </div>
+<h1>Emergency announcements</h1>
+<form method="get" class="mb-4">
+<label>Search title <input name="q" value="<?= e($controller->query('q')) ?>"></label>
+<label>Created date <input type="date" name="date" value="<?= e($controller->query('date')) ?>"></label>
+<button class="btn btn-secondary">Search</button> <a href="<?= e(url('resources/views/user/announcement.php')) ?>">Clear</a>
+</form>
+<?php if (!$announcements): ?><p>No published notices match your search.</p><?php endif; ?>
+<?php foreach ($announcements as $announcement): ?>
+<article class="border rounded p-3 mb-3"><h2><?= e($announcement['title']) ?></h2><p>Created <?= e($announcement['created_at']) ?></p><div style="white-space:pre-wrap;overflow-wrap:anywhere"><?= e($announcement['message']) ?></div></article>
+<?php endforeach; ?>
 <?php require __DIR__ . '/../components/footer.php'; ?>

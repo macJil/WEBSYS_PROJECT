@@ -38,3 +38,7 @@ See [Phase 3 setup and reusable page pattern](docs/PHASE_3_PHP_FOUNDATIONS.md). 
 ## Relief inventory and distribution
 
 [Phase 8 guide](docs/PHASE_8_RELIEF.md): admins manage goods, record stock-in/out, search movement history, and distribute multiple goods to registered households. Stock deductions and distribution history are saved in one transaction. No additional database migration is required for this phase.
+
+## Emergency announcements
+
+[Phase 9 guide](docs/PHASE_9_ANNOUNCEMENTS.md): admins create/edit drafts, publish notices, and withdraw them. Residents see only published notices. Includes title/status/date filtering and fictional classroom contact guidance. No new migration is required.
