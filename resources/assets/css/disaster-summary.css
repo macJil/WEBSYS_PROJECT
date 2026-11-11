@@ -1,0 +1,13 @@
+@media print {
+    @page { margin: 15mm; }
+    nav, footer, .no-print { display: none !important; }
+    main.container { width: 100%; max-width: none; padding: 0 !important; }
+    body { color: #000; background: #fff; font-size: 10pt; }
+    h1 { font-size: 19pt; } h2 { font-size: 14pt; margin-top: 18pt; break-after: avoid; }
+    .table-responsive { overflow: visible; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { border: 1px solid #999 !important; padding: 5pt !important; }
+    thead { display: table-header-group; }
+    tfoot { display: table-row-group; }
+    tr { break-inside: avoid; }
+}

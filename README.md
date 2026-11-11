@@ -42,3 +42,7 @@ See [Phase 3 setup and reusable page pattern](docs/PHASE_3_PHP_FOUNDATIONS.md). 
 ## Emergency announcements
 
 [Phase 9 guide](docs/PHASE_9_ANNOUNCEMENTS.md): admins create/edit drafts, publish notices, and withdraw them. Residents see only published notices. Includes title/status/date filtering and fictional classroom contact guidance. No new migration is required.
+
+## Disaster reports and summaries
+
+[Phase 10 guide](docs/PHASE_10_DISASTER_SUMMARIES.md): admin summaries for current affected households and occupancy, date-filtered incident counts, and relief distributed by good/unit. Includes a print layout without personal records and reproducible fictional-data total checks. No new migration required.
