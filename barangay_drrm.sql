@@ -1,9 +1,9 @@
--- BARANGAY DRRM: SIMPLE DEVELOPMENT DATABASE (v1.2)
+-- BARANGAY DRRM: SIMPLE DEVELOPMENT DATABASE (v1.3)
 -- MySQL 8.0.16+; new development database ONLY.
 -- No sample accounts/data. Never import over SmartSlope's existing database.
 -- One barangay, admin and resident roles; incident images stored separately from MySQL.
--- Fresh installation only. Existing v1.0 databases: run migrations 001 then 002.
--- Existing v1.1 databases: run database/migrations/002_phase_5.sql.
+-- Fresh installation only. Existing databases: apply missing migrations in order: 001, 002, 003.
+-- Existing v1.2 databases: run database/migrations/003_phase_7.sql.
 
 CREATE DATABASE IF NOT EXISTS barangay_drrm CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE barangay_drrm;
@@ -165,6 +165,16 @@ CREATE TABLE evacuation_centers (
 
 -- 10. One record per individual (registered member OR walk-in).
 -- checked_out_at IS NULL means currently checked in.
+CREATE TABLE evacuation_walkins (
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  full_name VARCHAR(100) NOT NULL,
+  age SMALLINT UNSIGNED NOT NULL,
+  address_details VARCHAR(255) NOT NULL,
+  contact_phone VARCHAR(20) NOT NULL,
+  identity_key CHAR(64) NOT NULL UNIQUE,
+  CHECK (age <= 130)
+) ENGINE=InnoDB;
+
 CREATE TABLE evacuation_records (
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   center_id INT UNSIGNED NOT NULL,
@@ -174,6 +184,15 @@ CREATE TABLE evacuation_records (
   checked_in_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   checked_out_at DATETIME NULL,
   recorded_by INT UNSIGNED NOT NULL,
+  walkin_id INT UNSIGNED NULL,
+  checked_out_by INT UNSIGNED NULL,
+  active_member_id INT UNSIGNED GENERATED ALWAYS AS (CASE WHEN checked_out_at IS NULL THEN household_member_id ELSE NULL END) STORED,
+  active_walkin_id INT UNSIGNED GENERATED ALWAYS AS (CASE WHEN checked_out_at IS NULL THEN walkin_id ELSE NULL END) STORED,
+  UNIQUE KEY uq_evac_active_member (active_member_id),
+  UNIQUE KEY uq_evac_active_walkin (active_walkin_id),
+  FOREIGN KEY (walkin_id) REFERENCES evacuation_walkins(id) ON DELETE RESTRICT,
+  FOREIGN KEY (checked_out_by) REFERENCES users(id) ON DELETE RESTRICT,
+  CHECK (walkin_id IS NULL OR household_member_id IS NULL),
   FOREIGN KEY (center_id) REFERENCES evacuation_centers(id) ON DELETE RESTRICT,
   FOREIGN KEY (household_member_id) REFERENCES household_members(id) ON DELETE RESTRICT,
   FOREIGN KEY (recorded_by) REFERENCES users(id) ON DELETE RESTRICT,

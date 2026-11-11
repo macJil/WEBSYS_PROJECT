@@ -9,7 +9,7 @@ A one-barangay classroom project using simple PHP MVC, PDO/MySQL, sessions, and 
 - [Phase 1 baseline and five-member review assignments](docs/PHASE_1_PROJECT_BASELINE.md)
 - [Phase 2 database installation, relationships, and implementation rules](docs/PHASE_2_DATABASE_SCHEMA.md)
 - [Field dictionary](docs/PHASE_2_FIELD_DICTIONARY.md)
-- [Fresh-install schema v1.2](barangay_drrm.sql)
+- [Fresh-install schema v1.3](barangay_drrm.sql)
 - [One-time upgrade from the original v1.0 schema](database/migrations/001_phase_2.sql)
 - [Read-only disaster summary query examples](database/report_queries.sql)
 
@@ -30,3 +30,7 @@ See [Phase 3 setup and reusable page pattern](docs/PHASE_3_PHP_FOUNDATIONS.md). 
 ## Emergency response
 
 [Phase 6 guide](docs/PHASE_6_EMERGENCY_RESPONSE.md): admins manage active/inactive response teams, assign teams from incident details, and record actions with history. Dispatch sets an incident to responding; staff close active assignments before resolving it. No additional database migration is required for this phase.
+
+## Evacuation centers
+
+[Phase 7 guide](docs/PHASE_7_EVACUATION.md): admins manage centers, check in registered members or walk-ins, and check out occupants while preserving stays. Apply migration 003 on an existing database before using this module.
