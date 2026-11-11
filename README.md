@@ -34,3 +34,7 @@ See [Phase 3 setup and reusable page pattern](docs/PHASE_3_PHP_FOUNDATIONS.md). 
 ## Evacuation centers
 
 [Phase 7 guide](docs/PHASE_7_EVACUATION.md): admins manage centers, check in registered members or walk-ins, and check out occupants while preserving stays. Apply migration 003 on an existing database before using this module.
+
+## Relief inventory and distribution
+
+[Phase 8 guide](docs/PHASE_8_RELIEF.md): admins manage goods, record stock-in/out, search movement history, and distribute multiple goods to registered households. Stock deductions and distribution history are saved in one transaction. No additional database migration is required for this phase.

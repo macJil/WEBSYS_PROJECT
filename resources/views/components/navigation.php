@@ -7,6 +7,7 @@
 <a href="<?= e(url('resources/views/admin/reports/report.php')) ?>">Incidents</a>
 <a href="<?= e(url('resources/views/admin/response/teams.php')) ?>">Response teams</a>
 <a href="<?= e(url('resources/views/admin/evacuation/centers.php')) ?>">Evacuation centers</a>
+<a href="<?= e(url('resources/views/admin/relief/inventory.php')) ?>">Relief goods</a>
 <a href="<?= e(url('resources/views/admin/announcement/announcement.php')) ?>">Announcements</a>
 <?php else: ?>
 <a href="<?= e(url('resources/views/user/report.incident.php')) ?>">Report incident</a>
