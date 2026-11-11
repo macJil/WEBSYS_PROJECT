@@ -18,3 +18,7 @@ Read the Phase 2 installation instructions before importing SQL. Use fictional d
 ## PHP foundation setup
 
 See [Phase 3 setup and reusable page pattern](docs/PHASE_3_PHP_FOUNDATIONS.md). Copy `config/local.example.php` to the ignored `config/local.php`, configure your local connection/base URL, and open root `index.php`. The account screens use ordinary forms and PHP sessions.
+
+## Household registry
+
+[Phase 4 guide](docs/PHASE_4_HOUSEHOLD_REGISTRY.md): sign in as an admin and select **Households** to manage household details, emergency contacts, vulnerability assessments, and individual members. Member totals are calculated automatically.
