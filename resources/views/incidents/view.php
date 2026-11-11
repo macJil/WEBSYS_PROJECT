@@ -23,6 +23,7 @@ require __DIR__ . '/../components/errors.php';
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="<?= e(url('resources/assets/js/incident-location.js')) ?>"></script>
 <?php endif; ?>
+<p>Locations are reported points, not verified hazard assessments. No approved barangay boundary or location restriction is applied. DEMO ONLY locations are fictional examples.</p>
 <h2>Incident images</h2>
 <?php if (!$images): ?><p>No image attached.</p><?php endif; ?>
 <?php foreach ($images as $image): ?>

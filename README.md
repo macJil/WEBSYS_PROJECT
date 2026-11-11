@@ -46,3 +46,7 @@ See [Phase 3 setup and reusable page pattern](docs/PHASE_3_PHP_FOUNDATIONS.md). 
 ## Disaster reports and summaries
 
 [Phase 10 guide](docs/PHASE_10_DISASTER_SUMMARIES.md): admin summaries for current affected households and occupancy, date-filtered incident counts, and relief distributed by good/unit. Includes a print layout without personal records and reproducible fictional-data total checks. No new migration required.
+
+## Map search and locations
+
+[Phase 11 guide](docs/PHASE_11_MAP_LOCATIONS.md): incident forms support fictional purok/landmark search, map point selection, manual coordinates, and staff review of saved locations. No boundary or automatic hazard prediction is applied. No new migration required.
