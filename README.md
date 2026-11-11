@@ -50,3 +50,7 @@ See [Phase 3 setup and reusable page pattern](docs/PHASE_3_PHP_FOUNDATIONS.md). 
 ## Map search and locations
 
 [Phase 11 guide](docs/PHASE_11_MAP_LOCATIONS.md): incident forms support fictional purok/landmark search, map point selection, manual coordinates, and staff review of saved locations. No boundary or automatic hazard prediction is applied. No new migration required.
+
+## Integration review
+
+[Phase 12 results and repeatable test setup](docs/PHASE_12_INTEGRATION_REVIEW.md): all modules exercised together against isolated MySQL, 189 main HTTP checks passed, upgrade migrations and concurrent stock/capacity protections checked, and issues resolved. Browser visual/print and deployment acceptance checks remain separate.
