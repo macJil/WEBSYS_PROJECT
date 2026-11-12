@@ -66,8 +66,8 @@ class ReportModel
             $stmt->execute([$id]); $active = (int)$stmt->fetchColumn();
             if ($active > 0 && $status !== 'responding') { throw new DomainException('Complete or cancel all active team assignments before changing the incident out of responding.'); }
             if ($active === 0 && $status === 'responding' && $old !== 'responding') { throw new DomainException('Verify the incident, then assign a team to start responding.'); }
-            $stmt = $this->pdo->prepare('UPDATE incident_reports SET status=?, reviewed_by=?, reviewed_at=CURRENT_TIMESTAMP, review_notes=? WHERE id=?');
-            $stmt->execute([$status, $staff, $notes, $id]);
+            $stmt = $this->pdo->prepare("UPDATE incident_reports SET is_public=CASE WHEN ? IN ('pending','rejected') THEN 0 ELSE is_public END, status=?, reviewed_by=?, reviewed_at=CURRENT_TIMESTAMP, review_notes=? WHERE id=?");
+            $stmt->execute([$status, $status, $staff, $notes, $id]);
             $stmt = $this->pdo->prepare('INSERT INTO response_updates (incident_id,updated_by,action_taken,from_status,to_status) VALUES (?,?,?,?,?)');
             $stmt->execute([$id, $staff, $notes, $old, $status]);
             $this->pdo->commit();

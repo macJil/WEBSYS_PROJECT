@@ -1,0 +1,15 @@
+# Revision 2 — Schema and map data
+
+Apply migration `004_revision_2.sql` once after 003 on existing installations. Fresh installations use schema v1.4. Back up before migration; MySQL DDL is not transactional. No existing application database was changed during this work.
+
+Added public flags for incidents, centers, and relief locations; separate incident public label/coordinates; minimum_stock; archive timestamps on eligible master tables; announcement first-publication time and an unknown-history flag. Existing records remain unpublished on maps by default. Legacy announcements are conservatively marked as having unknown publication history. New publication writes record first_published_at. No foreign keys or historical records are removed.
+
+GET `resources/views/maps/data.php` returns session-authorized JSON. Anonymous requests receive 401, non-GET requests receive 405. Responses are private/no-store. A posted/query role cannot choose the staff response. Resident SQL explicitly selects safe fields and never fetches original incident descriptions, reporter details, images, household markers, or private coordinates. Staff gets separate queries with protected marker data. Resident markers use separate public points and an approximate-location note.
+
+Residents receive eligible published incidents only (verified/responding/resolved), public open centers, and public distribution/both relief locations. Archived or invalid/missing-coordinate records are omitted from markers. Occupancy counts active stays. Other lists retain records without points; no counts are derived from marker counts. The forthcoming map view should explain that records without points are not drawn.
+
+MapController::publicationErrors provides server validation for the forthcoming publication editor: paired finite coordinates within ranges, safe label length, explicit visibility value, eligible status and nonarchived record. It does not publish a record; the editor must call it before saving. No publication POST endpoint exists in this revision. SQL eligibility also filters invalid records independently. Existing incident review clears public visibility on pending/rejected; center editing clears it on closure. Reopening/reverification never turns it back on automatically.
+
+Archive fields are schema preparation; archive controls and exclusion from other active lists are implemented in Revision 6. Map queries already exclude archived markers. Low-stock thresholds are schema preparation for dashboard/item form changes. Public map UI follows in Revision 3.
+
+Verification: all changed PHP files passed syntax checks. Thirteen fictional SQLite assertions exercised actual map queries and publication validation, including private-field exclusion and invalid points. A separate MySQL 8.0.46 instance imported both the fresh schema and the previous schema plus migration 004; table/column types, defaults, nullability, and extra definitions matched. Run `php tests/revision2_map.php` for the privacy fixture. HTTP session behavior and visual map rendering were not browser-tested in this revision.

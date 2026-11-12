@@ -21,11 +21,11 @@ class AnnouncementModel
     public function save(?int $id,string $title,string $message,int $published,int $staff): void
     {
         if ($id===null) {
-            $stmt=$this->pdo->prepare('INSERT INTO announcements (title,message,is_published,created_by) VALUES (?,?,?,?)');
-            $stmt->execute([$title,$message,$published,$staff]);
+            $stmt=$this->pdo->prepare('INSERT INTO announcements (title,message,is_published,created_by,first_published_at) VALUES (?,?,?,?,CASE WHEN ?=1 THEN CURRENT_TIMESTAMP ELSE NULL END)');
+            $stmt->execute([$title,$message,$published,$staff,$published]);
         } else {
-            $stmt=$this->pdo->prepare('UPDATE announcements SET title=?,message=?,is_published=? WHERE id=?');
-            $stmt->execute([$title,$message,$published,$id]);
+            $stmt=$this->pdo->prepare('UPDATE announcements SET title=?,message=?,is_published=?,first_published_at=CASE WHEN ?=1 THEN COALESCE(first_published_at,CURRENT_TIMESTAMP) ELSE first_published_at END WHERE id=?');
+            $stmt->execute([$title,$message,$published,$published,$id]);
         }
     }
 }

@@ -1,8 +1,8 @@
--- BARANGAY DRRM: SIMPLE DEVELOPMENT DATABASE (v1.3)
+-- BARANGAY DRRM: SIMPLE DEVELOPMENT DATABASE (v1.4)
 -- MySQL 8.0.16+; new development database ONLY.
 -- No sample accounts/data. Never import over SmartSlope's existing database.
 -- One barangay, admin and resident roles; incident images stored separately from MySQL.
--- Fresh installation only. Existing databases: apply missing migrations in order: 001, 002, 003.
+-- Fresh installation only. Existing databases: apply missing migrations in order: 001, 002, 003, 004.
 -- Existing v1.2 databases: run database/migrations/003_phase_7.sql.
 
 CREATE DATABASE IF NOT EXISTS barangay_drrm CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -23,6 +23,7 @@ CREATE TABLE users (
 
 -- 2. Households: monitored OR newly affected (registered before relief distribution).
 CREATE TABLE households (
+  archived_at DATETIME NULL,
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   household_code VARCHAR(30) NOT NULL UNIQUE,
   representative_name VARCHAR(100) NOT NULL,
@@ -49,6 +50,7 @@ CREATE TABLE households (
 
 -- 3. Members: linked household members; no login account required.
 CREATE TABLE household_members (
+  archived_at DATETIME NULL,
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   household_id INT UNSIGNED NOT NULL,
   full_name VARCHAR(100) NOT NULL,
@@ -61,6 +63,11 @@ CREATE TABLE household_members (
 -- 4. Incidents: private to staff and the submitting account; verification does not publish.
 -- reported_by is always the logged-in creator, including admin-entered walk-in reports.
 CREATE TABLE incident_reports (
+  archived_at DATETIME NULL,
+  is_public BOOLEAN NOT NULL DEFAULT FALSE,
+  public_label VARCHAR(150) NULL,
+  public_latitude DECIMAL(10,7) NULL,
+  public_longitude DECIMAL(10,7) NULL,
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   reported_by INT UNSIGNED NOT NULL,
   report_source ENUM('resident','walk_in','phone','admin') NOT NULL DEFAULT 'resident',
@@ -141,6 +148,9 @@ CREATE TABLE response_updates (
 
 -- 8. Admin-written emergency announcements.
 CREATE TABLE announcements (
+  archived_at DATETIME NULL,
+  first_published_at DATETIME NULL,
+  publication_history_unknown BOOLEAN NOT NULL DEFAULT FALSE,
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   title VARCHAR(150) NOT NULL,
   message TEXT NOT NULL,
@@ -153,6 +163,8 @@ CREATE TABLE announcements (
 
 -- 9. Centers: capacity is in individuals; occupancy comes from active evacuation_records.
 CREATE TABLE evacuation_centers (
+  archived_at DATETIME NULL,
+  is_public BOOLEAN NOT NULL DEFAULT FALSE,
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(150) NOT NULL,
   address_details VARCHAR(255) NULL,
@@ -166,6 +178,7 @@ CREATE TABLE evacuation_centers (
 -- 10. One record per individual (registered member OR walk-in).
 -- checked_out_at IS NULL means currently checked in.
 CREATE TABLE evacuation_walkins (
+  archived_at DATETIME NULL,
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   full_name VARCHAR(100) NOT NULL,
   age SMALLINT UNSIGNED NOT NULL,
@@ -207,6 +220,8 @@ CREATE TABLE evacuation_records (
 
 -- 11. Relief item catalog and current stock quantity.
 CREATE TABLE relief_items (
+  archived_at DATETIME NULL,
+  minimum_stock INT UNSIGNED NOT NULL DEFAULT 0,
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   item_name VARCHAR(120) NOT NULL,
   unit VARCHAR(30) NOT NULL DEFAULT 'pieces',
@@ -216,6 +231,8 @@ CREATE TABLE relief_items (
 
 -- 12. Warehouse/storage/distribution points shown on the staff map.
 CREATE TABLE relief_locations (
+  archived_at DATETIME NULL,
+  is_public BOOLEAN NOT NULL DEFAULT FALSE,
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(150) NOT NULL,
   location_type ENUM('storage','distribution','both') NOT NULL DEFAULT 'distribution',

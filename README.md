@@ -9,7 +9,7 @@ A one-barangay classroom project using simple PHP MVC, PDO/MySQL, sessions, and 
 - [Phase 1 baseline and five-member review assignments](docs/PHASE_1_PROJECT_BASELINE.md)
 - [Phase 2 database installation, relationships, and implementation rules](docs/PHASE_2_DATABASE_SCHEMA.md)
 - [Field dictionary](docs/PHASE_2_FIELD_DICTIONARY.md)
-- [Fresh-install schema v1.3](barangay_drrm.sql)
+- [Fresh-install schema v1.4](barangay_drrm.sql)
 - [One-time upgrade from the original v1.0 schema](database/migrations/001_phase_2.sql)
 - [Read-only disaster summary query examples](database/report_queries.sql)
 
@@ -60,3 +60,5 @@ See [Phase 3 setup and reusable page pattern](docs/PHASE_3_PHP_FOUNDATIONS.md). 
 [Shared map, dashboard, and bulk-action revision phases](docs/REVISION_PHASES_MAP_DASHBOARD_BULK_ACTIONS.md) define the agreed demo-area behavior, role-specific map data, location picker, dashboard counts, history-preserving admin actions, checkpoints, and five-member ownership. The revision plan is on `revision-map-dashboard-bulk-actions`; feature implementation follows in later commits.
 
 [Revision 1 rules and demo setup](docs/REVISION_1_DATA_AND_PRIVACY_RULES.md) lock map field visibility, publication transitions, bulk-action eligibility, and count definitions. Demo map defaults and fictional search points now focus on Irisan; no official boundary is enforced.
+
+[Revision 2 schema and map data](docs/REVISION_2_SCHEMA_AND_MAP_DATA.md): apply migration 004 before using the guarded map JSON endpoint. Fresh schema is v1.4; public flags default to private and resident queries use explicit safe fields.
