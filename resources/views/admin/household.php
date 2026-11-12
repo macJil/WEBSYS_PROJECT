@@ -11,6 +11,7 @@ $members=$controller->members($id);
 $pageTitle='Household details';
 require __DIR__ . '/../components/header.php';
 ?>
+<?php $savedPoint=$household; require __DIR__ . '/../components/saved-point.php'; ?>
 <a href="<?= e(url('resources/views/admin/households.php')) ?>">Back to registry</a>
 <h1><?= e($household['household_code']) ?> — <?= e($household['representative_name']) ?></h1>
 <a class="btn btn-outline-primary mb-3" href="<?= e(url('resources/views/admin/households.php?edit='.$id)) ?>">Edit household</a>

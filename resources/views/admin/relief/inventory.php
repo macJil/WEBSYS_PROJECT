@@ -7,7 +7,7 @@ if (isPost()) { $item=['item_name'=>input('item_name'),'unit'=>input('unit')]; }
 $q=$controller->query('q'); $items=$controller->items($q); $pageTitle='Relief inventory';
 require __DIR__ . '/../../components/header.php'; require __DIR__ . '/../../components/errors.php';
 ?>
-<h1>Relief inventory</h1>
+<h1>Relief inventory</h1><p><a href="<?= e(url('resources/views/admin/relief/locations.php')) ?>">Manage relief locations</a></p>
 <p><a href="<?= e(url('resources/views/admin/relief/inventory.php')) ?>">Inventory</a> · <a href="<?= e(url('resources/views/admin/relief/movements.php')) ?>">Stock movements</a> · <a href="<?= e(url('resources/views/admin/relief/distributions.php')) ?>">Household distributions</a></p>
 
 <form method="get" class="mb-3"><label>Search name or unit <input name="q" value="<?= e($q) ?>"></label> <button class="btn btn-secondary">Search</button> <a href="<?= e(url('resources/views/admin/relief/inventory.php')) ?>">Clear</a></form>

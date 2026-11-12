@@ -73,3 +73,10 @@ set_exception_handler(function (Throwable $error): void {
     http_response_code(500);
     echo '<p>The request could not be completed. Please try again later.</p>';
 });
+
+function locationErrors(string $description, string $lat, string $lng): array
+{
+    if (($lat === '') !== ($lng === '')) { return ['Enter both coordinates or clear both.']; }
+    if ($lat !== '' && (!is_numeric($lat) || !is_numeric($lng) || !is_finite((float)$lat) || !is_finite((float)$lng) || abs((float)$lat)>90 || abs((float)$lng)>180 || trim($description)==='')) { return ['Enter valid coordinates and a written location.']; }
+    return [];
+}

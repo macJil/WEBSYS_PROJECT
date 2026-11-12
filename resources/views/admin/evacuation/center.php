@@ -6,6 +6,7 @@ $records=$controller->records($id); $members=$controller->members(); $walkins=$c
 $pageTitle=$center['name'];
 require __DIR__ . '/../../components/header.php'; require __DIR__ . '/../../components/errors.php';
 ?>
+<?php $savedPoint=$center; require __DIR__ . '/../../components/saved-point.php'; ?>
 <h1><?= e($center['name']) ?></h1>
 <p><?= e($center['address_details']) ?> · <?= e($center['status']) ?> · Occupancy: <?= (int)$center['occupancy'] ?> / <?= (int)$center['capacity'] ?> people</p>
 <a href="<?= e(url('resources/views/admin/evacuation/centers.php')) ?>">All centers</a> · <a href="<?= e(url('resources/views/admin/evacuation/centers.php?edit='.$id)) ?>">Edit / close center</a>

@@ -30,6 +30,7 @@ require __DIR__ . '/../components/header.php';
 <div class="col-md-6 mb-3"><label for="<?= e($key) ?>" class="form-label"><?= e($label) ?></label><textarea class="form-control" id="<?= e($key) ?>" name="<?= e($key) ?>" maxlength="255"><?= e($form[$key]) ?></textarea></div>
 <?php endforeach; ?></div>
 <p>Not yet assessed: no assessment recorded. No additional assistance need identified: reviewed without an identified need; this does not mean disaster-safe. Additional assistance needed: record the practical help required. Choosing “Not yet assessed” clears prior assessment notes and metadata.</p>
+<?php $point=$form; require __DIR__ . '/../components/location-picker.php'; ?>
 <button class="btn btn-primary">Save household</button> <a href="<?= e(url('resources/views/admin/households.php')) ?>">Cancel / new household</a>
 </form>
 <?php require __DIR__ . '/../components/footer.php'; ?>

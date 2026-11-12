@@ -33,6 +33,8 @@ class EvacuationController extends Controller
         $capacity=filter_var(input('capacity'),FILTER_VALIDATE_INT,['options'=>['min_range'=>0,'max_range'=>1000000]]);
         $data=['name'=>input('name'),'address_details'=>input('address_details'),'capacity'=>$capacity,'status'=>input('status')];
         if ($data['name']==='' || strlen($data['name'])>150 || $data['address_details']==='' || strlen($data['address_details'])>255 || $capacity===false || !in_array($data['status'],['open','closed'],true)) { return ['Enter name (up to 150 bytes), address (up to 255 bytes), whole-person capacity (0–1,000,000), and valid status.']; }
+        $errors=locationErrors($data['address_details'],input('latitude'),input('longitude')); if ($errors) { return $errors; }
+        foreach (['latitude','longitude'] as $field) { $data[$field]=input($field)===''?null:input($field); }
         try { $this->model->saveCenter($id,$data); } catch (Throwable $e) { return $this->failure($e); }
         $this->success('Center saved.','resources/views/admin/evacuation/centers.php'); return [];
     }

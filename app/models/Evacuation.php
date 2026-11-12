@@ -36,11 +36,11 @@ class EvacuationModel
                 $this->lockCenter($id); $count=$this->occupancy($id);
                 if ($data['capacity'] < $count) { throw new DomainException('Capacity cannot be less than current occupancy.'); }
                 if ($data['status']==='closed' && $count>0) { throw new DomainException('Check out all evacuees before closing this center.'); }
-                $stmt=$this->pdo->prepare("UPDATE evacuation_centers SET name=?, address_details=?, capacity=?, status=?, is_public=CASE WHEN ?='closed' THEN 0 ELSE is_public END WHERE id=?");
-                $stmt->execute([$data['name'],$data['address_details'],$data['capacity'],$data['status'],$data['status'],$id]);
+                $stmt=$this->pdo->prepare("UPDATE evacuation_centers SET latitude=?,longitude=?,name=?, address_details=?, capacity=?, status=?, is_public=CASE WHEN ?='closed' THEN 0 ELSE is_public END WHERE id=?");
+                $stmt->execute([$data['latitude'],$data['longitude'],$data['name'],$data['address_details'],$data['capacity'],$data['status'],$data['status'],$id]);
             } else {
-                $stmt=$this->pdo->prepare('INSERT INTO evacuation_centers (name,address_details,capacity,status) VALUES (?,?,?,?)');
-                $stmt->execute([$data['name'],$data['address_details'],$data['capacity'],$data['status']]);
+                $stmt=$this->pdo->prepare('INSERT INTO evacuation_centers (latitude,longitude,name,address_details,capacity,status) VALUES (?,?,?,?,?,?)');
+                $stmt->execute([$data['latitude'],$data['longitude'],$data['name'],$data['address_details'],$data['capacity'],$data['status']]);
             }
             $this->pdo->commit();
         } catch (Throwable $e) { $this->pdo->rollBack(); throw $e; }

@@ -24,7 +24,7 @@ class HouseholdModel
     }
     public function save(array $data, ?int $id): int
     {
-        $fields = ['household_code','representative_name','contact_phone','purok','address_details','registry_reason','hazard_type','hazard_notes','vulnerability_category','vulnerability_notes','vulnerability_assessed_by','vulnerability_assessed_at','evacuation_status'];
+        $fields = ['household_code','representative_name','contact_phone','purok','address_details','registry_reason','hazard_type','hazard_notes','vulnerability_category','vulnerability_notes','vulnerability_assessed_by','vulnerability_assessed_at','evacuation_status','latitude','longitude'];
         $values = array_map(fn($field) => $data[$field], $fields);
         if ($id === null) {
             $stmt = $this->pdo->prepare('INSERT INTO households (' . implode(',', $fields) . ') VALUES (' . implode(',', array_fill(0, count($fields), '?')) . ')');

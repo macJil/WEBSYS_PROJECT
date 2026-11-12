@@ -27,30 +27,10 @@ require __DIR__ . '/../components/errors.php';
 <label class="d-block mb-3"><?= e($field[0]) ?><input class="form-control" name="<?= e($key) ?>" maxlength="<?= $field[1] ?>" value="<?= e($data[$key]) ?>" required></label>
 <?php endforeach; ?>
 <label class="d-block mb-3">Describe what happened<textarea class="form-control" name="description" maxlength="10000" required><?= e($data['description']) ?></textarea></label>
-<fieldset class="mb-3"><legend>Location pin (optional)</legend>
-<p>Demo map area: <?= e($settings['demo_barangay_name']) ?></p>
-<p>Search fictional demo addresses/puroks below, click the map, or enter coordinates. Keep the written location above even when you select a pin.</p>
-<p><strong>Location only, not hazard prediction.</strong> No barangay boundary has been approved. Pins do not prove risk, safety, or an approved evacuation site. Demo labels do not describe real facilities at these coordinates.</p>
-<label for="location-search">Search demo purok / landmark</label>
-<input id="location-search" class="form-control" type="search" placeholder="Sample A, Sample B, or Community Hall" maxlength="100">
-<button id="search-location" type="button" class="btn btn-secondary my-2">Search demo locations</button>
-<p>Selecting a result replaces the coordinates and written location with the fictional example.</p>
-<div id="location-results" aria-live="polite"></div>
-<div class="row">
-<?php foreach (['latitude'=>90,'longitude'=>180] as $key=>$limit): ?>
-<label class="col"><?= e(ucfirst($key)) ?><input id="<?= e($key) ?>" class="form-control" type="number" step="any" min="<?= -$limit ?>" max="<?= $limit ?>" name="<?= e($key) ?>" value="<?= e($data[$key]) ?>"></label>
-<?php endforeach; ?></div>
-<button class="btn btn-outline-secondary my-2" id="clear-location" type="button">Clear pin</button>
-<div id="incident-map" style="height:320px" data-lat="<?= e($settings['map_latitude']) ?>" data-lng="<?= e($settings['map_longitude']) ?>" data-zoom="<?= e($settings['map_zoom']) ?>"></div>
-<p id="map-status" aria-live="polite">Map needs internet. You can still submit a written location or enter coordinates.</p>
-</fieldset>
+<?php $point=$data; require __DIR__ . '/../components/location-picker.php'; ?>
 <label class="d-block mb-3">Incident image (optional; JPEG, PNG, WebP; maximum 5 MiB)
 <input class="form-control" type="file" name="image" accept="image/jpeg,image/png,image/webp"></label>
 <p>If a form error occurs, choose the image again before submitting.</p>
 <button class="btn btn-primary" name="action" value="create_incident">Submit report</button>
 </form>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="<?= e(url('resources/assets/js/demo-locations.js')) ?>"></script>
-<script src="<?= e(url('resources/assets/js/incident-map.js')) ?>"></script>
 <?php require __DIR__ . '/../components/footer.php'; ?>

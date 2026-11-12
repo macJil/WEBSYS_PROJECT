@@ -36,7 +36,7 @@ class HouseholdController extends Controller
     public function householdInput(): array
     {
         $data=[];
-        foreach (['household_code','representative_name','contact_phone','purok','address_details','registry_reason','hazard_type','hazard_notes','vulnerability_category','vulnerability_notes','evacuation_status'] as $field) { $data[$field]=input($field); }
+        foreach (['household_code','representative_name','contact_phone','purok','address_details','registry_reason','hazard_type','hazard_notes','vulnerability_category','vulnerability_notes','evacuation_status','latitude','longitude'] as $field) { $data[$field]=input($field); }
         return $data;
     }
     public function saveHousehold(?int $id, array $data): array
@@ -44,7 +44,7 @@ class HouseholdController extends Controller
         if (!isPost()) { return []; }
         if (input('action') !== ($id === null ? 'create_household' : 'update_household')) { return ['Invalid form action.']; }
         $old = $id === null ? null : $this->find($id);
-        $errors=[];
+        $errors=locationErrors($data['address_details'],$data['latitude'],$data['longitude']);
         foreach (['household_code'=>30,'representative_name'=>100,'purok'=>100] as $field=>$max) {
             if ($data[$field] === '' || strlen($data[$field]) > $max) { $errors[] = str_replace('_',' ',ucfirst($field)) . ' is required and must fit within ' . $max . ' bytes.'; }
         }
@@ -57,6 +57,7 @@ class HouseholdController extends Controller
         }
         if ($data['vulnerability_category'] !== 'unassessed' && $data['vulnerability_notes'] === '') { $errors[]='Record the assessment source and practical assistance notes.'; }
         if ($errors) { return $errors; }
+        foreach (['latitude','longitude'] as $field) { $data[$field]=$data[$field]===''?null:$data[$field]; }
         $assessed = $data['vulnerability_category'] !== 'unassessed';
         $changed = !$old || $data['vulnerability_category'] !== $old['vulnerability_category'] || $data['vulnerability_notes'] !== ($old['vulnerability_notes'] ?? '');
         $data['vulnerability_notes'] = $assessed ? $data['vulnerability_notes'] : null;

@@ -20,6 +20,7 @@ require __DIR__ . '/../../components/header.php'; require __DIR__ . '/../../comp
 <label class="d-block mb-3">Capacity (people)<input class="form-control" type="number" min="0" max="1000000" name="capacity" value="<?= e($data['capacity']) ?>" required></label>
 <label class="d-block mb-3">Status<select class="form-select" name="status"><?php foreach (['open','closed'] as $status): ?><option value="<?= e($status) ?>" <?= $data['status']===$status?'selected':'' ?>><?= e(ucfirst($status)) ?></option><?php endforeach; ?></select></label>
 <p>Check out all occupants before closing a center. Capacity cannot be reduced below current occupancy.</p>
+<?php $point=$data; require __DIR__ . '/../../components/location-picker.php'; ?>
 <button class="btn btn-primary" name="action" value="save_center">Save center</button> <a href="<?= e(url('resources/views/admin/evacuation/centers.php')) ?>">New center / cancel edit</a>
 </form>
 <?php require __DIR__ . '/../../components/footer.php'; ?>
