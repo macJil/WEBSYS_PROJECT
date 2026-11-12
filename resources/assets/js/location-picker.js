@@ -15,7 +15,7 @@ document.querySelectorAll('.location-picker').forEach(root => {
   if(map){marker=L.marker([a,b],{draggable:true}).addTo(map);map.setView([a,b],16);marker.on('dragend',()=>{request++;const p=marker.getLatLng();setPoint(p.lat,p.lng);});}
   status.textContent='Selected: '+lat.value+', '+lng.value+'. Confirm the point and written location before saving.';
  }
- function setPoint(a,b){lat.value=a.toFixed(7);lng.value=b.toFixed(7);show();}
+ function setPoint(a,b){lat.value=a.toFixed(7);lng.value=b.toFixed(7);show();root.dispatchEvent(new Event('location-selected'));}
  [lat,lng].forEach(input=>input.addEventListener('input',()=>{request++;show();}));
  root.querySelector('[data-clear]').addEventListener('click',()=>{request++;lat.value='';lng.value='';show();});
  root.querySelector('[data-locate]').addEventListener('click',()=>{
