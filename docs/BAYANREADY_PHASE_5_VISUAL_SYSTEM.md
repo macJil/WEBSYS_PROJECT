@@ -10,7 +10,7 @@ The shared header now has a consistent brand, account area and active navigation
 
 ## Empty-map investigation and fixes
 
-1. The user's MAMP checkout had ignored `config/local.php` overrides still set to latitude 12.8797, longitude 121.7740 and zoom 6. These superseded Irisan defaults. Only those three settings were corrected to 16.41792, 120.56091 and zoom 15. Database settings and records were not changed.
+1. The user's MAMP checkout had ignored `config/config.php` overrides still set to latitude 12.8797, longitude 121.7740 and zoom 6. These superseded Irisan defaults. Only those three settings were corrected to 16.41792, 120.56091 and zoom 15. Database settings and records were not changed.
 2. Map pages previously depended on remote Leaflet CSS/JavaScript. The same version, **1.9.4**, is now bundled locally with marker images and its license. All shared pickers, saved-location views and the community map use these local assets. This removes a possible CDN-loading failure; it does not establish that the CDN caused the user's reported symptom.
 3. Explicit shared CSS heights cover all map containers. Missing-library messages are now visible in pickers and saved-location views. The community map distinguishes no active points from no approved public points. Tile failures and data failures retain their separate messages. Basemap tiles still need internet.
 4. The user's MAMP HTTP endpoint on localhost:8888 and its database connection were unreachable during checking (connection refused / SQLSTATE 2002). Opening the MAMP control window also timed out. The fixed application was verified on an isolated fictional site; a live MAMP check remains dependent on its servers being available. No real records were inspected or republished.

@@ -74,7 +74,7 @@ Use a disposable instance only. The suite inserts fictional records and expects 
    CREATE TABLE websys_integration_fixture (label VARCHAR(30));
    INSERT INTO websys_integration_fixture VALUES ('fictional-only');
    ```
-4. Temporarily configure ignored `config/local.php` for port 18960, database barangay_drrm, base_url empty, and a private image directory outside the served repository. Preserve/restore any existing local config. This fixture instance used temporary local root credentials; do not commit local settings.
+4. Temporarily configure ignored `config/config.php` for port 18960, database barangay_drrm, base_url empty, and a private image directory outside the served repository. Preserve/restore any existing local config. This fixture instance used temporary local root credentials; do not commit local settings.
 5. Run `php tests/phase12_seed.php`. It refuses non-CLI requests, an unmarked connection, the wrong port, or an existing user database.
 6. Serve the project at **http://127.0.0.1:18961** using PHP, with upload_max_filesize 5M and post_max_size 8M. Use a dedicated temporary session directory.
 7. Run `python3 tests/phase12_http.py`. Python uses only its standard library and the installed `/usr/local/mysql/bin/mysql` client. The script checks the fixture marker and application's database connection before writing. Console output contains check labels only.

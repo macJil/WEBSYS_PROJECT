@@ -14,7 +14,7 @@ The approximate locality point was checked against the [Irisan map listing](http
 | DEMO ONLY — Purok Sample B | 16.4192000 | 120.5623000 | Fictional roadside landmark |
 | DEMO ONLY — Sample Community Hall | 16.4168000 | 120.5597000 | Fictional example address |
 
-These labels do not identify real people, facilities, hazards, or official puroks at the coordinates. Existing database records are not rewritten. Config/local.php overrides example defaults: update existing local map latitude/longitude/zoom overrides to use this view. No database seed or migration is required in this revision.
+These labels do not identify real people, facilities, hazards, or official puroks at the coordinates. Existing database records are not rewritten. config/config.php overrides example defaults: update existing local map latitude/longitude/zoom overrides to use this view. No database seed or migration is required in this revision.
 
 ## Map visibility contract
 

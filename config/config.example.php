@@ -1,5 +1,5 @@
 <?php
-// Copy to local.php and change values for your computer. Never commit local.php.
+// Copy to config.php and change values for your computer. Never commit config.php.
 return [
     'app_name' => 'BayanReady',
     'base_url' => '/WEBSYS_PROJECT', // Use '' when served at localhost root.

@@ -5,7 +5,7 @@ This branch retains root index.php and direct PHP view URLs. There is no route l
 ## Local setup
 
 1. Use PHP 8+ with pdo_mysql and MySQL compatible with the Phase 2 schema.
-2. Copy config/local.example.php to config/local.php. Set host, port, database, username, password, and base_url for your computer. local.php is ignored by Git. The committed defaults contain no database password.
+2. Copy config/config.example.php to config/config.php. Set host, port, database, username, password, and base_url for your computer. config.php is ignored by Git. The committed defaults contain no database password.
 3. Import the fresh schema, or follow the Phase 2 upgrade instructions for an existing database.
 4. Open root index.php. When using PHP's local server at the project root, base_url is an empty string; under MAMP's WEBSYS_PROJECT directory it is /WEBSYS_PROJECT.
 5. Register a fictional account. For the initial admin, the developer can promote that specific account in their local database: `UPDATE users SET role = 'admin' WHERE username = 'your_chosen_username';`. Verify the username first, then log out and log in again. Public registration always creates residents even if a request includes a different role.

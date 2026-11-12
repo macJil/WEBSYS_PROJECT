@@ -17,7 +17,7 @@ Read the Phase 2 installation instructions before importing SQL. Use fictional d
 
 ## PHP foundation setup
 
-See [Phase 3 setup and reusable page pattern](docs/PHASE_3_PHP_FOUNDATIONS.md). Copy `config/local.example.php` to the ignored `config/local.php`, configure your local connection/base URL, and open root `index.php`. The account screens use ordinary forms and PHP sessions.
+See [Phase 3 setup and reusable page pattern](docs/PHASE_3_PHP_FOUNDATIONS.md). Copy `config/config.example.php` to the ignored `config/config.php`, configure your local connection/base URL, and open root `index.php`. The account screens use ordinary forms and PHP sessions.
 
 ## Household registry
 
@@ -86,3 +86,5 @@ BayanReady Phase 5: [shared visual system and map verification](docs/BAYANREADY_
 - [Phase 6 responsive layouts and checks](docs/BAYANREADY_PHASE_6_RESPONSIVE_LAYOUTS.md)
 
 - [Phase 7 acceptance and issue log](docs/BAYANREADY_PHASE_7_ACCEPTANCE.md)
+
+Configuration now uses one ignored `config/config.php` array. Existing teammates should transfer their previous local values using [the configuration migration guide](docs/simplification/PHASE_3_CONFIGURATION.md). Check a clean setup with `python3 tests/simplification_config.py`.

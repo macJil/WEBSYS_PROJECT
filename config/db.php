@@ -6,7 +6,11 @@ class DATABASE
     public function connect(): PDO
     {
         if (self::$connection === null) {
-            $settings = require __DIR__ . '/settings.php';
+            if (!is_file(__DIR__ . '/config.php')) {
+                http_response_code(503);
+                exit('Setup required: copy config/config.example.php to config/config.php and enter your local settings.');
+            }
+            $settings = require __DIR__ . '/config.php';
             $dsn = "mysql:host={$settings['host']};port={$settings['port']};dbname={$settings['database']};charset=utf8mb4";
             self::$connection = new PDO($dsn, $settings['username'], $settings['password'], [
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,

@@ -3,7 +3,7 @@
 ## Setup
 
 1. Fresh database: import root `barangay_drrm.sql` (v1.2). Existing Phase 2 database: back up first, then run `database/migrations/002_phase_5.sql` once in your selected database. If starting from v1.0, apply migration 001 before 002. Do not reimport the fresh schema over existing records.
-2. In ignored `config/local.php`, set `incident_upload_dir` to an absolute folder outside **both the repository and the web server document root**, for example `/Users/YOUR_USER/WEBSYS-private/incident-images`. Give the PHP process permission to create/write that directory. Uploads fail with a controlled message if storage is not configured; reports without an image remain available.
+2. In ignored `config/config.php`, set `incident_upload_dir` to an absolute folder outside **both the repository and the web server document root**, for example `/Users/YOUR_USER/WEBSYS-private/incident-images`. Give the PHP process permission to create/write that directory. Uploads fail with a controlled message if storage is not configured; reports without an image remain available.
 3. Enable PHP PDO MySQL and Fileinfo. Set `upload_max_filesize = 5M` and `post_max_size = 8M` or larger; restart PHP after changing settings. The app independently enforces a 5 MiB limit. Web server request limits may reject large requests before PHP handles them.
 4. Set `map_latitude`, `map_longitude`, and `map_zoom` in local configuration once a barangay is selected. Until then the map shows a Philippines overview; this is not a selected incident location.
 5. Sign in. Residents use **Report incident** and **My reports**. Staff use **Incidents**, then **Enter incident report** or open a report to review it.

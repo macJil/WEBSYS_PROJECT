@@ -2,7 +2,7 @@
 
 Completed 12 November 2026 on `bayanready-map-responsive-frontend`.
 
-The product name is defined once as `app_name` in `config/local.example.php`. The shared navigation, login/registration heading, dashboard headings and footer use this escaped value. The shared browser-title format is `Page name | BayanReady`, preserving each page's useful context. The README heading now uses BayanReady as well.
+The product name is defined once as `app_name` in `config/config.example.php`. The shared navigation, login/registration heading, dashboard headings and footer use this escaped value. The shared browser-title format is `Page name | BayanReady`, preserving each page's useful context. The README heading now uses BayanReady as well.
 
 The shared footer retains the configured Irisan demo label and explicitly says the area is a demo, with no confirmed stakeholder or approved boundary. Existing map disclaimers remain. PHP classes, database/table names and URL paths retain their existing names; no migration is needed.
 

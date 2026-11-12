@@ -21,7 +21,7 @@ The existing shared picker serves incident creation/correction, households, cent
 - Use only returned street/name, locality/district and city/town/village. Do not invent house numbers, add an Irisan suffix, or move coordinates to a provider's result point. Sparse responses can be locality-level; nearby suggestions are not address verification. The form says **Address suggested; please confirm**.
 - Provider text is assigned through input.value and textContent, never raw HTML. Existing PHP validation, escaping, session guards and ordinary form saving remain in place.
 
-`address_suggestions_enabled` and `address_lookup_url` are configuration settings in local.example.php. Set the enable flag to false in local.php to disable suggestions without affecting manual entry. Endpoint replacement must use a compatible Photon response format and HTTPS. Attribution/disclosure must be reviewed if changing providers. No schema change is needed.
+`address_suggestions_enabled` and `address_lookup_url` are configuration settings in config.example.php. Set the enable flag to false in config.php to disable suggestions without affecting manual entry. Endpoint replacement must use a compatible Photon response format and HTTPS. Attribution/disclosure must be reviewed if changing providers. No schema change is needed.
 
 ## Privacy and real deployment gate
 

@@ -1,5 +1,9 @@
 <?php
-$settings = require __DIR__ . '/../config/settings.php';
+if (!is_file(__DIR__ . '/../config/config.php')) {
+    http_response_code(503);
+    exit('Setup required: copy config/config.example.php to config/config.php and enter your local settings.');
+}
+$settings = require __DIR__ . '/../config/config.php';
 define('BASE_URL', rtrim($settings['base_url'], '/'));
 
 function start_app_session(): void
