@@ -6,7 +6,7 @@ class ReportModel
     public function __construct() { $this->pdo = (new DATABASE())->connect(); }
     public function listing(array $filters, ?int $owner): array
     {
-        $where = []; $values = [];
+        $where = ['archived_at IS NULL']; $values = [];
         if ($owner !== null) { $where[] = 'reported_by = ?'; $values[] = $owner; }
         foreach (['incident_type', 'status'] as $field) {
             if ($filters[$field] !== '') { $where[] = "$field = ?"; $values[] = $filters[$field]; }

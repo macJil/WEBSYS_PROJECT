@@ -9,12 +9,12 @@ class ReliefModel
         $stmt=$this->pdo->prepare($sql); $stmt->execute($args); return $stmt->fetchAll();
     }
     private function term(string $q): string { return '%'.strtr($q,['!'=>'!!','%'=>'!%','_'=>'!_']).'%'; }
-    public function items(string $q=''): array
+    public function items(string $q='',bool $low=false): array
     {
-        return $this->rows("SELECT * FROM relief_items WHERE item_name LIKE ? ESCAPE '!' OR unit LIKE ? ESCAPE '!' ORDER BY item_name,unit",[$this->term($q),$this->term($q)]);
+        return $this->rows("SELECT * FROM relief_items WHERE archived_at IS NULL AND (item_name LIKE ? ESCAPE '!' OR unit LIKE ? ESCAPE '!')".($low?' AND minimum_stock>0 AND quantity_on_hand<minimum_stock':'')." ORDER BY item_name,unit",[$this->term($q),$this->term($q)]);
     }
     public function item(int $id): array { return $this->rows('SELECT * FROM relief_items WHERE id=?',[$id])[0]??[]; }
-    public function saveItem(?int $id,string $name,string $unit): void
+    public function saveItem(?int $id,string $name,string $unit,int $minimum=0): void
     {
         $this->pdo->beginTransaction();
         try {
@@ -22,9 +22,9 @@ class ReliefModel
                 $old=$this->rows('SELECT * FROM relief_items WHERE id=? FOR UPDATE',[$id])[0]??null;
                 if (!$old) { throw new DomainException('Item not found.'); }
                 if ($old['unit']!==$unit && $this->rows('SELECT id FROM relief_stock_movements WHERE item_id=? LIMIT 1',[$id])) { throw new DomainException('An item with stock history must keep its unit. Create a separate item for a different unit.'); }
-                $stmt=$this->pdo->prepare('UPDATE relief_items SET item_name=?,unit=? WHERE id=?'); $stmt->execute([$name,$unit,$id]);
+                $stmt=$this->pdo->prepare('UPDATE relief_items SET item_name=?,unit=?,minimum_stock=? WHERE id=?'); $stmt->execute([$name,$unit,$minimum,$id]);
             } else {
-                $stmt=$this->pdo->prepare('INSERT INTO relief_items (item_name,unit) VALUES (?,?)'); $stmt->execute([$name,$unit]);
+                $stmt=$this->pdo->prepare('INSERT INTO relief_items (item_name,unit,minimum_stock) VALUES (?,?,?)'); $stmt->execute([$name,$unit,$minimum]);
             }
             $this->pdo->commit();
         } catch (Throwable $e) { $this->pdo->rollBack(); throw $e; }

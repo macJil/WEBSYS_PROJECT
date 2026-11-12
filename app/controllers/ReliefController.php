@@ -11,7 +11,7 @@ class ReliefController extends Controller
         if (!$id || $id<1) { http_response_code(400); exit('Invalid ID.'); } return $id;
     }
     public function query(string $key): string { return is_string($_GET[$key]??null)?trim($_GET[$key]):''; }
-    public function items(string $q=''): array { return $this->model->items($q); }
+    public function items(string $q='',bool $low=false): array { return $this->model->items($q,$low); }
     public function item(int $id): array
     {
         $row=$this->model->item($id); if (!$row) { http_response_code(404); exit('Item not found.'); } return $row;
@@ -46,7 +46,9 @@ class ReliefController extends Controller
         if (input('action')!=='save_item') { return ['Unknown form action.']; }
         $name=input('item_name'); $unit=input('unit');
         if ($name==='' || strlen($name)>120 || $unit==='' || strlen($unit)>30) { return ['Enter an item name (up to 120 bytes) and unit (up to 30 bytes).']; }
-        try { $this->model->saveItem($id,$name,$unit); } catch (Throwable $e) { return $this->failure($e); }
+        $minimum=filter_var(input('minimum_stock')===''?'0':input('minimum_stock'),FILTER_VALIDATE_INT,['options'=>['min_range'=>0,'max_range'=>1000000000]]);
+        if($minimum===false)return ['Minimum stock must be a whole number from 0 to 1 billion.'];
+        try { $this->model->saveItem($id,$name,$unit,$minimum); } catch (Throwable $e) { return $this->failure($e); }
         $this->success('Relief item saved.','resources/views/admin/relief/inventory.php'); return [];
     }
     public function stock(): array

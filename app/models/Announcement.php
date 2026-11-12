@@ -6,7 +6,7 @@ class AnnouncementModel
     public function __construct() { $this->pdo=(new DATABASE())->connect(); }
     public function listing(array $filters,bool $resident): array
     {
-        $where=[]; $args=[];
+        $where=['archived_at IS NULL']; $args=[];
         if ($resident) { $where[]='is_published=1'; }
         elseif ($filters['status']!=='') { $where[]='is_published=?'; $args[]=$filters['status']==='published'?1:0; }
         if ($filters['q']!=='') { $where[]="title LIKE ? ESCAPE '!'"; $args[]='%'.strtr($filters['q'],['!'=>'!!','%'=>'!%','_'=>'!_']).'%'; }
