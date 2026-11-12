@@ -84,3 +84,5 @@ BayanReady Phase 4: [visible product name](docs/BAYANREADY_PHASE_4_PRODUCT_NAME.
 BayanReady Phase 5: [shared visual system and map verification](docs/BAYANREADY_PHASE_5_VISUAL_SYSTEM.md).
 
 - [Phase 6 responsive layouts and checks](docs/BAYANREADY_PHASE_6_RESPONSIVE_LAYOUTS.md)
+
+- [Phase 7 acceptance and issue log](docs/BAYANREADY_PHASE_7_ACCEPTANCE.md)

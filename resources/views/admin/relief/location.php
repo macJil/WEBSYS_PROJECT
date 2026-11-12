@@ -6,6 +6,7 @@ require __DIR__ . '/../../components/header.php';
 ?>
 <?php $savedPoint=$location; require __DIR__ . '/../../components/saved-point.php'; ?>
 <h1><?= e($location['name']) ?></h1>
+<p><a href="<?= e(url('resources/views/admin/map-publication.php?type=relief&id='.$location['id'])) ?>">Manage community map visibility</a></p>
 <dl>
 <?php foreach (['location_type'=>'Type','address_details'=>'Address','latitude'=>'Latitude','longitude'=>'Longitude'] as $key=>$label): ?>
 <dt><?= e($label) ?></dt><dd><?= e($location[$key]??'Not recorded') ?></dd>

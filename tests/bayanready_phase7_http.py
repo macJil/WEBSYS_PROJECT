@@ -1,0 +1,73 @@
+"""Acceptance extensions: run after phase12_http.py on its isolated fictional fixture."""
+from pathlib import Path
+exec(Path(__file__).with_name('phase12_http.py').read_text().split('# Explicit fixture marker')[0])
+check(sql('SELECT label FROM websys_integration_fixture')=='fictional-only','fixture marker')
+admin,resident,other,anon=Client(),Client(),Client(),Client()
+for c,email in [(admin,'admin@example.invalid'),(resident,'resident1@example.invalid'),(other,'resident2@example.invalid')]:
+ success(c.post('/index.php',{'action':'login','email':email,'password':'DemoPass123!'}),'login '+email)
+def mapdata(c):return json.loads(c.get('/resources/views/maps/data.php')[1])
+def publication(kind,id):return '/resources/views/admin/map-publication.php?type='+kind+'&id='+str(id)
+report={'action':'create_incident','incident_type':'other','description':'DEMO ONLY acceptance','reporter_name':'Fictional reporter','contact_phone':'0000000000','location_description':'DEMO ONLY imagined landmark','latitude':'16.4181','longitude':'120.5611'}
+success(resident.post('/resources/views/incidents/create.php',report),'new report with manual point')
+i=sql('SELECT MAX(id) FROM incident_reports');url=publication('incident',i)
+check(any(str(x['id'])==i for x in mapdata(admin)['incidents']),'new point on staff map')
+check(not any(str(x['id'])==i for x in mapdata(resident)['incidents']),'new report private by default')
+check(other.get('/resources/views/incidents/view.php?id='+i)[0]==404,'other resident cannot view report')
+check(resident.get('/resources/views/incidents/view.php?id='+i)[0]==200,'owner can view report')
+for c in [resident,other]:
+ check(c.get(url)[0]==403 and c.post(url,{'action':'publish'})[0]==403,'publication staff-only GET and POST')
+check(anon.get(url)[2].endswith('/index.php'),'publication anonymous guarded')
+d={'action':'publish','public_label':'DEMO ONLY approximate area','public_latitude':'16.418','public_longitude':'120.561'}
+check(b'alert-danger' in admin.post(url,d)[1],'pending cannot publish')
+sql("UPDATE incident_reports SET status='verified' WHERE id="+i)
+check(not any(str(x['id'])==i for x in mapdata(resident)['incidents']),'verification alone does not publish')
+for changes in [{'public_latitude':'91'},{'public_longitude':''},{'public_label':'x'*151}]:
+ check(b'alert-danger' in admin.post(url,dict(d,**changes))[1],'invalid public field rejected')
+success(admin.post(url,d),'staff publication form')
+public=next(x for x in mapdata(resident)['incidents'] if str(x['id'])==i)
+check(set(public)=={'id','incident_type','public_label','public_latitude','public_longitude','status','report_date'},'public field allowlist')
+check(sql('SELECT latitude FROM incident_reports WHERE id='+i).startswith('16.4181'),'private point unchanged')
+sql("UPDATE incident_reports SET status='resolved' WHERE id="+i)
+check(any(str(x['id'])==i for x in mapdata(resident)['incidents']),'resolved stays visible')
+success(admin.post(url,{'action':'withdraw'}),'withdraw via staff form')
+check(not any(str(x['id'])==i for x in mapdata(resident)['incidents']),'withdraw removes marker')
+sql("UPDATE incident_reports SET status='rejected' WHERE id="+i)
+check(b'alert-danger' in admin.post(url,d)[1],'rejected cannot publish')
+success(resident.post('/resources/views/incidents/create.php',dict(report,latitude='',longitude='')),'no-point report usable')
+no=sql('SELECT MAX(id) FROM incident_reports');check(not any(str(x['id'])==no for x in mapdata(admin)['incidents']),'no point omitted from map')
+check(b'No map point' in resident.get('/resources/views/incidents/view.php?id='+no)[1],'no-point text alternative')
+# Use fresh fictional facilities, avoiding occupied centers in the earlier suite.
+center={'action':'save_center','name':'DEMO ONLY acceptance shelter','address_details':'Fictional shelter label','capacity':'10','status':'open','latitude':'16.418','longitude':'120.561'}
+success(admin.post('/resources/views/admin/evacuation/centers.php',center),'create center')
+cid=sql('SELECT MAX(id) FROM evacuation_centers');cu=publication('center',cid)
+success(admin.post(cu,{'action':'publish'}),'approve center')
+check(any(str(x['id'])==cid for x in mapdata(resident)['centers']),'approved center visible')
+success(admin.post('/resources/views/admin/evacuation/centers.php?edit='+cid,dict(center,status='closed')),'close center')
+check(not any(str(x['id'])==cid for x in mapdata(resident)['centers']),'closed center removed')
+check(b'alert-danger' in admin.post(cu,{'action':'publish'})[1],'closed center cannot publish')
+loc={'action':'save_location','name':'DEMO ONLY acceptance relief','location_type':'distribution','address_details':'Fictional relief label','latitude':'16.418','longitude':'120.561'}
+success(admin.post('/resources/views/admin/relief/locations.php',loc),'create relief location')
+lid=sql('SELECT MAX(id) FROM relief_locations');lu=publication('relief',lid)
+success(admin.post(lu,{'action':'publish'}),'approve relief point')
+check(any(str(x['id'])==lid for x in mapdata(resident)['relief_locations']),'relief point visible')
+success(admin.post(lu,{'action':'withdraw'}),'withdraw relief point')
+check(not any(str(x['id'])==lid for x in mapdata(resident)['relief_locations']),'relief point removed')
+# Archive through normal review/confirmation, preserving the incident record.
+path='/resources/views/admin/records.php?type=incidents'
+r=admin.post(path,{'action':'review','operation':'archive','ids[]':i})
+ticket=re.search(rb'name="ticket" value="([^"]+)"',r[1]);check(bool(ticket),'archive review ticket')
+success(admin.post(path,{'action':'confirm','ticket':ticket.group(1).decode()}),'archive confirmed')
+check(sql('SELECT archived_at IS NOT NULL FROM incident_reports WHERE id='+i)=='1','incident archived')
+check(b'alert-danger' in admin.post(url,d)[1],'archived cannot publish')
+check(not any(str(x['id'])==i for x in mapdata(admin)['incidents']),'archived excluded from current staff map')
+# Mixed eligibility must roll back every selection.
+sql("INSERT INTO relief_items(item_name,unit,quantity_on_hand) VALUES ('DEMO ONLY empty item','packs',0),('DEMO ONLY stocked item','packs',3)")
+ids=sql('SELECT id FROM relief_items ORDER BY id DESC LIMIT 2').splitlines()
+path='/resources/views/admin/records.php?type=goods'
+r=admin.post(path,{'action':'review','operation':'archive','ids[0]':ids[0],'ids[1]':ids[1]})
+ticket=re.search(rb'name="ticket" value="([^"]+)"',r[1]);check(bool(ticket),'mixed batch review')
+r=admin.post(path,{'action':'confirm','ticket':ticket.group(1).decode()})
+check(b'alert-danger' in r[1],'stocked item blocks batch')
+check(sql('SELECT COUNT(*) FROM relief_items WHERE archived_at IS NOT NULL AND id IN ('+','.join(ids)+')')=='0','blocked batch changes none')
+check(sql('SELECT quantity_on_hand FROM relief_items WHERE id='+ids[0])=='3','stock unchanged after blocked archive')
+print('TOTAL',len(passes))

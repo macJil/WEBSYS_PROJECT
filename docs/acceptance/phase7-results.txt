@@ -1,0 +1,324 @@
+PASS isolated fixture marker
+PASS application uses isolated fixture database
+PASS fixture starts with only a demo admin
+PASS resident registration 1
+PASS resident registration 2
+PASS public registration ignores forged admin role
+PASS login admin@example.invalid
+PASS login resident1@example.invalid
+PASS login resident2@example.invalid
+PASS anonymous get blocked /resources/views/admin/records.php
+PASS anonymous post blocked /resources/views/admin/records.php
+PASS anonymous get blocked /resources/views/admin/map-publication.php
+PASS anonymous post blocked /resources/views/admin/map-publication.php
+PASS anonymous get blocked /resources/views/admin/admin.index.php
+PASS anonymous post blocked /resources/views/admin/admin.index.php
+PASS anonymous get blocked /resources/views/admin/households.php
+PASS anonymous post blocked /resources/views/admin/households.php
+PASS anonymous get blocked /resources/views/admin/household.php
+PASS anonymous post blocked /resources/views/admin/household.php
+PASS anonymous get blocked /resources/views/admin/evacuation/center.php
+PASS anonymous post blocked /resources/views/admin/evacuation/center.php
+PASS anonymous get blocked /resources/views/admin/evacuation/centers.php
+PASS anonymous post blocked /resources/views/admin/evacuation/centers.php
+PASS anonymous get blocked /resources/views/admin/response/incident.php
+PASS anonymous post blocked /resources/views/admin/response/incident.php
+PASS anonymous get blocked /resources/views/admin/response/teams.php
+PASS anonymous post blocked /resources/views/admin/response/teams.php
+PASS anonymous get blocked /resources/views/admin/summaries/disaster.php
+PASS anonymous post blocked /resources/views/admin/summaries/disaster.php
+PASS anonymous get blocked /resources/views/admin/summaries/current.php
+PASS anonymous post blocked /resources/views/admin/summaries/current.php
+PASS anonymous get blocked /resources/views/admin/announcement/editor.php
+PASS anonymous post blocked /resources/views/admin/announcement/editor.php
+PASS anonymous get blocked /resources/views/admin/announcement/announcement.update.php
+PASS anonymous post blocked /resources/views/admin/announcement/announcement.update.php
+PASS anonymous get blocked /resources/views/admin/announcement/announcement.php
+PASS anonymous post blocked /resources/views/admin/announcement/announcement.php
+PASS anonymous get blocked /resources/views/admin/reports/report.update.php
+PASS anonymous post blocked /resources/views/admin/reports/report.update.php
+PASS anonymous get blocked /resources/views/admin/reports/report.php
+PASS anonymous post blocked /resources/views/admin/reports/report.php
+PASS anonymous get blocked /resources/views/admin/relief/distributions.php
+PASS anonymous post blocked /resources/views/admin/relief/distributions.php
+PASS anonymous get blocked /resources/views/admin/relief/inventory.php
+PASS anonymous post blocked /resources/views/admin/relief/inventory.php
+PASS anonymous get blocked /resources/views/admin/relief/locations.php
+PASS anonymous post blocked /resources/views/admin/relief/locations.php
+PASS anonymous get blocked /resources/views/admin/relief/movements.php
+PASS anonymous post blocked /resources/views/admin/relief/movements.php
+PASS anonymous get blocked /resources/views/admin/relief/location.php
+PASS anonymous post blocked /resources/views/admin/relief/location.php
+PASS anonymous get blocked /resources/views/user/report.incident.php
+PASS anonymous post blocked /resources/views/user/report.incident.php
+PASS anonymous get blocked /resources/views/user/user.index.php
+PASS anonymous post blocked /resources/views/user/user.index.php
+PASS anonymous get blocked /resources/views/user/reports.php
+PASS anonymous post blocked /resources/views/user/reports.php
+PASS anonymous get blocked /resources/views/user/community.map.php
+PASS anonymous post blocked /resources/views/user/community.map.php
+PASS anonymous get blocked /resources/views/user/announcement.php
+PASS anonymous post blocked /resources/views/user/announcement.php
+PASS anonymous get blocked /resources/views/incidents/create.php
+PASS anonymous post blocked /resources/views/incidents/create.php
+PASS anonymous get blocked /resources/views/incidents/list.php
+PASS anonymous post blocked /resources/views/incidents/list.php
+PASS anonymous get blocked /resources/views/incidents/view.php
+PASS anonymous post blocked /resources/views/incidents/view.php
+PASS anonymous get blocked /resources/views/incidents/image.php
+PASS anonymous post blocked /resources/views/incidents/image.php
+PASS resident get denied /resources/views/admin/records.php
+PASS resident post denied /resources/views/admin/records.php
+PASS resident get denied /resources/views/admin/map-publication.php
+PASS resident post denied /resources/views/admin/map-publication.php
+PASS resident get denied /resources/views/admin/admin.index.php
+PASS resident post denied /resources/views/admin/admin.index.php
+PASS resident get denied /resources/views/admin/households.php
+PASS resident post denied /resources/views/admin/households.php
+PASS resident get denied /resources/views/admin/household.php
+PASS resident post denied /resources/views/admin/household.php
+PASS resident get denied /resources/views/admin/evacuation/center.php
+PASS resident post denied /resources/views/admin/evacuation/center.php
+PASS resident get denied /resources/views/admin/evacuation/centers.php
+PASS resident post denied /resources/views/admin/evacuation/centers.php
+PASS resident get denied /resources/views/admin/response/incident.php
+PASS resident post denied /resources/views/admin/response/incident.php
+PASS resident get denied /resources/views/admin/response/teams.php
+PASS resident post denied /resources/views/admin/response/teams.php
+PASS resident get denied /resources/views/admin/summaries/disaster.php
+PASS resident post denied /resources/views/admin/summaries/disaster.php
+PASS resident get denied /resources/views/admin/summaries/current.php
+PASS resident post denied /resources/views/admin/summaries/current.php
+PASS resident get denied /resources/views/admin/announcement/editor.php
+PASS resident post denied /resources/views/admin/announcement/editor.php
+PASS resident get denied /resources/views/admin/announcement/announcement.update.php
+PASS resident post denied /resources/views/admin/announcement/announcement.update.php
+PASS resident get denied /resources/views/admin/announcement/announcement.php
+PASS resident post denied /resources/views/admin/announcement/announcement.php
+PASS resident get denied /resources/views/admin/reports/report.update.php
+PASS resident post denied /resources/views/admin/reports/report.update.php
+PASS resident get denied /resources/views/admin/reports/report.php
+PASS resident post denied /resources/views/admin/reports/report.php
+PASS resident get denied /resources/views/admin/relief/distributions.php
+PASS resident post denied /resources/views/admin/relief/distributions.php
+PASS resident get denied /resources/views/admin/relief/inventory.php
+PASS resident post denied /resources/views/admin/relief/inventory.php
+PASS resident get denied /resources/views/admin/relief/locations.php
+PASS resident post denied /resources/views/admin/relief/locations.php
+PASS resident get denied /resources/views/admin/relief/movements.php
+PASS resident post denied /resources/views/admin/relief/movements.php
+PASS resident get denied /resources/views/admin/relief/location.php
+PASS resident post denied /resources/views/admin/relief/location.php
+PASS admin denied resident-only page /resources/views/user/report.incident.php
+PASS admin denied resident-only page /resources/views/user/user.index.php
+PASS admin denied resident-only page /resources/views/user/reports.php
+PASS admin denied resident-only page /resources/views/user/community.map.php
+PASS admin denied resident-only page /resources/views/user/announcement.php
+PASS create household
+PASS edit household
+PASS household search and escaping
+PASS create member age zero
+PASS edit member
+PASS member count from rows
+PASS resident incident and image
+PASS resident cannot forge report source
+PASS other resident incident privacy
+PASS other resident image privacy
+PASS authorized private image stream
+PASS authorized private image stream
+PASS resident review submission blocked
+PASS invalid upload rejected fake.png
+PASS invalid upload rejected huge.png
+PASS coordinate range validation
+PASS admin phone incident
+PASS staff incident detail
+PASS incident search/filter
+PASS create team 1
+PASS create team 2
+PASS pending incident cannot dispatch
+PASS verify incident
+PASS assign team 1
+PASS assign team 2
+PASS dispatch changes incident status
+PASS premature closure blocked
+PASS complete assignment 1
+PASS complete assignment 2
+PASS resolve after teams complete
+PASS response append-only history
+PASS edit deactivate team
+PASS create center 1
+PASS create center 2
+PASS member checkin
+PASS duplicate member across centers blocked
+PASS walkin checkin
+PASS active occupancy
+PASS capacity prevents overflow
+PASS duplicate walkin across centers blocked
+PASS capacity cannot drop below occupancy
+PASS checkout 1
+PASS checkout 3
+PASS close empty center
+PASS evacuation history retained
+PASS center search
+PASS add relief Demo Food
+PASS add relief Demo Water
+PASS stock in 1
+PASS stock in 2
+PASS manual stock out
+PASS unregistered household distribution blocked
+PASS insufficient distribution rejected
+PASS failed distribution rolls back all writes
+PASS multi-good distribution
+PASS distribution deducts exact amounts
+PASS linked distribution stock history
+PASS inventory search
+PASS movement filters
+PASS edit good
+PASS historical unit protected
+PASS save announcement draft
+PASS draft hidden despite forged filter
+PASS publish notice
+PASS resident sees escaped published notice
+PASS withdraw notice
+PASS withdrawal hides notice
+PASS summary shared database
+PASS summary excludes private records
+PASS invalid summary date rejected
+PASS FK protects households
+PASS FK protects household_members
+PASS FK protects incident_reports
+PASS FK protects responders
+PASS FK protects evacuation_centers
+PASS FK protects relief_items
+PASS FK protects relief_distributions
+PASS navigation link /resources/assets/css/bootstrap.min.css
+PASS navigation link /resources/assets/css/bayanready.css
+PASS navigation link /resources/views/admin/admin.index.php
+PASS navigation link /resources/views/admin/admin.index.php
+PASS navigation link /resources/views/maps/map.php
+PASS navigation link /resources/views/admin/households.php
+PASS navigation link /resources/views/incidents/list.php
+PASS navigation link /resources/views/admin/response/teams.php
+PASS navigation link /resources/views/admin/evacuation/centers.php
+PASS navigation link /resources/views/admin/relief/inventory.php
+PASS navigation link /resources/views/admin/announcement/announcement.php
+PASS navigation link /resources/views/admin/summaries/disaster.php
+PASS navigation link /resources/views/admin/records.php
+PASS navigation link /resources/views/incidents/list.php?status=pending
+PASS navigation link /resources/views/incidents/list.php?status=verified
+PASS navigation link /resources/views/incidents/list.php?status=responding
+PASS navigation link /resources/views/maps/centers.php
+PASS navigation link /resources/views/maps/centers.php
+PASS navigation link /resources/views/admin/summaries/current.php?type=households
+PASS navigation link /resources/views/admin/summaries/current.php?type=evacuees
+PASS navigation link /resources/views/admin/relief/inventory.php?low=1
+PASS navigation link /resources/views/maps/map.php
+PASS navigation link /resources/views/admin/households.php
+PASS navigation link /resources/views/admin/reports/report.php
+PASS navigation link /resources/views/admin/response/teams.php
+PASS navigation link /resources/views/admin/evacuation/centers.php
+PASS navigation link /resources/views/admin/relief/inventory.php
+PASS navigation link /resources/views/admin/announcement/announcement.php
+PASS navigation link /resources/views/admin/summaries/disaster.php
+TOTAL 222
+PASS fixture guard
+PASS login
+PASS login
+PASS anonymous get /resources/views/maps/map.php
+PASS anonymous post /resources/views/maps/map.php
+PASS anonymous get /resources/views/maps/data.php
+PASS anonymous post /resources/views/maps/data.php
+PASS anonymous get /resources/views/admin/admin.index.php
+PASS anonymous post /resources/views/admin/admin.index.php
+PASS anonymous get /resources/views/user/user.index.php
+PASS anonymous post /resources/views/user/user.index.php
+PASS anonymous get /resources/views/admin/records.php
+PASS anonymous post /resources/views/admin/records.php
+PASS resident selection denied get
+PASS resident selection denied post
+PASS resident map response
+PASS published incident visible
+PASS resident incident field allowlist
+PASS resident map response
+PASS withdrawal removes marker
+PASS resident map response
+PASS open center visible
+PASS resident map response
+PASS closure removes marker
+PASS resident map response
+PASS approved relief point visible
+PASS resident map response
+PASS unapproval removes marker
+PASS no-point record retained
+TOTAL 29
+PASS fixture marker
+PASS login admin@example.invalid
+PASS login resident1@example.invalid
+PASS login resident2@example.invalid
+PASS new report with manual point
+PASS new point on staff map
+PASS new report private by default
+PASS other resident cannot view report
+PASS owner can view report
+PASS publication staff-only GET and POST
+PASS publication staff-only GET and POST
+PASS publication anonymous guarded
+PASS pending cannot publish
+PASS verification alone does not publish
+PASS invalid public field rejected
+PASS invalid public field rejected
+PASS invalid public field rejected
+PASS staff publication form
+PASS public field allowlist
+PASS private point unchanged
+PASS resolved stays visible
+PASS withdraw via staff form
+PASS withdraw removes marker
+PASS rejected cannot publish
+PASS no-point report usable
+PASS no point omitted from map
+PASS no-point text alternative
+PASS create center
+PASS approve center
+PASS approved center visible
+PASS close center
+PASS closed center removed
+PASS closed center cannot publish
+PASS create relief location
+PASS approve relief point
+PASS relief point visible
+PASS withdraw relief point
+PASS relief point removed
+PASS archive review ticket
+PASS archive confirmed
+PASS incident archived
+PASS archived cannot publish
+PASS archived excluded from current staff map
+PASS mixed batch review
+PASS stocked item blocks batch
+PASS blocked batch changes none
+PASS stock unchanged after blocked archive
+TOTAL 47
+PASS incident dashboard/list parity admin pending
+PASS incident dashboard/list parity admin verified
+PASS incident dashboard/list parity admin responding
+PASS incident dashboard/list parity admin resolved
+PASS incident dashboard/list parity admin rejected
+PASS incident dashboard/list parity 2 pending
+PASS incident dashboard/list parity 2 verified
+PASS incident dashboard/list parity 2 responding
+PASS incident dashboard/list parity 2 resolved
+PASS incident dashboard/list parity 2 rejected
+PASS incident dashboard/list parity 3 pending
+PASS incident dashboard/list parity 3 verified
+PASS incident dashboard/list parity 3 responding
+PASS incident dashboard/list parity 3 resolved
+PASS incident dashboard/list parity 3 rejected
+PASS center count parity
+PASS occupancy parity
+PASS center count parity
+PASS affected parity
+PASS active stays parity
+PASS low stock parity
+PASS notice parity
+TOTAL 22
