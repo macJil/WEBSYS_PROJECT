@@ -10,7 +10,7 @@ $point = $point ?? [];
 <?php endforeach; ?>
 <button type="button" class="btn btn-secondary my-2" data-locate>Use my current location</button>
 <button type="button" class="btn btn-outline-secondary" data-clear>Clear pin</button>
-<div data-picker-map style="height:320px" data-lat="<?= e($settings['map_latitude']) ?>" data-lng="<?= e($settings['map_longitude']) ?>" data-zoom="<?= e($settings['map_zoom']) ?>" data-min-zoom="<?= e($settings['map_min_zoom']) ?>"></div>
+<div data-picker-map data-lat="<?= e($settings['map_latitude']) ?>" data-lng="<?= e($settings['map_longitude']) ?>" data-zoom="<?= e($settings['map_zoom']) ?>" data-min-zoom="<?= e($settings['map_min_zoom']) ?>"></div>
 <?php if (!empty($settings['address_suggestions_enabled'])): ?>
 <div class="mt-3">
 <label><input type="checkbox" data-address-enabled checked> Suggest an address when I choose a point</label>
@@ -20,10 +20,12 @@ $point = $point ?? [];
 <p class="small">Address suggestions: <a href="https://photon.komoot.io/" target="_blank" rel="noopener noreferrer">Photon</a> · Data © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap contributors (ODbL)</a>.</p>
 </div>
 <?php endif; ?>
+<p data-picker-availability class="small" role="status">The map background needs internet. Written location and coordinate fields remain available.</p>
+<noscript>JavaScript is needed for map selection. You can still type the location and coordinates.</noscript>
 <p data-picker-status role="status">Click the map or enter coordinates. Confirm the location before saving.</p>
 </fieldset>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<link rel="stylesheet" href="<?= e(url('resources/assets/vendor/leaflet/leaflet.css')) ?>">
+<script src="<?= e(url('resources/assets/vendor/leaflet/leaflet.js')) ?>"></script>
 <script src="<?= e(url('resources/assets/js/location-picker.js')) ?>" defer></script>
 
 <script src="<?= e(url('resources/assets/js/address-suggestion.js')) ?>" defer></script>

@@ -2,7 +2,7 @@
     const element=document.getElementById('community-map');
     if (!element) return;
     const status=document.getElementById('community-map-status');
-    if (typeof L==='undefined') { status.textContent='The map library could not load. Check your internet connection and refresh; record pages remain available.'; return; }
+    if (typeof L==='undefined') { status.textContent='Map files could not load. Refresh the page; record pages remain available.'; return; }
     const admin=element.dataset.admin==='1';
     const home=[Number(element.dataset.lat),Number(element.dataset.lng)];
     const zoom=Number(element.dataset.zoom);
@@ -80,7 +80,7 @@
                 });
                 document.getElementById('count-'+layer).textContent='('+count+')'; total+=count;
             });
-            status.textContent=total?total+' saved locations loaded. Select a marker for details.':'No visible saved locations have map points yet.';
+            status.textContent=total?total+' saved locations loaded. Select a marker for details.':(admin?'No active saved locations have map points yet. Add a point using a record form.':'No approved locations with map points are published yet. Your submissions remain in My reports.');
             document.getElementById('map-fit').disabled=false;
         })
         .catch(error=>{status.textContent=error.message || 'Saved locations could not be loaded. Please refresh.';});

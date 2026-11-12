@@ -45,5 +45,5 @@ require __DIR__ . '/../../components/errors.php';
 <?php if (!$history): ?><p>No updates yet.</p><?php endif; ?>
 <?php foreach ($history as $entry): ?><article class="border-bottom py-2"><strong><?= e($entry['staff_name']) ?></strong> · <?= e($entry['created_at']) ?><br>Incident: <?= e($entry['from_status']) ?> → <?= e($entry['to_status']) ?>
 <?php if ($entry['assignment_id']): ?> · Assignment #<?= (int)$entry['assignment_id'] ?>: <?= e($entry['assignment_status']) ?><?php endif; ?>
-<p style="white-space:pre-wrap"><?= e($entry['action_taken']) ?></p></article><?php endforeach; ?>
+<p class="preserve-text"><?= e($entry['action_taken']) ?></p></article><?php endforeach; ?>
 <?php require __DIR__ . '/../../components/footer.php'; ?>

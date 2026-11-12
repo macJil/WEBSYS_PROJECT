@@ -13,5 +13,5 @@ if($admin){
  $cards[]=['Low-stock goods',$overview['low_stock'],'resources/views/admin/relief/inventory.php?low=1'];
 }else{$cards[]=['Published notices',count($overview['notices']),'resources/views/user/announcement.php'];}
 ?>
-<div class="row g-3 mb-4"><?php foreach($cards as [$label,$value,$path]): ?><div class="col-md-4"><a class="d-block border rounded p-3" href="<?= e(url($path)) ?>"><strong class="fs-3"><?= (int)$value ?></strong><br><?= e($label) ?></a></div><?php endforeach; ?></div>
+<div class="row g-3 mb-4"><?php foreach($cards as [$label,$value,$path]): ?><div class="col-sm-6 col-lg-4"><a class="stat-card" href="<?= e(url($path)) ?>"><strong class="stat-value"><?= (int)$value ?></strong><span class="stat-label"><?= e($label) ?></span></a></div><?php endforeach; ?></div>
 <?php if(!$admin): ?><h2>Latest published notices</h2><?php foreach(array_slice($overview['notices'],0,3) as $notice): ?><p><a href="<?= e(url('resources/views/user/announcement.php?q='.urlencode($notice['title']))) ?>"><?= e($notice['title']) ?></a> · <?= e($notice['created_at']) ?></p><?php endforeach; ?><?php if(!$overview['notices']): ?><p>No published notices.</p><?php endif; ?><?php endif; ?>

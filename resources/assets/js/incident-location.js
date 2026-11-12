@@ -1,6 +1,7 @@
 (() => {
     const element = document.getElementById('saved-incident-map');
-    if (!element || typeof L === 'undefined') return;
+    if (!element) return;
+    if (typeof L === 'undefined') { document.getElementById('saved-map-status').textContent='Map files could not load. Saved coordinates and the written location remain available above.'; return; }
     const lat = Number(element.dataset.lat), lng = Number(element.dataset.lng);
     if (!Number.isFinite(lat) || !Number.isFinite(lng) || Math.abs(lat) > 90 || Math.abs(lng) > 180) return;
     const map = L.map(element).setView([lat,lng],16);

@@ -80,3 +80,5 @@ BayanReady Phase 2: [location saving and fixture review](docs/BAYANREADY_PHASE_2
 BayanReady Phase 3: [address suggestions and provider/privacy review](docs/BAYANREADY_PHASE_3_ADDRESS_SUGGESTIONS.md).
 
 BayanReady Phase 4: [visible product name](docs/BAYANREADY_PHASE_4_PRODUCT_NAME.md).
+
+BayanReady Phase 5: [shared visual system and map verification](docs/BAYANREADY_PHASE_5_VISUAL_SYSTEM.md).

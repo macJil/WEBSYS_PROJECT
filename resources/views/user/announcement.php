@@ -14,6 +14,6 @@ require __DIR__ . '/../components/header.php';
 </form>
 <?php if (!$announcements): ?><p>No published notices match your search.</p><?php endif; ?>
 <?php foreach ($announcements as $announcement): ?>
-<article class="border rounded p-3 mb-3"><h2><?= e($announcement['title']) ?></h2><p>Created <?= e($announcement['created_at']) ?></p><div style="white-space:pre-wrap;overflow-wrap:anywhere"><?= e($announcement['message']) ?></div></article>
+<article class="notice-card"><h2><?= e($announcement['title']) ?></h2><p class="small">Published notice · Created <?= e($announcement['created_at']) ?></p><div class="preserve-text"><?= e($announcement['message']) ?></div></article>
 <?php endforeach; ?>
 <?php require __DIR__ . '/../components/footer.php'; ?>

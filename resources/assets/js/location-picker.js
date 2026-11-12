@@ -2,6 +2,8 @@ document.querySelectorAll('.location-picker').forEach(root => {
  if(root.dataset.ready) return; root.dataset.ready='1';
  const lat=root.querySelector('[data-coordinate="latitude"]'), lng=root.querySelector('[data-coordinate="longitude"]'), status=root.querySelector('[data-picker-status]'), el=root.querySelector('[data-picker-map]');
  let map=null,marker=null,request=0;
+ const availability=root.querySelector('[data-picker-availability]');
+ if(typeof L==='undefined' && availability) availability.textContent='Map files could not load. Refresh the page or type the location and coordinates manually.';
  if(typeof L!=='undefined') {
   map=L.map(el, {minZoom:Number(el.dataset.minZoom || 14)}).setView([Number(el.dataset.lat),Number(el.dataset.lng)],Number(el.dataset.zoom));
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'}).on('tileerror',()=>status.textContent='Tiles unavailable. Manual coordinates still work.').addTo(map);

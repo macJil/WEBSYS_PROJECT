@@ -15,21 +15,21 @@ require __DIR__ . '/../components/errors.php';
 <h1><?= e($pageTitle) ?></h1>
 <dl>
 <?php foreach (['incident_type'=>'Type','status'=>'Status','description'=>'Description','reporter_name'=>'Reporter/contact name','contact_phone'=>'Contact number','location_description'=>'Location','latitude'=>'Latitude','longitude'=>'Longitude','report_source'=>'Received through','created_at'=>'Submitted'] as $key=>$label): ?>
-<dt><?= e($label) ?></dt><dd style="white-space:pre-wrap"><?= e($report[$key] ?? 'Not recorded') ?></dd>
+<dt><?= e($label) ?></dt><dd class="preserve-text"><?= e($report[$key] ?? 'Not recorded') ?></dd>
 <?php endforeach; ?></dl>
 <?php if (!hasMapPoint($report)): ?><p>No map point. This report remains available in lists and totals.</p><?php endif; ?>
 <?php if ((!$admin || $report['archived_at']!==null) && hasMapPoint($report)): ?>
-<div id="saved-incident-map" style="height:320px" data-lat="<?= e($report['latitude']) ?>" data-lng="<?= e($report['longitude']) ?>"></div>
+<div id="saved-incident-map" data-lat="<?= e($report['latitude']) ?>" data-lng="<?= e($report['longitude']) ?>"></div>
 <p id="saved-map-status">Saved coordinates are listed above. Map tiles need internet.</p>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<link rel="stylesheet" href="<?= e(url('resources/assets/vendor/leaflet/leaflet.css')) ?>">
+<script src="<?= e(url('resources/assets/vendor/leaflet/leaflet.js')) ?>"></script>
 <script src="<?= e(url('resources/assets/js/incident-location.js')) ?>"></script>
 <?php endif; ?>
 <p>Locations are reported points, not verified hazard assessments. No approved barangay boundary or location restriction is applied. DEMO ONLY locations are fictional examples.</p>
 <h2>Incident images</h2>
 <?php if (!$images): ?><p>No image attached.</p><?php endif; ?>
 <?php foreach ($images as $image): ?>
-<a href="<?= e(url('resources/views/incidents/image.php?id=' . $image['id'])) ?>"><img style="max-width:100%;max-height:360px" src="<?= e(url('resources/views/incidents/image.php?id=' . $image['id'])) ?>" alt="Image attached to this incident"></a>
+<a href="<?= e(url('resources/views/incidents/image.php?id=' . $image['id'])) ?>"><img class="incident-image" src="<?= e(url('resources/views/incidents/image.php?id=' . $image['id'])) ?>" alt="Image attached to this incident"></a>
 <?php endforeach; ?>
 <?php if ($admin): ?>
 <p class="mt-3"><a class="btn btn-secondary" href="<?= e(url('resources/views/admin/response/incident.php?id=' . $id)) ?>">Manage response teams and actions</a></p>
