@@ -11,10 +11,10 @@ require __DIR__ . '/../../components/header.php'; require __DIR__ . '/../../comp
 <p><a href="<?= e(url('resources/views/admin/records.php?type=goods')) ?>">Select records / view archived</a></p><p><?= count($items) ?> <?= $low?'low-stock':'active' ?> goods.</p><p><a href="<?= e(url('resources/views/admin/relief/locations.php')) ?>">Manage relief locations</a></p>
 <p><a href="<?= e(url('resources/views/admin/relief/inventory.php')) ?>">Inventory</a> · <a href="<?= e(url('resources/views/admin/relief/movements.php')) ?>">Stock movements</a> · <a href="<?= e(url('resources/views/admin/relief/distributions.php')) ?>">Household distributions</a></p>
 
-<form method="get" class="mb-3"><label><input type="checkbox" name="low" value="1" <?= $low?'checked':'' ?>> Low stock only</label> <label>Search name or unit <input name="q" value="<?= e($q) ?>"></label> <button class="btn btn-secondary">Search</button> <a href="<?= e(url('resources/views/admin/relief/inventory.php')) ?>">Clear</a></form>
-<table class="table"><thead><tr><th>Good</th><th>Unit</th><th>Available stock</th><th>Action</th></tr></thead><tbody>
+<form method="get" class="filter-form mb-3"><label><input type="checkbox" name="low" value="1" <?= $low?'checked':'' ?>> Low stock only</label> <label>Search name or unit <input name="q" value="<?= e($q) ?>"></label> <button class="btn btn-secondary">Search</button> <a href="<?= e(url('resources/views/admin/relief/inventory.php')) ?>">Clear</a></form>
+<div class="table-responsive" tabindex="0" role="region" aria-label="Scrollable records"><table class="table"><thead><tr><th>Good</th><th>Unit</th><th>Available stock</th><th>Action</th></tr></thead><tbody>
 <?php foreach ($items as $row): ?><tr><td><?= e($row['item_name']) ?></td><td><?= e($row['unit']) ?></td><td><?= (int)$row['quantity_on_hand'] ?></td><td><a href="<?= e(url('resources/views/admin/relief/inventory.php?edit='.$row['id'])) ?>">Edit</a></td></tr><?php endforeach; ?>
-<?php if (!$items): ?><tr><td colspan="4">No matching goods.</td></tr><?php endif; ?></tbody></table>
+<?php if (!$items): ?><tr><td colspan="4">No matching goods.</td></tr><?php endif; ?></tbody></table></div>
 <h2><?= $id?'Edit good':'Add good' ?></h2>
 <form method="post">
 <label class="d-block mb-3">Item name<input class="form-control" name="item_name" maxlength="120" value="<?= e($item['item_name']) ?>" required></label>

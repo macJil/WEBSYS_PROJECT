@@ -12,8 +12,8 @@ require __DIR__ . '/../components/header.php';
 ?>
 <h1>Household registry</h1>
 <p><a href="<?= e(url('resources/views/admin/records.php?type=households')) ?>">Select records / view archived</a></p>
-<form method="get" class="d-flex gap-2 mb-3"><label for="search" class="visually-hidden">Search households</label><input id="search" class="form-control" name="q" maxlength="255" value="<?= e($search) ?>" placeholder="Code, representative, purok, address or contact"><button class="btn btn-primary">Search</button><a class="btn btn-outline-secondary" href="<?= e(url('resources/views/admin/households.php')) ?>">Clear</a></form>
-<div class="table-responsive"><table class="table"><thead><tr><th>Code</th><th>Representative</th><th>Purok</th><th>Members</th><th>Actions</th></tr></thead><tbody>
+<form method="get" class="filter-form d-flex gap-2 mb-3"><label for="search" class="visually-hidden">Search households</label><input id="search" class="form-control" name="q" maxlength="255" value="<?= e($search) ?>" placeholder="Code, representative, purok, address or contact"><button class="btn btn-primary">Search</button><a class="btn btn-outline-secondary" href="<?= e(url('resources/views/admin/households.php')) ?>">Clear</a></form>
+<div class="table-responsive" tabindex="0" role="region" aria-label="Scrollable records"><table class="table"><thead><tr><th>Code</th><th>Representative</th><th>Purok</th><th>Members</th><th>Actions</th></tr></thead><tbody>
 <?php foreach ($rows as $row): ?><tr><td><?= e($row['household_code']) ?></td><td><?= e($row['representative_name']) ?></td><td><?= e($row['purok']) ?><?php if (!hasMapPoint($row)): ?><br><small>No map point</small><?php endif; ?></td><td><?= (int)$row['member_count'] ?></td><td><a href="<?= e(url('resources/views/admin/household.php?id='.$row['id'])) ?>">View / members</a> · <a href="<?= e(url('resources/views/admin/households.php?edit='.$row['id'])) ?>">Edit</a></td></tr><?php endforeach; ?>
 <?php if (!$rows): ?><tr><td colspan="5">No matching households.</td></tr><?php endif; ?></tbody></table></div>
 <h2><?= $id === null ? 'Add household' : 'Edit household' ?></h2>

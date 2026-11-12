@@ -82,3 +82,5 @@ BayanReady Phase 3: [address suggestions and provider/privacy review](docs/BAYAN
 BayanReady Phase 4: [visible product name](docs/BAYANREADY_PHASE_4_PRODUCT_NAME.md).
 
 BayanReady Phase 5: [shared visual system and map verification](docs/BAYANREADY_PHASE_5_VISUAL_SYSTEM.md).
+
+- [Phase 6 responsive layouts and checks](docs/BAYANREADY_PHASE_6_RESPONSIVE_LAYOUTS.md)

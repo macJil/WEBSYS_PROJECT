@@ -7,7 +7,7 @@ $announcements=$controller->listing(); $pageTitle='Emergency announcements';
 require __DIR__ . '/../components/header.php';
 ?>
 <h1>Emergency announcements</h1>
-<form method="get" class="mb-4">
+<form method="get" class="filter-form mb-4">
 <label>Search title <input name="q" value="<?= e($controller->query('q')) ?>"></label>
 <label>Created date <input type="date" name="date" value="<?= e($controller->query('date')) ?>"></label>
 <button class="btn btn-secondary">Search</button> <a href="<?= e(url('resources/views/user/announcement.php')) ?>">Clear</a>

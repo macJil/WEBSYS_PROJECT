@@ -21,7 +21,7 @@ require __DIR__ . '/../components/header.php';
 <?php foreach (['registry_reason'=>['Registry reason',HouseholdController::REASONS],'hazard_type'=>['Hazard concern',HouseholdController::HAZARDS],'vulnerability_category'=>['Assistance classification',HouseholdController::VULNERABILITY],'evacuation_status'=>['Household advisory status',HouseholdController::EVACUATION]] as $field=>$info): ?><dt class="col-sm-4"><?= e($info[0]) ?></dt><dd class="col-sm-8"><?= e($info[1][$household[$field]]) ?></dd><?php endforeach; ?>
 <dt class="col-sm-4">Members recorded</dt><dd class="col-sm-8"><?= (int)$household['member_count'] ?></dd></dl>
 <h2>Household members</h2><p>Add each person, including the representative if they live in this household. Member records do not create login accounts.</p>
-<div class="table-responsive"><table class="table"><thead><tr><th>Name</th><th>Age</th><th>Notes</th><th>Action</th></tr></thead><tbody>
+<div class="table-responsive" tabindex="0" role="region" aria-label="Scrollable records"><table class="table"><thead><tr><th>Name</th><th>Age</th><th>Notes</th><th>Action</th></tr></thead><tbody>
 <?php foreach ($members as $member): ?><tr><td><?= e($member['full_name']) ?></td><td><?= e($member['age'] ?? 'Not recorded') ?></td><td><?= e($member['notes']) ?></td><td><a href="<?= e(url('resources/views/admin/household.php?id='.$id.'&member='.$member['id'])) ?>">View / edit</a></td></tr><?php endforeach; ?>
 <?php if (!$members): ?><tr><td colspan="4">No members recorded.</td></tr><?php endif; ?></tbody></table></div>
 <h2><?= $memberId === null ? 'Add member' : 'Edit member' ?></h2>
