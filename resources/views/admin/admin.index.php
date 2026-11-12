@@ -5,6 +5,7 @@ $pageTitle='Staff dashboard';
 require __DIR__ . '/../components/header.php';
 ?>
 <h1>Staff dashboard</h1>
+<p><a class="btn btn-primary" href="<?= e(url('resources/views/maps/map.php')) ?>">Explore saved locations on the map</a></p>
 <p>Use the shared records to manage incidents, response teams, evacuation, and relief.</p>
 <div class="row g-3">
 <?php foreach ([

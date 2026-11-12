@@ -5,6 +5,7 @@ $pageTitle='Resident dashboard';
 require __DIR__ . '/../components/header.php';
 ?>
 <h1>Resident dashboard</h1>
+<p><a class="btn btn-primary" href="<?= e(url('resources/views/maps/map.php')) ?>">Explore saved locations on the map</a></p>
 <p>Submit incident details for staff review, follow your own reports, and read published barangay notices.</p>
 <ul>
 <li><a href="<?= e(url('resources/views/user/report.incident.php')) ?>">Report an incident and select its location</a></li>

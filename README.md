@@ -62,3 +62,5 @@ See [Phase 3 setup and reusable page pattern](docs/PHASE_3_PHP_FOUNDATIONS.md). 
 [Revision 1 rules and demo setup](docs/REVISION_1_DATA_AND_PRIVACY_RULES.md) lock map field visibility, publication transitions, bulk-action eligibility, and count definitions. Demo map defaults and fictional search points now focus on Irisan; no official boundary is enforced.
 
 [Revision 2 schema and map data](docs/REVISION_2_SCHEMA_AND_MAP_DATA.md): apply migration 004 before using the guarded map JSON endpoint. Fresh schema is v1.4; public flags default to private and resident queries use explicit safe fields.
+
+[Revision 3 shared map](docs/REVISION_3_SHARED_MAP.md): both roles have a Map link, persistent legend, layer controls, and saved markers from their authorized data. Admin markers link to protected records; resident popups contain safe summaries only.

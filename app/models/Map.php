@@ -22,11 +22,16 @@ class MapModel
     public function admin(): array
     {
         return [
-            'incidents'=>$this->rows('SELECT id,incident_type,location_description,latitude,longitude,status,is_public FROM incident_reports WHERE archived_at IS NULL AND '.$this->point('latitude','longitude')),
+            'incidents'=>$this->rows('SELECT id,incident_type,location_description,latitude,longitude,status,is_public,DATE(created_at) AS report_date FROM incident_reports WHERE archived_at IS NULL AND '.$this->point('latitude','longitude')),
             'households'=>$this->rows("SELECT id,household_code,purok,address_details,hazard_type,latitude,longitude FROM households WHERE archived_at IS NULL AND hazard_type<>'unassessed' AND ".$this->point('latitude','longitude')),
             'centers'=>$this->centers(false),
             'relief_locations'=>$this->rows('SELECT id,name,address_details,latitude,longitude,location_type,is_public FROM relief_locations WHERE archived_at IS NULL AND '.$this->point('latitude','longitude'))
         ];
+    }
+    public function reliefLocation(int $id): array
+    {
+        $stmt=$this->pdo->prepare('SELECT id,name,address_details,latitude,longitude,location_type,archived_at,is_public FROM relief_locations WHERE id=?');
+        $stmt->execute([$id]); return $stmt->fetch() ?: [];
     }
     private function centers(bool $resident): array
     {

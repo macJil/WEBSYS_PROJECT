@@ -1,5 +1,5 @@
 <?php
-// Legacy link: point selection is part of the resident incident form.
+// Keep the legacy resident map link connected to the shared map.
 require_once __DIR__ . '/../../../app/helpers.php';
 requireRole('resident');
-redirect('resources/views/user/report.incident.php');
+redirect('resources/views/maps/map.php');

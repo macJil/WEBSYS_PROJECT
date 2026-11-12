@@ -2,6 +2,7 @@
 <span class="navbar-brand">Barangay DRRM</span>
 <?php if (!empty($_SESSION['ID'])): ?>
 <a href="<?= e(url(dashboardPath())) ?>">Home</a>
+<a href="<?= e(url('resources/views/maps/map.php')) ?>">Map</a>
 <?php if ($_SESSION['ROLE'] === 'admin'): ?>
 <a href="<?= e(url('resources/views/admin/households.php')) ?>">Households</a>
 <a href="<?= e(url('resources/views/admin/reports/report.php')) ?>">Incidents</a>
