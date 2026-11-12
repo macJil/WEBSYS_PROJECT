@@ -55,6 +55,21 @@ class ReportModel
             $this->pdo->commit(); return $id;
         } catch (Throwable $error) { $this->pdo->rollBack(); throw $error; }
     }
+    public function updateLocation(int $id, string $description, ?string $lat, ?string $lng, string $notes, int $staff): void
+    {
+        $this->pdo->beginTransaction();
+        try {
+            $stmt=$this->pdo->prepare('SELECT location_description,latitude,longitude,status,archived_at FROM incident_reports WHERE id=? FOR UPDATE');
+            $stmt->execute([$id]); $old=$stmt->fetch();
+            if (!$old || $old['archived_at']!==null) { throw new DomainException('Archived or missing incidents cannot be edited.'); }
+            $stmt=$this->pdo->prepare('UPDATE incident_reports SET location_description=?,latitude=?,longitude=? WHERE id=?');
+            $stmt->execute([$description,$lat,$lng,$id]);
+            $action='Location correction: '.$notes.' | Previous: '.$old['location_description'].' ['.($old['latitude']??'none').', '.($old['longitude']??'none').'] | Updated: '.$description.' ['.($lat??'none').', '.($lng??'none').']';
+            $stmt=$this->pdo->prepare('INSERT INTO response_updates(incident_id,updated_by,action_taken,from_status,to_status) VALUES(?,?,?,?,?)');
+            $stmt->execute([$id,$staff,$action,$old['status'],$old['status']]);
+            $this->pdo->commit();
+        } catch (Throwable $error) { $this->pdo->rollBack(); throw $error; }
+    }
     public function review(int $id, string $status, string $notes, int $staff): void
     {
         $this->pdo->beginTransaction();

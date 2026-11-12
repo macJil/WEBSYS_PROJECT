@@ -74,3 +74,5 @@ See [Phase 3 setup and reusable page pattern](docs/PHASE_3_PHP_FOUNDATIONS.md). 
 Revision 7 review: [integration log](docs/REVISION_7_INTEGRATION_LOG.md).
 
 BayanReady Phase 1: [map investigation and locked behavior](docs/BAYANREADY_PHASE_1_MAP_REVIEW.md).
+
+BayanReady Phase 2: [location saving and fixture review](docs/BAYANREADY_PHASE_2_LOCATIONS.md).

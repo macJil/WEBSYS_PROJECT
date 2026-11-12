@@ -61,7 +61,7 @@ mid=sql('SELECT MAX(id) FROM household_members')
 success(admin.post('/resources/views/admin/household.php?id='+hid+'&member='+mid,{'action':'update_member','full_name':'Demo Member Edited','age':'1','notes':'Fictional'}),'edit member')
 check(sql('SELECT COUNT(*) FROM household_members WHERE household_id='+hid)=='1','member count from rows')
 png=base64.b64decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jRZkAAAAASUVORK5CYII=')
-report={'action':'create_incident','incident_type':'flood','description':'Demo incident only','reporter_name':'Demo reporter','contact_phone':'0000000000','location_description':'DEMO ONLY Sample B','latitude':'12.8812','longitude':'121.7763','report_source':'admin'}
+report={'action':'create_incident','incident_type':'flood','description':'Demo incident only','reporter_name':'Demo reporter','contact_phone':'0000000000','location_description':'DEMO ONLY Sample B','latitude':'16.4192','longitude':'120.5623','report_source':'admin'}
 success(resident.post('/resources/views/incidents/create.php',report,('demo.png','image/png',png)),'resident incident and image')
 iid=sql('SELECT MAX(id) FROM incident_reports');imageid=sql('SELECT MAX(id) FROM incident_images')
 check(sql('SELECT report_source FROM incident_reports WHERE id='+iid)=='resident','resident cannot forge report source')

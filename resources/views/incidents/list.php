@@ -21,7 +21,7 @@ require __DIR__ . '/../components/header.php';
 </form>
 <div class="table-responsive"><table class="table"><thead><tr><th>ID</th><th>Type</th><th>Location</th><th>Status</th><th>Submitted</th><th>Details</th></tr></thead><tbody>
 <?php foreach ($reports as $report): ?>
-<tr><td><?= (int)$report['id'] ?></td><td><?= e(ReportController::TYPES[$report['incident_type']] ?? $report['incident_type']) ?></td><td><?= e($report['location_description']) ?></td><td><?= e($report['status']) ?></td><td><?= e($report['created_at']) ?></td><td><a href="<?= e(url('resources/views/incidents/view.php?id=' . $report['id'])) ?>">View</a></td></tr>
+<tr><td><?= (int)$report['id'] ?></td><td><?= e(ReportController::TYPES[$report['incident_type']] ?? $report['incident_type']) ?></td><td><?= e($report['location_description']) ?><?php if (!hasMapPoint($report)): ?><br><small>No map point</small><?php endif; ?></td><td><?= e($report['status']) ?></td><td><?= e($report['created_at']) ?></td><td><a href="<?= e(url('resources/views/incidents/view.php?id=' . $report['id'])) ?>">View</a></td></tr>
 <?php endforeach; ?>
 <?php if (!$reports): ?><tr><td colspan="6">No matching reports.</td></tr><?php endif; ?>
 </tbody></table></div>

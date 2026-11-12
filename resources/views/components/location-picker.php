@@ -6,7 +6,7 @@ $point = $point ?? [];
 <fieldset class="location-picker mb-3"><legend>Location point (optional)</legend>
 <p>Keep the written address or landmark above. A point does not assess hazard risk.</p>
 <?php foreach (['latitude'=>90,'longitude'=>180] as $field=>$limit): ?>
-<label><?= e(ucfirst($field)) ?><input class="form-control" data-coordinate="<?= e($field) ?>" name="<?= e($field) ?>" type="number" step="any" min="<?= -$limit ?>" max="<?= $limit ?>" value="<?= e(isPost()?input($field):($point[$field]??'')) ?>"></label>
+<label><?= e(ucfirst($field)) ?><input class="form-control" data-coordinate="<?= e($field) ?>" name="<?= e($field) ?>" type="number" step="any" min="<?= -$limit ?>" max="<?= $limit ?>" value="<?= e($point[$field]??'') ?>"></label>
 <?php endforeach; ?>
 <button type="button" class="btn btn-secondary my-2" data-locate>Use my current location</button>
 <button type="button" class="btn btn-outline-secondary" data-clear>Clear pin</button>

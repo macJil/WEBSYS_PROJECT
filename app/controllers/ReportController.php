@@ -108,6 +108,22 @@ class ReportController extends Controller
         $this->success('Incident submitted for staff review.', 'resources/views/incidents/view.php?id=' . $id);
         return [];
     }
+    public function updateLocation(int $id): array
+    {
+        requireRole('admin');
+        $description=input('location_description'); $lat=input('latitude'); $lng=input('longitude');
+        $errors=locationErrors($description,$lat,$lng);
+        if ($description==='' || strlen($description)>255) { $errors[]='Enter a written location of up to 255 bytes.'; }
+        $notes=input('location_notes');
+        if ($notes==='' || strlen($notes)>255) { $errors[]='Enter a correction reason of up to 255 bytes.'; }
+        if ($errors) { return $errors; }
+        try {
+            $this->model->updateLocation($id,$description,$lat===''?null:$lat,$lng===''?null:$lng,$notes,(int)$_SESSION['ID']);
+        } catch (DomainException $error) { return [$error->getMessage()]; }
+        catch (Throwable $error) { error_log((string)$error); return ['Location could not be saved. Please try again.']; }
+        $this->success('Incident location updated.','resources/views/incidents/view.php?id='.$id);
+        return [];
+    }
     public function review(int $id): array
     {
         requireRole('admin');

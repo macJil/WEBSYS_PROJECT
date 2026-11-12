@@ -80,3 +80,11 @@ function locationErrors(string $description, string $lat, string $lng): array
     if ($lat !== '' && (!is_numeric($lat) || !is_numeric($lng) || !is_finite((float)$lat) || !is_finite((float)$lng) || abs((float)$lat)>90 || abs((float)$lng)>180 || trim($description)==='')) { return ['Enter valid coordinates and a written location.']; }
     return [];
 }
+
+// Match the map's coordinate rules without treating zero as a missing value.
+function hasMapPoint(array $record): bool
+{
+    $lat=$record['latitude']??null; $lng=$record['longitude']??null;
+    return is_numeric($lat) && is_numeric($lng) && is_finite((float)$lat) && is_finite((float)$lng)
+        && abs((float)$lat)<=90 && abs((float)$lng)<=180;
+}
