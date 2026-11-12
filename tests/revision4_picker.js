@@ -5,7 +5,7 @@ for(const withMap of [true,false]){
  const root=element();root.querySelector=k=>items[k];items['[data-picker-map]'].dataset={lat:16,lng:120,zoom:15};
  let ok,fail,calls=0;const map={setView(){return this;},on(k,f){this[k]=f;},removeLayer(){}};
  const context={document:{querySelectorAll:()=>[root]},navigator:{geolocation:{getCurrentPosition(a,b){calls++;ok=a;fail=b;}}}};
- if(withMap)context.L={map:()=>map,tileLayer:()=>({on(){return this;},addTo(){}}),marker:()=>({addTo(){return this;},on(){}})};
+ if(withMap)context.L={map:(element,options)=>{assert.equal(options.minZoom,14);assert(!options.maxBounds);return map;},tileLayer:()=>({on(){return this;},addTo(){}}),marker:()=>({addTo(){return this;},on(){}})};
  vm.runInNewContext(fs.readFileSync(__dirname+'/../resources/assets/js/location-picker.js','utf8'),context);
  assert.equal(calls,0);const locate=items['[data-locate]'],status=items['[data-picker-status]'],lat=items['[data-coordinate="latitude"]'],lng=items['[data-coordinate="longitude"]'];
  locate.events.click();fail({code:1});assert(status.textContent.includes('denied'));

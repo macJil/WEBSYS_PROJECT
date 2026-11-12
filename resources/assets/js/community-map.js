@@ -6,7 +6,7 @@
     const admin=element.dataset.admin==='1';
     const home=[Number(element.dataset.lat),Number(element.dataset.lng)];
     const zoom=Number(element.dataset.zoom);
-    const map=L.map(element).setView(home,zoom);
+    const map=L.map(element, {minZoom:Number(element.dataset.minZoom || 14)}).setView(home,zoom);
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom:19, attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).on('tileerror',()=>{document.getElementById('community-tile-status').textContent='Some background tiles are unavailable. Saved markers can still be selected; refresh when internet is available.';}).addTo(map);

@@ -3,7 +3,7 @@ document.querySelectorAll('.location-picker').forEach(root => {
  const lat=root.querySelector('[data-coordinate="latitude"]'), lng=root.querySelector('[data-coordinate="longitude"]'), status=root.querySelector('[data-picker-status]'), el=root.querySelector('[data-picker-map]');
  let map=null,marker=null,request=0;
  if(typeof L!=='undefined') {
-  map=L.map(el).setView([Number(el.dataset.lat),Number(el.dataset.lng)],Number(el.dataset.zoom));
+  map=L.map(el, {minZoom:Number(el.dataset.minZoom || 14)}).setView([Number(el.dataset.lat),Number(el.dataset.lng)],Number(el.dataset.zoom));
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'}).on('tileerror',()=>status.textContent='Tiles unavailable. Manual coordinates still work.').addTo(map);
   map.on('click',e=>{request++;setPoint(e.latlng.lat,e.latlng.lng);});
  }

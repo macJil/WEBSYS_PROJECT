@@ -72,3 +72,5 @@ See [Phase 3 setup and reusable page pattern](docs/PHASE_3_PHP_FOUNDATIONS.md). 
 [Revision 6 record actions](docs/REVISION_6_RECORD_ACTIONS.md): admin management lists with checkboxes, review/confirmation, transactional delete/archive rules, and protected history. Relevant module lists link to the shared management page.
 
 Revision 7 review: [integration log](docs/REVISION_7_INTEGRATION_LOG.md).
+
+BayanReady Phase 1: [map investigation and locked behavior](docs/BAYANREADY_PHASE_1_MAP_REVIEW.md).

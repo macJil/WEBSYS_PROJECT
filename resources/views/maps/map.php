@@ -10,7 +10,7 @@ require __DIR__ . '/../components/header.php';
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <link rel="stylesheet" href="<?= e(url('resources/assets/css/community-map.css')) ?>">
 <h1><?= $admin?'Staff map':'Community map' ?></h1>
-<p><?= e($settings['demo_barangay_name']) ?>. Markers show saved locations; they do not predict danger or guarantee safety. No approved boundary is enforced.</p>
+<p><?= e($settings['demo_barangay_name']) ?>. Markers show saved locations; they do not predict danger or guarantee safety. The map opens focused on Irisan; you can pan to review other saved points. No approved boundary is enforced.</p>
 <?php if ($admin): ?><p>Staff layers include private incident points and manually recorded household concerns.</p>
 <?php else: ?><p>Only approved community information is shown. Incident points are approximate. Your private submissions remain available in <a href="<?= e(url('resources/views/user/reports.php')) ?>">My reports</a>.</p><?php endif; ?>
 <div class="map-layout">
@@ -25,11 +25,11 @@ require __DIR__ . '/../components/header.php';
 <button type="button" id="map-home" class="btn btn-outline-secondary my-2">Return to demo area</button>
 <button type="button" id="map-fit" class="btn btn-outline-secondary my-2" disabled>Show visible markers</button>
 <a class="d-block" href="<?= e(url('resources/views/maps/map.php')) ?>">Refresh saved locations</a>
-<p class="small mt-3">Counts represent mapped records only. Records without a valid point remain in their normal lists and totals.</p>
+<p class="small mt-3">Refresh saved locations after adding or changing a report. Some points may be outside the current view. Counts represent mapped records only. Records without a valid point remain in their normal lists and totals.</p>
 </aside>
 <div>
 <p id="community-map-status" role="status" aria-live="polite">Loading saved locations…</p>
-<div id="community-map" data-admin="<?= $admin?'1':'0' ?>" data-url="<?= e(url('resources/views/maps/data.php')) ?>" data-base="<?= e(BASE_URL) ?>" data-lat="<?= e($settings['map_latitude']) ?>" data-lng="<?= e($settings['map_longitude']) ?>" data-zoom="<?= e($settings['map_zoom']) ?>"></div>
+<div id="community-map" data-admin="<?= $admin?'1':'0' ?>" data-url="<?= e(url('resources/views/maps/data.php')) ?>" data-base="<?= e(BASE_URL) ?>" data-lat="<?= e($settings['map_latitude']) ?>" data-lng="<?= e($settings['map_longitude']) ?>" data-zoom="<?= e($settings['map_zoom']) ?>" data-min-zoom="<?= e($settings['map_min_zoom']) ?>"></div>
 <p id="community-tile-status" role="status" class="small">Map tiles require internet. The background map does not confirm the accuracy of a reported point.</p>
 <noscript>Enable JavaScript to explore this map. Your regular record pages remain available through navigation.</noscript>
 </div></div>

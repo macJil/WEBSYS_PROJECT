@@ -15,4 +15,5 @@ return [
     'map_latitude' => 16.41792,
     'map_longitude' => 120.56091,
     'map_zoom' => 15,
+    'map_min_zoom' => 14, // Focused demo view; no official boundary restriction.
 ];

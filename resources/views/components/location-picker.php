@@ -10,7 +10,7 @@ $point = $point ?? [];
 <?php endforeach; ?>
 <button type="button" class="btn btn-secondary my-2" data-locate>Use my current location</button>
 <button type="button" class="btn btn-outline-secondary" data-clear>Clear pin</button>
-<div data-picker-map style="height:320px" data-lat="<?= e($settings['map_latitude']) ?>" data-lng="<?= e($settings['map_longitude']) ?>" data-zoom="<?= e($settings['map_zoom']) ?>"></div>
+<div data-picker-map style="height:320px" data-lat="<?= e($settings['map_latitude']) ?>" data-lng="<?= e($settings['map_longitude']) ?>" data-zoom="<?= e($settings['map_zoom']) ?>" data-min-zoom="<?= e($settings['map_min_zoom']) ?>"></div>
 <p data-picker-status role="status">Click the map or enter coordinates. Confirm the location before saving.</p>
 </fieldset>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
