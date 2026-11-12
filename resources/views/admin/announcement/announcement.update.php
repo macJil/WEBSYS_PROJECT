@@ -1,8 +1,11 @@
 <?php
 require_once __DIR__ . '/../../../../app/controllers/AnnouncementController.php';
-$controller=new AnnouncementController('admin'); $announcement=$controller->find();
-$errors=$controller->save((int)$announcement['id']); $pageTitle='Edit announcement';
-require __DIR__ . '/../../components/header.php'; require __DIR__ . '/../../components/errors.php';
+$controller = new AnnouncementController('admin');
+$announcement = $controller->find();
+$errors = $controller->save((int)$announcement['id']);
+$pageTitle = 'Edit announcement';
+require __DIR__ . '/../../components/header.php';
+require __DIR__ . '/../../components/errors.php';
 ?>
 <h1>Edit announcement</h1>
 <p>Current status: <strong><?= $announcement['is_published']?'Published':'Draft / withdrawn' ?></strong> · Created <?= e($announcement['created_at']) ?></p>

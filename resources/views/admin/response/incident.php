@@ -1,11 +1,13 @@
 <?php
 require_once __DIR__ . '/../../../../app/controllers/ResponseController.php';
 $controller = new ResponseController();
-$id = $controller->id($_GET['id'] ?? null); $incident = $controller->incident($id);
+$id = $controller->id($_GET['id'] ?? null);
+$incident = $controller->incident($id);
 $errors = $controller->record($id);
-$assignments = $controller->assignments($id); $history = $controller->history($id);
+$assignments = $controller->assignments($id);
+$history = $controller->history($id);
 $assignedTeamIds = array_column($assignments, 'responder_id');
-$teams = array_filter($controller->teams(), fn($team) => $team['is_active'] && !in_array($team['id'],$assignedTeamIds));
+$teams = array_filter($controller->teams(), fn ($team) => $team['is_active'] && !in_array($team['id'], $assignedTeamIds));
 $open = in_array($incident['status'], ['verified','responding'], true);
 $pageTitle = 'Response for incident #' . $id;
 require __DIR__ . '/../../components/header.php';
@@ -35,7 +37,7 @@ require __DIR__ . '/../../components/errors.php';
 <form method="post">
 <input type="hidden" name="assignment_id" value="<?= (int)$assignment['id'] ?>">
 <label>Status<select class="form-select" name="assignment_status">
-<?php foreach (ResponseController::STATUSES as $status): ?><option value="<?= e($status) ?>" <?= ($retry ? input('assignment_status') : $assignment['status']) === $status ? 'selected' : '' ?>><?= e(str_replace('_',' ',ucfirst($status))) ?></option><?php endforeach; ?></select></label>
+<?php foreach (ResponseController::STATUSES as $status): ?><option value="<?= e($status) ?>" <?= ($retry ? input('assignment_status') : $assignment['status']) === $status ? 'selected' : '' ?>><?= e(str_replace('_', ' ', ucfirst($status))) ?></option><?php endforeach; ?></select></label>
 <label class="d-block my-2">Action taken<textarea class="form-control" name="notes" maxlength="2000" required><?= $retry ? e(input('notes')) : '' ?></textarea></label>
 <button class="btn btn-secondary" name="action" value="update_assignment">Record update</button>
 </form>

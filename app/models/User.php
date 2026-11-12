@@ -3,7 +3,10 @@ require_once __DIR__ . '/../../config/db.php';
 class UserModel
 {
     private PDO $pdo;
-    public function __construct() { $this->pdo = (new DATABASE())->connect(); }
+    public function __construct()
+    {
+        $this->pdo = (new DATABASE())->connect();
+    }
     public function findByEmail(string $email)
     {
         $stmt = $this->pdo->prepare('SELECT * FROM users WHERE email = ?');

@@ -16,13 +16,19 @@ function e($value): string
 {
     return htmlspecialchars((string) ($value ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 }
-function url(string $path): string { return BASE_URL . '/' . ltrim($path, '/'); }
+function url(string $path): string
+{
+    return BASE_URL . '/' . ltrim($path, '/');
+}
 function redirect(string $path): void
 {
     header('Location: ' . url($path), true, 303);
     exit;
 }
-function isPost(): bool { return ($_SERVER['REQUEST_METHOD'] ?? '') === 'POST'; }
+function isPost(): bool
+{
+    return ($_SERVER['REQUEST_METHOD'] ?? '') === 'POST';
+}
 function input(string $key, bool $trim = true): string
 {
     $value = $_POST[$key] ?? '';
@@ -31,7 +37,9 @@ function input(string $key, bool $trim = true): string
 function validDateInput(string $value): bool
 {
     // Reject malformed bytes before PHP's date parser, which can throw on null bytes.
-    if (!preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/D', $value)) { return false; }
+    if (!preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/D', $value)) {
+        return false;
+    }
     $date = DateTimeImmutable::createFromFormat('!Y-m-d', $value);
     return $date !== false && $date->format('Y-m-d') === $value;
 }
@@ -76,15 +84,20 @@ set_exception_handler(function (Throwable $error): void {
 
 function locationErrors(string $description, string $lat, string $lng): array
 {
-    if (($lat === '') !== ($lng === '')) { return ['Enter both coordinates or clear both.']; }
-    if ($lat !== '' && (!is_numeric($lat) || !is_numeric($lng) || !is_finite((float)$lat) || !is_finite((float)$lng) || abs((float)$lat)>90 || abs((float)$lng)>180 || trim($description)==='')) { return ['Enter valid coordinates and a written location.']; }
+    if (($lat === '') !== ($lng === '')) {
+        return ['Enter both coordinates or clear both.'];
+    }
+    if ($lat !== '' && (!is_numeric($lat) || !is_numeric($lng) || !is_finite((float)$lat) || !is_finite((float)$lng) || abs((float)$lat) > 90 || abs((float)$lng) > 180 || trim($description) === '')) {
+        return ['Enter valid coordinates and a written location.'];
+    }
     return [];
 }
 
 // Match the map's coordinate rules without treating zero as a missing value.
 function hasMapPoint(array $record): bool
 {
-    $lat=$record['latitude']??null; $lng=$record['longitude']??null;
+    $lat = $record['latitude'] ?? null;
+    $lng = $record['longitude'] ?? null;
     return is_numeric($lat) && is_numeric($lng) && is_finite((float)$lat) && is_finite((float)$lng)
-        && abs((float)$lat)<=90 && abs((float)$lng)<=180;
+        && abs((float)$lat) <= 90 && abs((float)$lng) <= 180;
 }

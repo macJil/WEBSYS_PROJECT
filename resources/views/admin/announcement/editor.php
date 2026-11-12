@@ -1,7 +1,10 @@
 <?php
 require_once __DIR__ . '/../../../../app/helpers.php';
 requireRole('admin');
-if (!isset($announcement)) { http_response_code(404); exit('Open the announcement editor from the announcement list.'); }
+if (!isset($announcement)) {
+    http_response_code(404);
+    exit('Open the announcement editor from the announcement list.');
+}
 ?>
 <form method="post">
 <label class="d-block mb-3">Title<input class="form-control" name="title" maxlength="150" value="<?= e(isPost()?input('title'):$announcement['title']) ?>" required></label>
