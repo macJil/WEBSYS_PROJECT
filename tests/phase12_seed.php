@@ -2,7 +2,7 @@
 // Only for the explicitly marked, disposable MySQL integration fixture.
 if (PHP_SAPI !== 'cli') { http_response_code(404); exit; }
 require __DIR__ . '/../config/db.php';
-$pdo=(new DATABASE())->connect();
+$pdo=db();
 if ($pdo->query('SELECT label FROM websys_integration_fixture')->fetchColumn()!=='fictional-only'
     || (int)$pdo->query('SELECT @@port')->fetchColumn()!==18960
     || (int)$pdo->query('SELECT COUNT(*) FROM users')->fetchColumn()!==0) {

@@ -15,9 +15,9 @@ class RecordActionsModel
         'announcements' => ['announcements','title','Announcements','resources/views/admin/announcement/announcement.update.php?id=']
     ];
     private PDO $pdo;
-    public function __construct()
+    public function __construct(?PDO $pdo = null)
     {
-        $this->pdo = (new DATABASE())->connect();
+        $this->pdo = $pdo ?? db();
     }
     private function query(string $sql, array $args = []): array
     {

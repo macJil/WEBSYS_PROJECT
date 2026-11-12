@@ -3,7 +3,7 @@ if (PHP_SAPI !== 'cli') { http_response_code(404); exit; }
 // Fictional in-memory fixture only; does not connect to or change MySQL.
 require __DIR__ . '/../app/models/DisasterSummary.php';
 $pdo=new PDO('sqlite::memory:',null,null,[PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION,PDO::ATTR_DEFAULT_FETCH_MODE=>PDO::FETCH_ASSOC]);
-$property=new ReflectionProperty(DATABASE::class,'connection'); $property->setValue(null,$pdo);
+
 $pdo->exec("CREATE TABLE households(id INTEGER,registry_reason TEXT,archived_at TEXT);
 CREATE TABLE evacuation_centers(id INTEGER,name TEXT,status TEXT,capacity INTEGER);
 CREATE TABLE evacuation_records(id INTEGER,center_id INTEGER,checked_out_at TEXT);
@@ -19,7 +19,7 @@ INSERT INTO relief_items VALUES(1,'Demo food','packs'),(2,'Demo water','bottles'
 INSERT INTO relief_distributions VALUES(1,1,'2026-11-01 00:00:00'),(2,1,'2026-11-30 23:59:59'),(3,2,'2026-11-20 12:00:00'),(4,3,'2026-12-01 00:00:00');
 INSERT INTO relief_distribution_items VALUES(1,1,1,2),(2,1,2,3),(3,2,1,4),(4,3,2,5),(5,4,1,100);");
 function check($condition,$label) { if (!$condition) { throw new RuntimeException($label); } echo "PASS $label\n"; }
-$model=new DisasterSummaryModel(); $s=$model->summarize('2026-11-01 00:00:00','2026-12-01 00:00:00');
+$model=new DisasterSummaryModel($pdo); $s=$model->summarize('2026-11-01 00:00:00','2026-12-01 00:00:00');
 check($s['affected']===2,'affected registry total');
 check(array_sum(array_column($s['centers'],'capacity'))===10,'capacity includes all centers');
 check(array_sum(array_column($s['centers'],'occupancy'))===2,'active-only occupancy');

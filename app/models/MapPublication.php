@@ -1,12 +1,13 @@
 <?php
 require_once __DIR__ . '/../../config/db.php';
+require_once __DIR__ . '/../map-validation.php';
 class MapPublicationModel
 {
     private PDO $pdo;
     private const TABLES = ['incident' => 'incident_reports','center' => 'evacuation_centers','relief' => 'relief_locations'];
-    public function __construct()
+    public function __construct(?PDO $pdo = null)
     {
-        $this->pdo = (new DATABASE())->connect();
+        $this->pdo = $pdo ?? db();
     }
     private function table(string $type): string
     {
@@ -26,6 +27,17 @@ class MapPublicationModel
         $this->pdo->beginTransaction();
         try {
             $r = $this->find($type, $id, true);
+            if ($publish && $type === 'incident') {
+                $errors = publicationErrors(array_replace($r, [
+                    'is_public' => 1,
+                    'public_label' => $data['label'],
+                    'public_latitude' => $data['latitude'],
+                    'public_longitude' => $data['longitude'],
+                ]));
+                if ($errors) {
+                    throw new DomainException(implode(' ', $errors));
+                }
+            }
             if ($publish) {
                 if ($r['archived_at'] !== null)throw new DomainException('Archived records cannot be published.');
                 if ($type === 'incident' && !in_array($r['status'], ['verified','responding','resolved'], true))throw new DomainException('Only verified, responding, or resolved incidents can be published.');

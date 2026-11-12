@@ -12,7 +12,7 @@ with tempfile.TemporaryDirectory(prefix='bayanready-config-') as tmp:
         shutil.copyfile(root/name,copy/name)
     for name in ['config/config.php','config/local.php','config/settings.php','config/local.example.php']:
         (copy/name).unlink(missing_ok=True)
-    for code in ["require 'app/helpers.php';", "require 'config/db.php'; (new DATABASE())->connect();"]:
+    for code in ["require 'app/helpers.php';", "require 'config/db.php'; db();"]:
         r=run(copy,code)
         assert 'Setup required:' in r.stdout and 'Warning:' not in r.stdout and 'Fatal error:' not in r.stdout,r
     print('PASS missing config produces controlled setup message for pages and database')

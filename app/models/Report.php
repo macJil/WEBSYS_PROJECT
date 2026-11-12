@@ -3,9 +3,9 @@ require_once __DIR__ . '/../../config/db.php';
 class ReportModel
 {
     private PDO $pdo;
-    public function __construct()
+    public function __construct(?PDO $pdo = null)
     {
-        $this->pdo = (new DATABASE())->connect();
+        $this->pdo = $pdo ?? db();
     }
     public function listing(array $filters, ?int $owner): array
     {

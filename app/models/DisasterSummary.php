@@ -3,9 +3,9 @@ require_once __DIR__ . '/../../config/db.php';
 class DisasterSummaryModel
 {
     private PDO $pdo;
-    public function __construct()
+    public function __construct(?PDO $pdo = null)
     {
-        $this->pdo = (new DATABASE())->connect();
+        $this->pdo = $pdo ?? db();
     }
     private function rows(string $sql, array $values = []): array
     {

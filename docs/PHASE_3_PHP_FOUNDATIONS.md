@@ -10,7 +10,7 @@ This branch retains root index.php and direct PHP view URLs. There is no route l
 4. Open root index.php. When using PHP's local server at the project root, base_url is an empty string; under MAMP's WEBSYS_PROJECT directory it is /WEBSYS_PROJECT.
 5. Register a fictional account. For the initial admin, the developer can promote that specific account in their local database: `UPDATE users SET role = 'admin' WHERE username = 'your_chosen_username';`. Verify the username first, then log out and log in again. Public registration always creates residents even if a request includes a different role.
 
-The database connection is created once per request and shared by models. connect() returns PDO or throws PDOException. It never returns markup. Login/registration construct the model inside their error boundary, log details privately, and show a general database-unavailable message. An exception handler provides a controlled fallback for existing module pages.
+The database connection is created once per request and shared by models. db() returns PDO or throws PDOException. It never returns markup. Login/registration construct the model inside their error boundary, log details privately, and show a general database-unavailable message. An exception handler provides a controlled fallback for existing module pages.
 
 ## Shared request pattern
 

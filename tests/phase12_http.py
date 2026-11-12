@@ -31,7 +31,7 @@ def success(result,label):
  return result
 # Explicit fixture marker plus application connection checks prevent running on a normal database.
 check(sql("SELECT label FROM websys_integration_fixture")=='fictional-only','isolated fixture marker')
-preflight=subprocess.run(['php','-r',"require 'config/db.php'; $p=(new DATABASE())->connect(); echo $p->query('SELECT label FROM websys_integration_fixture')->fetchColumn().':'.$p->query('SELECT @@port')->fetchColumn();"],cwd=ROOT,capture_output=True,text=True)
+preflight=subprocess.run(['php','-r',"require 'config/db.php'; $p=db(); echo $p->query('SELECT label FROM websys_integration_fixture')->fetchColumn().':'.$p->query('SELECT @@port')->fetchColumn();"],cwd=ROOT,capture_output=True,text=True)
 check(preflight.returncode==0 and preflight.stdout=='fictional-only:18960','application uses isolated fixture database')
 check(sql('SELECT COUNT(*) FROM users')=='1' and sql('SELECT COUNT(*) FROM households')=='0','fixture starts with only a demo admin')
 admin=Client(); resident=Client(); other=Client(); anon=Client()
