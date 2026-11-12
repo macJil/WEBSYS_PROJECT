@@ -58,3 +58,5 @@ See [Phase 3 setup and reusable page pattern](docs/PHASE_3_PHP_FOUNDATIONS.md). 
 ## Planned revisions
 
 [Shared map, dashboard, and bulk-action revision phases](docs/REVISION_PHASES_MAP_DASHBOARD_BULK_ACTIONS.md) define the agreed demo-area behavior, role-specific map data, location picker, dashboard counts, history-preserving admin actions, checkpoints, and five-member ownership. The revision plan is on `revision-map-dashboard-bulk-actions`; feature implementation follows in later commits.
+
+[Revision 1 rules and demo setup](docs/REVISION_1_DATA_AND_PRIVACY_RULES.md) lock map field visibility, publication transitions, bulk-action eligibility, and count definitions. Demo map defaults and fictional search points now focus on Irisan; no official boundary is enforced.

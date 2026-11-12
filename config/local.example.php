@@ -9,8 +9,10 @@ return [
     'password' => '',
     // Absolute private folder OUTSIDE your web server document root; PHP must be able to write here.
     'incident_upload_dir' => '',
-    // Philippines overview until the team selects a barangay.
-    'map_latitude' => 12.8797,
-    'map_longitude' => 121.7740,
-    'map_zoom' => 6,
+    // Irisan demo view only; no approved boundary or stakeholder identity.
+    'demo_barangay_name' => 'Barangay Irisan, Baguio City (DEMO)',
+    'map_boundary_approved' => false,
+    'map_latitude' => 16.41792,
+    'map_longitude' => 120.56091,
+    'map_zoom' => 15,
 ];

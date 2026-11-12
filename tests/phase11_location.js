@@ -1,7 +1,7 @@
 // Small DOM/map stand-ins exercise the actual interaction script without network access.
 const fs=require('fs'), vm=require('vm'), assert=require('assert');
 class Element {
-    constructor() { this.value=''; this.textContent=''; this.events={}; this.children=[]; this.dataset={lat:'12.8797',lng:'121.774',zoom:'6'}; }
+    constructor() { this.value=''; this.textContent=''; this.events={}; this.children=[]; this.dataset={lat:'16.41792',lng:'120.56091',zoom:'15'}; }
     addEventListener(name,fn) { this.events[name]=fn; }
     replaceChildren() { this.children=[]; }
     appendChild(child) { this.children.push(child); }
@@ -18,7 +18,7 @@ function scenario(withMap) {
     elements['location-search'].value='Sample B'; elements['search-location'].events.click();
     assert.equal(elements['location-results'].children.length,1);
     elements['location-results'].children[0].events.click();
-    assert.equal(elements.latitude.value,'12.8812000'); assert.equal(elements.longitude.value,'121.7763000');
+    assert.equal(elements.latitude.value,'16.4192000'); assert.equal(elements.longitude.value,'120.5623000');
     assert(elements.description.value.includes('DEMO ONLY'));
     if(withMap) {map.events.click({latlng:{lat:12.5,lng:121.5}}); assert.equal(elements.latitude.value,'12.5000000');}
     elements.latitude.value='95'; elements.latitude.events.input(); assert(elements['map-status'].textContent.includes('valid coordinates'));

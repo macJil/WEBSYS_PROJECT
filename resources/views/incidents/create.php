@@ -28,6 +28,7 @@ require __DIR__ . '/../components/errors.php';
 <?php endforeach; ?>
 <label class="d-block mb-3">Describe what happened<textarea class="form-control" name="description" maxlength="10000" required><?= e($data['description']) ?></textarea></label>
 <fieldset class="mb-3"><legend>Location pin (optional)</legend>
+<p>Demo map area: <?= e($settings['demo_barangay_name']) ?></p>
 <p>Search fictional demo addresses/puroks below, click the map, or enter coordinates. Keep the written location above even when you select a pin.</p>
 <p><strong>Location only, not hazard prediction.</strong> No barangay boundary has been approved. Pins do not prove risk, safety, or an approved evacuation site. Demo labels do not describe real facilities at these coordinates.</p>
 <label for="location-search">Search demo purok / landmark</label>
