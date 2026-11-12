@@ -5,7 +5,7 @@ $errors = (new UserController())->handlePost();
 $pageTitle = 'Login and registration';
 require __DIR__ . '/resources/views/components/header.php';
 ?>
-<h1 class="mb-4">Barangay DRRM</h1>
+<h1 class="mb-4"><?= e($settings['app_name']) ?></h1>
 <?php require __DIR__ . '/resources/views/components/errors.php'; ?>
 <div class="row g-4">
 <section class="col-md-5"><h2>Login</h2>

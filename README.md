@@ -1,4 +1,4 @@
-# Barangay DRRM — WEBSYS1
+# BayanReady — WEBSYS1
 
 Official project repository: https://github.com/macJil/WEBSYS_PROJECT
 
@@ -78,3 +78,5 @@ BayanReady Phase 1: [map investigation and locked behavior](docs/BAYANREADY_PHAS
 BayanReady Phase 2: [location saving and fixture review](docs/BAYANREADY_PHASE_2_LOCATIONS.md).
 
 BayanReady Phase 3: [address suggestions and provider/privacy review](docs/BAYANREADY_PHASE_3_ADDRESS_SUGGESTIONS.md).
+
+BayanReady Phase 4: [visible product name](docs/BAYANREADY_PHASE_4_PRODUCT_NAME.md).

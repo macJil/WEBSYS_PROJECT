@@ -1,5 +1,5 @@
 <nav class="navbar bg-light border-bottom"><div class="container gap-2">
-<span class="navbar-brand">Barangay DRRM</span>
+<span class="navbar-brand"><?= e($settings['app_name']) ?></span>
 <?php if (!empty($_SESSION['ID'])): ?>
 <a href="<?= e(url(dashboardPath())) ?>">Home</a>
 <a href="<?= e(url('resources/views/maps/map.php')) ?>">Map</a>

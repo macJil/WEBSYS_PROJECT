@@ -6,7 +6,7 @@ $overview=(new DashboardController('admin'))->data();
 $pageTitle='Staff dashboard';
 require __DIR__ . '/../components/header.php';
 ?>
-<h1>Staff dashboard</h1>
+<h1><?= e($settings['app_name']) ?> — staff dashboard</h1>
 <?php require __DIR__.'/../components/dashboard-cards.php'; ?>
 <p><a class="btn btn-primary" href="<?= e(url('resources/views/maps/map.php')) ?>">Explore saved locations on the map</a></p>
 <p>Use the shared records to manage incidents, response teams, evacuation, and relief.</p>
