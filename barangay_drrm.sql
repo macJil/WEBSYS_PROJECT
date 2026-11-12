@@ -288,14 +288,7 @@ CREATE TABLE relief_stock_movements (
   INDEX idx_stock_item_date (item_id, created_at)
 ) ENGINE=InnoDB;
 
--- 16. One-barangay configuration (seed value is non-personal placeholder only).
-CREATE TABLE system_settings (
-  id TINYINT UNSIGNED PRIMARY KEY,
-  barangay_name VARCHAR(120) NOT NULL DEFAULT 'Demo Barangay',
-  emergency_contact VARCHAR(50) NULL,
-  CHECK (id = 1)
-) ENGINE=InnoDB;
-INSERT INTO system_settings (id, barangay_name) VALUES (1, 'Demo Barangay');
+-- Demo labels are configured in ignored config/config.php.
 
 -- NO extra reports table: reports are SELECT queries on the tables above.
 -- All FK relationships intentionally use RESTRICT for historical integrity.

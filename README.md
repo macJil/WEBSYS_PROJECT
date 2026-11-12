@@ -88,3 +88,5 @@ BayanReady Phase 5: [shared visual system and map verification](docs/BAYANREADY_
 - [Phase 7 acceptance and issue log](docs/BAYANREADY_PHASE_7_ACCEPTANCE.md)
 
 Configuration now uses one ignored `config/config.php` array. Existing teammates should transfer their previous local values using [the configuration migration guide](docs/simplification/PHASE_3_CONFIGURATION.md). Check a clean setup with `python3 tests/simplification_config.py`.
+
+Database simplification: fresh installs use 17 tables; existing databases can retain the unused settings table. See the [database review and optional upgrade steps](docs/simplification/PHASE_6_DATABASE_REVIEW.md) before removing any existing table.
