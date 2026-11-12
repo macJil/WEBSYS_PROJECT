@@ -75,10 +75,6 @@ function requireRole(string $role): void
         redirect('index.php');
     }
 }
-function content_checker($data): string
-{
-    return empty($data) ? '<p>No records found.</p>' : 'hidden';
-}
 // Last-resort handling for legacy pages; models always return data or throw.
 set_exception_handler(function (Throwable $error): void {
     error_log((string) $error);
