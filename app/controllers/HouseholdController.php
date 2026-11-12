@@ -66,7 +66,7 @@ class HouseholdController extends Controller
         try {
             $savedId=$this->households->save($data,$id);
             $this->success('Household saved.', 'resources/views/admin/household.php?id=' . $savedId);
-        } catch (PDOException $error) {
+        } catch (DomainException $error) { return [$error->getMessage()]; } catch (PDOException $error) {
             error_log((string)$error);
             return [$error->getCode() === '23000' ? 'That household code is already used, or the record could not be linked. Choose a unique code.' : 'The household could not be saved. Please try again.'];
         }
@@ -87,7 +87,7 @@ class HouseholdController extends Controller
         try {
             $this->households->saveMember($householdId,$memberId,$data);
             $this->success('Household member saved.', 'resources/views/admin/household.php?id=' . $householdId);
-        } catch (PDOException $error) {
+        } catch (DomainException $error) { return [$error->getMessage()]; } catch (PDOException $error) {
             error_log((string)$error);
             return ['The member could not be saved. Please try again.'];
         }

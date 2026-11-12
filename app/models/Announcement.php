@@ -24,7 +24,7 @@ class AnnouncementModel
             $stmt=$this->pdo->prepare('INSERT INTO announcements (title,message,is_published,created_by,first_published_at) VALUES (?,?,?,?,CASE WHEN ?=1 THEN CURRENT_TIMESTAMP ELSE NULL END)');
             $stmt->execute([$title,$message,$published,$staff,$published]);
         } else {
-            $stmt=$this->pdo->prepare('UPDATE announcements SET title=?,message=?,is_published=?,first_published_at=CASE WHEN ?=1 THEN COALESCE(first_published_at,CURRENT_TIMESTAMP) ELSE first_published_at END WHERE id=?');
+            $stmt=$this->pdo->prepare('UPDATE announcements SET title=?,message=?,is_published=?,first_published_at=CASE WHEN ?=1 THEN COALESCE(first_published_at,CURRENT_TIMESTAMP) ELSE first_published_at END WHERE id=? AND archived_at IS NULL');
             $stmt->execute([$title,$message,$published,$published,$id]);
         }
     }

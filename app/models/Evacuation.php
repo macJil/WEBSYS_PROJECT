@@ -11,7 +11,7 @@ class EvacuationModel
     public function centers(string $search): array
     {
         $term='%' . strtr($search,['!'=>'!!','%'=>'!%','_'=>'!_']) . '%';
-        return $this->rows("SELECT c.*, (SELECT COUNT(*) FROM evacuation_records e WHERE e.center_id=c.id AND e.checked_out_at IS NULL) AS occupancy FROM evacuation_centers c WHERE c.name LIKE ? ESCAPE '!' OR c.address_details LIKE ? ESCAPE '!' ORDER BY c.name",[$term,$term]);
+        return $this->rows("SELECT c.*, (SELECT COUNT(*) FROM evacuation_records e WHERE e.center_id=c.id AND e.checked_out_at IS NULL) AS occupancy FROM evacuation_centers c WHERE c.archived_at IS NULL AND (c.name LIKE ? ESCAPE '!' OR c.address_details LIKE ? ESCAPE '!') ORDER BY c.name",[$term,$term]);
     }
     public function center(int $id): array
     {
@@ -33,7 +33,7 @@ class EvacuationModel
         $this->pdo->beginTransaction();
         try {
             if ($id) {
-                $this->lockCenter($id); $count=$this->occupancy($id);
+                $editing=$this->lockCenter($id); if($editing['archived_at']!==null)throw new DomainException('Archived centers cannot be edited.'); $count=$this->occupancy($id);
                 if ($data['capacity'] < $count) { throw new DomainException('Capacity cannot be less than current occupancy.'); }
                 if ($data['status']==='closed' && $count>0) { throw new DomainException('Check out all evacuees before closing this center.'); }
                 $stmt=$this->pdo->prepare("UPDATE evacuation_centers SET latitude=?,longitude=?,name=?, address_details=?, capacity=?, status=?, is_public=CASE WHEN ?='closed' THEN 0 ELSE is_public END WHERE id=?");
@@ -47,9 +47,9 @@ class EvacuationModel
     }
     public function members(): array
     {
-        return $this->rows('SELECT m.id,m.full_name,h.household_code FROM household_members m JOIN households h ON h.id=m.household_id ORDER BY h.household_code,m.full_name');
+        return $this->rows('SELECT m.id,m.full_name,h.household_code FROM household_members m JOIN households h ON h.id=m.household_id WHERE m.archived_at IS NULL AND h.archived_at IS NULL ORDER BY h.household_code,m.full_name');
     }
-    public function walkins(): array { return $this->rows('SELECT * FROM evacuation_walkins ORDER BY full_name,id'); }
+    public function walkins(): array { return $this->rows('SELECT * FROM evacuation_walkins WHERE archived_at IS NULL ORDER BY full_name,id'); }
     public function records(int $id): array
     {
         return $this->rows('SELECT e.*, COALESCE(m.full_name,e.walkin_name) AS person_name, h.household_code, w.age AS walkin_age,w.address_details AS walkin_address,u.full_name AS encoder, o.full_name AS checkout_staff FROM evacuation_records e LEFT JOIN household_members m ON m.id=e.household_member_id LEFT JOIN households h ON h.id=m.household_id LEFT JOIN evacuation_walkins w ON w.id=e.walkin_id JOIN users u ON u.id=e.recorded_by LEFT JOIN users o ON o.id=e.checked_out_by WHERE e.center_id=? ORDER BY (e.checked_out_at IS NULL) DESC,e.id DESC',[$id]);
@@ -59,11 +59,11 @@ class EvacuationModel
         $this->pdo->beginTransaction();
         try {
             $center=$this->lockCenter($centerId);
-            if ($center['status']!=='open') { throw new DomainException('This center is closed.'); }
+            if ($center['status']!=='open' || $center['archived_at']!==null) { throw new DomainException('This center is closed.'); }
             if ($this->occupancy($centerId)>=(int)$center['capacity']) { throw new DomainException('This center is full.'); }
             $memberId=null; $walkinId=null; $name=null; $phone=null;
             if ($kind==='member') {
-                $member=$this->rows('SELECT id FROM household_members WHERE id=? FOR UPDATE',[$personId]);
+                $member=$this->rows('SELECT m.id FROM household_members m JOIN households h ON h.id=m.household_id WHERE m.id=? AND m.archived_at IS NULL AND h.archived_at IS NULL FOR UPDATE',[$personId]);
                 if (!$member) { throw new DomainException('Registered member not found.'); } $memberId=$personId;
             } else {
                 if ($kind==='new_walkin') {
@@ -73,7 +73,7 @@ class EvacuationModel
                     $stmt->execute([$data['full_name'],$data['age'],$data['address_details'],$data['contact_phone'],$key]);
                     $personId=(int)$this->pdo->lastInsertId();
                 }
-                $people=$this->rows('SELECT * FROM evacuation_walkins WHERE id=? FOR UPDATE',[$personId]);
+                $people=$this->rows('SELECT * FROM evacuation_walkins WHERE id=? AND archived_at IS NULL FOR UPDATE',[$personId]);
                 if (!$people) { throw new DomainException('Walk-in not found.'); }
                 $walkinId=$personId; $name=$people[0]['full_name']; $phone=$people[0]['contact_phone'];
                 // Legacy walk-ins have no reusable ID; block matching active names/contacts for staff reconciliation.

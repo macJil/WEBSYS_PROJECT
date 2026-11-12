@@ -68,3 +68,5 @@ See [Phase 3 setup and reusable page pattern](docs/PHASE_3_PHP_FOUNDATIONS.md). 
 [Revision 4 location picker](docs/REVISION_4_LOCATION_PICKER.md): shared manual/map/device-location selection across incidents and staff location forms, plus relief-location management and saved-point views.
 
 [Revision 5 dashboards](docs/REVISION_5_DASHBOARDS.md): current role-specific counts, matching list links, latest resident notices, public open-center list, and editable per-good minimum-stock thresholds.
+
+[Revision 6 record actions](docs/REVISION_6_RECORD_ACTIONS.md): admin management lists with checkboxes, review/confirmation, transactional delete/archive rules, and protected history. Relevant module lists link to the shared management page.

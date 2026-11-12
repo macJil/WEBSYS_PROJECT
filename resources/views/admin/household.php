@@ -14,6 +14,7 @@ require __DIR__ . '/../components/header.php';
 <?php $savedPoint=$household; require __DIR__ . '/../components/saved-point.php'; ?>
 <a href="<?= e(url('resources/views/admin/households.php')) ?>">Back to registry</a>
 <h1><?= e($household['household_code']) ?> — <?= e($household['representative_name']) ?></h1>
+<p><a href="<?= e(url('resources/views/admin/records.php?type=members')) ?>">Select records / view archived</a></p>
 <a class="btn btn-outline-primary mb-3" href="<?= e(url('resources/views/admin/households.php?edit='.$id)) ?>">Edit household</a>
 <dl class="row">
 <?php foreach (['contact_phone'=>'Emergency contact number','purok'=>'Purok / sitio','address_details'=>'Address and location description','hazard_notes'=>'Hazard notes','vulnerability_notes'=>'Assessment notes / source','vulnerability_assessed_at'=>'Assessment date'] as $field=>$label): ?><dt class="col-sm-4"><?= e($label) ?></dt><dd class="col-sm-8"><?= e($household[$field] ?: 'Not recorded') ?></dd><?php endforeach; ?>

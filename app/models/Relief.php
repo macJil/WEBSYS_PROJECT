@@ -20,7 +20,7 @@ class ReliefModel
         try {
             if ($id) {
                 $old=$this->rows('SELECT * FROM relief_items WHERE id=? FOR UPDATE',[$id])[0]??null;
-                if (!$old) { throw new DomainException('Item not found.'); }
+                if (!$old || $old['archived_at']!==null) { throw new DomainException('Item not found.'); }
                 if ($old['unit']!==$unit && $this->rows('SELECT id FROM relief_stock_movements WHERE item_id=? LIMIT 1',[$id])) { throw new DomainException('An item with stock history must keep its unit. Create a separate item for a different unit.'); }
                 $stmt=$this->pdo->prepare('UPDATE relief_items SET item_name=?,unit=?,minimum_stock=? WHERE id=?'); $stmt->execute([$name,$unit,$minimum,$id]);
             } else {
@@ -40,7 +40,7 @@ class ReliefModel
         $this->pdo->beginTransaction();
         try {
             $item=$this->rows('SELECT * FROM relief_items WHERE id=? FOR UPDATE',[$id])[0]??null;
-            if (!$item) { throw new DomainException('Item not found.'); }
+            if (!$item || $item['archived_at']!==null) { throw new DomainException('Item not found.'); }
             $next=(int)$item['quantity_on_hand']+($type==='stock_in'?$quantity:-$quantity);
             if ($next<0) { throw new DomainException('Stock-out exceeds available stock.'); }
             if ($next>4294967295) { throw new DomainException('Resulting stock exceeds the supported quantity.'); }
@@ -56,7 +56,7 @@ class ReliefModel
         if ($date!=='') { $sql.=' AND DATE(m.created_at)=?'; $args[]=$date; }
         return $this->rows($sql.' ORDER BY m.id DESC',$args);
     }
-    public function households(): array { return $this->rows('SELECT id,household_code,representative_name FROM households ORDER BY household_code'); }
+    public function households(): array { return $this->rows('SELECT id,household_code,representative_name FROM households WHERE archived_at IS NULL ORDER BY household_code'); }
     public function distribute(int $household,string $receiver,string $notes,array $goods,int $staff): int
     {
         if (!$goods) { throw new DomainException('Choose at least one good.'); }
@@ -65,12 +65,12 @@ class ReliefModel
         }
         $this->pdo->beginTransaction();
         try {
-            if (!$this->rows('SELECT id FROM households WHERE id=?',[$household])) { throw new DomainException('Select a registered household.'); }
+            if (!$this->rows('SELECT id FROM households WHERE id=? AND archived_at IS NULL FOR UPDATE',[$household])) { throw new DomainException('Select a registered household.'); }
             // Lock in the same item order for every distribution to reduce deadlocks.
             ksort($goods,SORT_NUMERIC);
             foreach ($goods as $id=>$quantity) {
                 $item=$this->rows('SELECT * FROM relief_items WHERE id=? FOR UPDATE',[$id])[0]??null;
-                if (!$item) { throw new DomainException('One selected item no longer exists.'); }
+                if (!$item || $item['archived_at']!==null) { throw new DomainException('One selected item no longer exists.'); }
                 if ($quantity>(int)$item['quantity_on_hand']) { throw new DomainException('Insufficient stock for '.$item['item_name'].'. No goods were distributed.'); }
             }
             $stmt=$this->pdo->prepare('INSERT INTO relief_distributions (household_id,received_by,distributed_by,notes) VALUES (?,?,?,?)');

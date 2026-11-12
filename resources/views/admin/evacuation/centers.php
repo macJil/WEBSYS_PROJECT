@@ -10,6 +10,7 @@ $centers=$controller->centers($q); $pageTitle='Evacuation centers';
 require __DIR__ . '/../../components/header.php'; require __DIR__ . '/../../components/errors.php';
 ?>
 <h1>Evacuation centers</h1>
+<p><a href="<?= e(url('resources/views/admin/records.php?type=centers')) ?>">Select records / view archived</a></p>
 <form method="get" class="mb-3"><label>Search name or address <input name="q" value="<?= e($q) ?>"></label> <button class="btn btn-secondary">Search</button> <a href="<?= e(url('resources/views/admin/evacuation/centers.php')) ?>">Clear</a></form>
 <div class="table-responsive"><table class="table"><thead><tr><th>Name</th><th>Address</th><th>Status</th><th>People / capacity</th><th>Available places</th><th>Actions</th></tr></thead><tbody>
 <?php foreach ($centers as $center): ?><tr><td><?= e($center['name']) ?></td><td><?= e($center['address_details']) ?></td><td><?= e($center['status']) ?></td><td><?= (int)$center['occupancy'] ?> / <?= (int)$center['capacity'] ?></td><td><?= $center['status']==='open'?max(0,(int)$center['capacity']-(int)$center['occupancy']):0 ?></td><td><a href="<?= e(url('resources/views/admin/evacuation/center.php?id='.$center['id'])) ?>">People / history</a> · <a href="<?= e(url('resources/views/admin/evacuation/centers.php?edit='.$center['id'])) ?>">Edit / close</a></td></tr><?php endforeach; ?>

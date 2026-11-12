@@ -6,7 +6,7 @@ class ResponseModel
     public function __construct() { $this->pdo = (new DATABASE())->connect(); }
     public function teams(): array
     {
-        return $this->pdo->query('SELECT * FROM responders ORDER BY is_active DESC, team_name')->fetchAll();
+        return $this->pdo->query('SELECT * FROM responders WHERE is_active=1 ORDER BY is_active DESC, team_name')->fetchAll();
     }
     public function team(int $id)
     {
@@ -43,7 +43,7 @@ class ResponseModel
     {
         $this->pdo->beginTransaction();
         try {
-            $stmt = $this->pdo->prepare('SELECT status FROM incident_reports WHERE id=? FOR UPDATE');
+            $stmt = $this->pdo->prepare('SELECT status FROM incident_reports WHERE id=? AND archived_at IS NULL FOR UPDATE');
             $stmt->execute([$incidentId]); $old = $stmt->fetchColumn();
             if (!in_array($old, ['verified','responding'], true)) {
                 throw new DomainException('Verify or reopen the incident before managing its response.');

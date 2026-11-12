@@ -7,6 +7,7 @@ if(isPost())foreach(['name','address_details','location_type'] as $k)$d[$k]=inpu
 $pageTitle='Relief locations';require __DIR__.'/../../components/header.php';require __DIR__.'/../../components/errors.php';
 ?>
 <h1>Relief locations</h1>
+<p><a href="<?= e(url('resources/views/admin/records.php?type=locations')) ?>">Select records / view archived</a></p>
 <ul><?php foreach($c->all() as $row): ?><li><?= e($row['name']) ?> — <a href="<?= e(url('resources/views/admin/relief/location.php?id='.$row['id'])) ?>">View</a> · <a href="?edit=<?= (int)$row['id'] ?>">Edit</a></li><?php endforeach; ?></ul>
 <h2><?= $id?'Edit':'Add' ?> location</h2>
 <form method="post">

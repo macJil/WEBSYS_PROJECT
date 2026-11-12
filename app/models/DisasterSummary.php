@@ -13,7 +13,7 @@ class DisasterSummaryModel
         // A single read transaction keeps the summaries on the same database snapshot.
         $this->pdo->beginTransaction();
         try {
-            $affected=$this->rows("SELECT COUNT(*) AS total FROM households WHERE registry_reason IN ('affected','both')")[0]['total'];
+            $affected=$this->rows("SELECT COUNT(*) AS total FROM households WHERE archived_at IS NULL AND registry_reason IN ('affected','both')")[0]['total'];
             $centers=$this->rows("SELECT c.id,c.name,c.status,c.capacity,COUNT(e.id) AS occupancy,
                 CASE WHEN c.status='open' AND c.capacity>COUNT(e.id) THEN c.capacity-COUNT(e.id) ELSE 0 END AS available
                 FROM evacuation_centers c LEFT JOIN evacuation_records e ON e.center_id=c.id AND e.checked_out_at IS NULL

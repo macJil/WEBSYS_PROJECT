@@ -59,7 +59,7 @@ class ReportModel
     {
         $this->pdo->beginTransaction();
         try {
-            $stmt = $this->pdo->prepare('SELECT status FROM incident_reports WHERE id = ? FOR UPDATE');
+            $stmt = $this->pdo->prepare('SELECT status FROM incident_reports WHERE id = ? AND archived_at IS NULL FOR UPDATE');
             $stmt->execute([$id]); $old = $stmt->fetchColumn();
             if ($old === false) { throw new RuntimeException('Incident not found.'); }
             $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM incident_assignments WHERE incident_id=? AND status IN ('assigned','on_scene')");

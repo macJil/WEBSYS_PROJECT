@@ -25,6 +25,7 @@ class AnnouncementController extends Controller
     {
         requireRole('admin');
         if (!isPost()) { return []; }
+        if ($id!==null && !empty($this->model->find($id)['archived_at'])) { return ['Archived notices cannot be edited or republished.']; }
         $action=input('action'); $title=input('title'); $message=input('message');
         if (!in_array($action,['save_draft','publish'],true)) { return ['Choose Save draft / withdraw or Publish.']; }
         if ($title==='' || strlen($title)>150 || $message==='' || strlen($message)>10000) { return ['Enter a title (up to 150 bytes) and message (up to 10,000 bytes).']; }

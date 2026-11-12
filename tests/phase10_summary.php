@@ -4,14 +4,14 @@ if (PHP_SAPI !== 'cli') { http_response_code(404); exit; }
 require __DIR__ . '/../app/models/DisasterSummary.php';
 $pdo=new PDO('sqlite::memory:',null,null,[PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION,PDO::ATTR_DEFAULT_FETCH_MODE=>PDO::FETCH_ASSOC]);
 $property=new ReflectionProperty(DATABASE::class,'connection'); $property->setValue(null,$pdo);
-$pdo->exec("CREATE TABLE households(id INTEGER,registry_reason TEXT);
+$pdo->exec("CREATE TABLE households(id INTEGER,registry_reason TEXT,archived_at TEXT);
 CREATE TABLE evacuation_centers(id INTEGER,name TEXT,status TEXT,capacity INTEGER);
 CREATE TABLE evacuation_records(id INTEGER,center_id INTEGER,checked_out_at TEXT);
 CREATE TABLE incident_reports(id INTEGER,incident_type TEXT,status TEXT,created_at TEXT);
 CREATE TABLE relief_items(id INTEGER,item_name TEXT,unit TEXT);
 CREATE TABLE relief_distributions(id INTEGER,household_id INTEGER,distributed_at TEXT);
 CREATE TABLE relief_distribution_items(id INTEGER,distribution_id INTEGER,item_id INTEGER,quantity INTEGER);
-INSERT INTO households VALUES(1,'affected'),(2,'both'),(3,'monitored');
+INSERT INTO households(id,registry_reason) VALUES(1,'affected'),(2,'both'),(3,'monitored');
 INSERT INTO evacuation_centers VALUES(1,'Demo A','open',3),(2,'Demo B','closed',5),(3,'Demo C','open',2);
 INSERT INTO evacuation_records VALUES(1,1,NULL),(2,1,NULL),(3,1,'2026-11-01 12:00:00');
 INSERT INTO incident_reports VALUES(1,'flood','pending','2026-11-01 00:00:00'),(2,'fire','resolved','2026-11-30 23:59:59'),(3,'flood','pending','2026-11-15 12:00:00'),(4,'other','verified','2026-12-01 00:00:00'),(5,'fire','rejected','2026-10-31 23:59:59');

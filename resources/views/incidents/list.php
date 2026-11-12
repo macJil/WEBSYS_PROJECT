@@ -7,6 +7,7 @@ $pageTitle = $_SESSION['ROLE'] === 'admin' ? 'Incident reports' : 'My incident r
 require __DIR__ . '/../components/header.php';
 ?>
 <h1><?= e($pageTitle) ?></h1>
+<?php if($_SESSION['ROLE']==='admin'): ?><p><a href="<?= e(url('resources/views/admin/records.php?type=incidents')) ?>">Select records / view archived</a></p><?php endif; ?>
 <a class="btn btn-primary mb-3" href="<?= e(url('resources/views/incidents/create.php')) ?>">Enter incident report</a>
 <form method="get" class="row g-2 mb-4">
 <label class="col-md-3">Type<select class="form-select" name="incident_type"><option value="">All types</option>

@@ -4,6 +4,7 @@
 <a href="<?= e(url(dashboardPath())) ?>">Home</a>
 <a href="<?= e(url('resources/views/maps/map.php')) ?>">Map</a>
 <?php if ($_SESSION['ROLE'] === 'admin'): ?>
+<a href="<?= e(url('resources/views/admin/records.php')) ?>">Manage records</a>
 <a href="<?= e(url('resources/views/admin/households.php')) ?>">Households</a>
 <a href="<?= e(url('resources/views/admin/reports/report.php')) ?>">Incidents</a>
 <a href="<?= e(url('resources/views/admin/response/teams.php')) ?>">Response teams</a>

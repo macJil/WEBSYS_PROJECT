@@ -5,6 +5,7 @@ $announcements=$controller->listing(); $pageTitle='Manage announcements';
 require __DIR__ . '/../../components/header.php'; require __DIR__ . '/../../components/errors.php';
 ?>
 <h1>Emergency announcements</h1>
+<p><a href="<?= e(url('resources/views/admin/records.php?type=announcements')) ?>">Select records / view archived</a></p>
 <p>Use drafts while preparing a notice. Publishing makes the saved text visible to residents. During classroom development, use clearly labeled fictional contacts only.</p>
 <h2>Create announcement</h2>
 <?php $announcement=['title'=>'','message'=>'','is_published'=>0]; require __DIR__ . '/editor.php'; ?>
