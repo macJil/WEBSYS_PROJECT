@@ -6,7 +6,7 @@ return [
     'port' => '8889',
     'database' => 'barangay_drrm',
     'username' => 'root',
-    'password' => '',
+    'password' => 'root',
     // Absolute private folder OUTSIDE your web server document root; PHP must be able to write here.
     'incident_upload_dir' => '',
     // Philippines overview until the team selects a barangay.
