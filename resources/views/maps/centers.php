@@ -6,7 +6,7 @@ $admin = $_SESSION['ROLE'] === 'admin';
 $pageTitle = 'Open evacuation centers';
 require __DIR__ . '/../components/header.php';
 ?>
-<h1>Open <?= $admin?'':'approved ' ?>evacuation centers</h1>
+<h1>Open evacuation centers</h1>
 <p><?= count($overview['centers']) ?> centers. Centers without map points are still included.</p>
 <div class="table-responsive" tabindex="0" role="region" aria-label="Scrollable records">
     <table class="table">

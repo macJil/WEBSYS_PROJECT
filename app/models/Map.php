@@ -21,8 +21,7 @@ class MapModel
         return [
             'incidents' => $this->rows("SELECT id,incident_type,latitude,longitude,status,DATE(created_at) AS report_date FROM incident_reports WHERE archived_at IS NULL AND status IN ('verified','responding','resolved') AND " . $this->point('latitude', 'longitude')),
             'centers' => $this->centers(),
-            'relief_locations' => $this->rows("SELECT id,name,address_details,latitude,longitude,location_type FROM relief_locations WHERE archived_at IS NULL AND location_type IN ('distribution','both') AND " . $this->point('latitude', 'longitude')),
-            'incident_location_note' => 'Public incident markers use the saved report location.'
+            'relief_locations' => $this->rows("SELECT id,name,address_details,latitude,longitude,location_type FROM relief_locations WHERE archived_at IS NULL AND location_type IN ('distribution','both') AND " . $this->point('latitude', 'longitude'))
         ];
     }
     public function reliefLocation(int $id): array

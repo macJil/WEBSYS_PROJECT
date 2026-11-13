@@ -11,7 +11,7 @@ foreach ($overview['incidents'] as $status => $count) {
     if (!$admin || in_array($status, ['pending','verified','responding'], true))$cards[] = [ucfirst($status) . ' incidents',$count,'resources/views/incidents/list.php?status=' . $status];
 }
 $centerPath = 'resources/views/maps/centers.php';
-$cards[] = ['Open ' . ($admin?'':'approved ') . 'centers',count($overview['centers']),$centerPath];
+$cards[] = ['Open centers',count($overview['centers']),$centerPath];
 if ($admin) {
     $available = 0;
     foreach ($overview['centers'] as $center)$available += max(0, (int)$center['capacity'] - (int)$center['occupancy']);

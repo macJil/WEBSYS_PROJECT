@@ -12,7 +12,6 @@ return [
     'incident_upload_dir' => '',
     // Atok municipality demo view only; choose one barangay before deployment.
     'demo_barangay_name' => 'Atok, Benguet (DEMO)',
-    'map_boundary_approved' => false,
     'map_latitude' => 16.6272,
     'map_longitude' => 120.7672,
     'map_zoom' => 12,
