@@ -98,7 +98,6 @@ class RecordActionsModel
                     $s = $this->pdo->prepare("DELETE FROM $table WHERE id=?");
                 } else {
                     $set = $type === 'teams'?'is_active=0':'archived_at=COALESCE(archived_at,CURRENT_TIMESTAMP)';
-                    if (in_array($type, ['incidents','centers','locations'], true))$set .= ',is_public=0';
                     if ($type === 'centers')$set .= ",status='closed'";
                     if ($type === 'announcements')$set .= ',is_published=0';
                     $s = $this->pdo->prepare("UPDATE $table SET $set WHERE id=?");

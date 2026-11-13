@@ -12,16 +12,10 @@ require __DIR__ . '/../components/header.php';
 <h1><?= $admin?'Staff map':'Community map' ?></h1>
 <p
     ><?= e($settings['demo_barangay_name']) ?>. Markers show saved locations; they do not predict danger or guarantee
-    safety. The map opens focused on Irisan; you can pan to review other saved points. No approved
+    safety. The map opens focused on Atok; you can pan to review other saved points. No approved
     boundary is enforced.</p
 >
-<?php if ($admin): ?><p
-    >Staff layers include private incident points and manually recorded household concerns.</p
->
-<?php else: ?><p
-    >Only approved community information is shown. Public incident points use the saved report location. Your private
-    submissions remain available in <a href="<?= e(url('resources/views/incidents/list.php')) ?>">My reports</a>.</p
-><?php endif; ?>
+<p>Verified incidents, open centers, and distribution points with saved coordinates appear automatically. Pending reports and household records stay off this map.</p>
 <div class="map-layout">
     <aside class="map-key border rounded p-3" aria-label="Map layers and legend">
         <h2 class="h5">Layers and legend</h2>
@@ -36,21 +30,12 @@ require __DIR__ . '/../components/header.php';
             <span class="map-symbol center-open" aria-hidden="true">⌂</span> Evacuation centers
             <span id="count-centers"></span
         ></label>
-        <div class="small mb-2"
-            >Blue shelter: open<?php if ($admin): ?> ·
-            <span class="map-symbol center-closed" aria-hidden="true">⌂</span> Gray shelter:
-            closed<?php endif; ?></div
-        >
+        <div class="small mb-2">Blue shelter: open</div>
         <label class="map-layer">
             <input type="checkbox" data-layer="relief_locations" checked />
             <span class="map-symbol relief" aria-hidden="true">▣</span> Relief locations
             <span id="count-relief_locations"></span
         ></label>
-        <?php if ($admin): ?><label class="map-layer">
-            <input type="checkbox" data-layer="households" checked />
-            <span class="map-symbol household" aria-hidden="true">⌂</span> Household concerns
-            <span id="count-households"></span></label
-        ><?php endif; ?>
         <button type="button" id="map-home" class="btn btn-outline-secondary my-2"
             >Return to demo area</button
         >

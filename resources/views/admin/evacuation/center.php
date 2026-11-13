@@ -13,7 +13,6 @@ require __DIR__ . '/../../components/errors.php';
 ?> <?php $savedPoint = $center;
 require __DIR__ . '/../../components/saved-point.php'; ?>
 <h1><?= e($center['name']) ?></h1>
-<p><a href="<?= e(url('resources/views/admin/map-publication.php?type=center&id=' . $id)) ?>">Manage community map visibility</a></p>
 <p><a href="<?= e(url('resources/views/admin/records.php?type=walkins')) ?>">Select records / view archived</a></p>
 <p
     ><?= e($center['address_details']) ?> · <?= e($center['status']) ?> · Occupancy: <?= (int)$center['occupancy'] ?> /

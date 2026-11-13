@@ -10,11 +10,11 @@ return [
     'password' => '',
     // Absolute private folder OUTSIDE your web server document root; PHP must be able to write here.
     'incident_upload_dir' => '',
-    // Irisan demo view only; no approved boundary or stakeholder identity.
-    'demo_barangay_name' => 'Barangay Irisan, Baguio City (DEMO)',
+    // Atok municipality demo view only; choose one barangay before deployment.
+    'demo_barangay_name' => 'Atok, Benguet (DEMO)',
     'map_boundary_approved' => false,
-    'map_latitude' => 16.41792,
-    'map_longitude' => 120.56091,
-    'map_zoom' => 15,
-    'map_min_zoom' => 14, // Focused demo view; no official boundary restriction.
+    'map_latitude' => 16.6272,
+    'map_longitude' => 120.7672,
+    'map_zoom' => 12,
+    'map_min_zoom' => 11, // Focused demo view; no official boundary restriction.
 ];

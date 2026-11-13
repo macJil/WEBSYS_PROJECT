@@ -45,7 +45,6 @@ require __DIR__ . '/../components/errors.php';
     ><img class="incident-image" src="<?= e(url('resources/views/incidents/image.php?id=' . $image['id'])) ?>" alt="Image attached to this incident"
 /></a>
 <?php endforeach; ?> <?php if ($admin): ?>
-<p><a href="<?= e(url('resources/views/admin/map-publication.php?type=incident&id=' . $id)) ?>">Manage community map visibility</a></p>
 <p class="mt-3"
     ><a class="btn btn-secondary" href="<?= e(url('resources/views/admin/response/incident.php?id=' . $id)) ?>"
         >Manage response teams and actions</a

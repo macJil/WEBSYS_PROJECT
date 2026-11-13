@@ -64,7 +64,6 @@ CREATE TABLE household_members (
 -- reported_by is always the logged-in creator, including admin-entered walk-in reports.
 CREATE TABLE incident_reports (
   archived_at DATETIME NULL,
-  is_public BOOLEAN NOT NULL DEFAULT FALSE,
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   reported_by INT UNSIGNED NOT NULL,
   report_source ENUM('resident','walk_in','phone','admin') NOT NULL DEFAULT 'resident',
@@ -161,7 +160,6 @@ CREATE TABLE announcements (
 -- 9. Centers: capacity is in individuals; occupancy comes from active evacuation_records.
 CREATE TABLE evacuation_centers (
   archived_at DATETIME NULL,
-  is_public BOOLEAN NOT NULL DEFAULT FALSE,
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(150) NOT NULL,
   address_details VARCHAR(255) NULL,
@@ -228,7 +226,6 @@ CREATE TABLE relief_items (
 -- 12. Warehouse/storage/distribution points shown on the staff map.
 CREATE TABLE relief_locations (
   archived_at DATETIME NULL,
-  is_public BOOLEAN NOT NULL DEFAULT FALSE,
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(150) NOT NULL,
   location_type ENUM('storage','distribution','both') NOT NULL DEFAULT 'distribution',

@@ -36,7 +36,6 @@
         incidents: ["incident", "⚠"],
         centers: ["center-open", "⌂"],
         relief_locations: ["relief", "▣"],
-        households: ["household", "⌂"],
     };
     const boxes = document.querySelectorAll("[data-layer]");
     boxes.forEach((box) => {
@@ -60,10 +59,9 @@
             path = "";
         if (layer === "incidents") {
             title = types[row.incident_type] || "Incident";
-            if (admin) line(node, "Location: ", row.location_description);
             line(node, "Status: ", row.status);
             line(node, "Reported: ", row.report_date);
-            if (!admin) line(node, "", "Saved report location.");
+            line(node, "", "Saved report location.");
             path = "resources/views/incidents/view.php?id=";
         } else if (layer === "centers") {
             title = row.name;
@@ -73,12 +71,6 @@
             line(node, "Occupants: ", row.occupancy);
             line(node, "Available places: ", row.available);
             path = "resources/views/admin/evacuation/center.php?id=";
-        } else if (layer === "households") {
-            title = row.household_code;
-            line(node, "Purok: ", row.purok);
-            line(node, "Location: ", row.address_details);
-            line(node, "Recorded concern: ", types[row.hazard_type] || row.hazard_type);
-            path = "resources/views/admin/household.php?id=";
         } else {
             title = row.name;
             line(node, "Address: ", row.address_details);
@@ -141,7 +133,6 @@
                     )
                         return;
                     let [color, symbol] = symbols[layer];
-                    if (layer === "centers" && row.status === "closed") color = "center-closed";
                     // Only fixed icon constants enter HTML; database strings use textContent in popup().
                     const icon = L.divIcon({
                         className: "map-marker-icon",
@@ -170,7 +161,7 @@
                 ? total + " saved locations loaded. Select a marker for details."
                 : admin
                   ? "No active saved locations have map points yet. Add a point using a record form."
-                  : "No approved locations with map points are published yet. Your submissions remain in My reports.";
+                  : "No verified incidents, open centers, or distribution points have map coordinates yet. Your submissions remain in My reports.";
             document.getElementById("map-fit").disabled = false;
         })
         .catch((error) => {

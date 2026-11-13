@@ -21,8 +21,7 @@ class ReliefLocationModel
     {
         $values = [$d['name'],$d['location_type'],$d['address_details'],$d['latitude'],$d['longitude']];
         if ($id) {
-            $s = $this->pdo->prepare("UPDATE relief_locations SET name=?,location_type=?,address_details=?,latitude=?,longitude=?,is_public=CASE WHEN ?='storage' THEN 0 ELSE is_public END WHERE id=? AND archived_at IS NULL");
-            $values[] = $d['location_type'];
+            $s = $this->pdo->prepare("UPDATE relief_locations SET name=?,location_type=?,address_details=?,latitude=?,longitude=? WHERE id=? AND archived_at IS NULL");
             $values[] = $id;
         } else {
             $s = $this->pdo->prepare('INSERT INTO relief_locations(name,location_type,address_details,latitude,longitude) VALUES(?,?,?,?,?)');

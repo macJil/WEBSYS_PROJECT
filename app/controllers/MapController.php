@@ -7,7 +7,7 @@ class MapController extends Controller
     {
         session_checker();
         $model = new MapModel();
-        return $_SESSION['ROLE'] === 'admin'?$model->admin():$model->resident();
+        return $model->publicMap();
     }
     public function reliefLocation($value): array
     {
