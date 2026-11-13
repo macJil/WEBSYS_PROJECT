@@ -53,7 +53,7 @@ class ResponseModel
             $stmt = $this->pdo->prepare('SELECT status FROM incident_reports WHERE id=? AND archived_at IS NULL FOR UPDATE');
             $stmt->execute([$incidentId]);
             $old = $stmt->fetchColumn();
-            if (!in_array($old, ['verified','responding'], true)) {
+            if (!in_array($old, ['verified', 'responding'], true)) {
                 throw new DomainException('Verify or reopen the incident before managing its response.');
             }
             if ($teamId !== null) {
@@ -64,44 +64,44 @@ class ResponseModel
                     throw new DomainException('Choose an active response team.');
                 }
                 $stmt = $this->pdo->prepare('SELECT id FROM incident_assignments WHERE incident_id=? AND responder_id=?');
-                $stmt->execute([$incidentId,$teamId]);
+                $stmt->execute([$incidentId, $teamId]);
                 if ($stmt->fetchColumn()) {
                     throw new DomainException('This team already has an assignment. Update or reactivate that assignment below.');
                 }
                 $stmt = $this->pdo->prepare('INSERT INTO incident_assignments (incident_id,responder_id,assigned_by) VALUES (?,?,?)');
-                $stmt->execute([$incidentId,$teamId,$staff]);
+                $stmt->execute([$incidentId, $teamId, $staff]);
                 $assignmentId = (int)$this->pdo->lastInsertId();
                 $status = 'assigned';
                 $action = 'Assigned team ' . $team['team_name'] . '. ' . $notes;
             } else {
                 $stmt = $this->pdo->prepare('SELECT a.*, r.team_name, r.is_active FROM incident_assignments a JOIN responders r ON r.id=a.responder_id WHERE a.id=? AND a.incident_id=? FOR UPDATE');
-                $stmt->execute([$assignmentId,$incidentId]);
+                $stmt->execute([$assignmentId, $incidentId]);
                 $assignment = $stmt->fetch();
                 if (!$assignment) {
                     throw new DomainException('Assignment does not belong to this incident.');
                 }
                 $allowed = [
-                    'assigned' => ['assigned','on_scene','completed','cancelled'],
-                    'on_scene' => ['on_scene','completed','cancelled'],
-                    'completed' => ['completed','assigned'],
-                    'cancelled' => ['cancelled','assigned']
+                    'assigned' => ['assigned', 'on_scene', 'completed', 'cancelled'],
+                    'on_scene' => ['on_scene', 'completed', 'cancelled'],
+                    'completed' => ['completed', 'assigned'],
+                    'cancelled' => ['cancelled', 'assigned']
                 ];
                 if (!in_array($status, $allowed[$assignment['status']], true)) {
                     throw new DomainException('Invalid assignment transition. Reactivate a closed assignment as assigned first.');
                 }
-                if ($status === 'assigned' && in_array($assignment['status'], ['completed','cancelled'], true) && !$assignment['is_active']) {
+                if ($status === 'assigned' && in_array($assignment['status'], ['completed', 'cancelled'], true) && !$assignment['is_active']) {
                     throw new DomainException('Reactivate the response team before assigning it again.');
                 }
                 $stmt = $this->pdo->prepare('UPDATE incident_assignments SET status=? WHERE id=? AND incident_id=?');
-                $stmt->execute([$status,$assignmentId,$incidentId]);
+                $stmt->execute([$status, $assignmentId, $incidentId]);
                 $action = $assignment['team_name'] . ': ' . $assignment['status'] . ' → ' . $status . '. ' . $notes;
             }
             // Dispatch/on-scene starts response. Completion never automatically resolves an emergency.
-            $next = in_array($status, ['assigned','on_scene'], true) ? 'responding' : $old;
+            $next = in_array($status, ['assigned', 'on_scene'], true) ? 'responding' : $old;
             $stmt = $this->pdo->prepare('UPDATE incident_reports SET status=? WHERE id=?');
-            $stmt->execute([$next,$incidentId]);
+            $stmt->execute([$next, $incidentId]);
             $stmt = $this->pdo->prepare('INSERT INTO response_updates (incident_id,updated_by,action_taken,from_status,to_status,assignment_id,assignment_status) VALUES (?,?,?,?,?,?,?)');
-            $stmt->execute([$incidentId,$staff,$action,$old,$next,$assignmentId,$status]);
+            $stmt->execute([$incidentId, $staff, $action, $old, $next, $assignmentId, $status]);
             $this->pdo->commit();
         } catch (Throwable $error) {
             $this->pdo->rollBack();

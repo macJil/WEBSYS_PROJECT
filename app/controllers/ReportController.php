@@ -3,8 +3,8 @@ require_once __DIR__ . '/Controller.php';
 require_once __DIR__ . '/../models/Report.php';
 class ReportController extends Controller
 {
-    public const TYPES = ['flood' => 'Flooding','fire' => 'Fire','landslide' => 'Landslide','road_obstruction' => 'Road obstruction','other' => 'Other emergency'];
-    public const STATUSES = ['pending','verified','responding','resolved','rejected'];
+    public const TYPES = ['flood' => 'Flooding', 'fire' => 'Fire', 'landslide' => 'Landslide', 'road_obstruction' => 'Road obstruction', 'other' => 'Other emergency'];
+    public const STATUSES = ['pending', 'verified', 'responding', 'resolved', 'rejected'];
     private ReportModel $model;
     public function __construct(string $role)
     {
@@ -21,7 +21,8 @@ class ReportController extends Controller
         if (!$id || $id < 1) {
             http_response_code(400);
             exit('Invalid ID.');
-        } return $id;
+        }
+        return $id;
     }
     public function getIncident(int $id): array
     {
@@ -29,17 +30,19 @@ class ReportController extends Controller
         if (!$row) {
             http_response_code(404);
             exit('Incident not found.');
-        } return $row;
+        }
+        return $row;
     }
     public function filters(): array
     {
         $filters = [];
-        foreach (['incident_type','status','date','location','search'] as $key) {
+        foreach (['incident_type', 'status', 'date', 'location', 'search'] as $key) {
             $filters[$key] = is_string($_GET[$key] ?? null) ? trim($_GET[$key]) : '';
         }
         if (($filters['incident_type'] !== '' && !isset(self::TYPES[$filters['incident_type']])) ||
             ($filters['status'] !== '' && !in_array($filters['status'], self::STATUSES, true)) ||
-            ($filters['date'] !== '' && !$this->validDate($filters['date']))) {
+            ($filters['date'] !== '' && !$this->validDate($filters['date']))
+        ) {
             http_response_code(400);
             exit('Invalid search filter.');
         }
@@ -66,7 +69,7 @@ class ReportController extends Controller
     public function values(): array
     {
         $data = [];
-        foreach (['incident_type','description','reporter_name','contact_phone','location_description','latitude','longitude','report_source'] as $key) {
+        foreach (['incident_type', 'description', 'reporter_name', 'contact_phone', 'location_description', 'latitude', 'longitude', 'report_source'] as $key) {
             $data[$key] = input($key);
         }
         return $data;
@@ -115,7 +118,7 @@ class ReportController extends Controller
             throw new InvalidArgumentException('Image must be between 1 byte and 5 MiB.');
         }
         $mime = (new finfo(FILEINFO_MIME_TYPE))->file($file['tmp_name']);
-        $types = ['image/jpeg' => 'jpg','image/png' => 'png','image/webp' => 'webp'];
+        $types = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp'];
         $info = @getimagesize($file['tmp_name']);
         if (!isset($types[$mime]) || !$info || $info['mime'] !== $mime) {
             throw new InvalidArgumentException('Choose a valid JPEG, PNG, or WebP image.');
@@ -126,7 +129,7 @@ class ReportController extends Controller
             throw new RuntimeException('Could not store image.');
         }
         chmod($path, 0600);
-        return ['stored_filename' => $name,'original_filename' => substr(basename((string) $file['name']), 0, 255),'mime_type' => $mime,'file_size' => $size,'path' => $path];
+        return ['stored_filename' => $name, 'original_filename' => substr(basename((string) $file['name']), 0, 255), 'mime_type' => $mime, 'file_size' => $size, 'path' => $path];
     }
     public function create(array $data): array
     {
@@ -137,7 +140,7 @@ class ReportController extends Controller
             return ['The form was incomplete or exceeded the server upload limit. Please try again.'];
         }
         $errors = [];
-        foreach (['description' => 10000,'reporter_name' => 100,'contact_phone' => 20,'location_description' => 255] as $key => $max) {
+        foreach (['description' => 10000, 'reporter_name' => 100, 'contact_phone' => 20, 'location_description' => 255] as $key => $max) {
             if ($data[$key] === '' || strlen($data[$key]) > $max) {
                 $errors[] = ucfirst(str_replace('_', ' ', $key)) . " is required (maximum $max bytes).";
             }
@@ -148,7 +151,7 @@ class ReportController extends Controller
         if ($data['contact_phone'] !== '' && !preg_match('/^[0-9+() .-]{3,20}$/', $data['contact_phone'])) {
             $errors[] = 'Enter a valid contact number.';
         }
-        foreach (['latitude' => 90,'longitude' => 180] as $key => $limit) {
+        foreach (['latitude' => 90, 'longitude' => 180] as $key => $limit) {
             if ($data[$key] !== '' && (!is_numeric($data[$key]) || !is_finite((float)$data[$key]) || abs((float)$data[$key]) > $limit)) {
                 $errors[] = 'Enter valid coordinates.';
             }
@@ -157,14 +160,14 @@ class ReportController extends Controller
             $errors[] = 'Provide both coordinates, or leave both blank.';
         }
         $admin = $_SESSION['ROLE'] === 'admin';
-        if ($admin && !in_array($data['report_source'], ['walk_in','phone','admin'], true)) {
+        if ($admin && !in_array($data['report_source'], ['walk_in', 'phone', 'admin'], true)) {
             $errors[] = 'Choose how the report was received.';
         }
         if ($errors) {
             return $errors;
         }
         $data['report_source'] = $admin ? $data['report_source'] : 'resident';
-        foreach (['latitude','longitude'] as $key) {
+        foreach (['latitude', 'longitude'] as $key) {
             $data[$key] = $data[$key] === '' ? null : $data[$key];
         }
         $data['reported_by'] = (int) $_SESSION['ID'];
@@ -200,7 +203,7 @@ class ReportController extends Controller
             return $errors;
         }
         try {
-            $this->model->updateLocation($id, $description, $lat === ''?null:$lat, $lng === ''?null:$lng, $notes, (int)$_SESSION['ID']);
+            $this->model->updateLocation($id, $description, $lat === '' ? null : $lat, $lng === '' ? null : $lng, $notes, (int)$_SESSION['ID']);
         } catch (DomainException $error) {
             return [$error->getMessage()];
         } catch (Throwable $error) {

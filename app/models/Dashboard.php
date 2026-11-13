@@ -21,13 +21,13 @@ class DashboardModel
             $s .= ' AND reported_by=?';
             $args[] = $owner;
         }
-        $counts = array_fill_keys(['pending','verified','responding','resolved','rejected'], 0);
-        foreach ($this->rows($s . ' GROUP BY status', $args) as $r)$counts[$r['status']] = (int)$r['total'];
+        $counts = array_fill_keys(['pending', 'verified', 'responding', 'resolved', 'rejected'], 0);
+        foreach ($this->rows($s . ' GROUP BY status', $args) as $r) $counts[$r['status']] = (int)$r['total'];
         return $counts;
     }
     public function centers(bool $public): array
     {
-        return $this->rows("SELECT c.id,c.name,c.address_details,c.capacity,(SELECT COUNT(*) FROM evacuation_records e WHERE e.center_id=c.id AND e.checked_out_at IS NULL) AS occupancy FROM evacuation_centers c WHERE c.archived_at IS NULL AND c.status='open'" . ($public?' AND c.is_public=1':'') . ' ORDER BY c.name');
+        return $this->rows("SELECT c.id,c.name,c.address_details,c.capacity,(SELECT COUNT(*) FROM evacuation_records e WHERE e.center_id=c.id AND e.checked_out_at IS NULL) AS occupancy FROM evacuation_centers c WHERE c.archived_at IS NULL AND c.status='open'" . ($public ? ' AND c.is_public=1' : '') . ' ORDER BY c.name');
     }
     public function affected(): array
     {

@@ -3,10 +3,10 @@ require_once __DIR__ . '/Controller.php';
 require_once __DIR__ . '/../models/Household.php';
 class HouseholdController extends Controller
 {
-    public const VULNERABILITY = ['unassessed' => 'Not yet assessed','no_additional_need_identified' => 'No additional assistance need identified','assistance_needed' => 'Additional assistance needed'];
-    public const HAZARDS = ['unassessed' => 'Not assessed','landslide' => 'Landslide','flood' => 'Flood','fire' => 'Fire','other' => 'Other'];
-    public const REASONS = ['monitored' => 'Monitored','affected' => 'Affected','both' => 'Monitored and affected'];
-    public const EVACUATION = ['at_home' => 'At home','advised' => 'Advised to evacuate','evacuated' => 'Evacuated','returned' => 'Returned'];
+    public const VULNERABILITY = ['unassessed' => 'Not yet assessed', 'no_additional_need_identified' => 'No additional assistance need identified', 'assistance_needed' => 'Additional assistance needed'];
+    public const HAZARDS = ['unassessed' => 'Not assessed', 'landslide' => 'Landslide', 'flood' => 'Flood', 'fire' => 'Fire', 'other' => 'Other'];
+    public const REASONS = ['monitored' => 'Monitored', 'affected' => 'Affected', 'both' => 'Monitored and affected'];
+    public const EVACUATION = ['at_home' => 'At home', 'advised' => 'Advised to evacuate', 'evacuated' => 'Evacuated', 'returned' => 'Returned'];
     private HouseholdModel $households;
     public function __construct()
     {
@@ -51,7 +51,7 @@ class HouseholdController extends Controller
     public function householdInput(): array
     {
         $data = [];
-        foreach (['household_code','representative_name','contact_phone','purok','address_details','registry_reason','hazard_type','hazard_notes','vulnerability_category','vulnerability_notes','evacuation_status','latitude','longitude'] as $field) {
+        foreach (['household_code', 'representative_name', 'contact_phone', 'purok', 'address_details', 'registry_reason', 'hazard_type', 'hazard_notes', 'vulnerability_category', 'vulnerability_notes', 'evacuation_status', 'latitude', 'longitude'] as $field) {
             $data[$field] = input($field);
         }
         return $data;
@@ -66,12 +66,12 @@ class HouseholdController extends Controller
         }
         $old = $id === null ? null : $this->getHousehold($id);
         $errors = locationErrors($data['address_details'], $data['latitude'], $data['longitude']);
-        foreach (['household_code' => 30,'representative_name' => 100,'purok' => 100] as $field => $max) {
+        foreach (['household_code' => 30, 'representative_name' => 100, 'purok' => 100] as $field => $max) {
             if ($data[$field] === '' || strlen($data[$field]) > $max) {
                 $errors[] = str_replace('_', ' ', ucfirst($field)) . ' is required and must fit within ' . $max . ' bytes.';
             }
         }
-        foreach (['address_details','hazard_notes','vulnerability_notes'] as $field) {
+        foreach (['address_details', 'hazard_notes', 'vulnerability_notes'] as $field) {
             if (strlen($data[$field]) > 255) {
                 $errors[] = str_replace('_', ' ', ucfirst($field)) . ' must fit within 255 bytes.';
             }
@@ -79,7 +79,7 @@ class HouseholdController extends Controller
         if ($data['contact_phone'] !== '' && !preg_match('/^[0-9+() .-]{7,20}$/', $data['contact_phone'])) {
             $errors[] = 'Enter a valid emergency contact number (7–20 characters), or leave it blank.';
         }
-        foreach (['registry_reason' => self::REASONS,'hazard_type' => self::HAZARDS,'vulnerability_category' => self::VULNERABILITY,'evacuation_status' => self::EVACUATION] as $field => $options) {
+        foreach (['registry_reason' => self::REASONS, 'hazard_type' => self::HAZARDS, 'vulnerability_category' => self::VULNERABILITY, 'evacuation_status' => self::EVACUATION] as $field => $options) {
             if (!array_key_exists($data[$field], $options)) {
                 $errors[] = 'Choose a valid ' . str_replace('_', ' ', $field) . '.';
             }
@@ -90,8 +90,8 @@ class HouseholdController extends Controller
         if ($errors) {
             return $errors;
         }
-        foreach (['latitude','longitude'] as $field) {
-            $data[$field] = $data[$field] === ''?null:$data[$field];
+        foreach (['latitude', 'longitude'] as $field) {
+            $data[$field] = $data[$field] === '' ? null : $data[$field];
         }
         $assessed = $data['vulnerability_category'] !== 'unassessed';
         $changed = !$old || $data['vulnerability_category'] !== $old['vulnerability_category'] || $data['vulnerability_notes'] !== ($old['vulnerability_notes'] ?? '');
@@ -127,7 +127,7 @@ class HouseholdController extends Controller
         if (strlen($data['notes']) > 255) {
             $errors[] = 'Member notes must fit within 255 bytes.';
         }
-        $age = $data['age'] === '' ? null : filter_var($data['age'], FILTER_VALIDATE_INT, ['options' => ['min_range' => 0,'max_range' => 130]]);
+        $age = $data['age'] === '' ? null : filter_var($data['age'], FILTER_VALIDATE_INT, ['options' => ['min_range' => 0, 'max_range' => 130]]);
         if ($age === false) {
             $errors[] = 'Enter a whole-number age from 0 to 130, or leave it blank.';
         }

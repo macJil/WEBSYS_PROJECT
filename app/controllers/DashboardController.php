@@ -12,13 +12,14 @@ class DashboardController extends Controller
     public function dashboardData(): array
     {
         $admin = $_SESSION['ROLE'] === 'admin';
-        $data = ['incidents' => $this->model->incidents($admin?null:(int)$_SESSION['ID']),'centers' => $this->model->centers(!$admin)];
+        $data = ['incidents' => $this->model->incidents($admin ? null : (int)$_SESSION['ID']), 'centers' => $this->model->centers(!$admin)];
         if ($admin) {
             $data['affected'] = $this->model->affected();
             $data['stays'] = $this->model->stays();
             $data['low_stock'] = $this->model->lowStock();
         } else {
             $data['notices'] = $this->model->notices();
-        }return $data;
+        }
+        return $data;
     }
 }

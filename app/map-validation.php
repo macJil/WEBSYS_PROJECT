@@ -1,7 +1,7 @@
 <?php
 function publicationErrors(array $data): array
 {
-    if (!in_array($data['is_public'] ?? null, [0,1,'0','1'], true)) {
+    if (!in_array($data['is_public'] ?? null, [0, 1, '0', '1'], true)) {
         return ['Choose a valid visibility value.'];
     }
     $lat = $data['public_latitude'] ?? '';
@@ -13,7 +13,7 @@ function publicationErrors(array $data): array
     }
     if ((int)$data['is_public'] === 1) {
         $label = $data['public_label'] ?? null;
-        if (!is_string($label) || trim($label) === '' || strlen($label) > 150 || $emptyLat || !in_array($data['status'] ?? '', ['verified','responding','resolved'], true) || !empty($data['archived_at'])) {
+        if (!is_string($label) || trim($label) === '' || strlen($label) > 150 || $emptyLat || !in_array($data['status'] ?? '', ['verified', 'responding', 'resolved'], true) || !empty($data['archived_at'])) {
             return ['Publication requires an eligible incident, safe label, and separate public point.'];
         }
     }

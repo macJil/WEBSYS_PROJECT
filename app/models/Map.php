@@ -42,6 +42,6 @@ class MapModel
     }
     private function centers(bool $resident): array
     {
-        return $this->rows("SELECT c.id,c.name,c.address_details,c.latitude,c.longitude,c.status,c.capacity,COUNT(e.id) AS occupancy,CASE WHEN c.status='open' AND c.capacity>COUNT(e.id) THEN c.capacity-COUNT(e.id) ELSE 0 END AS available FROM evacuation_centers c LEFT JOIN evacuation_records e ON e.center_id=c.id AND e.checked_out_at IS NULL WHERE c.archived_at IS NULL AND " . $this->point('c.latitude', 'c.longitude') . ($resident?" AND c.is_public=1 AND c.status='open'":'') . " GROUP BY c.id,c.name,c.address_details,c.latitude,c.longitude,c.status,c.capacity");
+        return $this->rows("SELECT c.id,c.name,c.address_details,c.latitude,c.longitude,c.status,c.capacity,COUNT(e.id) AS occupancy,CASE WHEN c.status='open' AND c.capacity>COUNT(e.id) THEN c.capacity-COUNT(e.id) ELSE 0 END AS available FROM evacuation_centers c LEFT JOIN evacuation_records e ON e.center_id=c.id AND e.checked_out_at IS NULL WHERE c.archived_at IS NULL AND " . $this->point('c.latitude', 'c.longitude') . ($resident ? " AND c.is_public=1 AND c.status='open'" : '') . " GROUP BY c.id,c.name,c.address_details,c.latitude,c.longitude,c.status,c.capacity");
     }
 }

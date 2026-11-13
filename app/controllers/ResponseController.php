@@ -3,7 +3,7 @@ require_once __DIR__ . '/Controller.php';
 require_once __DIR__ . '/../models/Response.php';
 class ResponseController extends Controller
 {
-    public const STATUSES = ['assigned','on_scene','completed','cancelled'];
+    public const STATUSES = ['assigned', 'on_scene', 'completed', 'cancelled'];
     private ResponseModel $model;
     public function __construct()
     {
@@ -16,7 +16,8 @@ class ResponseController extends Controller
         if (!$id || $id < 1) {
             http_response_code(400);
             exit('Invalid record ID.');
-        } return $id;
+        }
+        return $id;
     }
     public function team(int $id): array
     {
@@ -24,7 +25,8 @@ class ResponseController extends Controller
         if (!$row) {
             http_response_code(404);
             exit('Team not found.');
-        } return $row;
+        }
+        return $row;
     }
     public function incident(int $id): array
     {
@@ -32,7 +34,8 @@ class ResponseController extends Controller
         if (!$row) {
             http_response_code(404);
             exit('Incident not found.');
-        } return $row;
+        }
+        return $row;
     }
     public function teams(): array
     {
@@ -63,7 +66,7 @@ class ResponseController extends Controller
         if ($phone !== '' && !preg_match('/^[0-9+() .-]{3,20}$/', $phone)) {
             return ['Enter a valid contact number, or leave it blank.'];
         }
-        if (!in_array($active, ['0','1'], true)) {
+        if (!in_array($active, ['0', '1'], true)) {
             return ['Choose active or inactive.'];
         }
         try {
@@ -82,7 +85,7 @@ class ResponseController extends Controller
         }
         $action = input('action');
         $notes = input('notes');
-        if (!in_array($action, ['assign_team','update_assignment'], true)) {
+        if (!in_array($action, ['assign_team', 'update_assignment'], true)) {
             return ['Unknown form action.'];
         }
         if ($notes === '' || strlen($notes) > 2000) {

@@ -11,15 +11,16 @@ class ReliefController extends Controller
     }
     public function recordId($value): int
     {
-        $id = is_scalar($value)?filter_var($value, FILTER_VALIDATE_INT):false;
+        $id = is_scalar($value) ? filter_var($value, FILTER_VALIDATE_INT) : false;
         if (!$id || $id < 1) {
             http_response_code(400);
             exit('Invalid ID.');
-        } return $id;
+        }
+        return $id;
     }
     public function queryValue(string $key): string
     {
-        return is_string($_GET[$key] ?? null)?trim($_GET[$key]):'';
+        return is_string($_GET[$key] ?? null) ? trim($_GET[$key]) : '';
     }
     public function items(string $q = '', bool $low = false): array
     {
@@ -31,7 +32,8 @@ class ReliefController extends Controller
         if (!$row) {
             http_response_code(404);
             exit('Item not found.');
-        } return $row;
+        }
+        return $row;
     }
     public function households(): array
     {
@@ -47,7 +49,8 @@ class ReliefController extends Controller
         if (!$row) {
             http_response_code(404);
             exit('Distribution not found.');
-        } return $row;
+        }
+        return $row;
     }
     public function distributedGoods(int $id): array
     {
@@ -57,7 +60,7 @@ class ReliefController extends Controller
     {
         $type = $this->queryValue('type');
         $date = $this->queryValue('date');
-        if (!in_array($type, ['','stock_in','stock_out','distribution'], true) || ($date !== '' && !validDateInput($date))) {
+        if (!in_array($type, ['', 'stock_in', 'stock_out', 'distribution'], true) || ($date !== '' && !validDateInput($date))) {
             http_response_code(400);
             exit('Invalid history filter.');
         }
@@ -76,7 +79,7 @@ class ReliefController extends Controller
     }
     private function quantity($value)
     {
-        return is_scalar($value)?filter_var($value, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1,'max_range' => 1000000000]]):false;
+        return is_scalar($value) ? filter_var($value, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1, 'max_range' => 1000000000]]) : false;
     }
     public function saveItem(?int $id): array
     {
@@ -91,8 +94,8 @@ class ReliefController extends Controller
         if ($name === '' || strlen($name) > 120 || $unit === '' || strlen($unit) > 30) {
             return ['Enter an item name (up to 120 bytes) and unit (up to 30 bytes).'];
         }
-        $minimum = filter_var(input('minimum_stock') === ''?'0':input('minimum_stock'), FILTER_VALIDATE_INT, ['options' => ['min_range' => 0,'max_range' => 1000000000]]);
-        if ($minimum === false)return ['Minimum stock must be a whole number from 0 to 1 billion.'];
+        $minimum = filter_var(input('minimum_stock') === '' ? '0' : input('minimum_stock'), FILTER_VALIDATE_INT, ['options' => ['min_range' => 0, 'max_range' => 1000000000]]);
+        if ($minimum === false) return ['Minimum stock must be a whole number from 0 to 1 billion.'];
         try {
             $this->model->saveItem($id, $name, $unit, $minimum);
         } catch (Throwable $e) {
@@ -109,7 +112,7 @@ class ReliefController extends Controller
         $quantity = $this->quantity(input('quantity'));
         $type = input('movement_type');
         $notes = input('notes');
-        if (input('action') !== 'stock' || !in_array($type, ['stock_in','stock_out'], true) || $quantity === false || $notes === '' || strlen($notes) > 255) {
+        if (input('action') !== 'stock' || !in_array($type, ['stock_in', 'stock_out'], true) || $quantity === false || $notes === '' || strlen($notes) > 255) {
             return ['Choose stock-in/out, enter a positive whole quantity (up to 1 billion), and notes/reason (up to 255 bytes).'];
         }
         $id = $this->recordId(input('item_id'));

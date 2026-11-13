@@ -15,11 +15,11 @@ class ReliefModel
     }
     private function term(string $q): string
     {
-        return '%' . strtr($q, ['!' => '!!','%' => '!%','_' => '!_']) . '%';
+        return '%' . strtr($q, ['!' => '!!', '%' => '!%', '_' => '!_']) . '%';
     }
     public function items(string $q = '', bool $low = false): array
     {
-        return $this->rows("SELECT * FROM relief_items WHERE archived_at IS NULL AND (item_name LIKE ? ESCAPE '!' OR unit LIKE ? ESCAPE '!')" . ($low?' AND minimum_stock>0 AND quantity_on_hand<minimum_stock':'') . " ORDER BY item_name,unit", [$this->term($q),$this->term($q)]);
+        return $this->rows("SELECT * FROM relief_items WHERE archived_at IS NULL AND (item_name LIKE ? ESCAPE '!' OR unit LIKE ? ESCAPE '!')" . ($low ? ' AND minimum_stock>0 AND quantity_on_hand<minimum_stock' : '') . " ORDER BY item_name,unit", [$this->term($q), $this->term($q)]);
     }
     public function item(int $id): array
     {
@@ -38,10 +38,10 @@ class ReliefModel
                     throw new DomainException('An item with stock history must keep its unit. Create a separate item for a different unit.');
                 }
                 $stmt = $this->pdo->prepare('UPDATE relief_items SET item_name=?,unit=?,minimum_stock=? WHERE id=?');
-                $stmt->execute([$name,$unit,$minimum,$id]);
+                $stmt->execute([$name, $unit, $minimum, $id]);
             } else {
                 $stmt = $this->pdo->prepare('INSERT INTO relief_items (item_name,unit,minimum_stock) VALUES (?,?,?)');
-                $stmt->execute([$name,$unit,$minimum]);
+                $stmt->execute([$name, $unit, $minimum]);
             }
             $this->pdo->commit();
         } catch (Throwable $e) {
@@ -52,11 +52,11 @@ class ReliefModel
     private function movement(int $item, string $type, int $quantity, ?int $distribution, int $staff, string $notes): void
     {
         $stmt = $this->pdo->prepare('INSERT INTO relief_stock_movements (item_id,movement_type,quantity,distribution_id,recorded_by,notes) VALUES (?,?,?,?,?,?)');
-        $stmt->execute([$item,$type,$quantity,$distribution,$staff,$notes]);
+        $stmt->execute([$item, $type, $quantity, $distribution, $staff, $notes]);
     }
     public function stock(int $id, string $type, int $quantity, int $staff, string $notes): void
     {
-        if (!in_array($type, ['stock_in','stock_out'], true) || $quantity < 1 || $quantity > 1000000000) {
+        if (!in_array($type, ['stock_in', 'stock_out'], true) || $quantity < 1 || $quantity > 1000000000) {
             throw new DomainException('Choose a valid movement and positive whole quantity.');
         }
         $this->pdo->beginTransaction();
@@ -65,7 +65,7 @@ class ReliefModel
             if (!$item || $item['archived_at'] !== null) {
                 throw new DomainException('Item not found.');
             }
-            $next = (int)$item['quantity_on_hand'] + ($type === 'stock_in'?$quantity:-$quantity);
+            $next = (int)$item['quantity_on_hand'] + ($type === 'stock_in' ? $quantity : -$quantity);
             if ($next < 0) {
                 throw new DomainException('Stock-out exceeds available stock.');
             }
@@ -73,7 +73,7 @@ class ReliefModel
                 throw new DomainException('Resulting stock exceeds the supported quantity.');
             }
             $stmt = $this->pdo->prepare('UPDATE relief_items SET quantity_on_hand=? WHERE id=?');
-            $stmt->execute([$next,$id]);
+            $stmt->execute([$next, $id]);
             $this->movement($id, $type, $quantity, null, $staff, $notes);
             $this->pdo->commit();
         } catch (Throwable $e) {
@@ -126,13 +126,13 @@ class ReliefModel
                 }
             }
             $stmt = $this->pdo->prepare('INSERT INTO relief_distributions (household_id,received_by,distributed_by,notes) VALUES (?,?,?,?)');
-            $stmt->execute([$household,$receiver,$staff,$notes]);
+            $stmt->execute([$household, $receiver, $staff, $notes]);
             $distribution = (int)$this->pdo->lastInsertId();
             foreach ($goods as $id => $quantity) {
                 $stmt = $this->pdo->prepare('UPDATE relief_items SET quantity_on_hand=quantity_on_hand-? WHERE id=?');
-                $stmt->execute([$quantity,$id]);
+                $stmt->execute([$quantity, $id]);
                 $stmt = $this->pdo->prepare('INSERT INTO relief_distribution_items (distribution_id,item_id,quantity) VALUES (?,?,?)');
-                $stmt->execute([$distribution,$id,$quantity]);
+                $stmt->execute([$distribution, $id, $quantity]);
                 $this->movement($id, 'distribution', $quantity, $distribution, $staff, $notes);
             }
             $this->pdo->commit();
@@ -144,7 +144,7 @@ class ReliefModel
     }
     public function distributions(string $q): array
     {
-        return $this->rows("SELECT d.*,h.household_code,u.full_name FROM relief_distributions d JOIN households h ON h.id=d.household_id JOIN users u ON u.id=d.distributed_by WHERE h.household_code LIKE ? ESCAPE '!' OR d.received_by LIKE ? ESCAPE '!' ORDER BY d.id DESC", [$this->term($q),$this->term($q)]);
+        return $this->rows("SELECT d.*,h.household_code,u.full_name FROM relief_distributions d JOIN households h ON h.id=d.household_id JOIN users u ON u.id=d.distributed_by WHERE h.household_code LIKE ? ESCAPE '!' OR d.received_by LIKE ? ESCAPE '!' ORDER BY d.id DESC", [$this->term($q), $this->term($q)]);
     }
     public function distribution(int $id): array
     {

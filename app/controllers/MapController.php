@@ -7,12 +7,12 @@ class MapController extends Controller
     {
         session_checker();
         $model = new MapModel();
-        return $_SESSION['ROLE'] === 'admin'?$model->admin():$model->resident();
+        return $_SESSION['ROLE'] === 'admin' ? $model->admin() : $model->resident();
     }
     public function reliefLocation($value): array
     {
         requireRole('admin');
-        $id = is_scalar($value)?filter_var($value, FILTER_VALIDATE_INT):false;
+        $id = is_scalar($value) ? filter_var($value, FILTER_VALIDATE_INT) : false;
         if (!$id || $id < 1) {
             http_response_code(400);
             exit('Invalid location ID.');

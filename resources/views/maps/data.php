@@ -3,7 +3,7 @@ require_once __DIR__ . '/../../../app/controllers/MapController.php';
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: private, no-store');
 header('X-Content-Type-Options: nosniff');
-if (empty($_SESSION['ID']) || !in_array($_SESSION['ROLE'] ?? '', ['admin','resident'], true)) {
+if (empty($_SESSION['ID']) || !in_array($_SESSION['ROLE'] ?? '', ['admin', 'resident'], true)) {
     http_response_code(401);
     echo json_encode(['error' => 'Sign in to view map data.']);
     exit;
