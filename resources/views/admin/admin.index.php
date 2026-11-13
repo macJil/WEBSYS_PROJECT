@@ -16,7 +16,7 @@ require __DIR__ . '/../components/header.php';
 <div class="row g-3">
     <?php foreach ([
     ['Household registry','Register households and members before evacuation and household relief distribution.','households.php'],
-    ['Incidents','Review reports and assign response teams from an incident’s details.','reports/report.php'],
+    ['Incidents','Review reports and assign response teams from an incident’s details.','../incidents/list.php'],
     ['Response teams','Maintain teams and their availability.','response/teams.php'],
     ['Evacuation centers','Manage capacity, check-ins, checkouts, and stay history.','evacuation/centers.php'],
     ['Relief goods','Record supplies and distribute goods to registered households.','relief/inventory.php'],

@@ -218,7 +218,6 @@ CREATE TABLE evacuation_records (
 -- 11. Relief item catalog and current stock quantity.
 CREATE TABLE relief_items (
   archived_at DATETIME NULL,
-  minimum_stock INT UNSIGNED NOT NULL DEFAULT 0,
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   item_name VARCHAR(120) NOT NULL,
   unit VARCHAR(30) NOT NULL DEFAULT 'pieces',

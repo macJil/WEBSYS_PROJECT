@@ -17,16 +17,14 @@ check(resident.get('/resources/views/incidents/view.php?id='+i)[0]==200,'owner c
 for c in [resident,other]:
  check(c.get(url)[0]==403 and c.post(url,{'action':'publish'})[0]==403,'publication staff-only GET and POST')
 check(anon.get(url)[2].endswith('/index.php'),'publication anonymous guarded')
-d={'action':'publish','public_label':'DEMO ONLY approximate area','public_latitude':'16.418','public_longitude':'120.561'}
+d={'action':'publish'}
 check(b'alert-danger' in admin.post(url,d)[1],'pending cannot publish')
 sql("UPDATE incident_reports SET status='verified' WHERE id="+i)
 check(not any(str(x['id'])==i for x in mapdata(resident)['incidents']),'verification alone does not publish')
-for changes in [{'public_latitude':'91'},{'public_longitude':''},{'public_label':'x'*151}]:
- check(b'alert-danger' in admin.post(url,dict(d,**changes))[1],'invalid public field rejected')
 success(admin.post(url,d),'staff publication form')
 public=next(x for x in mapdata(resident)['incidents'] if str(x['id'])==i)
-check(set(public)=={'id','incident_type','public_label','public_latitude','public_longitude','status','report_date'},'public field allowlist')
-check(sql('SELECT latitude FROM incident_reports WHERE id='+i).startswith('16.4181'),'private point unchanged')
+check(set(public)=={'id','incident_type','latitude','longitude','status','report_date'},'public field allowlist')
+check(str(public['latitude']).startswith('16.4181'),'public marker uses saved point')
 sql("UPDATE incident_reports SET status='resolved' WHERE id="+i)
 check(any(str(x['id'])==i for x in mapdata(resident)['incidents']),'resolved stays visible')
 success(admin.post(url,{'action':'withdraw'}),'withdraw via staff form')

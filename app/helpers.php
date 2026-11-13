@@ -77,7 +77,6 @@ function requireRole(string $role): void
 }
 // Last-resort handling for legacy pages; models always return data or throw.
 set_exception_handler(function (Throwable $error): void {
-    error_log((string) $error);
     http_response_code(500);
     echo '<p>The request could not be completed. Please try again later.</p>';
 });

@@ -23,7 +23,6 @@ class MapPublicationController extends Controller
         } catch (DomainException $e) {
             return [$e->getMessage()];
         } catch (Throwable $e) {
-            error_log((string)$e);
             return ['Map visibility could not be saved.'];
         }
         $this->success('Community map visibility saved.', 'resources/views/admin/map-publication.php?type=' . $type . '&id=' . $id);

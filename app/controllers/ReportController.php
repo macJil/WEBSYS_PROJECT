@@ -176,7 +176,6 @@ class ReportController extends Controller
             if ($image && is_file($image['path'])) {
                 unlink($image['path']);
             }
-            error_log((string)$error);
             return [$error instanceof InvalidArgumentException ? $error->getMessage() : 'Report could not be saved. Please try again; reselect your image.'];
         }
         $this->success('Incident submitted for staff review.', 'resources/views/incidents/view.php?id=' . $id);
@@ -204,7 +203,6 @@ class ReportController extends Controller
         } catch (DomainException $error) {
             return [$error->getMessage()];
         } catch (Throwable $error) {
-            error_log((string)$error);
             return ['Location could not be saved. Please try again.'];
         }
         $this->success('Incident location updated.', 'resources/views/incidents/view.php?id=' . $id);
@@ -224,7 +222,6 @@ class ReportController extends Controller
         } catch (DomainException $error) {
             return [$error->getMessage()];
         } catch (Throwable $error) {
-            error_log((string)$error);
             return ['Review could not be saved. Please try again.'];
         }
         $this->success('Review saved.', 'resources/views/incidents/view.php?id=' . $id);

@@ -46,7 +46,6 @@ class EvacuationController extends Controller
         if ($e instanceof DomainException) {
             return [$e->getMessage()];
         }
-        error_log((string)$e);
         if ($e instanceof PDOException && ($e->errorInfo[1] ?? null) === 1062) {
             return ['This person already has an active check-in. Check out the existing stay first.'];
         }

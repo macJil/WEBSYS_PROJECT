@@ -41,8 +41,4 @@ class DashboardModel
     {
         return $this->rows('SELECT id,title,created_at FROM announcements WHERE is_published=1 AND archived_at IS NULL ORDER BY created_at DESC,id DESC');
     }
-    public function lowStock(): int
-    {
-        return (int)$this->rows('SELECT COUNT(*) AS total FROM relief_items WHERE archived_at IS NULL AND minimum_stock>0 AND quantity_on_hand<minimum_stock')[0]['total'];
-    }
 }

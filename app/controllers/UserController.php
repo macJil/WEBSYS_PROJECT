@@ -60,7 +60,6 @@ class UserController extends Controller
             $_SESSION = ['ID' => (int) $user['id'], 'FULL_NAME' => $user['full_name'], 'USERNAME' => $user['username'], 'PHONE' => $user['phone'] ?? '', 'EMAIL' => $user['email'], 'ROLE' => $user['role']];
             $this->success('You are now signed in.', dashboardPath());
         } catch (PDOException $error) {
-            error_log((string) $error);
             if ($action === 'register' && $error->getCode() === '23000') {
                 return ['That email address or username is already registered.'];
             }

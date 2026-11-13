@@ -34,7 +34,6 @@ class ReliefLocationController extends Controller
         try {
             $this->model->save($id, $d);
         } catch (PDOException $e) {
-            error_log((string)$e);
             return ['Location could not be saved.'];
         }
         $this->success('Location saved.', 'resources/views/admin/relief/locations.php');

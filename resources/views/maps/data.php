@@ -17,7 +17,6 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'GET') {
 try {
     echo json_encode((new MapController())->mapData(), JSON_THROW_ON_ERROR);
 } catch (Throwable $error) {
-    error_log((string)$error);
     http_response_code(500);
     echo json_encode(['error' => 'Map data is unavailable.']);
 }

@@ -22,7 +22,6 @@ try {
 } catch (DomainException $e) {
     $errors[] = $e->getMessage();
 } catch (Throwable $e) {
-    error_log((string)$e);
     $errors[] = 'The batch could not be completed. No selected records were changed. Reload and review again.';
 }
 $rows = $rows ?? [];

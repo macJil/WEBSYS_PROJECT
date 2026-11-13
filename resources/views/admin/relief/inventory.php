@@ -8,15 +8,14 @@ if (isPost()) {
     $item = ['item_name' => input('item_name'),'unit' => input('unit')];
 }
 $q = $controller->queryValue('q');
-$low = $controller->queryValue('low') === '1';
-$items = $controller->items($q, $low);
+$items = $controller->items($q);
 $pageTitle = 'Relief inventory';
 require __DIR__ . '/../../components/header.php';
 require __DIR__ . '/../../components/errors.php';
 ?>
 <h1>Relief inventory</h1>
 <p><a href="<?= e(url('resources/views/admin/records.php?type=goods')) ?>">Select records / view archived</a></p
-><p><?= count($items) ?> <?= $low?'low-stock':'active' ?> goods.</p
+><p><?= count($items) ?> active goods.</p
 ><p><a href="<?= e(url('resources/views/admin/relief/locations.php')) ?>">Manage relief locations</a></p>
 <p
     ><a href="<?= e(url('resources/views/admin/relief/inventory.php')) ?>">Inventory</a> ·
@@ -25,9 +24,6 @@ require __DIR__ . '/../../components/errors.php';
 >
 
 <form method="get" class="filter-form mb-3">
-    <label>
-        <input type="checkbox" name="low" value="1" <?= $low?'checked':'' ?> /> Low stock only</label
-    >
     <label>Search name or unit <input name="q" value="<?= e($q) ?>" /></label>
     <button class="btn btn-secondary">Search</button> <a href="<?= e(url('resources/views/admin/relief/inventory.php')) ?>">Clear</a>
 </form>
@@ -71,19 +67,6 @@ require __DIR__ . '/../../components/errors.php';
             value="<?= e($item['unit']) ?>"
             required
     /></label>
-    <label class="d-block mb-3"
-        >Minimum stock<input
-            class="form-control"
-            type="number"
-            name="minimum_stock"
-            min="0"
-            max="1000000000"
-            value="<?= e(isPost()?input('minimum_stock'):($item['minimum_stock'] ?? 0)) ?>"
-            required /></label
-    ><p
-        >Zero disables the warning. Stock below this number is low; the quantity uses this item's
-        unit.</p
-    >
     <p
         >New goods start at zero stock. Record incoming supplies in Stock movements. Units cannot
         change after stock history exists.</p

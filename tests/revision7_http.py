@@ -14,9 +14,9 @@ for method in ['get','post']:
  check(r[0]==403,'resident selection denied '+method)
 def data():
  r=resident.get('/resources/views/maps/data.php?role=admin');check(r[0]==200,'resident map response');return json.loads(r[1])
-sql("UPDATE incident_reports SET archived_at=NULL,status='verified',is_public=1,public_label='Demo approximate point',public_latitude=16.41792,public_longitude=120.56091 WHERE id=1")
+sql("UPDATE incident_reports SET archived_at=NULL,status='verified',is_public=1,latitude=16.41792,longitude=120.56091 WHERE id=1")
 d=data();check(bool(d['incidents']),'published incident visible')
-check('households' not in d and all(set(i)<=set(['id','incident_type','public_label','public_latitude','public_longitude','status','report_date']) for i in d['incidents']),'resident incident field allowlist')
+check('households' not in d and all(set(i)<=set(['id','incident_type','latitude','longitude','status','report_date']) for i in d['incidents']),'resident incident field allowlist')
 sql('UPDATE incident_reports SET is_public=0 WHERE id=1');check(not data()['incidents'],'withdrawal removes marker')
 sql("UPDATE evacuation_centers SET archived_at=NULL,status='open',is_public=1,latitude=16.41792,longitude=120.56091 WHERE id=1")
 check(any(int(c['id'])==1 for c in data()['centers']),'open center visible')

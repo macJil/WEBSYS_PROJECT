@@ -69,7 +69,6 @@ class ResponseController extends Controller
         try {
             $this->model->saveTeam($id, $name, $phone, (int)$active);
         } catch (PDOException $error) {
-            error_log((string)$error);
             return [($error->errorInfo[1] ?? null) === 1062 ? 'That team name is already in use.' : 'Team could not be saved. Please try again.'];
         }
         $this->success('Team saved.', 'resources/views/admin/response/teams.php');
@@ -99,7 +98,6 @@ class ResponseController extends Controller
         } catch (DomainException $error) {
             return [$error->getMessage()];
         } catch (Throwable $error) {
-            error_log((string)$error);
             return ['Response update could not be saved. Please try again.'];
         }
         $this->success('Response update recorded.', 'resources/views/admin/response/incident.php?id=' . $id);

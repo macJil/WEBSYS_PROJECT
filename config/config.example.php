@@ -16,8 +16,5 @@ return [
     'map_latitude' => 16.41792,
     'map_longitude' => 120.56091,
     'map_zoom' => 15,
-    // Fictional demo only. Review provider/privacy suitability before real resident use.
-    'address_suggestions_enabled' => true,
-    'address_lookup_url' => 'https://photon.komoot.io/reverse',
     'map_min_zoom' => 14, // Focused demo view; no official boundary restriction.
 ];

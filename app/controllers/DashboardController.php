@@ -16,7 +16,6 @@ class DashboardController extends Controller
         if ($admin) {
             $data['affected'] = $this->model->affected();
             $data['stays'] = $this->model->stays();
-            $data['low_stock'] = $this->model->lowStock();
         } else {
             $data['notices'] = $this->model->notices();
         }return $data;

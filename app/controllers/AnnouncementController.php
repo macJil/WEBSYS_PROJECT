@@ -58,7 +58,6 @@ class AnnouncementController extends Controller
         try {
             $this->model->save($id, $title, $message, $action === 'publish'?1:0, (int)$_SESSION['ID']);
         } catch (PDOException $error) {
-            error_log((string)$error);
             return ['Announcement could not be saved. Please try again.'];
         }
         $this->success($action === 'publish'?'Announcement published to residents.':'Announcement saved privately as a draft.', 'resources/views/admin/announcement/announcement.php');

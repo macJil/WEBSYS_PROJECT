@@ -21,9 +21,9 @@ class ReliefController extends Controller
     {
         return is_string($_GET[$key] ?? null)?trim($_GET[$key]):'';
     }
-    public function items(string $q = '', bool $low = false): array
+    public function items(string $q = ''): array
     {
-        return $this->model->items($q, $low);
+        return $this->model->items($q);
     }
     public function item(int $id): array
     {
@@ -68,7 +68,6 @@ class ReliefController extends Controller
         if ($e instanceof DomainException) {
             return [$e->getMessage()];
         }
-        error_log((string)$e);
         if ($e instanceof PDOException && ($e->errorInfo[1] ?? null) === 1062) {
             return ['That item name and unit already exist.'];
         }
@@ -91,10 +90,8 @@ class ReliefController extends Controller
         if ($name === '' || strlen($name) > 120 || $unit === '' || strlen($unit) > 30) {
             return ['Enter an item name (up to 120 bytes) and unit (up to 30 bytes).'];
         }
-        $minimum = filter_var(input('minimum_stock') === ''?'0':input('minimum_stock'), FILTER_VALIDATE_INT, ['options' => ['min_range' => 0,'max_range' => 1000000000]]);
-        if ($minimum === false)return ['Minimum stock must be a whole number from 0 to 1 billion.'];
         try {
-            $this->model->saveItem($id, $name, $unit, $minimum);
+            $this->model->saveItem($id, $name, $unit);
         } catch (Throwable $e) {
             return $this->failure($e);
         }

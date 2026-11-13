@@ -18,7 +18,6 @@ if ($admin) {
     $cards[] = ['Available places',$available,$centerPath];
     $cards[] = ['Affected households',count($overview['affected']),'resources/views/admin/summaries/current.php?type=households'];
     $cards[] = ['Active evacuees',count($overview['stays']),'resources/views/admin/summaries/current.php?type=evacuees'];
-    $cards[] = ['Low-stock goods',$overview['low_stock'],'resources/views/admin/relief/inventory.php?low=1'];
 } else {
     $cards[] = ['Published notices',count($overview['notices']),'resources/views/user/announcement.php'];
 }
