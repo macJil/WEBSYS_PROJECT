@@ -6,15 +6,10 @@ if (!is_file(__DIR__ . '/../config/config.php')) {
 $settings = require __DIR__ . '/../config/config.php';
 define('BASE_URL', rtrim($settings['base_url'], '/'));
 
-function start_app_session(): void
-{
-    if (session_status() !== PHP_SESSION_ACTIVE) {
-        ini_set('session.use_strict_mode', '1');
-        ini_set('session.use_only_cookies', '1');
-        session_start();
-    }
+if (session_status() !== PHP_SESSION_ACTIVE) {
+    ini_set('session.use_strict_mode', '1');
+    session_start();
 }
-start_app_session();
 
 function e($value): string
 {
@@ -41,11 +36,17 @@ function input(string $key, bool $trim = true): string
 function validDateInput(string $value): bool
 {
     // Reject malformed bytes before PHP's date parser, which can throw on null bytes.
-    if (!preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/D', $value)) {
+    if (strlen($value) !== 10 || $value[4] !== '-' || $value[7] !== '-' || !ctype_digit(str_replace('-', '', $value))) {
         return false;
     }
     $date = DateTimeImmutable::createFromFormat('!Y-m-d', $value);
     return $date !== false && $date->format('Y-m-d') === $value;
+}
+function validPhone(string $value, int $minimum): bool
+{
+    $length = strlen($value);
+    return $length >= $minimum && $length <= 20
+        && strspn($value, '0123456789+() .-') === $length;
 }
 function flash(string $message): void
 {

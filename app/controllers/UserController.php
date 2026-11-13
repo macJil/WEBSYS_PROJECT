@@ -29,10 +29,12 @@ class UserController extends Controller
             if ($data['full_name'] === '' || strlen($data['full_name']) > 100) {
                 $errors[] = 'Enter a name of up to 100 bytes.';
             }
-            if (!preg_match('/^[a-zA-Z0-9_]{3,50}$/', $data['username'])) {
+            $usernameLength = strlen($data['username']);
+            if ($usernameLength < 3 || $usernameLength > 50
+                || strspn($data['username'], 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_') !== $usernameLength) {
                 $errors[] = 'Use 3–50 letters, numbers or underscores for your username.';
             }
-            if (!preg_match('/^[0-9+() .-]{7,20}$/', $data['phone'])) {
+            if (!validPhone($data['phone'], 7)) {
                 $errors[] = 'Enter a contact number of 7–20 characters.';
             }
             if (strlen($password) < 8) {

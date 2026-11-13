@@ -76,7 +76,7 @@ class HouseholdController extends Controller
                 $errors[] = str_replace('_', ' ', ucfirst($field)) . ' must fit within 255 bytes.';
             }
         }
-        if ($data['contact_phone'] !== '' && !preg_match('/^[0-9+() .-]{7,20}$/', $data['contact_phone'])) {
+        if ($data['contact_phone'] !== '' && !validPhone($data['contact_phone'], 7)) {
             $errors[] = 'Enter a valid emergency contact number (7–20 characters), or leave it blank.';
         }
         foreach (['registry_reason' => self::REASONS,'hazard_type' => self::HAZARDS,'vulnerability_category' => self::VULNERABILITY,'evacuation_status' => self::EVACUATION] as $field => $options) {

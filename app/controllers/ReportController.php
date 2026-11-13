@@ -145,7 +145,7 @@ class ReportController extends Controller
         if (!isset(self::TYPES[$data['incident_type']])) {
             $errors[] = 'Choose an incident type.';
         }
-        if ($data['contact_phone'] !== '' && !preg_match('/^[0-9+() .-]{3,20}$/', $data['contact_phone'])) {
+        if ($data['contact_phone'] !== '' && !validPhone($data['contact_phone'], 3)) {
             $errors[] = 'Enter a valid contact number.';
         }
         foreach (['latitude' => 90,'longitude' => 180] as $key => $limit) {
@@ -230,7 +230,11 @@ class ReportController extends Controller
     public function serveImage(int $id): void
     {
         $image = $this->model->image($id, $this->owner());
-        if (!$image || !preg_match('/^[a-f0-9]{48}\.(jpg|png|webp)$/', $image['stored_filename'])) {
+        $filename = $image['stored_filename'] ?? '';
+        $parts = explode('.', $filename);
+        if (count($parts) !== 2 || strlen($parts[0]) !== 48
+            || strspn($parts[0], 'abcdef0123456789') !== 48
+            || !in_array($parts[1], ['jpg', 'png', 'webp'], true)) {
             http_response_code(404);
             exit('Image not found.');
         }

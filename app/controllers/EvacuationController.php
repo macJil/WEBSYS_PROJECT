@@ -96,7 +96,7 @@ class EvacuationController extends Controller
                 }
                 if ($kind === 'new_walkin') {
                     $data = ['full_name' => input('full_name'),'age' => filter_var(input('age'), FILTER_VALIDATE_INT, ['options' => ['min_range' => 0,'max_range' => 130]]),'address_details' => input('address_details'),'contact_phone' => input('contact_phone')];
-                    if ($data['full_name'] === '' || strlen($data['full_name']) > 100 || $data['age'] === false || $data['address_details'] === '' || strlen($data['address_details']) > 255 || !preg_match('/^[0-9+() .-]{3,20}$/', $data['contact_phone'])) {
+                    if ($data['full_name'] === '' || strlen($data['full_name']) > 100 || $data['age'] === false || $data['address_details'] === '' || strlen($data['address_details']) > 255 || !validPhone($data['contact_phone'], 3)) {
                         return ['For a new walk-in, enter name (up to 100 bytes), age 0–130, home address (up to 255 bytes), and contact number (personal or guardian).'];
                     }
                 } else {
