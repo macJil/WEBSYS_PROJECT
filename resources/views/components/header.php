@@ -17,6 +17,5 @@
     ><body>
         <a class="skip-link" href="#main-content">Skip to content</a>
         <?php require __DIR__ . '/navigation.php'; ?>
-        <main id="main-content" class="container app-main"> <?php require __DIR__ . '/messages.php'; ?> </main></body
-    ></html
->
+        <main id="main-content" class="container app-main">
+            <?php require __DIR__ . '/messages.php'; ?>
