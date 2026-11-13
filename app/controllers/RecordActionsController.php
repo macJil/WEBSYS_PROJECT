@@ -41,6 +41,6 @@ class RecordActionsController extends Controller
         unset($_SESSION['record_batch']);
         if (!$batch || $batch['type'] !== $type || $batch['expires'] < time() || !hash_equals($batch['ticket'], input('ticket')))throw new DomainException('Review expired or already submitted. Select records again.');
         $this->model->apply($type, $batch['ids'], $batch['action'], $batch['expected']);
-        $this->success('Selected records processed. History was preserved.','resources/views/admin/records.php?type=' . urlencode($type));
+        $this->success('Selected records processed. History was preserved.', 'resources/views/admin/records.php?type=' . urlencode($type));
     }
 }

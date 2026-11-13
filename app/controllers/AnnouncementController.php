@@ -9,21 +9,21 @@ class AnnouncementController extends Controller
         requireRole($role);
         $this->model = new AnnouncementModel();
     }
-    public function query(string $key): string
+    public function queryValue(string $key): string
     {
         return is_string($_GET[$key] ?? null)?trim($_GET[$key]):'';
     }
-    public function listing(): array
+    public function listAnnouncements(): array
     {
         $resident = $_SESSION['ROLE'] === 'resident';
-        $filters = ['q' => $this->query('q'),'date' => $this->query('date'),'status' => $resident?'':$this->query('status')];
+        $filters = ['q' => $this->queryValue('q'),'date' => $this->queryValue('date'),'status' => $resident?'':$this->queryValue('status')];
         if (!in_array($filters['status'], ['','published','draft'], true) || ($filters['date'] !== '' && !validDateInput($filters['date']))) {
             http_response_code(400);
             exit('Invalid announcement filter.');
         }
         return $this->model->listing($filters, $resident);
     }
-    public function find(): array
+    public function getAnnouncement(): array
     {
         requireRole('admin');
         $id = is_scalar($_GET['id'] ?? null)?filter_var($_GET['id'], FILTER_VALIDATE_INT):false;

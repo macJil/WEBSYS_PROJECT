@@ -10,7 +10,7 @@ class ResponseController extends Controller
         requireRole('admin');
         $this->model = new ResponseModel();
     }
-    public function id($value): int
+    public function recordId($value): int
     {
         $id = is_scalar($value) ? filter_var($value, FILTER_VALIDATE_INT) : false;
         if (!$id || $id < 1) {
@@ -88,8 +88,8 @@ class ResponseController extends Controller
         if ($notes === '' || strlen($notes) > 2000) {
             return ['Describe the action taken (maximum 2,000 bytes).'];
         }
-        $teamId = $action === 'assign_team' ? $this->id(input('team_id')) : null;
-        $assignmentId = $action === 'update_assignment' ? $this->id(input('assignment_id')) : null;
+        $teamId = $action === 'assign_team' ? $this->recordId(input('team_id')) : null;
+        $assignmentId = $action === 'update_assignment' ? $this->recordId(input('assignment_id')) : null;
         $status = $action === 'assign_team' ? 'assigned' : input('assignment_status');
         if (!in_array($status, self::STATUSES, true)) {
             return ['Choose a valid assignment status.'];

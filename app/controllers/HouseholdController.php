@@ -13,7 +13,7 @@ class HouseholdController extends Controller
         requireRole('admin');
         $this->households = new HouseholdModel();
     }
-    public function id($value): int
+    public function recordId($value): int
     {
         $id = is_scalar($value) ? filter_var($value, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]) : false;
         if ($id === false) {
@@ -22,7 +22,7 @@ class HouseholdController extends Controller
         }
         return $id;
     }
-    public function find(int $id): array
+    public function getHousehold(int $id): array
     {
         $row = $this->households->findById($id);
         if (!$row) {
@@ -40,7 +40,7 @@ class HouseholdController extends Controller
         }
         return $row;
     }
-    public function listing(string $search): array
+    public function listHouseholds(string $search): array
     {
         return $this->households->getAll($search);
     }
@@ -64,7 +64,7 @@ class HouseholdController extends Controller
         if (input('action') !== ($id === null ? 'create_household' : 'update_household')) {
             return ['Invalid form action.'];
         }
-        $old = $id === null ? null : $this->find($id);
+        $old = $id === null ? null : $this->getHousehold($id);
         $errors = locationErrors($data['address_details'], $data['latitude'], $data['longitude']);
         foreach (['household_code' => 30,'representative_name' => 100,'purok' => 100] as $field => $max) {
             if ($data[$field] === '' || strlen($data[$field]) > $max) {
@@ -116,7 +116,7 @@ class HouseholdController extends Controller
         if (input('action') !== ($memberId === null ? 'create_member' : 'update_member')) {
             return ['Invalid form action.'];
         }
-        $this->find($householdId);
+        $this->getHousehold($householdId);
         if ($memberId !== null) {
             $this->member($memberId, $householdId);
         }

@@ -9,7 +9,7 @@ class ReliefController extends Controller
         requireRole('admin');
         $this->model = new ReliefModel();
     }
-    public function id($value): int
+    public function recordId($value): int
     {
         $id = is_scalar($value)?filter_var($value, FILTER_VALIDATE_INT):false;
         if (!$id || $id < 1) {
@@ -17,7 +17,7 @@ class ReliefController extends Controller
             exit('Invalid ID.');
         } return $id;
     }
-    public function query(string $key): string
+    public function queryValue(string $key): string
     {
         return is_string($_GET[$key] ?? null)?trim($_GET[$key]):'';
     }
@@ -55,13 +55,13 @@ class ReliefController extends Controller
     }
     public function movements(): array
     {
-        $type = $this->query('type');
-        $date = $this->query('date');
+        $type = $this->queryValue('type');
+        $date = $this->queryValue('date');
         if (!in_array($type, ['','stock_in','stock_out','distribution'], true) || ($date !== '' && !validDateInput($date))) {
             http_response_code(400);
             exit('Invalid history filter.');
         }
-        return $this->model->movements($this->query('q'), $type, $date);
+        return $this->model->movements($this->queryValue('q'), $type, $date);
     }
     private function failure(Throwable $e): array
     {
@@ -112,7 +112,7 @@ class ReliefController extends Controller
         if (input('action') !== 'stock' || !in_array($type, ['stock_in','stock_out'], true) || $quantity === false || $notes === '' || strlen($notes) > 255) {
             return ['Choose stock-in/out, enter a positive whole quantity (up to 1 billion), and notes/reason (up to 255 bytes).'];
         }
-        $id = $this->id(input('item_id'));
+        $id = $this->recordId(input('item_id'));
         try {
             $this->model->stock($id, $type, $quantity, (int)$_SESSION['ID'], $notes);
         } catch (Throwable $e) {
@@ -137,7 +137,7 @@ class ReliefController extends Controller
             if ($value === '' || $value === '0') {
                 continue;
             }
-            $id = $this->id($key);
+            $id = $this->recordId($key);
             $quantity = $this->quantity($value);
             if ($quantity === false) {
                 return ['Goods quantities must be positive whole numbers (up to 1 billion), or blank/zero to omit.'];
@@ -147,13 +147,13 @@ class ReliefController extends Controller
         if (!$goods) {
             return ['Select at least one good by entering its quantity.'];
         }
-        $household = $this->id(input('household_id'));
+        $household = $this->recordId(input('household_id'));
         try {
             $id = $this->model->distribute($household, $receiver, $notes, $goods, (int)$_SESSION['ID']);
         } catch (Throwable $e) {
             return $this->failure($e);
         }
-        $this->success('Distribution recorded and stock updated.','resources/views/admin/relief/distributions.php?id=' . $id);
+        $this->success('Distribution recorded and stock updated.', 'resources/views/admin/relief/distributions.php?id=' . $id);
         return [];
     }
 }

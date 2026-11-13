@@ -9,7 +9,7 @@ class DashboardController extends Controller
         requireRole($role);
         $this->model = new DashboardModel();
     }
-    public function data(): array
+    public function dashboardData(): array
     {
         $admin = $_SESSION['ROLE'] === 'admin';
         $data = ['incidents' => $this->model->incidents($admin?null:(int)$_SESSION['ID']),'centers' => $this->model->centers(!$admin)];

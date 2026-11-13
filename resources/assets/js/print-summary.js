@@ -1,1 +1,1 @@
-document.getElementById('print-summary').addEventListener('click', () => window.print());
+document.getElementById("print-summary").addEventListener("click", () => window.print());

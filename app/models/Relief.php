@@ -152,6 +152,6 @@ class ReliefModel
     }
     public function distributedGoods(int $id): array
     {
-        return $this->rows('SELECT d.quantity,i.item_name,i.unit FROM relief_distribution_items d JOIN relief_items i ON i.id=d.item_id WHERE d.distribution_id=? ORDER BY d.id',[$id]);
+        return $this->rows('SELECT d.quantity,i.item_name,i.unit FROM relief_distribution_items d JOIN relief_items i ON i.id=d.item_id WHERE d.distribution_id=? ORDER BY d.id', [$id]);
     }
 }

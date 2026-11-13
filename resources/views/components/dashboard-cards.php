@@ -23,6 +23,15 @@ if ($admin) {
     $cards[] = ['Published notices',count($overview['notices']),'resources/views/user/announcement.php'];
 }
 ?>
-<div class="row g-3 mb-4"><?php foreach ($cards as [$label,$value,$path]): ?><div class="col-sm-6 col-lg-4"><a class="stat-card" href="<?= e(url($path)) ?>"><strong class="stat-value"><?= (int)$value ?></strong><span class="stat-label"><?= e($label) ?></span></a>
-</div><?php endforeach; ?></div>
-<?php if (!$admin): ?><h2>Latest published notices</h2><?php foreach (array_slice($overview['notices'], 0, 3) as $notice): ?><p><a href="<?= e(url('resources/views/user/announcement.php?q=' . urlencode($notice['title']))) ?>"><?= e($notice['title']) ?></a> · <?= e($notice['created_at']) ?></p><?php endforeach; ?><?php if (!$overview['notices']): ?><p>No published notices.</p><?php endif; ?><?php endif; ?>
+<div class="row g-3 mb-4"
+    ><?php foreach ($cards as [$label,$value,$path]): ?><div class="col-sm-6 col-lg-4"
+        ><a class="stat-card" href="<?= e(url($path)) ?>"
+            ><strong class="stat-value"><?= (int)$value ?></strong
+            ><span class="stat-label"><?= e($label) ?></span></a
+        > </div
+    ><?php endforeach; ?></div
+>
+<?php if (!$admin): ?><h2>Latest published notices</h2><?php foreach (array_slice($overview['notices'], 0, 3) as $notice): ?><p
+    ><a href="<?= e(url('resources/views/user/announcement.php?q=' . urlencode($notice['title']))) ?>"><?= e($notice['title']) ?></a> · <?= e($notice['created_at']) ?></p
+><?php endforeach; ?> <?php if (!$overview['notices']): ?><p>No published notices.</p><?php endif; ?>
+<?php endif; ?>

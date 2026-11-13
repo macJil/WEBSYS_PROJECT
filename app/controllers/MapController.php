@@ -3,7 +3,7 @@ require_once __DIR__ . '/Controller.php';
 require_once __DIR__ . '/../models/Map.php';
 class MapController extends Controller
 {
-    public function data(): array
+    public function mapData(): array
     {
         session_checker();
         $model = new MapModel();

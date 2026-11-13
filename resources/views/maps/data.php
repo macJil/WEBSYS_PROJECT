@@ -15,7 +15,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'GET') {
     exit;
 }
 try {
-    echo json_encode((new MapController())->data(), JSON_THROW_ON_ERROR);
+    echo json_encode((new MapController())->mapData(), JSON_THROW_ON_ERROR);
 } catch (Throwable $error) {
     error_log((string)$error);
     http_response_code(500);

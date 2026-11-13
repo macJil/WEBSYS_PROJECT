@@ -9,7 +9,7 @@ class EvacuationController extends Controller
         requireRole('admin');
         $this->model = new EvacuationModel();
     }
-    public function id($value): int
+    public function recordId($value): int
     {
         $id = is_scalar($value)?filter_var($value, FILTER_VALIDATE_INT):false;
         if (!$id || $id < 1) {
@@ -87,7 +87,7 @@ class EvacuationController extends Controller
         }
         try {
             if (input('action') === 'checkout') {
-                $this->model->checkout($id, $this->id(input('record_id')), (int)$_SESSION['ID']);
+                $this->model->checkout($id, $this->recordId(input('record_id')), (int)$_SESSION['ID']);
             } elseif (input('action') === 'checkin') {
                 $kind = input('kind');
                 $data = [];
@@ -101,7 +101,7 @@ class EvacuationController extends Controller
                         return ['For a new walk-in, enter name (up to 100 bytes), age 0–130, home address (up to 255 bytes), and contact number (personal or guardian).'];
                     }
                 } else {
-                    $personId = $this->id(input($kind === 'member'?'member_id':'walkin_id'));
+                    $personId = $this->recordId(input($kind === 'member'?'member_id':'walkin_id'));
                 }
                 $this->model->checkin($id, $kind, $personId, $data, (int)$_SESSION['ID']);
             } else {
@@ -110,7 +110,7 @@ class EvacuationController extends Controller
         } catch (Throwable $e) {
             return $this->failure($e);
         }
-        $this->success('Evacuation record saved.','resources/views/admin/evacuation/center.php?id=' . $id);
+        $this->success('Evacuation record saved.', 'resources/views/admin/evacuation/center.php?id=' . $id);
         return [];
     }
 }

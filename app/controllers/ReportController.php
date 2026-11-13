@@ -15,7 +15,7 @@ class ReportController extends Controller
     {
         return $_SESSION['ROLE'] === 'admin' ? null : (int) $_SESSION['ID'];
     }
-    public function id(): int
+    public function incidentId(): int
     {
         $id = filter_var($_GET['id'] ?? null, FILTER_VALIDATE_INT);
         if (!$id || $id < 1) {
@@ -23,7 +23,7 @@ class ReportController extends Controller
             exit('Invalid ID.');
         } return $id;
     }
-    public function find(int $id): array
+    public function getIncident(int $id): array
     {
         $row = $this->model->find($id, $this->owner());
         if (!$row) {
@@ -49,13 +49,13 @@ class ReportController extends Controller
     {
         return validDateInput($date);
     }
-    public function listing(array $filters): array
+    public function listIncidents(array $filters): array
     {
         return $this->model->listing($filters, $this->owner());
     }
     public function images(int $id): array
     {
-        $this->find($id);
+        $this->getIncident($id);
         return $this->model->images($id);
     }
     public function history(int $id): array
