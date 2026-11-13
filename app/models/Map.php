@@ -19,10 +19,10 @@ class MapModel
     {
         // Explicit allowlists: never select private incident fields for the resident response.
         return [
-            'incidents' => $this->rows("SELECT id,incident_type,public_label,public_latitude,public_longitude,status,DATE(created_at) AS report_date FROM incident_reports WHERE archived_at IS NULL AND is_public=1 AND status IN ('verified','responding','resolved') AND public_label IS NOT NULL AND TRIM(public_label)<>'' AND " . $this->point('public_latitude', 'public_longitude')),
+            'incidents' => $this->rows("SELECT id,incident_type,latitude,longitude,status,DATE(created_at) AS report_date FROM incident_reports WHERE archived_at IS NULL AND is_public=1 AND status IN ('verified','responding','resolved') AND " . $this->point('latitude', 'longitude')),
             'centers' => $this->centers(true),
             'relief_locations' => $this->rows("SELECT id,name,address_details,latitude,longitude,location_type FROM relief_locations WHERE archived_at IS NULL AND is_public=1 AND location_type IN ('distribution','both') AND " . $this->point('latitude', 'longitude')),
-            'incident_location_note' => 'Incident points are approximate public locations.'
+            'incident_location_note' => 'Public incident markers use the saved report location.'
         ];
     }
     public function admin(): array

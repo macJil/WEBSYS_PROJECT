@@ -60,10 +60,10 @@
             path = "";
         if (layer === "incidents") {
             title = types[row.incident_type] || "Incident";
-            line(node, "Location: ", admin ? row.location_description : row.public_label);
+            if (admin) line(node, "Location: ", row.location_description);
             line(node, "Status: ", row.status);
             line(node, "Reported: ", row.report_date);
-            if (!admin) line(node, "", "Approximate public location.");
+            if (!admin) line(node, "", "Saved report location.");
             path = "resources/views/incidents/view.php?id=";
         } else if (layer === "centers") {
             title = row.name;
@@ -125,10 +125,8 @@
                     group = groups[layer];
                 let count = 0;
                 (data[layer] || []).forEach((row) => {
-                    const latValue =
-                        layer === "incidents" && !admin ? row.public_latitude : row.latitude;
-                    const lngValue =
-                        layer === "incidents" && !admin ? row.public_longitude : row.longitude;
+                    const latValue = row.latitude;
+                    const lngValue = row.longitude;
                     const lat = Number(latValue),
                         lng = Number(lngValue);
                     if (

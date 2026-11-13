@@ -19,8 +19,8 @@ require __DIR__ . '/../components/header.php';
     >Staff layers include private incident points and manually recorded household concerns.</p
 >
 <?php else: ?><p
-    >Only approved community information is shown. Incident points are approximate. Your private
-    submissions remain available in <a href="<?= e(url('resources/views/user/reports.php')) ?>">My reports</a>.</p
+    >Only approved community information is shown. Public incident points use the saved report location. Your private
+    submissions remain available in <a href="<?= e(url('resources/views/incidents/list.php')) ?>">My reports</a>.</p
 ><?php endif; ?>
 <div class="map-layout">
     <aside class="map-key border rounded p-3" aria-label="Map layers and legend">

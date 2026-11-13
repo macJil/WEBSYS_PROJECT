@@ -18,14 +18,8 @@ class MapPublicationController extends Controller
         if (!isPost())return [];
         $action = input('action');
         if (!in_array($action, ['publish','withdraw'], true))return ['Invalid action.'];
-        $d = ['label' => input('public_label'),'latitude' => input('public_latitude'),'longitude' => input('public_longitude')];
-        if ($action === 'publish' && $type === 'incident') {
-            $errors = locationErrors($d['label'], $d['latitude'], $d['longitude']);
-            if ($d['label'] === '' || strlen($d['label']) > 150 || $d['latitude'] === '' || $d['longitude'] === '')$errors[] = 'Enter a safe public label and both approximate coordinates.';
-            if ($errors)return $errors;
-        }
         try {
-            $this->model->save($type, $id, $action === 'publish', $d);
+            $this->model->save($type, $id, $action === 'publish');
         } catch (DomainException $e) {
             return [$e->getMessage()];
         } catch (Throwable $e) {

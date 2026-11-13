@@ -17,8 +17,8 @@ require __DIR__ . '/../components/header.php';
     notices.</p
 >
 <ul>
-    <li><a href="<?= e(url('resources/views/user/report.incident.php')) ?>">Report an incident and select its location</a></li>
-    <li><a href="<?= e(url('resources/views/user/reports.php')) ?>">View my incident reports</a></li>
+    <li><a href="<?= e(url('resources/views/incidents/create.php')) ?>">Report an incident and select its location</a></li>
+    <li><a href="<?= e(url('resources/views/incidents/list.php')) ?>">View my incident reports</a></li>
     <li><a href="<?= e(url('resources/views/user/announcement.php')) ?>">Read emergency announcements</a></li>
 </ul>
 <p>Submitting a report does not guarantee an immediate emergency response.</p>

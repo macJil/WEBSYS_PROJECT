@@ -65,9 +65,6 @@ CREATE TABLE household_members (
 CREATE TABLE incident_reports (
   archived_at DATETIME NULL,
   is_public BOOLEAN NOT NULL DEFAULT FALSE,
-  public_label VARCHAR(150) NULL,
-  public_latitude DECIMAL(10,7) NULL,
-  public_longitude DECIMAL(10,7) NULL,
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   reported_by INT UNSIGNED NOT NULL,
   report_source ENUM('resident','walk_in','phone','admin') NOT NULL DEFAULT 'resident',
