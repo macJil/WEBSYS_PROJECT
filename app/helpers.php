@@ -47,9 +47,9 @@ function validDateInput(string $value): bool
     $date = DateTimeImmutable::createFromFormat('!Y-m-d', $value);
     return $date !== false && $date->format('Y-m-d') === $value;
 }
-function flash(string $message, string $type = 'success'): void
+function flash(string $message): void
 {
-    $_SESSION['message'] = ['text' => $message, 'type' => $type === 'success' ? 'success' : 'danger'];
+    $_SESSION['message'] = ['text' => $message, 'type' => 'success'];
 }
 function dashboardPath(): string
 {
