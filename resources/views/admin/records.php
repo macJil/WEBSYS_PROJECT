@@ -1,120 +1,71 @@
 <?php
 require_once __DIR__ . '/../../../app/controllers/RecordActionsController.php';
-$c = new RecordActionsController();
-$type = is_string($_GET['type'] ?? null)?$_GET['type']:'households';
-if (!isset(RecordActionsModel::TYPES[$type])) {
+$controller = new RecordActionsController();
+$type = is_string($_GET['type'] ?? null) ? $_GET['type'] : 'all';
+if ($type !== 'all' && !isset(RecordActionsModel::TYPES[$type])) {
     http_response_code(400);
     exit('Unsupported record type.');
 }
-$q = is_string($_GET['q'] ?? null)?trim($_GET['q']):'';
-$archived = ($_GET['archived'] ?? '') === '1';
-$page = filter_var($_GET['page'] ?? 1, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1,'max_range' => 1000000]]);
+$q = is_string($_GET['q'] ?? null) ? trim($_GET['q']) : '';
+$page = filter_var($_GET['page'] ?? 1, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1, 'max_range' => 1000000]]);
 if (!$page) {
     http_response_code(400);
     exit('Invalid page.');
 }
+$params = ['type' => $type, 'q' => $q, 'page' => $page];
+$rows = $controller->listing($type, $q, $page);
 $errors = [];
-$review = null;
-try {
-    if (isPost() && input('action') === 'confirm')$c->confirm($type);
-    $rows = $c->listing($type, $q, $archived, $page);
-    if (isPost() && input('action') === 'review')$review = $c->review($type, array_map('intval', array_column($rows, 'id')));
-} catch (DomainException $e) {
-    $errors[] = $e->getMessage();
-} catch (Throwable $e) {
-    $errors[] = 'The batch could not be completed. No selected records were changed. Reload and review again.';
+if (isPost()) {
+    try {
+        $controller->delete($rows);
+        redirect('resources/views/admin/records.php?' . http_build_query($params));
+    } catch (DomainException $error) {
+        $errors[] = $error->getMessage();
+    } catch (Throwable $error) {
+        $errors[] = 'Deletion failed. No selected records were changed.';
+    }
 }
-$rows = $rows ?? [];
-[$table,$label,$title,$path] = RecordActionsModel::TYPES[$type];
-$pageTitle = 'Manage ' . $title;
+$pageTitle = 'Manage records';
 require __DIR__ . '/../components/header.php';
 require __DIR__ . '/../components/errors.php';
 ?>
-<p class="return-link no-print"><a href="<?= e(url(dashboardPath())) ?>">Back to dashboard</a></p>
-<h1><?= e($pageTitle) ?></h1>
-<p
-    >Delete unused records or archive/deactivate records that must retain history. Stock movements,
-    distributions, stays, assignments, and response updates cannot be deleted here. Use
-    checkout/completion or a documented correcting stock movement where appropriate.</p
->
+<p><a class="btn btn-outline-secondary" href="<?= e(url(dashboardPath())) ?>">Back to dashboard</a></p>
+<h1>Manage records</h1>
+<p>Filter or search, then select records to delete. Unused records are permanently deleted. Linked records are removed from active lists while their history is kept. Records still in use show the steps needed first.</p>
 <form method="get" class="filter-form mb-3">
-    <label
-        >Records<select name="type"
-            ><?php foreach (RecordActionsModel::TYPES as $key => $spec): ?><option value="<?= e($key) ?>" <?= $type === $key?'selected':'' ?>
-                ><?= e($spec[2]) ?></option
-            ><?php endforeach; ?></select
-        ></label
-    >
+    <label>Record type<select name="type">
+        <option value="all">All record types</option>
+        <?php foreach (RecordActionsModel::TYPES as $key => $spec): ?>
+        <option value="<?= e($key) ?>" <?= $type === $key ? 'selected' : '' ?>><?= e($spec[2]) ?></option>
+        <?php endforeach; ?>
+    </select></label>
     <label>Search ID/name <input name="q" value="<?= e($q) ?>" /></label>
-    <label>
-        <input type="checkbox" name="archived" value="1" <?= $archived?'checked':'' ?> /> Show archived /
-        inactive only</label
-    >
     <button class="btn btn-outline-secondary">Search</button>
 </form>
-<?php if ($review): ?>
-<h2>Review: <?= $review['action'] === 'delete'?'permanent deletion':'archive / deactivate' ?></h2>
-<p>If any selected record is ineligible or has changed, the entire batch will be cancelled.</p>
-<ul
-    ><?php foreach ($review['rows'] as $row): ?><li>#<?= (int)$row['id'] ?> — <?= e($row[$label] ?? 'Unnamed') ?></li
-    ><?php endforeach; ?></ul
->
-<form method="post">
-    <input type="hidden" name="ticket" value="<?= e($review['ticket']) ?>" />
-    <button class="btn btn-danger" name="action" value="confirm"><?= $review['action'] === 'delete' ? 'Permanently delete selected records' : 'Archive / deactivate selected records' ?></button>
-    <a href="<?= e(url('resources/views/admin/records.php?type=' . $type)) ?>">Cancel and return to record selection</a>
-</form>
-<?php else: ?>
 <form method="post" id="record-selection">
-    <label> <input type="checkbox" id="select-page" /> Select all on this page</label>
-    <span id="selected-count" role="status">0 selected</span>
-    <div class="table-responsive" tabindex="0" role="region" aria-label="Scrollable records">
+    <div class="table-responsive" tabindex="0" aria-label="Records">
         <table class="table">
-            <thead>
-                <tr>
-                    <th>Select</th>
-                    <th>ID</th>
-                    <th>Name / description</th>
-                    <th>Record</th>
-                </tr>
-            </thead>
+            <thead><tr>
+                <th><button class="btn btn-danger" name="action" value="delete">Delete selected</button><br />
+                    <label><input type="checkbox" id="select-page" /> Select all on this page</label>
+                    <span id="selected-count" role="status">0 selected</span></th>
+                <th>Record type</th><th>ID</th><th>Name / description</th>
+            </tr></thead>
             <tbody>
                 <?php foreach ($rows as $row): ?>
                 <tr>
-                    <td>
-                        <input
-                            type="checkbox"
-                            name="ids[]"
-                            value="<?= (int)$row['id'] ?>"
-                            aria-label="<?= e('Select ' . $title . ' #' . $row['id']) ?>"
-                    /></td>
-                    <td><?= (int)$row['id'] ?></td>
-                    <td><?= e($row[$label] ?? 'Unnamed') ?></td>
-                    <td>
-                        <?php $link = $path?(url($path . $row['id'])):($type === 'members'?url('resources/views/admin/household.php?id=' . $row['household_id'] . '&member=' . $row['id']):url('resources/views/admin/records.php?type=walkins&q=' . $row['id'] . '&archived=' . ($archived?'1':'0'))); ?>
-                        <a href="<?= e($link) ?>">View record</a></td
-                    > </tr
-                ><?php endforeach; ?> <?php if (!$rows): ?><tr>
-                    <td colspan="4">No matching records.</td> </tr
-                ><?php endif; ?></tbody
-            >
+                    <td><input type="checkbox" name="ids[]" value="<?= e($row['record_type'] . ':' . $row['id']) ?>" aria-label="<?= e('Select ' . RecordActionsModel::TYPES[$row['record_type']][2] . ' #' . $row['id']) ?>" /></td>
+                    <td><?= e(RecordActionsModel::TYPES[$row['record_type']][2]) ?></td>
+                    <td><?= (int)$row['id'] ?></td><td><?= e($row['label']) ?></td>
+                </tr>
+                <?php endforeach; ?>
+                <?php if (!$rows): ?><tr><td colspan="4">No matching records.</td></tr><?php endif; ?>
+            </tbody>
         </table>
     </div>
-    <label
-        >Action<select name="operation"
-            ><option value="archive">Archive / deactivate</option
-            ><option value="delete">Permanently delete unused records</option></select
-        ></label
-    >
-    <button name="action" value="review" class="btn btn-outline-secondary">Review selected records</button>
 </form>
-<?php $params = ['type' => $type,'q' => $q,'archived' => $archived?'1':'0']; ?>
-<p
-    >Page <?= $page ?> (up to 50 records). <?php if ($page > 1): ?><a
-        href="?<?= e(http_build_query($params + ['page' => $page - 1])) ?>"
-        >Previous</a
-    ><?php endif; ?> <?php if (count($rows) === 50): ?><a href="?<?= e(http_build_query($params + ['page' => $page + 1])) ?>">Next</a
-    ><?php endif; ?></p
->
-<script src="<?= e(url('resources/assets/js/record-selection.js')) ?>"></script>
-<?php endif; ?> <?php require __DIR__ . '/../components/footer.php'; ?>
+<p>Page <?= $page ?> · Up to 50 records.
+<?php if ($page > 1): ?><a href="?<?= e(http_build_query(array_replace($params, ['page' => $page - 1]))) ?>">Previous</a><?php endif; ?>
+<?php if (count($rows) === 50): ?><a href="?<?= e(http_build_query(array_replace($params, ['page' => $page + 1]))) ?>">Next</a><?php endif; ?></p>
+<script src="<?= e(url('resources/assets/js/record-selection.js?v=delete-confirm')) ?>"></script>
+<?php require __DIR__ . '/../components/footer.php'; ?>

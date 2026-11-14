@@ -8,7 +8,7 @@ $pageTitle = 'Stock movements';
 require __DIR__ . '/../../components/header.php';
 require __DIR__ . '/../../components/errors.php';
 ?>
-<p class="return-link no-print"><a href="<?= e(url('resources/views/admin/relief/inventory.php')) ?>">Back to relief inventory</a></p>
+<p class="return-link no-print"><a class="btn btn-outline-secondary" href="<?= e(url('resources/views/admin/relief/inventory.php')) ?>">Back to relief inventory</a></p>
 <h1>Stock movements</h1>
 <p
     ><a href="<?= e(url('resources/views/admin/relief/inventory.php')) ?>">Inventory</a> ·

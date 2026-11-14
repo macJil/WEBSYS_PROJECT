@@ -59,6 +59,7 @@ with tempfile.TemporaryDirectory(prefix='bayanready-address-') as temporary:
               ','.join("('Fictional " + role + "','" + role + "','" + role + "@example.invalid','" + password_hash + "','" + role + "')" for role in ['admin', 'resident']))
         config = (ROOT / 'config/config.example.php').read_text().replace("'base_url' => '/WEBSYS_PROJECT'", "'base_url' => ''")
         config = config.replace("'host' => '127.0.0.1'", "'host' => 'localhost'").replace("'database' => 'barangay_drrm'", "'database' => '" + DB_NAME + "'").replace("'password' => ''", "'password' => 'root'")
+        config = config.replace("'incident_upload_dir' => ''", "'incident_upload_dir' => '" + str(folder / 'images') + "'")
         (site / 'config/config.php').write_text(config)
         with socket.socket() as listener:
             listener.bind(('127.0.0.1', 0))
@@ -174,6 +175,8 @@ with tempfile.TemporaryDirectory(prefix='bayanready-address-') as temporary:
         check_actions(admin, resident, query, prefix)
         from integrated_acceptance import check_acceptance
         check_acceptance(admin, resident, Client, query, prefix)
+        from incident_upload import check_upload
+        check_upload(resident, admin, Client, query, base, prefix)
         if os.environ.get('TEST_BROWSER_PAUSE') == '1':
             Path('/tmp/bayanready-actions-preview.txt').write_text(base)
             print('Fictional browser preview:', base, flush=True)

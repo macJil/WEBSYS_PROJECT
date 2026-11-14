@@ -51,14 +51,14 @@ document.querySelectorAll(".location-picker").forEach((root) => {
                     const controller = new AbortController();
                     addressRequest = controller;
                     timeout = setTimeout(function () { controller.abort(); }, 8000);
-                    const url = new URL(root.dataset.addressUrl);
+                    const url = new URL(root.dataset.addressUrl, window.location.href);
                     url.searchParams.set("lat", latitude);
                     url.searchParams.set("lon", longitude);
                     url.searchParams.set("limit", "1");
                     url.searchParams.set("radius", "1");
                     const response = await fetch(url, {
                         signal: controller.signal,
-                        credentials: "omit",
+                        credentials: url.origin === window.location.origin ? "same-origin" : "omit",
                         referrerPolicy: "no-referrer"
                     });
                     if (!response.ok) throw new Error("Address lookup failed");

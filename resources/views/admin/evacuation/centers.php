@@ -15,9 +15,9 @@ $pageTitle = 'Evacuation centers';
 require __DIR__ . '/../../components/header.php';
 require __DIR__ . '/../../components/errors.php';
 ?>
-<p class="return-link no-print"><a href="<?= e(url(dashboardPath())) ?>">Back to dashboard</a></p>
+<p class="return-link no-print"><a class="btn btn-outline-secondary" href="<?= e(url(dashboardPath())) ?>">Back to dashboard</a></p>
 <h1>Evacuation centers</h1>
-<p><a href="<?= e(url('resources/views/admin/records.php?type=centers')) ?>">Select records / view archived</a></p>
+<p><a class="btn btn-outline-secondary" href="<?= e(url('resources/views/admin/records.php?type=centers')) ?>">Manage records</a></p>
 <form method="get" class="filter-form mb-3">
     <label>Search name or address <input name="q" value="<?= e($q) ?>" /></label>
     <button class="btn btn-outline-secondary">Search</button> <a href="<?= e(url('resources/views/admin/evacuation/centers.php')) ?>">Clear</a>

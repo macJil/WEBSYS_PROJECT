@@ -24,7 +24,7 @@ $pageTitle = 'Disaster reports and summaries';
 require __DIR__ . '/../../components/header.php';
 ?>
 <link rel="stylesheet" href="<?= e(url('resources/assets/css/disaster-summary.css')) ?>" />
-<p class="return-link no-print"><a href="<?= e(url(dashboardPath())) ?>">Back to dashboard</a></p>
+<p class="return-link no-print"><a class="btn btn-outline-secondary" href="<?= e(url(dashboardPath())) ?>">Back to dashboard</a></p>
 <h1>Disaster reports and summaries</h1>
 <form method="get" class="filter-form no-print mb-3">
     <label>From <input type="date" name="from" value="<?= e($period['from']) ?>" required /></label>

@@ -10,7 +10,7 @@ $announcements = $controller->listAnnouncements();
 $pageTitle = 'Emergency announcements';
 require __DIR__ . '/../components/header.php';
 ?>
-<p class="return-link no-print"><a href="<?= e(url(dashboardPath())) ?>">Back to dashboard</a></p>
+<p class="return-link no-print"><a class="btn btn-outline-secondary" href="<?= e(url(dashboardPath())) ?>">Back to dashboard</a></p>
 <h1>Emergency announcements</h1>
 <form method="get" class="filter-form mb-4">
     <label>Search title <input name="q" value="<?= e($controller->queryValue('q')) ?>" /></label>

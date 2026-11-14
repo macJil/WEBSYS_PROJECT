@@ -51,20 +51,12 @@ def check_actions(admin, resident, query, prefix):
     save('admin/announcement/announcement.update.php?id=1', values, 'admin/announcement/announcement.php')
     print('PASS team, goods, stock, distribution and announcement save redirects; withdrawal confirmation')
 
-    # Review and Cancel are ordinary pages. Only explicit confirmation changes data.
     page = 'admin/records.php?type=teams'
-    code, body = admin.request(prefix + page, [('action','review'),('operation','delete'),('ids[]','1')])
-    assert code == 200 and 'Permanently delete selected records' in body
-    parser = Controls()
-    parser.feed(body)
-    cancel = next(attrs['href'] for attrs, text in parser.links if text == 'Cancel and return to record selection')
-    assert admin.request(cancel)[0] == 200 and query('SELECT COUNT(*) AS total FROM responders')[0]['total'] == 1
-    code, body = admin.request(prefix + page, [('action','review'),('operation','delete'),('ids[]','1')])
-    parser = Controls()
-    parser.feed(body)
-    save(page, dict(action='confirm', ticket=parser.inputs['ticket']), page)
+    code, body = admin.request(prefix + page)
+    assert 'Delete selected' in body and 'teams:1' in body
+    save(page, [('action','delete'),('ids[]','teams:1')], page + '&q=&page=1')
     assert query('SELECT COUNT(*) AS total FROM responders')[0]['total'] == 0
-    print('PASS explicit delete review, Cancel without deletion, confirmed deletion and redirect')
+    print('PASS direct checkbox deletion and filtered redirect')
     # Recreate the team for the navigation crawl and browser check.
     save('admin/response/teams.php', dict(action='save_team', team_name='Fictional UI Team', contact_phone='', is_active='1'), 'admin/response/teams.php')
 

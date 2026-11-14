@@ -12,9 +12,9 @@ $rows = $controller->listHouseholds(substr($search, 0, 255));
 $pageTitle = 'Household registry';
 require __DIR__ . '/../components/header.php';
 ?>
-<p class="return-link no-print"><a href="<?= e(url(dashboardPath())) ?>">Back to dashboard</a></p>
+<p class="return-link no-print"><a class="btn btn-outline-secondary" href="<?= e(url(dashboardPath())) ?>">Back to dashboard</a></p>
 <h1>Household registry</h1>
-<p><a href="<?= e(url('resources/views/admin/records.php?type=households')) ?>">Select records / view archived</a></p>
+<p><a class="btn btn-outline-secondary" href="<?= e(url('resources/views/admin/records.php?type=households')) ?>">Manage records</a></p>
 <form method="get" class="filter-form d-flex gap-2 mb-3">
     <label for="search" class="visually-hidden">Search households</label>
     <input

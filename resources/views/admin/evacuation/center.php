@@ -32,13 +32,13 @@ require __DIR__ . '/../../components/errors.php';
 ?> <?php $savedPoint = $center;
 require __DIR__ . '/../../components/saved-point.php'; ?>
 <h1><?= e($center['name']) ?></h1>
-<p><a href="<?= e(url('resources/views/admin/records.php?type=walkins')) ?>">Select records / view archived</a></p>
+<p><a class="btn btn-outline-secondary" href="<?= e(url('resources/views/admin/records.php?type=walkins')) ?>">Manage records</a></p>
 <p
     ><?= e($center['address_details']) ?> · <?= e($center['status']) ?> · Occupancy: <?= (int)$center['occupancy'] ?> /
     <?= (int)$center['capacity'] ?> people</p
 >
 <p>Available capacity (people): <strong><?= (int)$center['available'] ?></strong></p>
-<a href="<?= e(url('resources/views/admin/evacuation/centers.php')) ?>">Back to evacuation centers</a> ·
+<a class="btn btn-outline-secondary" href="<?= e(url('resources/views/admin/evacuation/centers.php')) ?>">Back to evacuation centers</a> ·
 <a href="<?= e(url('resources/views/admin/evacuation/centers.php?edit=' . $id)) ?>">Edit / close center</a>
 <?php if ($center['status'] === 'open' && $center['archived_at'] === null && $center['occupancy'] < $center['capacity']): ?>
 <h2 class="mt-4">Check in a household</h2>

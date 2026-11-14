@@ -30,13 +30,21 @@ class RecordActionsModel
         if (!isset(self::TYPES[$type]))throw new DomainException('Unsupported record type.');
         return self::TYPES[$type];
     }
-    public function listing(string $type, string $search, bool $archived, int $page): array
+    public function listing(string $type, string $search, int $page): array
     {
-        [$table,$label] = $this->spec($type);
-        $state = $type === 'teams'?($archived?'is_active=0':'is_active=1'):($archived?'archived_at IS NOT NULL':'archived_at IS NULL');
-        $term = '%' . strtr($search, ['!' => '!!','%' => '!%','_' => '!_']) . '%';
+        $types = $type === 'all' ? self::TYPES : [$type => $this->spec($type)];
+        $queries = [];
+        $values = [];
+        $term = '%' . strtr($search, ['!' => '!!', '%' => '!%', '_' => '!_']) . '%';
+        foreach ($types as $key => $spec) {
+            [$table, $label] = $spec;
+            $state = $key === 'teams' ? 'is_active=1' : 'archived_at IS NULL';
+            $queries[] = "SELECT id, $label AS label, '$key' AS record_type FROM $table WHERE $state AND ($label LIKE ? ESCAPE '!' OR CAST(id AS CHAR) LIKE ? ESCAPE '!')";
+            $values[] = $term;
+            $values[] = $term;
+        }
         $offset = ($page - 1) * 50;
-        return $this->query("SELECT * FROM $table WHERE $state AND ($label LIKE ? ESCAPE '!' OR CAST(id AS CHAR) LIKE ? ESCAPE '!') ORDER BY id LIMIT 50 OFFSET $offset", [$term,$term]);
+        return $this->query(implode(' UNION ALL ', $queries) . " ORDER BY record_type, id LIMIT 50 OFFSET $offset", $values);
     }
     public function selected(string $type, array $ids, bool $lock = false): array
     {
@@ -51,63 +59,84 @@ class RecordActionsModel
         // All callers use literal identifiers and conditions defined below.
         return (bool)$this->query("SELECT id FROM $table WHERE $column=? $extra LIMIT 1 FOR UPDATE", [$id]);
     }
-    private function check(string $type, array $r, string $action): void
+    private function removalMode(string $type, array $row): string
     {
-        $id = (int)$r['id'];
-        $blocked = '';
-        if ($action === 'delete') {
-            $links = match ($type) {
-                'households' => [['household_members','household_id'],['relief_distributions','household_id']],
-                'members' => [['evacuation_records','household_member_id']],
-                'incidents' => [['incident_images','incident_id'],['incident_assignments','incident_id'],['response_updates','incident_id']],
-                'teams' => [['incident_assignments','responder_id']],
-                'centers' => [['evacuation_records','center_id']],
-                'walkins' => [['evacuation_records','walkin_id']],
-                'goods' => [['relief_stock_movements','item_id'],['relief_distribution_items','item_id']],
-                'locations' => [['relief_distributions','relief_location_id']],default => []
-            };
-            foreach ($links as [$table,$column])if ($this->linked($table, $column, $id))$blocked = 'has linked records; use archive/deactivate instead';
-            if ($type === 'announcements' && ($r['is_published'] || $r['first_published_at'] !== null || $r['publication_history_unknown']))$blocked = 'has published or unknown publication history; archive it instead';
-        } else {
-            if ($type === 'households') {
-                $members = $this->query('SELECT id FROM household_members WHERE household_id=? ORDER BY id FOR UPDATE', [$id]);
-                foreach ($members as $member)if ($this->linked('evacuation_records', 'household_member_id', (int)$member['id'], 'AND checked_out_at IS NULL'))$blocked = 'has a member currently checked in';
-            }
-            if ($type === 'members' && $this->linked('evacuation_records', 'household_member_id', $id, 'AND checked_out_at IS NULL'))$blocked = 'is currently checked in';
-            if ($type === 'walkins' && $this->linked('evacuation_records', 'walkin_id', $id, 'AND checked_out_at IS NULL'))$blocked = 'is currently checked in';
-            if ($type === 'centers' && $this->linked('evacuation_records', 'center_id', $id, 'AND checked_out_at IS NULL'))$blocked = 'still has occupants';
-            if ($type === 'incidents' && (!in_array($r['status'], ['resolved','rejected'], true) || $this->linked('incident_assignments', 'incident_id', $id, "AND status IN ('assigned','on_scene')")))$blocked = 'must be resolved/rejected with no active assignments';
+        $id = (int)$row['id'];
+        $guide = '';
+        if ($type === 'goods' && (int)$row['quantity_on_hand'] !== 0) {
+            $guide = 'Open Relief goods → Stock movements. Record the actual distribution or stock-out of remaining supplies, then retry when stock is zero.';
         }
-        if ($type === 'goods' && (int)$r['quantity_on_hand'] !== 0)$blocked = 'still has stock; record the proper stock transaction first';
-        if ($blocked !== '')throw new DomainException(self::TYPES[$type][2] . ' #' . $id . ' ' . $blocked . '. No selected records were changed.');
+        $stayColumn = ['members' => 'household_member_id', 'walkins' => 'walkin_id', 'centers' => 'center_id'];
+        if (isset($stayColumn[$type]) && $this->linked('evacuation_records', $stayColumn[$type], $id, 'AND checked_out_at IS NULL')) {
+            $guide = 'Open Evacuation centers → the occupied center. Check out the affected people when they have actually left, then retry.';
+        }
+        if ($type === 'households') {
+            $members = $this->query('SELECT id FROM household_members WHERE household_id=? FOR UPDATE', [$id]);
+            foreach ($members as $member) {
+                if ($this->linked('evacuation_records', 'household_member_id', (int)$member['id'], 'AND checked_out_at IS NULL')) {
+                    $guide = 'Open Evacuation centers and check out this household’s active occupants when they have left, then retry.';
+                }
+            }
+        }
+        if ($type === 'incidents' && (in_array($row['status'], ['verified','responding'], true) || $this->linked('incident_assignments', 'incident_id', $id, "AND status IN ('assigned','on_scene')"))) {
+            $guide = 'Open the incident → Response management. Complete or cancel active assignments, then resolve or reject the incident before retrying.';
+        }
+        if ($type === 'teams' && $this->linked('incident_assignments', 'responder_id', $id, "AND status IN ('assigned','on_scene')")) {
+            $guide = 'Open the assigned incidents → Response management. Complete or cancel this team’s active assignments, then retry.';
+        }
+        if ($guide !== '') {
+            throw new DomainException(self::TYPES[$type][2] . ' #' . $id . ': ' . $guide . ' No selected records were changed.');
+        }
+        $links = [
+            'households' => [['household_members','household_id'],['relief_distributions','household_id']],
+            'members' => [['evacuation_records','household_member_id']],
+            'incidents' => [['incident_images','incident_id'],['incident_assignments','incident_id'],['response_updates','incident_id']],
+            'teams' => [['incident_assignments','responder_id']],
+            'centers' => [['evacuation_records','center_id']],
+            'walkins' => [['evacuation_records','walkin_id']],
+            'goods' => [['relief_stock_movements','item_id'],['relief_distribution_items','item_id']],
+            'locations' => [['relief_distributions','relief_location_id']]
+        ];
+        foreach ($links[$type] ?? [] as [$table, $column]) {
+            if ($this->linked($table, $column, $id)) return 'hide';
+        }
+        if ($type === 'announcements' && ($row['first_published_at'] !== null || $row['is_published'] || $row['publication_history_unknown'])) return 'hide';
+        return 'delete';
     }
-    public function apply(string $type, array $ids, string $action, array $expected): void
+    public function deleteSelected(array $selection): void
     {
-        [$table] = $this->spec($type);
-        if (!in_array($action, ['delete','archive'], true))throw new DomainException('Unsupported action.');
         $this->pdo->beginTransaction();
         try {
-            $rows = $this->selected($type, $ids, true);
-            foreach ($rows as $row) {
-                if (($expected[(int)$row['id']] ?? '') !== hash('sha256', json_encode($row)))throw new DomainException('Record #' . $row['id'] . ' changed after review. Reload and review again. No records changed.');
-                $this->check($type, $row, $action);
-            }
-            foreach ($rows as $row) {
-                $id = (int)$row['id'];
-                if ($action === 'delete') {
-                    $s = $this->pdo->prepare("DELETE FROM $table WHERE id=?");
-                } else {
-                    $set = $type === 'teams'?'is_active=0':'archived_at=COALESCE(archived_at,CURRENT_TIMESTAMP)';
-                    if ($type === 'centers')$set .= ",status='closed'";
-                    if ($type === 'announcements')$set .= ',is_published=0';
-                    $s = $this->pdo->prepare("UPDATE $table SET $set WHERE id=?");
+            // Check the entire batch before deleting anything, including mixed types.
+            $modes = [];
+            ksort($selection);
+            foreach ($selection as $type => $ids) {
+                foreach ($this->selected($type, $ids, true) as $row) {
+                    $modes[$type][(int)$row['id']] = $this->removalMode($type, $row);
                 }
-                $s->execute([$id]);
+            }
+            foreach ($selection as $type => $ids) {
+                [$table] = $this->spec($type);
+                foreach ($ids as $id) {
+                    $sql = "DELETE FROM $table WHERE id=?";
+                    if ($modes[$type][$id] === 'hide') {
+                        $set = $type === 'teams' ? 'is_active=0' : 'archived_at=CURRENT_TIMESTAMP';
+                        if ($type === 'centers') $set .= ",status='closed'";
+                        if ($type === 'announcements') $set .= ',is_published=0';
+                        $sql = "UPDATE $table SET $set WHERE id=?";
+                        if ($type === 'households') {
+                            $stmt = $this->pdo->prepare('UPDATE household_members SET archived_at=COALESCE(archived_at,CURRENT_TIMESTAMP) WHERE household_id=?');
+                            $stmt->execute([$id]);
+                        }
+                    }
+                    $stmt = $this->pdo->prepare($sql);
+                    $stmt->execute([$id]);
+                }
             }
             $this->pdo->commit();
-        } catch (Throwable $e) {
+        } catch (Throwable $error) {
             $this->pdo->rollBack();
-            throw $e;
+            throw $error;
         }
     }
 }

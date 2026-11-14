@@ -62,9 +62,17 @@ def check_acceptance(admin, resident, Client, query, prefix):
     assert query('SELECT COUNT(*) AS n FROM relief_stock_movements')[0]['n'] == movements
     for kind, record in [('households',1), ('incidents',1), ('centers',1), ('goods',1)]:
         path = prefix + 'admin/records.php?type=' + kind
-        code, body = admin.request(path, [('action','review'),('operation','delete'),('ids[]',str(record))])
-        assert 'alert-danger' in body or 'cannot' in body.lower() or 'blocked' in body.lower(), (kind, body[-1200:])
+        code, body = admin.request(path, [('action','delete'),('ids[]',kind + ':' + str(record))])
+        assert 'alert-danger' in body and 'No selected records were changed' in body, kind
     assert query('SELECT COUNT(*) AS n FROM response_updates')[0]['n'] >= 3
     assert query('SELECT COUNT(*) AS n FROM relief_distribution_items')[0]['n'] == 1
     assert query('SELECT COUNT(*) AS n FROM evacuation_records WHERE checked_out_at IS NOT NULL')[0]['n'] == 1
-    print('PASS insufficient-stock rollback, linked delete rejection and preserved operational history')
+    print('PASS insufficient-stock rollback, active-record rejection and preserved operational history')
+    query("UPDATE relief_items SET quantity_on_hand=0 WHERE id=1")
+    history = query('SELECT COUNT(*) AS n FROM relief_stock_movements')[0]['n']
+    code, body = admin.request(prefix + 'admin/records.php?type=goods', [('action','delete'),('ids[]','goods:1')])
+    assert code == 200 and 'alert-danger' not in body
+    assert query('SELECT archived_at FROM relief_items WHERE id=1')[0]['archived_at'] is not None
+    assert query('SELECT COUNT(*) AS n FROM relief_stock_movements')[0]['n'] == history
+    assert 'value="goods:1"' not in body
+    print('PASS zero-stock good removed from active selection with stock/distribution history preserved')

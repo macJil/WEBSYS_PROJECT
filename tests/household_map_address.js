@@ -8,7 +8,7 @@ function fixture(initial='',withMap=true){
  const items=Object.fromEntries(keys.map(k=>[k,element()]));root.querySelector=k=>items[k];root.dataset.addressUrl='https://photon.komoot.io/reverse';items['[data-picker-map]'].dataset={lat:16.6272,lng:120.7672,zoom:15};
  let time=10000,sequence=0,geoOk,geoFail;const timers=new Map(),calls=[];
  const map={setView(){return this;},on(type,fn){this[type]=fn;},removeLayer(){}};
- const context={document:{querySelectorAll:()=>[root]},Event:class{constructor(type){this.type=type;}},URL,AbortController,TextEncoder,Map,Date:{now:()=>time},setTimeout(fn,ms){const id=++sequence;timers.set(id,{at:time+ms,fn});return id;},clearTimeout(id){timers.delete(id);},navigator:{geolocation:{getCurrentPosition(ok,fail){geoOk=ok;geoFail=fail;}}},fetch:(url,options)=>new Promise((resolve,reject)=>{calls.push({url,options,resolve,reject});})};
+ const context={window:{location:{href:'http://localhost/index.php',origin:'http://localhost'}},document:{querySelectorAll:()=>[root]},Event:class{constructor(type){this.type=type;}},URL,AbortController,TextEncoder,Map,Date:{now:()=>time},setTimeout(fn,ms){const id=++sequence;timers.set(id,{at:time+ms,fn});return id;},clearTimeout(id){timers.delete(id);},navigator:{geolocation:{getCurrentPosition(ok,fail){geoOk=ok;geoFail=fail;}}},fetch:(url,options)=>new Promise((resolve,reject)=>{calls.push({url,options,resolve,reject});})};
  if(withMap)context.L={map:()=>map,tileLayer:()=>({on(){return this;},addTo(){}}),marker:()=>({addTo(){return this;},on(){}})};
  for(const file of ['location-picker.js'])vm.runInNewContext(fs.readFileSync(__dirname+'/../resources/assets/js/'+file,'utf8'),context);
  const flush=async()=>{for(let i=0;i<8;i++)await Promise.resolve();};

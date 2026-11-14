@@ -7,7 +7,7 @@
         />
         <title><?= e(($pageTitle ?? 'Home') . ' | ' . $settings['app_name']) ?></title>
         <link rel="stylesheet" href="<?= e(url('resources/assets/css/bootstrap.min.css')) ?>" />
-        <link rel="stylesheet" href="<?= e(url('resources/assets/css/bayanready.css')) ?>" /><noscript
+        <link rel="stylesheet" href="<?= e(url('resources/assets/css/bayanready.css?v=20261114-buttons')) ?>" /><noscript
             ><style>
                 .navigation-collapse.collapse {
                     display: block;

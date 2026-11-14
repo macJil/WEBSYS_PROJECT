@@ -6,7 +6,7 @@ $admin = $_SESSION['ROLE'] === 'admin';
 $pageTitle = 'Open evacuation centers';
 require __DIR__ . '/../components/header.php';
 ?>
-<p class="return-link no-print"><a href="<?= e(url(dashboardPath())) ?>">Back to dashboard</a></p>
+<p class="return-link no-print"><a class="btn btn-outline-secondary" href="<?= e(url(dashboardPath())) ?>">Back to dashboard</a></p>
 <h1>Open evacuation centers</h1>
 <p><?= count($overview['centers']) ?> centers. Centers without map points are still included. Available capacity is capacity minus active occupants. Closed and archived centers are excluded.</p>
 <div class="table-responsive" tabindex="0" role="region" aria-label="Scrollable records">
