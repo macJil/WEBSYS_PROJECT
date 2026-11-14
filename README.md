@@ -4,6 +4,12 @@ Official project repository: https://github.com/macJil/WEBSYS_PROJECT
 
 A one-barangay classroom project using simple PHP MVC, PDO/MySQL, sessions, and direct PHP pages. Development is in progress.
 
+## Current team documentation
+
+Start with the [team handbook](docs/team/README.md), [five-member assignments](docs/team/TEAM_ASSIGNMENTS.md), [code walkthrough](docs/team/CODE_WALKTHROUGH.md), [complete maintained source](docs/team/SOURCE_COMPANION.md), [self-test guide](docs/team/TESTING_GUIDE.md), and [latest test results](docs/team/FINAL_VERIFICATION.md).
+
+The phase documents below are historical. Where they differ, use the current handbook and source: automatic map visibility, household-based check-in, and history-preserving removal are implemented.
+
 ## Project documents
 
 - [Phase 1 baseline and five-member review assignments](docs/PHASE_1_PROJECT_BASELINE.md)
