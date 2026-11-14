@@ -1,0 +1,98 @@
+[
+  {
+    "page": "admin/households.php",
+    "width": 390,
+    "documentWidth": 390,
+    "errors": 0
+  },
+  {
+    "page": "incidents/create.php",
+    "width": 390,
+    "documentWidth": 390,
+    "errors": 0
+  },
+  {
+    "page": "admin/response/teams.php",
+    "width": 390,
+    "documentWidth": 390,
+    "errors": 0
+  },
+  {
+    "page": "admin/evacuation/center.php?id=1",
+    "width": 390,
+    "documentWidth": 390,
+    "errors": 0
+  },
+  {
+    "page": "admin/relief/inventory.php",
+    "width": 390,
+    "documentWidth": 390,
+    "errors": 0
+  },
+  {
+    "page": "admin/relief/distributions.php",
+    "width": 390,
+    "documentWidth": 390,
+    "errors": 0
+  },
+  {
+    "page": "admin/announcement/announcement.php",
+    "width": 390,
+    "documentWidth": 390,
+    "errors": 0
+  },
+  {
+    "page": "admin/summaries/disaster.php",
+    "width": 390,
+    "documentWidth": 390,
+    "errors": 0
+  },
+  {
+    "page": "admin/households.php",
+    "width": 1366,
+    "documentWidth": 1366,
+    "errors": 0
+  },
+  {
+    "page": "incidents/create.php",
+    "width": 1366,
+    "documentWidth": 1366,
+    "errors": 0
+  },
+  {
+    "page": "admin/response/teams.php",
+    "width": 1366,
+    "documentWidth": 1366,
+    "errors": 0
+  },
+  {
+    "page": "admin/evacuation/center.php?id=1",
+    "width": 1366,
+    "documentWidth": 1366,
+    "errors": 0
+  },
+  {
+    "page": "admin/relief/inventory.php",
+    "width": 1366,
+    "documentWidth": 1366,
+    "errors": 0
+  },
+  {
+    "page": "admin/relief/distributions.php",
+    "width": 1366,
+    "documentWidth": 1366,
+    "errors": 0
+  },
+  {
+    "page": "admin/announcement/announcement.php",
+    "width": 1366,
+    "documentWidth": 1366,
+    "errors": 0
+  },
+  {
+    "page": "admin/summaries/disaster.php",
+    "width": 1366,
+    "documentWidth": 1366,
+    "errors": 0
+  }
+]

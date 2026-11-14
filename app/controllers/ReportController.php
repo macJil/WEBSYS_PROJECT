@@ -21,7 +21,8 @@ class ReportController extends Controller
         if (!$id || $id < 1) {
             http_response_code(400);
             exit('Invalid ID.');
-        } return $id;
+        }
+        return $id;
     }
     public function getIncident(int $id): array
     {
@@ -29,7 +30,8 @@ class ReportController extends Controller
         if (!$row) {
             http_response_code(404);
             exit('Incident not found.');
-        } return $row;
+        }
+        return $row;
     }
     public function filters(): array
     {

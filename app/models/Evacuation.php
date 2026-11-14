@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../../config/db.php';
+require_once __DIR__ . '/../evacuation-capacity.php';
 class EvacuationModel
 {
     private PDO $pdo;
@@ -16,19 +17,29 @@ class EvacuationModel
     public function centers(string $search): array
     {
         $term = '%' . strtr($search, ['!' => '!!','%' => '!%','_' => '!_']) . '%';
-        return $this->rows("SELECT c.*, (SELECT COUNT(*) FROM evacuation_records e WHERE e.center_id=c.id AND e.checked_out_at IS NULL) AS occupancy FROM evacuation_centers c WHERE c.archived_at IS NULL AND (c.name LIKE ? ESCAPE '!' OR c.address_details LIKE ? ESCAPE '!') ORDER BY c.name", [$term,$term]);
+        $centers = $this->rows("SELECT c.*, (SELECT COUNT(*) FROM evacuation_records e WHERE e.center_id=c.id AND e.checked_out_at IS NULL) AS occupancy FROM evacuation_centers c WHERE c.archived_at IS NULL AND (c.name LIKE ? ESCAPE '!' OR c.address_details LIKE ? ESCAPE '!') ORDER BY c.name", [$term,$term]);
+        foreach ($centers as $index => $center) {
+            $centers[$index]['available'] = availableCapacity($center);
+        }
+        return $centers;
     }
     public function center(int $id): array
     {
         $rows = $this->rows('SELECT c.*, (SELECT COUNT(*) FROM evacuation_records e WHERE e.center_id=c.id AND e.checked_out_at IS NULL) AS occupancy FROM evacuation_centers c WHERE c.id=?', [$id]);
-        return $rows[0] ?? [];
+        if (!$rows) {
+            return [];
+        }
+        $center = $rows[0];
+        $center['available'] = availableCapacity($center);
+        return $center;
     }
     private function lockCenter(int $id): array
     {
         $rows = $this->rows('SELECT * FROM evacuation_centers WHERE id=? FOR UPDATE', [$id]);
         if (!$rows) {
             throw new DomainException('Center not found.');
-        } return $rows[0];
+        }
+        return $rows[0];
     }
     private function occupancy(int $id): int
     {
@@ -41,7 +52,9 @@ class EvacuationModel
         try {
             if ($id) {
                 $editing = $this->lockCenter($id);
-                if ($editing['archived_at'] !== null)throw new DomainException('Archived centers cannot be edited.');
+                if ($editing['archived_at'] !== null) {
+                    throw new DomainException('Archived centers cannot be edited.');
+                }
                 $count = $this->occupancy($id);
                 if ($data['capacity'] < $count) {
                     throw new DomainException('Capacity cannot be less than current occupancy.');
@@ -61,10 +74,79 @@ class EvacuationModel
             throw $e;
         }
     }
-    public function members(): array
+    public function households(): array
     {
-        return $this->rows('SELECT m.id,m.full_name,h.household_code FROM household_members m JOIN households h ON h.id=m.household_id WHERE m.archived_at IS NULL AND h.archived_at IS NULL ORDER BY h.household_code,m.full_name');
+        return $this->rows("SELECT h.id, h.household_code, h.representative_name,
+            COUNT(m.id) AS member_count
+            FROM households h
+            LEFT JOIN household_members m ON m.household_id = h.id AND m.archived_at IS NULL
+            WHERE h.archived_at IS NULL
+            GROUP BY h.id, h.household_code, h.representative_name
+            ORDER BY h.household_code");
     }
+
+    public function householdMembers(int $householdId): array
+    {
+        return $this->rows('SELECT m.id, m.full_name FROM household_members m
+            JOIN households h ON h.id = m.household_id
+            WHERE h.id = ? AND h.archived_at IS NULL AND m.archived_at IS NULL
+            ORDER BY m.id', [$householdId]);
+    }
+
+    public function checkinHousehold(int $centerId, int $householdId, array $memberIds, int $staff): void
+    {
+        if (!$memberIds) {
+            throw new DomainException('Select at least one arriving member.');
+        }
+        foreach ($memberIds as $memberId) {
+            if (!is_scalar($memberId) || !filter_var($memberId, FILTER_VALIDATE_INT) || $memberId < 1) {
+                throw new DomainException('Invalid selected member.');
+            }
+        }
+        $memberIds = array_map('intval', $memberIds);
+        if (count($memberIds) !== count(array_unique($memberIds))) {
+            throw new DomainException('A member was selected more than once.');
+        }
+        sort($memberIds);
+        $this->pdo->beginTransaction();
+        try {
+            $center = $this->lockCenter($centerId);
+            if ($center['status'] !== 'open' || $center['archived_at'] !== null) {
+                throw new DomainException('This center is closed or archived.');
+            }
+            $household = $this->rows('SELECT id FROM households
+                WHERE id = ? AND archived_at IS NULL FOR UPDATE', [$householdId]);
+            if (!$household) {
+                throw new DomainException('Active household not found.');
+            }
+            $occupancy = $this->occupancy($centerId);
+            if ($occupancy + count($memberIds) > (int)$center['capacity']) {
+                throw new DomainException('Not enough capacity for all selected members. Nobody was checked in.');
+            }
+            foreach ($memberIds as $memberId) {
+                $member = $this->rows('SELECT id, full_name FROM household_members
+                    WHERE id = ? AND household_id = ? AND archived_at IS NULL FOR UPDATE', [$memberId, $householdId]);
+                if (!$member) {
+                    throw new DomainException('A selected member is no longer active in this household. Nobody was checked in.');
+                }
+                $active = $this->rows('SELECT id FROM evacuation_records
+                    WHERE household_member_id = ? AND checked_out_at IS NULL FOR UPDATE', [$memberId]);
+                if ($active) {
+                    throw new DomainException($member[0]['full_name'] . ' already has an active stay. Nobody was checked in.');
+                }
+            }
+            $stmt = $this->pdo->prepare('INSERT INTO evacuation_records
+                (center_id, household_member_id, recorded_by) VALUES (?, ?, ?)');
+            foreach ($memberIds as $memberId) {
+                $stmt->execute([$centerId, $memberId, $staff]);
+            }
+            $this->pdo->commit();
+        } catch (Throwable $e) {
+            $this->pdo->rollBack();
+            throw $e;
+        }
+    }
+
     public function walkins(): array
     {
         return $this->rows('SELECT * FROM evacuation_walkins WHERE archived_at IS NULL ORDER BY full_name,id');

@@ -15,7 +15,7 @@ require __DIR__ . '/../../components/errors.php';
 ?>
 <h1><?= e($pageTitle) ?></h1>
 <p><?= e($incident['incident_type']) ?> · <?= e($incident['location_description']) ?> · Status: <strong><?= e($incident['status']) ?></strong></p>
-<a href="<?= e(url('resources/views/incidents/view.php?id=' . $id)) ?>">Incident details / staff review</a>
+<a href="<?= e(url('resources/views/incidents/view.php?id=' . $id)) ?>">Back to incident details</a>
 <p
     >Verify an incident before assigning teams. Dispatch changes it to responding. Complete or
     cancel all active assignments before resolving it in staff review.</p
@@ -43,6 +43,7 @@ require __DIR__ . '/../../components/errors.php';
 <?= input('action') === 'assign_team' ? e(input('notes')) : '' ?></textarea>
     </label>
     <button class="btn btn-primary" name="action" value="assign_team">Assign team</button>
+    <a href="<?= e(url('resources/views/incidents/view.php?id=' . $id)) ?>">Cancel and return to incident details</a>
 </form>
 <?php elseif ($open): ?><p
     >No unassigned active teams. <a href="<?= e(url('resources/views/admin/response/teams.php')) ?>">Manage teams</a> or reactivate an
@@ -70,7 +71,7 @@ require __DIR__ . '/../../components/errors.php';
             >Action taken<textarea class="form-control" name="notes" maxlength="2000" required>
 <?= $retry ? e(input('notes')) : '' ?></textarea>
         </label>
-        <button class="btn btn-secondary" name="action" value="update_assignment"
+        <button class="btn btn-primary" name="action" value="update_assignment"
             >Record update</button
         >
     </form>

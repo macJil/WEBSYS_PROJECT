@@ -11,6 +11,7 @@ $pageTitle = 'Report incident';
 require __DIR__ . '/../components/header.php';
 require __DIR__ . '/../components/errors.php';
 ?>
+<p class="return-link no-print"><a href="<?= e(url('resources/views/incidents/list.php')) ?>">Back to reports</a></p>
 <h1>Report an incident</h1>
 <p
     >Reports are reviewed by barangay staff. This website does not guarantee an immediate emergency
@@ -67,5 +68,6 @@ require __DIR__ . '/../components/location-picker.php'; ?>
     /></label>
     <p>If a form error occurs, choose the image again before submitting.</p>
     <button class="btn btn-primary" name="action" value="create_incident">Submit report</button>
+    <a href="<?= e(url('resources/views/incidents/list.php')) ?>">Cancel and return to reports</a>
 </form>
 <?php require __DIR__ . '/../components/footer.php'; ?>

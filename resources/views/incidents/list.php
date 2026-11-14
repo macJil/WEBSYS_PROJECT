@@ -7,6 +7,7 @@ $reports = $controller->listIncidents($filters);
 $pageTitle = $_SESSION['ROLE'] === 'admin' ? 'Incident reports' : 'My incident reports';
 require __DIR__ . '/../components/header.php';
 ?>
+<p class="return-link no-print"><a href="<?= e(url(dashboardPath())) ?>">Back to dashboard</a></p>
 <h1><?= e($pageTitle) ?></h1>
 <?php if ($_SESSION['ROLE'] === 'admin'): ?><p><a href="<?= e(url('resources/views/admin/records.php?type=incidents')) ?>">Select records / view archived</a></p
 ><?php endif; ?>
@@ -38,7 +39,7 @@ require __DIR__ . '/../components/header.php';
     /></label>
     <?php endforeach; ?>
     <div>
-        <button class="btn btn-secondary">Search</button>
+        <button class="btn btn-outline-secondary">Search</button>
         <a href="<?= e(url('resources/views/incidents/list.php')) ?>">Clear filters</a>
     </div>
 </form>

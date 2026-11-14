@@ -10,7 +10,8 @@
     const admin = element.dataset.admin === "1";
     const home = [Number(element.dataset.lat), Number(element.dataset.lng)];
     const zoom = Number(element.dataset.zoom);
-    const map = L.map(element, { minZoom: Number(element.dataset.minZoom || 14) }).setView(
+    const minimumZoom = Number(element.dataset.minZoom || 11);
+    const map = L.map(element, { minZoom: minimumZoom }).setView(
         home,
         zoom,
     );
@@ -69,7 +70,7 @@
             line(node, "Status: ", row.status);
             line(node, "Capacity: ", row.capacity);
             line(node, "Occupants: ", row.occupancy);
-            line(node, "Available places: ", row.available);
+            line(node, "Available capacity (people): ", row.available);
             path = "resources/views/admin/evacuation/center.php?id=";
         } else {
             title = row.name;
@@ -88,17 +89,26 @@
         }
         return node;
     }
-    document.getElementById("map-home").addEventListener("click", () => map.setView(home, zoom));
+    document.getElementById("map-home").addEventListener("click", () => {
+        map.setMinZoom(minimumZoom);
+        map.setView(home, zoom);
+        status.textContent = "Atok demo view. Use Show all locations to see saved points outside this view.";
+    });
     document.getElementById("map-fit").addEventListener("click", () => {
         const bounds = L.latLngBounds([]);
         boxes.forEach((box) => {
-            if (box.checked)
-                groups[box.dataset.layer].eachLayer((marker) => bounds.extend(marker.getLatLng()));
+            box.checked = true;
+            groups[box.dataset.layer].addTo(map);
+            groups[box.dataset.layer].eachLayer((marker) => bounds.extend(marker.getLatLng()));
         });
-        if (bounds.isValid()) map.fitBounds(bounds, { padding: [30, 30], maxZoom: 16 });
-        else
-            status.textContent =
-                "No markers in the selected layers. Enable a layer or return to the demo area.";
+        if (bounds.isValid()) {
+            // Saved points can be anywhere; fit them without imposing a demo boundary.
+            map.setMinZoom(1);
+            map.fitBounds(bounds, { padding: [30, 30], maxZoom: 16 });
+            status.textContent = "Showing all saved locations. Select a marker for details.";
+        } else {
+            status.textContent = "No saved locations have map points yet. The demo view is unchanged.";
+        }
     });
     fetch(element.dataset.url, { credentials: "same-origin", cache: "no-store" })
         .then((response) => {

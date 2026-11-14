@@ -5,6 +5,7 @@ $pageTitle = 'Relief location';
 require __DIR__ . '/../../components/header.php';
 ?> <?php $savedPoint = $location;
 require __DIR__ . '/../../components/saved-point.php'; ?>
+<p class="return-link no-print"><a href="<?= e(url('resources/views/admin/relief/locations.php')) ?>">Back to relief locations</a></p>
 <h1><?= e($location['name']) ?></h1>
 <dl>
     <?php foreach (['location_type' => 'Type','address_details' => 'Address','latitude' => 'Latitude','longitude' => 'Longitude'] as $key => $label): ?>

@@ -5,7 +5,26 @@ $id = $controller->recordId($_GET['id'] ?? null);
 $center = $controller->center($id);
 $errors = $controller->handleStay($id);
 $records = $controller->records($id);
-$members = $controller->members();
+$households = $controller->households();
+$householdId = 0;
+if (isset($_GET['household_id']) && $_GET['household_id'] !== '') {
+    $householdId = $controller->recordId($_GET['household_id']);
+}
+if (input('action') === 'checkin_household') {
+    $householdId = $controller->recordId(input('household_id'));
+}
+$members = $householdId ? $controller->householdMembers($householdId) : [];
+$selectedMembers = input('action') === 'checkin_household' ? ($_POST['member_ids'] ?? []) : array_column($members, 'id');
+if (!is_array($selectedMembers)) {
+    $selectedMembers = [];
+}
+$arrivingCount = 0;
+foreach ($members as $member) {
+    if (in_array($member['id'], $selectedMembers)) {
+        $arrivingCount++;
+    }
+}
+$center = $controller->center($id);
 $walkins = $controller->walkins();
 $pageTitle = $center['name'];
 require __DIR__ . '/../../components/header.php';
@@ -18,10 +37,46 @@ require __DIR__ . '/../../components/saved-point.php'; ?>
     ><?= e($center['address_details']) ?> · <?= e($center['status']) ?> · Occupancy: <?= (int)$center['occupancy'] ?> /
     <?= (int)$center['capacity'] ?> people</p
 >
-<a href="<?= e(url('resources/views/admin/evacuation/centers.php')) ?>">All centers</a> ·
+<p>Available capacity (people): <strong><?= (int)$center['available'] ?></strong></p>
+<a href="<?= e(url('resources/views/admin/evacuation/centers.php')) ?>">Back to evacuation centers</a> ·
 <a href="<?= e(url('resources/views/admin/evacuation/centers.php?edit=' . $id)) ?>">Edit / close center</a>
-<?php if ($center['status'] === 'open' && $center['occupancy'] < $center['capacity']): ?>
-<h2 class="mt-4">Check in one person</h2>
+<?php if ($center['status'] === 'open' && $center['archived_at'] === null && $center['occupancy'] < $center['capacity']): ?>
+<h2 class="mt-4">Check in a household</h2>
+<form method="get" class="mb-3">
+    <input type="hidden" name="id" value="<?= $id ?>">
+    <label for="household_id" class="form-label">Registered household</label>
+    <select id="household_id" name="household_id" class="form-select mb-2" required>
+        <option value="">Choose a household</option>
+        <?php foreach ($households as $household): ?>
+            <option value="<?= (int)$household['id'] ?>" <?= $householdId === (int)$household['id'] ? 'selected' : '' ?>>
+                <?= e($household['household_code'] . ' — ' . $household['representative_name']) ?>
+                (<?= (int)$household['member_count'] ?> members)
+            </option>
+        <?php endforeach; ?>
+    </select>
+    <button class="btn btn-outline-secondary">Show members</button>
+</form>
+<?php if ($householdId): ?>
+    <form method="post" data-household-checkin data-occupancy="<?= (int)$center['occupancy'] ?>" data-capacity="<?= (int)$center['capacity'] ?>">
+        <input type="hidden" name="household_id" value="<?= $householdId ?>">
+        <fieldset>
+            <legend>Arriving members (<?= count($members) ?> registered)</legend>
+            <p>Uncheck anyone who is not arriving. Each selected person uses one place.</p>
+            <?php foreach ($members as $member): ?>
+                <label class="d-block mb-2">
+                    <input class="form-check-input" type="checkbox" name="member_ids[]" value="<?= (int)$member['id'] ?>" <?= in_array($member['id'], $selectedMembers) ? 'checked' : '' ?>>
+                    <?= e($member['full_name']) ?>
+                </label>
+            <?php endforeach; ?>
+        </fieldset>
+        <?php if (!$members): ?><p>No active members found. Update the household registry first.</p><?php endif; ?>
+        <p>Current occupancy: <?= (int)$center['occupancy'] ?> / <?= (int)$center['capacity'] ?> people.</p>
+        <p data-arrival-summary aria-live="polite">Arriving: <?= $arrivingCount ?> people. Remaining capacity after check-in: <?= (int)$center['capacity'] - (int)$center['occupancy'] - $arrivingCount ?> people.</p>
+        <button class="btn btn-primary" name="action" value="checkin_household" <?= !$members ? 'disabled' : '' ?>>Check in household</button>
+        <a href="<?= e(url('resources/views/admin/evacuation/center.php?id=' . $id)) ?>">Cancel household selection</a>
+    </form>
+<?php endif; ?>
+<h2 class="mt-4">Check in a walk-in</h2>
 <p
     >Search the household registry and existing walk-ins before creating a new walk-in. Confirm
     identity with the person or guardian. To transfer centers, check out the previous stay first.</p
@@ -29,16 +84,8 @@ require __DIR__ . '/../../components/saved-point.php'; ?>
 <form method="post">
     <label class="d-block mb-3"
         >Record type<select class="form-select" name="kind"
-            ><?php foreach (['member' => 'Registered household member','walkin' => 'Existing walk-in','new_walkin' => 'New walk-in'] as $key => $label): ?><option value="<?= e($key) ?>" <?= input('kind') === $key?'selected':'' ?>
+            ><?php foreach (['walkin' => 'Existing walk-in','new_walkin' => 'New walk-in'] as $key => $label): ?><option value="<?= e($key) ?>" <?= input('kind') === $key?'selected':'' ?>
                 ><?= e($label) ?></option
-            ><?php endforeach; ?></select
-        ></label
-    >
-    <label class="d-block mb-3"
-        >Registered member<select class="form-select" name="member_id"
-            ><option value="">Select for registered member check-in</option
-            ><?php foreach ($members as $member): ?><option value="<?= (int)$member['id'] ?>" <?= input('member_id') === (string)$member['id']?'selected':'' ?>
-                ><?= e($member['household_code'] . ' — ' . $member['full_name']) ?></option
             ><?php endforeach; ?></select
         ></label
     >
@@ -68,7 +115,8 @@ require __DIR__ . '/../../components/saved-point.php'; ?>
                 value="<?= e(input('age')) ?>"
         /></label>
     </fieldset>
-    <button class="btn btn-primary" name="action" value="checkin">Check in</button>
+    <button class="btn btn-primary" name="action" value="checkin">Check in walk-in</button>
+    <a href="<?= e(url('resources/views/admin/evacuation/centers.php')) ?>">Cancel and return to evacuation centers</a>
 </form>
 <?php else: ?><p class="alert alert-info mt-3"
     >Check-in unavailable: this center is closed or full.</p
@@ -111,4 +159,5 @@ require __DIR__ . '/../../components/saved-point.php'; ?>
         >
     </table>
 </div>
+<script src="<?= e(url('resources/assets/js/household-checkin.js')) ?>" defer></script>
 <?php require __DIR__ . '/../../components/footer.php'; ?>

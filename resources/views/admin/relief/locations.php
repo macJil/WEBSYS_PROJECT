@@ -16,6 +16,7 @@ $pageTitle = 'Relief locations';
 require __DIR__ . '/../../components/header.php';
 require __DIR__ . '/../../components/errors.php';
 ?>
+<p class="return-link no-print"><a href="<?= e(url('resources/views/admin/relief/inventory.php')) ?>">Back to relief inventory</a></p>
 <h1>Relief locations</h1>
 <p><a href="<?= e(url('resources/views/admin/records.php?type=locations')) ?>">Select records / view archived</a></p>
 <ul
@@ -43,6 +44,6 @@ require __DIR__ . '/../../components/errors.php';
     <?php $point = $d;
 require __DIR__ . '/../../components/location-picker.php'; ?>
     <button class="btn btn-primary" name="action" value="save_location">Save location</button>
-    <a href="locations.php">New location / cancel</a>
+    <a href="<?= e(url('resources/views/admin/relief/locations.php')) ?>">Cancel and return to relief locations</a>
 </form>
 <?php require __DIR__ . '/../../components/footer.php'; ?>

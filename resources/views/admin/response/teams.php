@@ -12,6 +12,7 @@ $pageTitle = 'Response teams';
 require __DIR__ . '/../../components/header.php';
 require __DIR__ . '/../../components/errors.php';
 ?>
+<p class="return-link no-print"><a href="<?= e(url(dashboardPath())) ?>">Back to dashboard</a></p>
 <h1>Response teams</h1>
 <p><a href="<?= e(url('resources/views/admin/records.php?type=teams')) ?>">Select records / view archived</a></p>
 <p
@@ -64,6 +65,6 @@ require __DIR__ . '/../../components/errors.php';
         ></label
     >
     <button class="btn btn-primary" name="action" value="save_team">Save team</button>
-    <a href="<?= e(url('resources/views/admin/response/teams.php')) ?>">New team / cancel edit</a>
+    <a href="<?= e(url('resources/views/admin/response/teams.php')) ?>">Cancel and return to response teams</a>
 </form>
 <?php require __DIR__ . '/../../components/footer.php'; ?>

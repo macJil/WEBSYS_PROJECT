@@ -13,19 +13,19 @@ class ReliefLocationModel
     }
     public function find(int $id): array
     {
-        $s = $this->pdo->prepare('SELECT * FROM relief_locations WHERE id=?');
-        $s->execute([$id]);
-        return $s->fetch()?:[];
+        $stmt = $this->pdo->prepare('SELECT * FROM relief_locations WHERE id=?');
+        $stmt->execute([$id]);
+        return $stmt->fetch()?:[];
     }
-    public function save(?int $id, array $d): void
+    public function save(?int $id, array $data): void
     {
-        $values = [$d['name'],$d['location_type'],$d['address_details'],$d['latitude'],$d['longitude']];
+        $values = [$data['name'],$data['location_type'],$data['address_details'],$data['latitude'],$data['longitude']];
         if ($id) {
-            $s = $this->pdo->prepare("UPDATE relief_locations SET name=?,location_type=?,address_details=?,latitude=?,longitude=? WHERE id=? AND archived_at IS NULL");
+            $stmt = $this->pdo->prepare("UPDATE relief_locations SET name=?,location_type=?,address_details=?,latitude=?,longitude=? WHERE id=? AND archived_at IS NULL");
             $values[] = $id;
         } else {
-            $s = $this->pdo->prepare('INSERT INTO relief_locations(name,location_type,address_details,latitude,longitude) VALUES(?,?,?,?,?)');
+            $stmt = $this->pdo->prepare('INSERT INTO relief_locations(name,location_type,address_details,latitude,longitude) VALUES(?,?,?,?,?)');
         }
-        $s->execute($values);
+        $stmt->execute($values);
     }
 }

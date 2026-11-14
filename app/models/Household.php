@@ -31,11 +31,16 @@ class HouseholdModel
             throw new DomainException('Archived households cannot be edited.');
         }
         $fields = ['household_code','representative_name','contact_phone','purok','address_details','registry_reason','hazard_type','hazard_notes','vulnerability_category','vulnerability_notes','vulnerability_assessed_by','vulnerability_assessed_at','evacuation_status','latitude','longitude'];
-        $values = array_map(fn ($field) => $data[$field], $fields);
+        $values = [];
+        $assignments = [];
+        foreach ($fields as $field) {
+            $values[] = $data[$field];
+            $assignments[] = $field . '=?';
+        }
         if ($id === null) {
             $stmt = $this->pdo->prepare('INSERT INTO households (' . implode(',', $fields) . ') VALUES (' . implode(',', array_fill(0, count($fields), '?')) . ')');
         } else {
-            $stmt = $this->pdo->prepare('UPDATE households SET ' . implode(',', array_map(fn ($field) => $field . '=?', $fields)) . ' WHERE id=?');
+            $stmt = $this->pdo->prepare('UPDATE households SET ' . implode(',', $assignments) . ' WHERE id=?');
             $values[] = $id;
         }
         $stmt->execute($values);

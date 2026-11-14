@@ -9,7 +9,7 @@ class ResponseModel
     }
     public function teams(): array
     {
-        return $this->pdo->query('SELECT * FROM responders WHERE is_active=1 ORDER BY is_active DESC, team_name')->fetchAll();
+        return $this->pdo->query('SELECT * FROM responders WHERE is_active=1 ORDER BY team_name')->fetchAll();
     }
     public function team(int $id)
     {

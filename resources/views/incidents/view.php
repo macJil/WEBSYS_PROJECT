@@ -46,7 +46,7 @@ require __DIR__ . '/../components/errors.php';
 /></a>
 <?php endforeach; ?> <?php if ($admin): ?>
 <p class="mt-3"
-    ><a class="btn btn-secondary" href="<?= e(url('resources/views/admin/response/incident.php?id=' . $id)) ?>"
+    ><a class="btn btn-outline-secondary" href="<?= e(url('resources/views/admin/response/incident.php?id=' . $id)) ?>"
         >Manage response teams and actions</a
     ></p
 >

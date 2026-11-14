@@ -8,6 +8,7 @@ $pageTitle = 'Stock movements';
 require __DIR__ . '/../../components/header.php';
 require __DIR__ . '/../../components/errors.php';
 ?>
+<p class="return-link no-print"><a href="<?= e(url('resources/views/admin/relief/inventory.php')) ?>">Back to relief inventory</a></p>
 <h1>Stock movements</h1>
 <p
     ><a href="<?= e(url('resources/views/admin/relief/inventory.php')) ?>">Inventory</a> ·
@@ -51,6 +52,7 @@ require __DIR__ . '/../../components/errors.php';
 <?= e(input('notes')) ?></textarea>
     </label>
     <button class="btn btn-primary" name="action" value="stock">Record movement</button>
+    <a href="<?= e(url('resources/views/admin/relief/inventory.php')) ?>">Cancel and return to relief inventory</a>
 </form>
 <h2>Movement history</h2>
 <form method="get" class="filter-form mb-3">
@@ -74,7 +76,7 @@ require __DIR__ . '/../../components/errors.php';
             name="date"
             value="<?= e($controller->queryValue('date')) ?>"
     /></label>
-    <button class="btn btn-secondary">Search</button> <a href="<?= e(url('resources/views/admin/relief/movements.php')) ?>">Clear</a>
+    <button class="btn btn-outline-secondary">Search</button> <a href="<?= e(url('resources/views/admin/relief/movements.php')) ?>">Clear</a>
 </form>
 <div class="table-responsive" tabindex="0" role="region" aria-label="Scrollable records">
     <table class="table">

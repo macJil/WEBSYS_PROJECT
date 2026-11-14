@@ -14,14 +14,20 @@ $centerPath = 'resources/views/maps/centers.php';
 $cards[] = ['Open centers',count($overview['centers']),$centerPath];
 if ($admin) {
     $available = 0;
-    foreach ($overview['centers'] as $center)$available += max(0, (int)$center['capacity'] - (int)$center['occupancy']);
-    $cards[] = ['Available places',$available,$centerPath];
+    foreach ($overview['centers'] as $center) {
+        $available += $center['available'];
+    }
+    $cards[] = ['Available capacity (people)',$available,$centerPath];
     $cards[] = ['Affected households',count($overview['affected']),'resources/views/admin/summaries/current.php?type=households'];
     $cards[] = ['Active evacuees',count($overview['stays']),'resources/views/admin/summaries/current.php?type=evacuees'];
 } else {
     $cards[] = ['Published notices',count($overview['notices']),'resources/views/user/announcement.php'];
 }
 ?>
+<?php if ($admin): ?>
+<p class="small">Available capacity counts additional people that open, non-archived centers can accommodate.
+    Centers without map points are included.</p>
+<?php endif; ?>
 <div class="row g-3 mb-4"
     ><?php foreach ($cards as [$label,$value,$path]): ?><div class="col-sm-6 col-lg-4"
         ><a class="stat-card" href="<?= e(url($path)) ?>"

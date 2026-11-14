@@ -3,9 +3,16 @@ require_once __DIR__ . '/../../../app/helpers.php';
 session_checker();
 $point = $point ?? [];
 ?>
-<fieldset class="location-picker mb-3" data-address-url="<?= e($settings['address_lookup_url'] ?? '') ?>"
+<fieldset class="location-picker mb-3" data-address-url="<?= e($settings['address_lookup_url'] ?? 'https://photon.komoot.io/reverse') ?>"
     ><legend>Location point (optional)</legend>
-    <p>Keep the written address or landmark above. A point does not assess hazard risk.</p>
+    <p>Confirm the written address or landmark above. A point does not assess hazard risk.</p>
+    <?php if (($settings['address_lookup_url'] ?? 'https://photon.komoot.io/reverse') !== ''): ?>
+    <p class="small">Selecting or moving a pin, or using current location, sends the selected coordinates
+        to <a href="https://photon.komoot.io/">Photon</a> for an address suggestion.
+        Address data: <a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</a>.
+        Nearby place names may be approximate; correct the address before saving.</p>
+    <?php endif; ?>
+    <p data-address-status role="status" class="small"></p>
     <?php foreach (['latitude' => 90,'longitude' => 180] as $field => $limit): ?>
     <label
         ><?= e(ucfirst($field)) ?><input
@@ -19,7 +26,7 @@ $point = $point ?? [];
             value="<?= e($point[$field] ?? '') ?>"
     /></label>
     <?php endforeach; ?>
-    <button type="button" class="btn btn-secondary my-2" data-locate
+    <button type="button" class="btn btn-outline-secondary my-2" data-locate
         >Use my current location</button
     >
     <button type="button" class="btn btn-outline-secondary" data-clear>Clear pin</button>

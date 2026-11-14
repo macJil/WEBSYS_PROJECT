@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../../config/db.php';
+require_once __DIR__ . '/../evacuation-capacity.php';
 class DashboardModel
 {
     private PDO $pdo;
@@ -9,25 +10,36 @@ class DashboardModel
     }
     private function rows(string $sql, array $args = []): array
     {
-        $s = $this->pdo->prepare($sql);
-        $s->execute($args);
-        return $s->fetchAll();
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($args);
+        return $stmt->fetchAll();
     }
     public function incidents(?int $owner): array
     {
-        $s = 'SELECT status,COUNT(*) AS total FROM incident_reports WHERE archived_at IS NULL';
+        $sql = 'SELECT status, COUNT(*) AS total FROM incident_reports WHERE archived_at IS NULL';
         $args = [];
         if ($owner !== null) {
-            $s .= ' AND reported_by=?';
+            $sql .= ' AND reported_by = ?';
             $args[] = $owner;
         }
         $counts = array_fill_keys(['pending','verified','responding','resolved','rejected'], 0);
-        foreach ($this->rows($s . ' GROUP BY status', $args) as $r)$counts[$r['status']] = (int)$r['total'];
+        foreach ($this->rows($sql . ' GROUP BY status', $args) as $row) {
+            $counts[$row['status']] = (int)$row['total'];
+        }
         return $counts;
     }
     public function centers(): array
     {
-        return $this->rows("SELECT c.id,c.name,c.address_details,c.capacity,(SELECT COUNT(*) FROM evacuation_records e WHERE e.center_id=c.id AND e.checked_out_at IS NULL) AS occupancy FROM evacuation_centers c WHERE c.archived_at IS NULL AND c.status='open' ORDER BY c.name");
+        $centers = $this->rows("SELECT c.id, c.name, c.address_details, c.status, c.capacity,
+            (SELECT COUNT(*) FROM evacuation_records e
+             WHERE e.center_id = c.id AND e.checked_out_at IS NULL) AS occupancy
+            FROM evacuation_centers c
+            WHERE c.archived_at IS NULL AND c.status = 'open'
+            ORDER BY c.name, c.id");
+        foreach ($centers as $index => $center) {
+            $centers[$index]['available'] = availableCapacity($center);
+        }
+        return $centers;
     }
     public function affected(): array
     {

@@ -2,13 +2,13 @@ const vm=require('vm'),fs=require('fs'),assert=require('assert');
 function element(){return {value:'',dataset:{},events:{},dispatchEvent(){},addEventListener(k,f){this.events[k]=f;}};}
 for(const withMap of [true,false]){
  const items={};for(const key of ['[data-coordinate="latitude"]','[data-coordinate="longitude"]','[data-picker-status]','[data-picker-map]','[data-clear]','[data-locate]'])items[key]=element();
- const root=element();root.querySelector=k=>items[k];items['[data-picker-map]'].dataset={lat:16.41792,lng:120.56091,zoom:15};
+ const root=element();root.closest=()=>({querySelector:()=>null,addEventListener(){}});root.querySelector=k=>items[k];items['[data-picker-map]'].dataset={lat:16.41792,lng:120.56091,zoom:15};
  const lat=items['[data-coordinate="latitude"]'],lng=items['[data-coordinate="longitude"]'];
  lat.value='16.4192000';lng.value='120.5623000';
  let ok,fail,calls=0,currentMarker=null;
  const views=[];
  const map={setView(point,zoom){views.push([point,zoom]);return this;},on(k,f){this[k]=f;},removeLayer(){currentMarker=null;}};
- const context={Event:class {constructor(type){this.type=type;}},document:{querySelectorAll:()=>[root]},navigator:{geolocation:{getCurrentPosition(a,b){calls++;ok=a;fail=b;}}}};
+ const context={Map,clearTimeout(){},Event:class {constructor(type){this.type=type;}},document:{querySelectorAll:()=>[root]},navigator:{geolocation:{getCurrentPosition(a,b){calls++;ok=a;fail=b;}}}};
  if(withMap)context.L={map:(element,options)=>{assert.equal(options.minZoom,14);assert(!options.maxBounds);return map;},tileLayer:()=>({on(){return this;},addTo(){}}),marker:(point)=>{currentMarker={point,events:{},addTo(){return this;},on(k,f){this.events[k]=f;},getLatLng(){return {lat:16.4168,lng:120.5597};}};return currentMarker;}};
  vm.runInNewContext(fs.readFileSync(__dirname+'/../resources/assets/js/location-picker.js','utf8'),context);
  assert.equal(calls,0);

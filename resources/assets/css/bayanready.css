@@ -653,3 +653,29 @@ legend {
         font-size: 0.8rem;
     }
 }
+
+/* Ordinary navigation links are underlined; form actions use Bootstrap buttons. */
+.app-main a:not(.btn):not(.stat-card) {
+    text-decoration: underline;
+}
+.return-link {
+    margin-bottom: 1rem;
+}
+.app-main .btn {
+    margin-block: 0.25rem;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    max-width: 100%;
+}
+.app-main form > .btn + a {
+    display: inline-block;
+    padding: 0.5rem;
+}
+@media (max-width: 575px) {
+    .app-main form > .btn + a,
+    .return-link a {
+        display: inline-block;
+        min-height: 44px;
+        padding-block: 0.6rem;
+    }
+}

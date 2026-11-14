@@ -9,6 +9,7 @@ require __DIR__ . '/../components/header.php';
 ?>
 <link rel="stylesheet" href="<?= e(url('resources/assets/vendor/leaflet/leaflet.css')) ?>" />
 
+<p class="return-link no-print"><a href="<?= e(url(dashboardPath())) ?>">Back to dashboard</a></p>
 <h1><?= $admin?'Staff map':'Community map' ?></h1>
 <p
     ><?= e($settings['demo_barangay_name']) ?>. Markers show saved locations; they do not predict danger or guarantee
@@ -19,7 +20,7 @@ require __DIR__ . '/../components/header.php';
 <div class="map-layout">
     <aside class="map-key border rounded p-3" aria-label="Map layers and legend">
         <h2 class="h5">Layers and legend</h2>
-        <p>Uncheck a layer to hide its markers.</p>
+        <p>Uncheck a layer to hide its markers. Show all locations turns every layer back on.</p>
         <label class="map-layer">
             <input type="checkbox" data-layer="incidents" checked />
             <span class="map-symbol incident" aria-hidden="true">⚠</span> Incidents
@@ -40,7 +41,7 @@ require __DIR__ . '/../components/header.php';
             >Return to demo area</button
         >
         <button type="button" id="map-fit" class="btn btn-outline-secondary my-2" disabled
-            >Show visible markers</button
+            >Show all locations</button
         >
         <a class="d-block" href="<?= e(url('resources/views/maps/map.php')) ?>">Refresh saved locations</a>
         <p class="small mt-3"

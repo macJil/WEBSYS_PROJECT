@@ -15,11 +15,12 @@ $pageTitle = 'Evacuation centers';
 require __DIR__ . '/../../components/header.php';
 require __DIR__ . '/../../components/errors.php';
 ?>
+<p class="return-link no-print"><a href="<?= e(url(dashboardPath())) ?>">Back to dashboard</a></p>
 <h1>Evacuation centers</h1>
 <p><a href="<?= e(url('resources/views/admin/records.php?type=centers')) ?>">Select records / view archived</a></p>
 <form method="get" class="filter-form mb-3">
     <label>Search name or address <input name="q" value="<?= e($q) ?>" /></label>
-    <button class="btn btn-secondary">Search</button> <a href="<?= e(url('resources/views/admin/evacuation/centers.php')) ?>">Clear</a>
+    <button class="btn btn-outline-secondary">Search</button> <a href="<?= e(url('resources/views/admin/evacuation/centers.php')) ?>">Clear</a>
 </form>
 <div class="table-responsive" tabindex="0" role="region" aria-label="Scrollable records">
     <table class="table">
@@ -29,7 +30,7 @@ require __DIR__ . '/../../components/errors.php';
                 <th>Address</th>
                 <th>Status</th>
                 <th>People / capacity</th>
-                <th>Available places</th>
+                <th>Available capacity (people)</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -46,7 +47,7 @@ require __DIR__ . '/../../components/errors.php';
                     ></td
                 >
                 <td><?= (int)$center['occupancy'] ?> / <?= (int)$center['capacity'] ?></td>
-                <td><?= $center['status'] === 'open'?max(0, (int)$center['capacity'] - (int)$center['occupancy']):0 ?></td>
+                <td><?= (int)$center['available'] ?></td>
                 <td
                     ><a href="<?= e(url('resources/views/admin/evacuation/center.php?id=' . $center['id'])) ?>">People / history</a> ·
                     <a href="<?= e(url('resources/views/admin/evacuation/centers.php?edit=' . $center['id'])) ?>">Edit / close</a></td
@@ -91,6 +92,6 @@ require __DIR__ . '/../../components/errors.php';
     <?php $point = $data;
 require __DIR__ . '/../../components/location-picker.php'; ?>
     <button class="btn btn-primary" name="action" value="save_center">Save center</button>
-    <a href="<?= e(url('resources/views/admin/evacuation/centers.php')) ?>">New center / cancel edit</a>
+    <a href="<?= e(url('resources/views/admin/evacuation/centers.php')) ?>">Cancel and return to evacuation centers</a>
 </form>
 <?php require __DIR__ . '/../../components/footer.php'; ?>

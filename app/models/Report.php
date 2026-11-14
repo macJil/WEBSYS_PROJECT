@@ -31,7 +31,7 @@ class ReportModel
                 $values[] = '%' . strtr($filters[$key], ['!' => '!!', '%' => '!%', '_' => '!_']) . '%';
             }
         }
-        $stmt = $this->pdo->prepare('SELECT * FROM incident_reports' . ($where ? ' WHERE ' . implode(' AND ', $where) : '') . ' ORDER BY created_at DESC, id DESC');
+        $stmt = $this->pdo->prepare('SELECT * FROM incident_reports WHERE ' . implode(' AND ', $where) . ' ORDER BY created_at DESC, id DESC');
         $stmt->execute($values);
         return $stmt->fetchAll();
     }
@@ -90,7 +90,11 @@ class ReportModel
             }
             $stmt = $this->pdo->prepare('UPDATE incident_reports SET location_description=?,latitude=?,longitude=? WHERE id=?');
             $stmt->execute([$description,$lat,$lng,$id]);
-            $action = 'Location correction: ' . $notes . ' | Previous: ' . $old['location_description'] . ' [' . ($old['latitude'] ?? 'none') . ', ' . ($old['longitude'] ?? 'none') . '] | Updated: ' . $description . ' [' . ($lat ?? 'none') . ', ' . ($lng ?? 'none') . ']';
+            $previousPoint = '[' . ($old['latitude'] ?? 'none') . ', ' . ($old['longitude'] ?? 'none') . ']';
+            $updatedPoint = '[' . ($lat ?? 'none') . ', ' . ($lng ?? 'none') . ']';
+            $action = 'Location correction: ' . $notes;
+            $action .= ' | Previous: ' . $old['location_description'] . ' ' . $previousPoint;
+            $action .= ' | Updated: ' . $description . ' ' . $updatedPoint;
             $stmt = $this->pdo->prepare('INSERT INTO response_updates(incident_id,updated_by,action_taken,from_status,to_status) VALUES(?,?,?,?,?)');
             $stmt->execute([$id,$staff,$action,$old['status'],$old['status']]);
             $this->pdo->commit();

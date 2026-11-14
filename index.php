@@ -82,7 +82,7 @@ require __DIR__ . '/resources/views/components/header.php';
                     required
                     autocomplete="new-password"
                 />
-                <button class="btn btn-success">Register</button>
+                <button class="btn btn-primary">Register</button>
             </form>
         </div></section
     >

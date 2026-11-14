@@ -15,7 +15,8 @@ class ReliefController extends Controller
         if (!$id || $id < 1) {
             http_response_code(400);
             exit('Invalid ID.');
-        } return $id;
+        }
+        return $id;
     }
     public function queryValue(string $key): string
     {
@@ -31,7 +32,8 @@ class ReliefController extends Controller
         if (!$row) {
             http_response_code(404);
             exit('Item not found.');
-        } return $row;
+        }
+        return $row;
     }
     public function households(): array
     {
@@ -47,7 +49,8 @@ class ReliefController extends Controller
         if (!$row) {
             http_response_code(404);
             exit('Distribution not found.');
-        } return $row;
+        }
+        return $row;
     }
     public function distributedGoods(int $id): array
     {

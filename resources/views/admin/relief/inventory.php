@@ -13,6 +13,7 @@ $pageTitle = 'Relief inventory';
 require __DIR__ . '/../../components/header.php';
 require __DIR__ . '/../../components/errors.php';
 ?>
+<p class="return-link no-print"><a href="<?= e(url(dashboardPath())) ?>">Back to dashboard</a></p>
 <h1>Relief inventory</h1>
 <p><a href="<?= e(url('resources/views/admin/records.php?type=goods')) ?>">Select records / view archived</a></p
 ><p><?= count($items) ?> active goods.</p
@@ -25,7 +26,7 @@ require __DIR__ . '/../../components/errors.php';
 
 <form method="get" class="filter-form mb-3">
     <label>Search name or unit <input name="q" value="<?= e($q) ?>" /></label>
-    <button class="btn btn-secondary">Search</button> <a href="<?= e(url('resources/views/admin/relief/inventory.php')) ?>">Clear</a>
+    <button class="btn btn-outline-secondary">Search</button> <a href="<?= e(url('resources/views/admin/relief/inventory.php')) ?>">Clear</a>
 </form>
 <div class="table-responsive" tabindex="0" role="region" aria-label="Scrollable records">
     <table class="table">
@@ -72,6 +73,6 @@ require __DIR__ . '/../../components/errors.php';
         change after stock history exists.</p
     >
     <button class="btn btn-primary" name="action" value="save_item">Save good</button>
-    <a href="<?= e(url('resources/views/admin/relief/inventory.php')) ?>">New good / cancel edit</a>
+    <a href="<?= e(url('resources/views/admin/relief/inventory.php')) ?>">Cancel and return to relief inventory</a>
 </form>
 <?php require __DIR__ . '/../../components/footer.php'; ?>

@@ -10,11 +10,12 @@ $announcements = $controller->listAnnouncements();
 $pageTitle = 'Emergency announcements';
 require __DIR__ . '/../components/header.php';
 ?>
+<p class="return-link no-print"><a href="<?= e(url(dashboardPath())) ?>">Back to dashboard</a></p>
 <h1>Emergency announcements</h1>
 <form method="get" class="filter-form mb-4">
     <label>Search title <input name="q" value="<?= e($controller->queryValue('q')) ?>" /></label>
     <label>Created date <input type="date" name="date" value="<?= e($controller->queryValue('date')) ?>" /></label>
-    <button class="btn btn-secondary">Search</button> <a href="<?= e(url('resources/views/user/announcement.php')) ?>">Clear</a>
+    <button class="btn btn-outline-secondary">Search</button> <a href="<?= e(url('resources/views/user/announcement.php')) ?>">Clear</a>
 </form>
 <?php if (!$announcements): ?><p>No published notices match your search.</p><?php endif; ?>
 <?php foreach ($announcements as $announcement): ?>

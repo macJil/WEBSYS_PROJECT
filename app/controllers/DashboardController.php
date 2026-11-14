@@ -18,6 +18,7 @@ class DashboardController extends Controller
             $data['stays'] = $this->model->stays();
         } else {
             $data['notices'] = $this->model->notices();
-        }return $data;
+        }
+        return $data;
     }
 }

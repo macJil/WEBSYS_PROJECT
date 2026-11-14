@@ -25,7 +25,7 @@ class AnnouncementModel
             $where[] = 'DATE(created_at)=?';
             $args[] = $filters['date'];
         }
-        $stmt = $this->pdo->prepare('SELECT id,title,message,is_published,created_at FROM announcements' . ($where?' WHERE ' . implode(' AND ', $where):'') . ' ORDER BY created_at DESC,id DESC');
+        $stmt = $this->pdo->prepare('SELECT id,title,message,is_published,created_at FROM announcements WHERE ' . implode(' AND ', $where) . ' ORDER BY created_at DESC,id DESC');
         $stmt->execute($args);
         return $stmt->fetchAll();
     }

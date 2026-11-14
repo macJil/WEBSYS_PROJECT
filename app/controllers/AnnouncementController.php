@@ -35,7 +35,8 @@ class AnnouncementController extends Controller
         if (!$row) {
             http_response_code(404);
             exit('Announcement not found.');
-        } return $row;
+        }
+        return $row;
     }
     public function save(?int $id): array
     {
@@ -47,6 +48,9 @@ class AnnouncementController extends Controller
             return ['Archived notices cannot be edited or republished.'];
         }
         $action = input('action');
+        if ($id !== null && $action === 'save_draft' && $this->model->find($id)['is_published'] && input('confirm_withdraw') !== '1') {
+            return ['Confirm withdrawal before saving this published notice as a draft.'];
+        }
         $title = input('title');
         $message = input('message');
         if (!in_array($action, ['save_draft','publish'], true)) {

@@ -16,7 +16,8 @@ class ResponseController extends Controller
         if (!$id || $id < 1) {
             http_response_code(400);
             exit('Invalid record ID.');
-        } return $id;
+        }
+        return $id;
     }
     public function team(int $id): array
     {
@@ -24,7 +25,8 @@ class ResponseController extends Controller
         if (!$row) {
             http_response_code(404);
             exit('Team not found.');
-        } return $row;
+        }
+        return $row;
     }
     public function incident(int $id): array
     {
@@ -32,7 +34,8 @@ class ResponseController extends Controller
         if (!$row) {
             http_response_code(404);
             exit('Incident not found.');
-        } return $row;
+        }
+        return $row;
     }
     public function teams(): array
     {

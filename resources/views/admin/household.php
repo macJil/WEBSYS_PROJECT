@@ -14,10 +14,10 @@ $pageTitle = 'Household details';
 require __DIR__ . '/../components/header.php';
 ?> <?php $savedPoint = $household;
 require __DIR__ . '/../components/saved-point.php'; ?>
-<a href="<?= e(url('resources/views/admin/households.php')) ?>">Back to registry</a>
+<a href="<?= e(url('resources/views/admin/households.php')) ?>">Back to households</a>
 <h1><?= e($household['household_code']) ?> — <?= e($household['representative_name']) ?></h1>
 <p><a href="<?= e(url('resources/views/admin/records.php?type=members')) ?>">Select records / view archived</a></p>
-<a class="btn btn-outline-primary mb-3" href="<?= e(url('resources/views/admin/households.php?edit=' . $id)) ?>">Edit household</a>
+<a class="d-inline-block mb-3" href="<?= e(url('resources/views/admin/households.php?edit=' . $id)) ?>">Edit household</a>
 <dl class="row">
     <?php foreach (['contact_phone' => 'Emergency contact number','purok' => 'Purok / sitio','address_details' => 'Address and location description','hazard_notes' => 'Hazard notes','vulnerability_notes' => 'Assessment notes / source','vulnerability_assessed_at' => 'Assessment date'] as $field => $label): ?><dt class="col-sm-4"><?= e($label) ?></dt
     ><dd class="col-sm-8"><?= e($household[$field] ?: 'Not recorded') ?></dd><?php endforeach; ?> <?php foreach (['registry_reason' => ['Registry reason',HouseholdController::REASONS],'hazard_type' => ['Hazard concern',HouseholdController::HAZARDS],'vulnerability_category' => ['Assistance classification',HouseholdController::VULNERABILITY],'evacuation_status' => ['Household advisory status',HouseholdController::EVACUATION]] as $field => $info): ?><dt
@@ -80,6 +80,6 @@ require __DIR__ . '/../components/saved-point.php'; ?>
     <textarea class="form-control mb-3" id="notes" name="notes" maxlength="255">
 <?= e($form['notes']) ?></textarea>
     <button class="btn btn-primary">Save member</button>
-    <a href="<?= e(url('resources/views/admin/household.php?id=' . $id)) ?>">Cancel / new member</a>
+    <a href="<?= e(url('resources/views/admin/household.php?id=' . $id)) ?>">Cancel and return to household</a>
 </form>
 <?php require __DIR__ . '/../components/footer.php'; ?>

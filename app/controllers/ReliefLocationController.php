@@ -15,24 +15,39 @@ class ReliefLocationController extends Controller
     }
     public function find(int $id): array
     {
-        $r = $this->model->find($id);
-        if (!$r) {
+        $location = $this->model->find($id);
+        if (!$location) {
             http_response_code(404);
             exit('Location not found.');
-        }return $r;
+        }
+        return $location;
     }
     public function save(?int $id): array
     {
-        if (!isPost())return [];
-        if ($id !== null && !empty($this->model->find($id)['archived_at']))return ['Archived locations cannot be edited.'];
-        $d = [];
-        foreach (['name','location_type','address_details','latitude','longitude'] as $k)$d[$k] = input($k);
-        if (input('action') !== 'save_location' || $d['name'] === '' || strlen($d['name']) > 150 || $d['address_details'] === '' || strlen($d['address_details']) > 255 || !in_array($d['location_type'], ['storage','distribution','both'], true))return ['Enter name, address, and valid location type.'];
-        $errors = locationErrors($d['address_details'], $d['latitude'], $d['longitude']);
-        if ($errors)return $errors;
-        foreach (['latitude','longitude'] as $k)$d[$k] = $d[$k] === ''?null:$d[$k];
+        if (!isPost()) {
+            return [];
+        }
+        if ($id !== null && !empty($this->model->find($id)['archived_at'])) {
+            return ['Archived locations cannot be edited.'];
+        }
+        $data = [];
+        foreach (['name','location_type','address_details','latitude','longitude'] as $field) {
+            $data[$field] = input($field);
+        }
+        if (input('action') !== 'save_location' || $data['name'] === '' || strlen($data['name']) > 150 || $data['address_details'] === '' || strlen($data['address_details']) > 255 || !in_array($data['location_type'], ['storage','distribution','both'], true)) {
+            return ['Enter name, address, and valid location type.'];
+        }
+        $errors = locationErrors($data['address_details'], $data['latitude'], $data['longitude']);
+        if ($errors) {
+            return $errors;
+        }
+        foreach (['latitude','longitude'] as $field) {
+            if ($data[$field] === '') {
+                $data[$field] = null;
+            }
+        }
         try {
-            $this->model->save($id, $d);
+            $this->model->save($id, $data);
         } catch (PDOException $e) {
             return ['Location could not be saved.'];
         }

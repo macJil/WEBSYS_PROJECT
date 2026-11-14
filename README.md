@@ -90,3 +90,11 @@ BayanReady Phase 5: [shared visual system and map verification](docs/BAYANREADY_
 Configuration now uses one ignored `config/config.php` array. Existing teammates should transfer their previous local values using [the configuration migration guide](docs/simplification/PHASE_3_CONFIGURATION.md). Check a clean setup with `python3 tests/simplification_config.py`.
 
 Database simplification: fresh installs use 17 tables; existing databases can retain the unused settings table. See the [database review and optional upgrade steps](docs/simplification/PHASE_6_DATABASE_REVIEW.md) before removing any existing table.
+
+Current household/map revision: [Phase 3 shared address suggestions](docs/simplification/HOUSEHOLD_MAP_PHASE_3.md). Uses the shared picker with Photon, editable suggestions, manual fallback, and save/reload checks.
+
+Current household/map revision: [Phase 4 Atok map view and responsive checks](docs/simplification/HOUSEHOLD_MAP_PHASE_4.md).
+
+Current household/map revision: [Phase 5 accurate dashboard counts](docs/simplification/HOUSEHOLD_MAP_PHASE_5.md).
+
+Current household/map revision: [Phase 6 buttons, confirmations and return links](docs/simplification/HOUSEHOLD_MAP_PHASE_6.md).

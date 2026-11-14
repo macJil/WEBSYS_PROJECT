@@ -24,13 +24,14 @@ $pageTitle = 'Disaster reports and summaries';
 require __DIR__ . '/../../components/header.php';
 ?>
 <link rel="stylesheet" href="<?= e(url('resources/assets/css/disaster-summary.css')) ?>" />
+<p class="return-link no-print"><a href="<?= e(url(dashboardPath())) ?>">Back to dashboard</a></p>
 <h1>Disaster reports and summaries</h1>
 <form method="get" class="filter-form no-print mb-3">
     <label>From <input type="date" name="from" value="<?= e($period['from']) ?>" required /></label>
     <label>Through <input type="date" name="to" value="<?= e($period['to']) ?>" required /></label>
-    <button class="btn btn-primary">Apply period</button>
+    <button class="btn btn-outline-secondary">Apply period</button>
     <a href="<?= e(url('resources/views/admin/summaries/disaster.php')) ?>">Current month</a>
-    <button class="btn btn-secondary" type="button" id="print-summary">Print summary</button>
+    <button class="btn btn-outline-secondary" type="button" id="print-summary">Print summary</button>
 </form>
 <p
     >Selected period: <strong><?= e($period['from']) ?> through <?= e($period['to']) ?></strong> (both dates
@@ -49,7 +50,7 @@ require __DIR__ . '/../../components/header.php';
 <h2>Current evacuation centers</h2>
 <p
     >Occupancy counts individual stays without a checkout timestamp. These are current figures; the
-    date filter does not apply.</p
+    date filter does not apply. Available capacity includes only open, non-archived centers, including those without map points.</p
 >
 <div class="table-responsive" tabindex="0" role="region" aria-label="Scrollable records">
     <table class="table">
@@ -59,13 +60,13 @@ require __DIR__ . '/../../components/header.php';
                 <th>Status</th>
                 <th>Capacity (people)</th>
                 <th>Current occupants</th>
-                <th>Available in open centers</th>
+                <th>Available capacity (people)</th>
             </tr>
         </thead>
         <tbody>
             <?php foreach ($summary['centers'] as $center): ?><tr>
                 <td><?= e($center['name']) ?></td>
-                <td><?= e($center['status']) ?></td>
+                <td><?= e($center['status']) ?><?= $center['archived_at'] !== null ? ' (archived)' : '' ?></td>
                 <td><?= (int)$center['capacity'] ?></td>
                 <td><?= (int)$center['occupancy'] ?></td>
                 <td><?= (int)$center['available'] ?></td> </tr
@@ -74,7 +75,7 @@ require __DIR__ . '/../../components/header.php';
             ><?php endif; ?> </tbody
         ><tfoot>
             <tr>
-                <th colspan="2">Total (capacity includes closed centers)</th>
+                <th colspan="2">Total (capacity includes closed and archived centers)</th>
                 <td><?= $capacity ?></td>
                 <td><?= $occupancy ?></td>
                 <td><?= $available ?></td>
@@ -85,7 +86,7 @@ require __DIR__ . '/../../components/header.php';
 <h2>Incident reports submitted in the selected period</h2>
 <p
     >Grouped by type and their current status. Dates use submission time, not occurrence time or the
-    time a status changed.</p
+    time a status changed. Historical incident counts include archived reports; dashboard cards and their lists count non-archived reports.</p
 >
 <div class="table-responsive" tabindex="0" role="region" aria-label="Scrollable records">
     <table class="table">

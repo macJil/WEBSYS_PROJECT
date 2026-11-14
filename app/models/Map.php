@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../../config/db.php';
+require_once __DIR__ . '/../evacuation-capacity.php';
 class MapModel
 {
     private PDO $pdo;
@@ -32,6 +33,15 @@ class MapModel
     }
     private function centers(): array
     {
-        return $this->rows("SELECT c.id,c.name,c.address_details,c.latitude,c.longitude,c.status,c.capacity,COUNT(e.id) AS occupancy,CASE WHEN c.capacity>COUNT(e.id) THEN c.capacity-COUNT(e.id) ELSE 0 END AS available FROM evacuation_centers c LEFT JOIN evacuation_records e ON e.center_id=c.id AND e.checked_out_at IS NULL WHERE c.archived_at IS NULL AND c.status='open' AND " . $this->point('c.latitude', 'c.longitude') . " GROUP BY c.id,c.name,c.address_details,c.latitude,c.longitude,c.status,c.capacity");
+        $centers = $this->rows("SELECT c.id, c.name, c.address_details, c.latitude, c.longitude,
+            c.status, c.capacity, COUNT(e.id) AS occupancy
+            FROM evacuation_centers c
+            LEFT JOIN evacuation_records e ON e.center_id = c.id AND e.checked_out_at IS NULL
+            WHERE c.archived_at IS NULL AND c.status = 'open' AND " . $this->point('c.latitude', 'c.longitude') . "
+            GROUP BY c.id, c.name, c.address_details, c.latitude, c.longitude, c.status, c.capacity");
+        foreach ($centers as $index => $center) {
+            $centers[$index]['available'] = availableCapacity($center);
+        }
+        return $centers;
     }
 }

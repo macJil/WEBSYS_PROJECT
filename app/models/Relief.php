@@ -65,7 +65,12 @@ class ReliefModel
             if (!$item || $item['archived_at'] !== null) {
                 throw new DomainException('Item not found.');
             }
-            $next = (int)$item['quantity_on_hand'] + ($type === 'stock_in'?$quantity:-$quantity);
+            $next = (int)$item['quantity_on_hand'];
+            if ($type === 'stock_in') {
+                $next += $quantity;
+            } else {
+                $next -= $quantity;
+            }
             if ($next < 0) {
                 throw new DomainException('Stock-out exceeds available stock.');
             }

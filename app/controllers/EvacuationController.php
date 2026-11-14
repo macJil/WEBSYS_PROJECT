@@ -15,7 +15,8 @@ class EvacuationController extends Controller
         if (!$id || $id < 1) {
             http_response_code(400);
             exit('Invalid ID.');
-        } return $id;
+        }
+        return $id;
     }
     public function center(int $id): array
     {
@@ -23,16 +24,23 @@ class EvacuationController extends Controller
         if (!$row) {
             http_response_code(404);
             exit('Center not found.');
-        } return $row;
+        }
+        return $row;
     }
     public function centers(string $q): array
     {
         return $this->model->centers($q);
     }
-    public function members(): array
+    public function households(): array
     {
-        return $this->model->members();
+        return $this->model->households();
     }
+
+    public function householdMembers(int $householdId): array
+    {
+        return $this->model->householdMembers($householdId);
+    }
+
     public function walkins(): array
     {
         return $this->model->walkins();
@@ -85,13 +93,19 @@ class EvacuationController extends Controller
             return [];
         }
         try {
-            if (input('action') === 'checkout') {
+            if (input('action') === 'checkin_household') {
+                $memberIds = $_POST['member_ids'] ?? [];
+                if (!is_array($memberIds)) {
+                    return ['Choose arriving members.'];
+                }
+                $this->model->checkinHousehold($id, $this->recordId(input('household_id')), $memberIds, (int)$_SESSION['ID']);
+            } elseif (input('action') === 'checkout') {
                 $this->model->checkout($id, $this->recordId(input('record_id')), (int)$_SESSION['ID']);
             } elseif (input('action') === 'checkin') {
                 $kind = input('kind');
                 $data = [];
                 $personId = 0;
-                if (!in_array($kind, ['member','walkin','new_walkin'], true)) {
+                if (!in_array($kind, ['walkin','new_walkin'], true)) {
                     return ['Choose a check-in type.'];
                 }
                 if ($kind === 'new_walkin') {
@@ -100,7 +114,7 @@ class EvacuationController extends Controller
                         return ['For a new walk-in, enter name (up to 100 bytes), age 0–130, home address (up to 255 bytes), and contact number (personal or guardian).'];
                     }
                 } else {
-                    $personId = $this->recordId(input($kind === 'member'?'member_id':'walkin_id'));
+                    $personId = $this->recordId(input('walkin_id'));
                 }
                 $this->model->checkin($id, $kind, $personId, $data, (int)$_SESSION['ID']);
             } else {

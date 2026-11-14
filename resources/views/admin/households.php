@@ -12,6 +12,7 @@ $rows = $controller->listHouseholds(substr($search, 0, 255));
 $pageTitle = 'Household registry';
 require __DIR__ . '/../components/header.php';
 ?>
+<p class="return-link no-print"><a href="<?= e(url(dashboardPath())) ?>">Back to dashboard</a></p>
 <h1>Household registry</h1>
 <p><a href="<?= e(url('resources/views/admin/records.php?type=households')) ?>">Select records / view archived</a></p>
 <form method="get" class="filter-form d-flex gap-2 mb-3">
@@ -24,7 +25,7 @@ require __DIR__ . '/../components/header.php';
         value="<?= e($search) ?>"
         placeholder="Code, representative, purok, address or contact"
     />
-    <button class="btn btn-primary">Search</button
+    <button class="btn btn-outline-secondary">Search</button
     ><a class="btn btn-outline-secondary" href="<?= e(url('resources/views/admin/households.php')) ?>">Clear</a>
 </form>
 <div class="table-responsive" tabindex="0" role="region" aria-label="Scrollable records">
@@ -107,6 +108,6 @@ require __DIR__ . '/../components/header.php';
     <?php $point = $form;
 require __DIR__ . '/../components/location-picker.php'; ?>
     <button class="btn btn-primary">Save household</button>
-    <a href="<?= e(url('resources/views/admin/households.php')) ?>">Cancel / new household</a>
+    <a href="<?= e(url('resources/views/admin/households.php')) ?>">Cancel and return to households</a>
 </form>
 <?php require __DIR__ . '/../components/footer.php'; ?>

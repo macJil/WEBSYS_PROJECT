@@ -30,6 +30,7 @@ $pageTitle = 'Manage ' . $title;
 require __DIR__ . '/../components/header.php';
 require __DIR__ . '/../components/errors.php';
 ?>
+<p class="return-link no-print"><a href="<?= e(url(dashboardPath())) ?>">Back to dashboard</a></p>
 <h1><?= e($pageTitle) ?></h1>
 <p
     >Delete unused records or archive/deactivate records that must retain history. Stock movements,
@@ -49,7 +50,7 @@ require __DIR__ . '/../components/errors.php';
         <input type="checkbox" name="archived" value="1" <?= $archived?'checked':'' ?> /> Show archived /
         inactive only</label
     >
-    <button>Search</button>
+    <button class="btn btn-outline-secondary">Search</button>
 </form>
 <?php if ($review): ?>
 <h2>Review: <?= $review['action'] === 'delete'?'permanent deletion':'archive / deactivate' ?></h2>
@@ -60,8 +61,8 @@ require __DIR__ . '/../components/errors.php';
 >
 <form method="post">
     <input type="hidden" name="ticket" value="<?= e($review['ticket']) ?>" />
-    <button class="btn btn-danger" name="action" value="confirm">Confirm selected action</button>
-    <a href="<?= e(url('resources/views/admin/records.php?type=' . $type)) ?>">Cancel</a>
+    <button class="btn btn-danger" name="action" value="confirm"><?= $review['action'] === 'delete' ? 'Permanently delete selected records' : 'Archive / deactivate selected records' ?></button>
+    <a href="<?= e(url('resources/views/admin/records.php?type=' . $type)) ?>">Cancel and return to record selection</a>
 </form>
 <?php else: ?>
 <form method="post" id="record-selection">
@@ -105,7 +106,7 @@ require __DIR__ . '/../components/errors.php';
             ><option value="delete">Permanently delete unused records</option></select
         ></label
     >
-    <button name="action" value="review" class="btn btn-primary">Review selected</button>
+    <button name="action" value="review" class="btn btn-outline-secondary">Review selected records</button>
 </form>
 <?php $params = ['type' => $type,'q' => $q,'archived' => $archived?'1':'0']; ?>
 <p

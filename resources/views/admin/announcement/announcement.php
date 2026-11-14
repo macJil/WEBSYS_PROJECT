@@ -7,6 +7,7 @@ $pageTitle = 'Manage announcements';
 require __DIR__ . '/../../components/header.php';
 require __DIR__ . '/../../components/errors.php';
 ?>
+<p class="return-link no-print"><a href="<?= e(url(dashboardPath())) ?>">Back to dashboard</a></p>
 <h1>Emergency announcements</h1>
 <p><a href="<?= e(url('resources/views/admin/records.php?type=announcements')) ?>">Select records / view archived</a></p>
 <p
@@ -28,7 +29,7 @@ require __DIR__ . '/editor.php'; ?>
         ></label
     >
     <label>Created date <input type="date" name="date" value="<?= e($controller->queryValue('date')) ?>" /></label>
-    <button class="btn btn-secondary">Search</button> <a href="<?= e(url('resources/views/admin/announcement/announcement.php')) ?>">Clear</a>
+    <button class="btn btn-outline-secondary">Search</button> <a href="<?= e(url('resources/views/admin/announcement/announcement.php')) ?>">Clear</a>
 </form>
 <div class="table-responsive" tabindex="0" role="region" aria-label="Scrollable records">
     <table class="table">
