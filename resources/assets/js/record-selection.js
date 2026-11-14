@@ -15,5 +15,14 @@
         update();
     });
     boxes.forEach((b) => b.addEventListener("change", update));
+    form.addEventListener("submit", (event) => {
+        const selected = boxes.filter((box) => box.checked).length;
+        if (!selected) {
+            event.preventDefault();
+            alert("Select at least one record to delete.");
+        } else if (!confirm("Permanently delete " + selected + " selected record(s)? This cannot be undone.")) {
+            event.preventDefault();
+        }
+    });
     update();
 })();

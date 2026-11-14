@@ -30,13 +30,20 @@ class RecordActionsModel
         if (!isset(self::TYPES[$type]))throw new DomainException('Unsupported record type.');
         return self::TYPES[$type];
     }
-    public function listing(string $type, string $search, bool $archived, int $page): array
+    public function listing(string $type, string $search, int $page): array
     {
-        [$table,$label] = $this->spec($type);
-        $state = '1=1'; // Include previously archived records for review and eligible deletion.
-        $term = '%' . strtr($search, ['!' => '!!','%' => '!%','_' => '!_']) . '%';
+        $types = $type === 'all' ? self::TYPES : [$type => $this->spec($type)];
+        $queries = [];
+        $values = [];
+        $term = '%' . strtr($search, ['!' => '!!', '%' => '!%', '_' => '!_']) . '%';
+        foreach ($types as $key => $spec) {
+            [$table, $label] = $spec;
+            $queries[] = "SELECT id, $label AS label, '$key' AS record_type FROM $table WHERE $label LIKE ? ESCAPE '!' OR CAST(id AS CHAR) LIKE ? ESCAPE '!'";
+            $values[] = $term;
+            $values[] = $term;
+        }
         $offset = ($page - 1) * 50;
-        return $this->query("SELECT * FROM $table WHERE $state AND ($label LIKE ? ESCAPE '!' OR CAST(id AS CHAR) LIKE ? ESCAPE '!') ORDER BY id LIMIT 50 OFFSET $offset", [$term,$term]);
+        return $this->query(implode(' UNION ALL ', $queries) . " ORDER BY record_type, id LIMIT 50 OFFSET $offset", $values);
     }
     public function selected(string $type, array $ids, bool $lock = false): array
     {
@@ -71,26 +78,28 @@ class RecordActionsModel
         if ($type === 'goods' && (int)$r['quantity_on_hand'] !== 0)$blocked = 'still has stock; record the proper stock transaction first';
         if ($blocked !== '')throw new DomainException(self::TYPES[$type][2] . ' #' . $id . ' ' . $blocked . '. No selected records were changed.');
     }
-    public function apply(string $type, array $ids, string $action, array $expected): void
+    public function deleteSelected(array $selection): void
     {
-        [$table] = $this->spec($type);
-        if ($action !== 'delete')throw new DomainException('Unsupported action.');
         $this->pdo->beginTransaction();
         try {
-            $rows = $this->selected($type, $ids, true);
-            foreach ($rows as $row) {
-                if (($expected[(int)$row['id']] ?? '') !== hash('sha256', json_encode($row)))throw new DomainException('Record #' . $row['id'] . ' changed after review. Reload and review again. No records changed.');
-                $this->check($type, $row, $action);
+            // Check the entire batch before deleting anything, including mixed types.
+            ksort($selection);
+            foreach ($selection as $type => $ids) {
+                foreach ($this->selected($type, $ids, true) as $row) {
+                    $this->check($type, $row, 'delete');
+                }
             }
-            foreach ($rows as $row) {
-                $id = (int)$row['id'];
-                $s = $this->pdo->prepare("DELETE FROM $table WHERE id=?");
-                $s->execute([$id]);
+            foreach ($selection as $type => $ids) {
+                [$table] = $this->spec($type);
+                $stmt = $this->pdo->prepare("DELETE FROM $table WHERE id=?");
+                foreach ($ids as $id) {
+                    $stmt->execute([$id]);
+                }
             }
             $this->pdo->commit();
-        } catch (Throwable $e) {
+        } catch (Throwable $error) {
             $this->pdo->rollBack();
-            throw $e;
+            throw $error;
         }
     }
 }
