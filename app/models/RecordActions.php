@@ -33,7 +33,7 @@ class RecordActionsModel
     public function listing(string $type, string $search, bool $archived, int $page): array
     {
         [$table,$label] = $this->spec($type);
-        $state = $type === 'teams'?($archived?'is_active=0':'is_active=1'):($archived?'archived_at IS NOT NULL':'archived_at IS NULL');
+        $state = '1=1'; // Include previously archived records for review and eligible deletion.
         $term = '%' . strtr($search, ['!' => '!!','%' => '!%','_' => '!_']) . '%';
         $offset = ($page - 1) * 50;
         return $this->query("SELECT * FROM $table WHERE $state AND ($label LIKE ? ESCAPE '!' OR CAST(id AS CHAR) LIKE ? ESCAPE '!') ORDER BY id LIMIT 50 OFFSET $offset", [$term,$term]);
@@ -66,17 +66,7 @@ class RecordActionsModel
                 'goods' => [['relief_stock_movements','item_id'],['relief_distribution_items','item_id']],
                 'locations' => [['relief_distributions','relief_location_id']],default => []
             };
-            foreach ($links as [$table,$column])if ($this->linked($table, $column, $id))$blocked = 'has linked records; use archive/deactivate instead';
-            if ($type === 'announcements' && ($r['is_published'] || $r['first_published_at'] !== null || $r['publication_history_unknown']))$blocked = 'has published or unknown publication history; archive it instead';
-        } else {
-            if ($type === 'households') {
-                $members = $this->query('SELECT id FROM household_members WHERE household_id=? ORDER BY id FOR UPDATE', [$id]);
-                foreach ($members as $member)if ($this->linked('evacuation_records', 'household_member_id', (int)$member['id'], 'AND checked_out_at IS NULL'))$blocked = 'has a member currently checked in';
-            }
-            if ($type === 'members' && $this->linked('evacuation_records', 'household_member_id', $id, 'AND checked_out_at IS NULL'))$blocked = 'is currently checked in';
-            if ($type === 'walkins' && $this->linked('evacuation_records', 'walkin_id', $id, 'AND checked_out_at IS NULL'))$blocked = 'is currently checked in';
-            if ($type === 'centers' && $this->linked('evacuation_records', 'center_id', $id, 'AND checked_out_at IS NULL'))$blocked = 'still has occupants';
-            if ($type === 'incidents' && (!in_array($r['status'], ['resolved','rejected'], true) || $this->linked('incident_assignments', 'incident_id', $id, "AND status IN ('assigned','on_scene')")))$blocked = 'must be resolved/rejected with no active assignments';
+            foreach ($links as [$table,$column])if ($this->linked($table, $column, $id))$blocked = 'has linked records and cannot be deleted';
         }
         if ($type === 'goods' && (int)$r['quantity_on_hand'] !== 0)$blocked = 'still has stock; record the proper stock transaction first';
         if ($blocked !== '')throw new DomainException(self::TYPES[$type][2] . ' #' . $id . ' ' . $blocked . '. No selected records were changed.');
@@ -84,7 +74,7 @@ class RecordActionsModel
     public function apply(string $type, array $ids, string $action, array $expected): void
     {
         [$table] = $this->spec($type);
-        if (!in_array($action, ['delete','archive'], true))throw new DomainException('Unsupported action.');
+        if ($action !== 'delete')throw new DomainException('Unsupported action.');
         $this->pdo->beginTransaction();
         try {
             $rows = $this->selected($type, $ids, true);
@@ -94,14 +84,7 @@ class RecordActionsModel
             }
             foreach ($rows as $row) {
                 $id = (int)$row['id'];
-                if ($action === 'delete') {
-                    $s = $this->pdo->prepare("DELETE FROM $table WHERE id=?");
-                } else {
-                    $set = $type === 'teams'?'is_active=0':'archived_at=COALESCE(archived_at,CURRENT_TIMESTAMP)';
-                    if ($type === 'centers')$set .= ",status='closed'";
-                    if ($type === 'announcements')$set .= ',is_published=0';
-                    $s = $this->pdo->prepare("UPDATE $table SET $set WHERE id=?");
-                }
+                $s = $this->pdo->prepare("DELETE FROM $table WHERE id=?");
                 $s->execute([$id]);
             }
             $this->pdo->commit();

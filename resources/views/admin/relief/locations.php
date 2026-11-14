@@ -16,9 +16,9 @@ $pageTitle = 'Relief locations';
 require __DIR__ . '/../../components/header.php';
 require __DIR__ . '/../../components/errors.php';
 ?>
-<p class="return-link no-print"><a href="<?= e(url('resources/views/admin/relief/inventory.php')) ?>">Back to relief inventory</a></p>
+<p class="return-link no-print"><a class="btn btn-outline-secondary" href="<?= e(url('resources/views/admin/relief/inventory.php')) ?>">Back to relief inventory</a></p>
 <h1>Relief locations</h1>
-<p><a href="<?= e(url('resources/views/admin/records.php?type=locations')) ?>">Select records / view archived</a></p>
+<p><a class="btn btn-outline-secondary" href="<?= e(url('resources/views/admin/records.php?type=locations')) ?>">Manage records</a></p>
 <ul
     ><?php foreach ($c->all() as $row): ?><li
         ><?= e($row['name']) ?><?php if (!hasMapPoint($row)): ?> <small>(No map point)</small><?php endif; ?>

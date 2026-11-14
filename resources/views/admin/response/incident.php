@@ -15,7 +15,7 @@ require __DIR__ . '/../../components/errors.php';
 ?>
 <h1><?= e($pageTitle) ?></h1>
 <p><?= e($incident['incident_type']) ?> · <?= e($incident['location_description']) ?> · Status: <strong><?= e($incident['status']) ?></strong></p>
-<a href="<?= e(url('resources/views/incidents/view.php?id=' . $id)) ?>">Back to incident details</a>
+<a class="btn btn-outline-secondary" href="<?= e(url('resources/views/incidents/view.php?id=' . $id)) ?>">Back to incident details</a>
 <p
     >Verify an incident before assigning teams. Dispatch changes it to responding. Complete or
     cancel all active assignments before resolving it in staff review.</p

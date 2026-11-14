@@ -10,7 +10,7 @@ $d = $c->dashboardData();
 $rows = $type === 'households'?$d['affected']:$d['stays'];
 $pageTitle = $type === 'households'?'Currently affected households':'Active evacuees';
 require __DIR__ . '/../../components/header.php';
-?> <p class="return-link no-print"><a href="<?= e(url(dashboardPath())) ?>">Back to dashboard</a></p>
+?> <p class="return-link no-print"><a class="btn btn-outline-secondary" href="<?= e(url(dashboardPath())) ?>">Back to dashboard</a></p>
 <h1><?= e($pageTitle) ?></h1><p><?= count($rows) ?> records.</p>
 <div class="table-responsive" tabindex="0" role="region" aria-label="Scrollable records">
     <table class="table">

@@ -1,7 +1,11 @@
 <?php
 require_once __DIR__ . '/../../../app/controllers/RecordActionsController.php';
 $c = new RecordActionsController();
-$type = is_string($_GET['type'] ?? null)?$_GET['type']:'households';
+$type = is_string($_GET['type'] ?? null)?$_GET['type']:'all';
+if ($type === 'all') {
+    require __DIR__ . '/records-all.php';
+    exit;
+}
 if (!isset(RecordActionsModel::TYPES[$type])) {
     http_response_code(400);
     exit('Unsupported record type.');
@@ -30,30 +34,22 @@ $pageTitle = 'Manage ' . $title;
 require __DIR__ . '/../components/header.php';
 require __DIR__ . '/../components/errors.php';
 ?>
-<p class="return-link no-print"><a href="<?= e(url(dashboardPath())) ?>">Back to dashboard</a></p>
+<p class="return-link no-print"><a class="btn btn-outline-secondary" href="<?= e(url(dashboardPath())) ?>">Back to dashboard</a></p>
 <h1><?= e($pageTitle) ?></h1>
-<p
-    >Delete unused records or archive/deactivate records that must retain history. Stock movements,
-    distributions, stays, assignments, and response updates cannot be deleted here. Use
-    checkout/completion or a documented correcting stock movement where appropriate.</p
->
+<p>Permanently delete selected records. Linked records and goods with remaining stock stay protected. Previously archived records are included.</p>
 <form method="get" class="filter-form mb-3">
     <label
         >Records<select name="type"
-            ><?php foreach (RecordActionsModel::TYPES as $key => $spec): ?><option value="<?= e($key) ?>" <?= $type === $key?'selected':'' ?>
+            ><option value="all">All record types</option><?php foreach (RecordActionsModel::TYPES as $key => $spec): ?><option value="<?= e($key) ?>" <?= $type === $key?'selected':'' ?>
                 ><?= e($spec[2]) ?></option
             ><?php endforeach; ?></select
         ></label
     >
     <label>Search ID/name <input name="q" value="<?= e($q) ?>" /></label>
-    <label>
-        <input type="checkbox" name="archived" value="1" <?= $archived?'checked':'' ?> /> Show archived /
-        inactive only</label
-    >
     <button class="btn btn-outline-secondary">Search</button>
 </form>
 <?php if ($review): ?>
-<h2>Review: <?= $review['action'] === 'delete'?'permanent deletion':'archive / deactivate' ?></h2>
+<h2>Review: permanent deletion</h2>
 <p>If any selected record is ineligible or has changed, the entire batch will be cancelled.</p>
 <ul
     ><?php foreach ($review['rows'] as $row): ?><li>#<?= (int)$row['id'] ?> — <?= e($row[$label] ?? 'Unnamed') ?></li
@@ -61,7 +57,7 @@ require __DIR__ . '/../components/errors.php';
 >
 <form method="post">
     <input type="hidden" name="ticket" value="<?= e($review['ticket']) ?>" />
-    <button class="btn btn-danger" name="action" value="confirm"><?= $review['action'] === 'delete' ? 'Permanently delete selected records' : 'Archive / deactivate selected records' ?></button>
+    <button class="btn btn-danger" name="action" value="confirm">Permanently delete selected records</button>
     <a href="<?= e(url('resources/views/admin/records.php?type=' . $type)) ?>">Cancel and return to record selection</a>
 </form>
 <?php else: ?>
@@ -100,12 +96,7 @@ require __DIR__ . '/../components/errors.php';
             >
         </table>
     </div>
-    <label
-        >Action<select name="operation"
-            ><option value="archive">Archive / deactivate</option
-            ><option value="delete">Permanently delete unused records</option></select
-        ></label
-    >
+    <input type="hidden" name="operation" value="delete" />
     <button name="action" value="review" class="btn btn-outline-secondary">Review selected records</button>
 </form>
 <?php $params = ['type' => $type,'q' => $q,'archived' => $archived?'1':'0']; ?>

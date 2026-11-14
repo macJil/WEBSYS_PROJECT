@@ -9,7 +9,7 @@ require __DIR__ . '/../components/header.php';
 ?>
 <link rel="stylesheet" href="<?= e(url('resources/assets/vendor/leaflet/leaflet.css')) ?>" />
 
-<p class="return-link no-print"><a href="<?= e(url(dashboardPath())) ?>">Back to dashboard</a></p>
+<p class="return-link no-print"><a class="btn btn-outline-secondary" href="<?= e(url(dashboardPath())) ?>">Back to dashboard</a></p>
 <h1><?= $admin?'Staff map':'Community map' ?></h1>
 <p
     ><?= e($settings['demo_barangay_name']) ?>. Markers show saved locations; they do not predict danger or guarantee

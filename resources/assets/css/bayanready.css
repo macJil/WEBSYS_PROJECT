@@ -654,9 +654,26 @@ legend {
     }
 }
 
-/* Ordinary navigation links are underlined; form actions use Bootstrap buttons. */
-.app-main a:not(.btn):not(.stat-card) {
-    text-decoration: underline;
+/* Make page actions recognizable while keeping normal link navigation. */
+.app-main a:not(.btn):not(.stat-card):not(.leaflet-container a) {
+    display: inline-block;
+    padding: 0.5rem 0.75rem;
+    margin-block: 0.25rem;
+    border: 1px solid var(--br-primary);
+    border-radius: 0.375rem;
+    background: #fff;
+    text-decoration: none;
+    line-height: 1.5;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+}
+.app-main a:not(.btn):not(.stat-card):not(.leaflet-container a):hover {
+    background: var(--br-primary);
+    color: #fff;
+}
+.app-main a:focus-visible {
+    outline: 3px solid var(--br-primary);
+    outline-offset: 3px;
 }
 .return-link {
     margin-bottom: 1rem;

@@ -5,7 +5,7 @@ $pageTitle = 'Relief location';
 require __DIR__ . '/../../components/header.php';
 ?> <?php $savedPoint = $location;
 require __DIR__ . '/../../components/saved-point.php'; ?>
-<p class="return-link no-print"><a href="<?= e(url('resources/views/admin/relief/locations.php')) ?>">Back to relief locations</a></p>
+<p class="return-link no-print"><a class="btn btn-outline-secondary" href="<?= e(url('resources/views/admin/relief/locations.php')) ?>">Back to relief locations</a></p>
 <h1><?= e($location['name']) ?></h1>
 <dl>
     <?php foreach (['location_type' => 'Type','address_details' => 'Address','latitude' => 'Latitude','longitude' => 'Longitude'] as $key => $label): ?>
@@ -14,5 +14,5 @@ require __DIR__ . '/../../components/saved-point.php'; ?>
     <dt>Archived</dt><dd><?= $location['archived_at']?'Yes':'No' ?></dd> <dt>Community map</dt
     ><dd><?= !$location['archived_at'] && in_array($location['location_type'], ['distribution','both'], true) && $location['latitude'] !== null && $location['longitude'] !== null?'Shown automatically':'Not displayed' ?></dd>
 </dl>
-<a href="<?= e(url('resources/views/maps/map.php')) ?>">Back to map</a>
+<a class="btn btn-outline-secondary" href="<?= e(url('resources/views/maps/map.php')) ?>">Back to map</a>
 <?php require __DIR__ . '/../../components/footer.php'; ?>

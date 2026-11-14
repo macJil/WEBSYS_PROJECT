@@ -25,7 +25,7 @@ class RecordActionsController extends Controller
         }
         $clean = array_values(array_unique($clean));
         $action = input('operation');
-        if (!in_array($action, ['delete','archive'], true))throw new DomainException('Choose delete or archive/deactivate.');
+        if ($action !== 'delete')throw new DomainException('Choose permanent deletion.');
         $rows = $this->model->selected($type, $clean);
         $expected = [];
         foreach ($rows as $row)$expected[(int)$row['id']] = hash('sha256', json_encode($row));

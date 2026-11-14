@@ -11,7 +11,7 @@ $pageTitle = 'Report incident';
 require __DIR__ . '/../components/header.php';
 require __DIR__ . '/../components/errors.php';
 ?>
-<p class="return-link no-print"><a href="<?= e(url('resources/views/incidents/list.php')) ?>">Back to reports</a></p>
+<p class="return-link no-print"><a class="btn btn-outline-secondary" href="<?= e(url('resources/views/incidents/list.php')) ?>">Back to reports</a></p>
 <h1>Report an incident</h1>
 <p
     >Reports are reviewed by barangay staff. This website does not guarantee an immediate emergency
