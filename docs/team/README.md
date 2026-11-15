@@ -45,3 +45,5 @@ See [member-by-member code explanation](MEMBER_CODE_EXPLANATIONS.md) for exact f
 ## Presentation code study
 
 Every member explains a complete request path. Use the [member focus guide](MEMBER_CODE_EXPLANATIONS.md), its five full trace chapters, and the [current live-presentation speech](../../presentation/LIVE_DEMO_PRESENTATION_SCRIPT.md). Presentation material excludes test results; existing test guides remain for team development use.
+
+See the [presentation Q&A and local-network demo guide](PRESENTATION_QA_AND_LAN_DEMO.md) for likely questions, suggested answers, visitor instructions and MAMP sharing preparation.

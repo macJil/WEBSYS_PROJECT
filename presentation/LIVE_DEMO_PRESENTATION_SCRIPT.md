@@ -591,10 +591,10 @@ Our next step is to acquire a stakeholder, validate the actual process and docum
 **On screen**
 
 - WEBSYS1 instructor. Final project announcement. Supplied course material.
-- The PHP Group. Introduction. php.net/intro
-- MDN Web Docs. MVC. developer.mozilla.org/en-US/docs/Glossary/MVC
-- The PHP Group. Transactions and auto-commit. php.net/manual/en/pdo.transactions.php
-- Leaflet. API reference, version 1.9.4. leafletjs.com/reference-1.9.4.html
+- The PHP Group. Introduction. https://www.php.net/intro
+- MDN Web Docs. MVC. https://developer.mozilla.org/en-US/docs/Glossary/MVC
+- The PHP Group. Transactions and auto-commit. https://www.php.net/manual/en/pdo.transactions.php
+- Leaflet. API reference, version 1.9.4. https://leafletjs.com/reference-1.9.4.html
 
 **Speech, only if asked**
 
@@ -635,3 +635,7 @@ Every member has a required 60–90 second code demonstration within the allocat
 - Start MAMP and confirm Apache and MySQL are running before presenting. Open the working local website address and keep MAMP running throughout the presentation.
 - No video segment is included. Each member demonstrates their assigned components live, immediately after introducing them on the relevant slide.
 - Rehearse to 35 minutes before questions. If long, shorten navigation and repeat explanations; keep all eight modules and the required client/documentation sections.
+
+## Class questions and local-network activity
+
+Use the [Q&A and LAN demo guide](../docs/team/PRESENTATION_QA_AND_LAN_DEMO.md) for possible teacher/classmate questions, suggested answers and the hands-on activity. This activity follows the timed presentation unless the instructor allocates time within it.
