@@ -1,0 +1,66 @@
+{
+  "R1": [
+    "Republic of the Philippines. (2010). Republic Act No. 10121, sections 3(p), 12(c)(12).",
+    "https://elibrary.judiciary.gov.ph/thebookshelf/showdocs/2/21121"
+  ],
+  "R2": [
+    "UNDRR. (n.d.). Disaster risk management. Terminology.",
+    "https://www.undrr.org/terminology/disaster-risk-management"
+  ],
+  "R3": [
+    "The PHP Group. (n.d.). What is PHP and what can it do?",
+    "https://www.php.net/intro"
+  ],
+  "R4": [
+    "The PHP Group. (n.d.). Classes and Objects: The Basics.",
+    "https://www.php.net/manual/en/language.oop5.basic.php"
+  ],
+  "R5": [
+    "MDN contributors. (n.d.). MVC. MDN Web Docs glossary.",
+    "https://developer.mozilla.org/en-US/docs/Glossary/MVC"
+  ],
+  "R6": [
+    "The PHP Group. (n.d.). PHP Data Objects: Introduction.",
+    "https://www.php.net/manual/en/book.pdo.php"
+  ],
+  "R7": [
+    "The PHP Group. (n.d.). Prepared statements and stored procedures.",
+    "https://www.php.net/manual/en/pdo.prepared-statements.php"
+  ],
+  "R8": [
+    "Leaflet contributors. (n.d.). Leaflet 1.9.4 API reference.",
+    "https://leafletjs.com/reference-1.9.4.html"
+  ],
+  "R9": [
+    "MDN contributors. (n.d.). Geolocation API.",
+    "https://developer.mozilla.org/en-US/docs/Web/API/Geolocation_API"
+  ],
+  "R10": [
+    "Bootstrap contributors. (n.d.). Breakpoints, Bootstrap 5.3.",
+    "https://getbootstrap.com/docs/5.3/layout/breakpoints/"
+  ],
+  "R11": [
+    "WEBSYS1 instructor. (n.d.). Final requirement announcement and project 2 mandatory module list.",
+    "Course announcement supplied by the team; retain the original course copy."
+  ],
+  "R12": [
+    "BayanReady team. (2026). WEBSYS_PROJECT source and team documentation, branch bayanready-household-map-simplify, baseline 5696ac1.",
+    "https://github.com/macJil/WEBSYS_PROJECT/tree/bayanready-household-map-simplify"
+  ],
+  "R13": [
+    "The PHP Group. (n.d.). Transactions and auto-commit.",
+    "https://www.php.net/manual/en/pdo.transactions.php"
+  ],
+  "R14": [
+    "The PHP Group. (n.d.). Handling file uploads.",
+    "https://www.php.net/manual/en/features.file-upload.php"
+  ],
+  "R15": [
+    "komoot and Photon contributors. (n.d.). Photon README, reverse geocoding.",
+    "https://github.com/komoot/photon"
+  ],
+  "R16": [
+    "Daud, M., Ugliotti, F. M., & Osello, A. (2024). Comprehensive Analysis of the Use of Web-GIS for Natural Hazard Management: A Systematic Review. Sustainability, 16(10), 4238.",
+    "https://doi.org/10.3390/su16104238"
+  ]
+}

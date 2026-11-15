@@ -3,3 +3,4 @@ config/local.php
 uploads/
 *.log
 config/config.php
+.presentation-build/

@@ -37,3 +37,11 @@ Use PHP with PDO MySQL, fileinfo and cURL, plus MySQL. Import barangay_drrm.sql 
 Copy config/config.example.php to ignored config/config.php. Enter host, port, database, username, password and base_url. Set incident_upload_dir to an absolute, writable directory OUTSIDE the web root. This was the cause of the earlier all-images-fail issue: the running copy had an empty setting. Do not commit local configuration or image files. The address endpoint requires outbound HTTPS; maps need access to OpenStreetMap tiles.
 
 Open index.php through your PHP web server, not directly as a file. Create fictional resident accounts using registration. Have the database/setup owner provide a fictional admin account with a password_hash-generated password; there is no public admin registration. The automatic test runner creates its own accounts and separate database.
+
+## Presentation responsibilities
+
+See [member-by-member code explanation](MEMBER_CODE_EXPLANATIONS.md) for exact files, methods, demonstration steps, likely questions and slide ownership. The timed slide script is in [presentation/SPEAKER_SCRIPT.md](../../presentation/SPEAKER_SCRIPT.md).
+
+## Presentation code study
+
+Every member explains a complete request path. Use the [member focus guide](MEMBER_CODE_EXPLANATIONS.md), its five full trace chapters, and the [current live-presentation speech](../../presentation/LIVE_DEMO_PRESENTATION_SCRIPT.md). Presentation material excludes test results; existing test guides remain for team development use.

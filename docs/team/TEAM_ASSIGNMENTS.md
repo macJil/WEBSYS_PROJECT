@@ -5,7 +5,7 @@ Use Member 1–5 until you replace these labels with names. Assign by complete f
 | Member | Primary responsibility and files | Required demonstration | Reviewer |
 |---|---|---|---|
 | 1 | Login and registry: index.php; User and Household models/controllers; admin/households.php, household.php; config/db.php and app/helpers.php | Resident registration/login/logout, rejected login, admin-only household/member CRUD and calculated size | 2 |
-| 2 | Incidents and response: Report and Response models/controllers; incidents/*; admin/response/*; incident-location.js | Valid/private image upload, verification, multiple teams, response updates and resolution | 3 |
+| 2 | Incidents and response: Report and Response models/controllers; incidents/*; admin/response/*; shared picker integration (location-picker.js owned by Member 5) | Valid/private image upload, verification, multiple teams, response updates and resolution | 3 |
 | 3 | Evacuation: Evacuation model/controller; admin/evacuation/*; household-checkin.js; app/evacuation-capacity.php | Household/partial arrivals, walk-ins, duplicate/capacity rejection, checkout/history | 4 |
 | 4 | Inventory/distribution and removal: Relief, ReliefLocation and RecordActions models/controllers; admin/relief/*; records.php, records-all.php; record-selection.js | Multi-good distribution, rollback on insufficient stock, removal with preserved history | 5 |
 | 5 | Announcements, summaries, map/dashboard integration: Announcement, DisasterSummary, Map and Dashboard models/controllers; announcement, summaries, maps and dashboard views; community-map.js, location-picker.js; shared components/CSS | Draft/publish, safe map fields, address fallback, matching totals and responsive navigation | 1 |
@@ -26,3 +26,9 @@ Members 2 and 4 own the heavier transaction workflows. Member 5's breadth is bal
 Each member supplies: a working feature, explanation of its methods/tables, two successful examples, two rejected examples, phone/desktop screenshots and a peer review. Review workload weekly; redistribute documentation/testing if one member has more defects. Do not judge fairness by lines of code.
 
 Report: task, files changed, database impact, tests, unresolved issue, reviewer. Everyone should understand sessions, prepared statements, escaping, redirects and transactions even when another member owns the implementation.
+
+## Presentation responsibilities
+
+See [member-by-member code explanation](MEMBER_CODE_EXPLANATIONS.md) for exact files, methods, demonstration steps, likely questions and slide ownership. The timed slide script is in [presentation/LIVE_DEMO_PRESENTATION_SCRIPT.md](../../presentation/LIVE_DEMO_PRESENTATION_SCRIPT.md).
+
+Every member must present their assigned code on slides 8, 12, 15, 19 or 23, respectively. Follow the complete trace chapters linked from the member guide. This supplements module ownership; it does not divide the website into five separate copies.

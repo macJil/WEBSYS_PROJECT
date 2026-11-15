@@ -1,5 +1,7 @@
 # Code walkthrough
 
+Start with the [five-member explanation guide](MEMBER_CODE_EXPLANATIONS.md) for assigned live code segments and complete, source-linked execution traces. This page remains the broad reference for all modules.
+
 This explains the current team-maintained application. [Complete source companion](SOURCE_COMPANION.md) includes the exact custom PHP, JavaScript, CSS and fresh schema with file/method navigation. Vendor internals are excluded: Bootstrap supplies styling/navigation and Leaflet supplies map rendering. Local credentials and uploaded files are never included.
 
 ## Request flow and PHP vocabulary
@@ -78,3 +80,7 @@ Views perform page-level setup/guards and call controllers before output. Header
 The 17 tables are users; households; household_members; incident_reports; incident_images; responders; incident_assignments; response_updates; announcements; evacuation_centers; evacuation_walkins; evacuation_records; relief_items; relief_locations; relief_distributions; relief_distribution_items; relief_stock_movements. The schema in the source companion shows exact fields, defaults, indexes and foreign keys. Multiple goods, multiple teams and separate stays need their own rows; removing these tables would lose required workflows.
 
 Read the source companion in this order: helpers/config → User → one view/controller/model trio → transaction modules → map scripts → schema. It includes every maintained source file and named PHP method so members can trace all code without relying on outdated phase descriptions. Tests are separate from runtime code and never belong in normal user navigation.
+
+## Presentation responsibilities
+
+See [member-by-member code explanation](MEMBER_CODE_EXPLANATIONS.md) for exact files, methods, demonstration steps, likely questions and slide ownership. The timed slide script is in [presentation/SPEAKER_SCRIPT.md](../../presentation/SPEAKER_SCRIPT.md).
