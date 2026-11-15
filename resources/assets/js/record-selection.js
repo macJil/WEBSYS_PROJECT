@@ -20,7 +20,7 @@
         if (!selected) {
             event.preventDefault();
             alert("Select at least one record to delete.");
-        } else if (!confirm("Permanently delete " + selected + " selected record(s)? This cannot be undone.")) {
+        } else if (!confirm("Remove " + selected + " selected record(s)? Unused records will be permanently deleted. Linked history will be kept.")) {
             event.preventDefault();
         }
     });
