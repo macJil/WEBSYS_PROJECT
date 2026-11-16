@@ -24,7 +24,7 @@ class UserController extends Controller
         if (strlen($password) > 72) {
             $errors[] = 'Use a password of at most 72 bytes.';
         }
-        if ($action === 'register') {
+        if ($action === 'register') { 
             $data = ['full_name' => input('full_name'), 'username' => input('username'), 'email' => $email, 'phone' => input('phone')];
             if ($data['full_name'] === '' || strlen($data['full_name']) > 100) {
                 $errors[] = 'Enter a name of up to 100 bytes.';
@@ -46,6 +46,7 @@ class UserController extends Controller
         }
         if ($errors) {
             return $errors;
+            
         }
         try {
             $users = new UserModel(); // Connection failure is inside the catch boundary.
