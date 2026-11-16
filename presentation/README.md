@@ -11,3 +11,7 @@ The old local BayanReady.pptx, video, ZIP, screenshots and earlier scripts are s
 Keep MAMP/Apache/MySQL running. Use separate prepared admin/resident sessions and fictional records. Open each member's code files at readable zoom before the talk. Do not project local configuration credentials.
 
 See the [presentation Q&A and local-network demo guide](../docs/team/PRESENTATION_QA_AND_LAN_DEMO.md) for likely questions, suggested answers, visitor instructions and MAMP sharing preparation.
+
+## Backup without PowerPoint
+
+Use [the complete 30-minute website-and-code presentation](NO_SLIDES_30_MINUTE_SCRIPT.md). Each member has six minutes, including a live demonstration and code explanation. It includes document/image cues, full dialogue and rehearsal time gates. Q&A and the class hands-on activity are separate.
