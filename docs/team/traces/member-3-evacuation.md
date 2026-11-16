@@ -1,6 +1,6 @@
 # Member 3 — Household evacuation check-in and checkout
 
-These are study notes for the current source, not application changes or a claim that a live demonstration has passed. Use fictional examples. The complete primary request is traced below, with exact source excerpts and explanations. Source links are relative to the repository and include line anchors. The main presentation should show only the marked 60–90 second segment; use the rest to prepare for questions.
+These are study notes for the pre-formatting source at commit 954885b, not application changes or a claim that a live demonstration has passed. Use fictional examples. The complete primary request is traced below, with exact source excerpts and explanations. Source links are relative to the repository and include line anchors. The main presentation should show only the marked 60–90 second segment; use the rest to prepare for questions.
 
 All PHP save paths run on the server through MAMP. The browser sends form values, not PHP objects. A successful POST redirects to a new GET; validation errors remain on the form. `[]` means an empty array, `$this` means the current object, `->` accesses an object, `?int` accepts integer or null, and `: array` declares a returned array. `prepare()` creates a SQL statement and `execute()` supplies its values.
 ## Focus and example
@@ -13,7 +13,7 @@ GET center; choose household using GET; load active members selected by default.
 
 ## 1. Page preparation and selection
 
-Source: [resources/views/admin/evacuation/center.php, lines 1–30](../../../resources/views/admin/evacuation/center.php#L1). Exact excerpt, not pseudocode.
+Source: [resources/views/admin/evacuation/center.php, lines 1–30](https://github.com/macJil/WEBSYS_PROJECT/blob/954885b/resources/views/admin/evacuation/center.php#L1). Exact excerpt, not pseudocode.
 
 ```php
 <?php
@@ -52,7 +52,7 @@ The center ID is validated and the staff controller handles the POST before outp
 
 ## 2. Browser form sends individual member IDs
 
-Source: [resources/views/admin/evacuation/center.php, lines 62–80](../../../resources/views/admin/evacuation/center.php#L62). Exact excerpt, not pseudocode.
+Source: [resources/views/admin/evacuation/center.php, lines 62–80](https://github.com/macJil/WEBSYS_PROJECT/blob/954885b/resources/views/admin/evacuation/center.php#L62). Exact excerpt, not pseudocode.
 
 ```php
         <fieldset>
@@ -80,7 +80,7 @@ The checkbox name `member_ids[]` becomes a PHP array. Unchecked members are omit
 
 ## 3. Controller dispatches the operation
 
-Source: [app/controllers/EvacuationController.php, lines 90–128](../../../app/controllers/EvacuationController.php#L90). Exact excerpt, not pseudocode.
+Source: [app/controllers/EvacuationController.php, lines 90–128](https://github.com/macJil/WEBSYS_PROJECT/blob/954885b/app/controllers/EvacuationController.php#L90). Exact excerpt, not pseudocode.
 
 ```php
     public function handleStay(int $id): array
@@ -128,7 +128,7 @@ The constructor already requires admin access. `handleStay()` first ignores GET.
 
 ## 4. Validate the whole batch and write stays
 
-Source: [app/models/Evacuation.php, lines 96–148](../../../app/models/Evacuation.php#L96). Exact excerpt, not pseudocode.
+Source: [app/models/Evacuation.php, lines 96–148](https://github.com/macJil/WEBSYS_PROJECT/blob/954885b/app/models/Evacuation.php#L96). Exact excerpt, not pseudocode.
 
 ```php
     public function checkinHousehold(int $centerId, int $householdId, array $memberIds, int $staff): void
@@ -199,7 +199,7 @@ For the example: 1 + 3 is within capacity 5. Three rows are inserted. If member 
 
 ## 5. Lock the center
 
-Source: [app/models/Evacuation.php, lines 36–43](../../../app/models/Evacuation.php#L36). Exact excerpt, not pseudocode.
+Source: [app/models/Evacuation.php, lines 36–43](https://github.com/macJil/WEBSYS_PROJECT/blob/954885b/app/models/Evacuation.php#L36). Exact excerpt, not pseudocode.
 
 ```php
     private function lockCenter(int $id): array
@@ -216,7 +216,7 @@ The model obtains a row lock inside the transaction. Check-in and checkout share
 
 ## 6. Count current active stays
 
-Source: [app/models/Evacuation.php, lines 44–48](../../../app/models/Evacuation.php#L44). Exact excerpt, not pseudocode.
+Source: [app/models/Evacuation.php, lines 44–48](https://github.com/macJil/WEBSYS_PROJECT/blob/954885b/app/models/Evacuation.php#L44). Exact excerpt, not pseudocode.
 
 ```php
     private function occupancy(int $id): int
@@ -230,7 +230,7 @@ A stay is active when `checked_out_at IS NULL`. This locking read sees the curre
 
 ## 7. Reload center totals
 
-Source: [app/models/Evacuation.php, lines 26–35](../../../app/models/Evacuation.php#L26). Exact excerpt, not pseudocode.
+Source: [app/models/Evacuation.php, lines 26–35](https://github.com/macJil/WEBSYS_PROJECT/blob/954885b/app/models/Evacuation.php#L26). Exact excerpt, not pseudocode.
 
 ```php
     public function center(int $id): array
@@ -249,7 +249,7 @@ The ordinary detail query counts active stays after the redirect. The shared hel
 
 ## 8. Shared capacity definition
 
-Source: [app/evacuation-capacity.php, lines 1–9](../../../app/evacuation-capacity.php#L1). Exact excerpt, not pseudocode.
+Source: [app/evacuation-capacity.php, lines 1–9](https://github.com/macJil/WEBSYS_PROJECT/blob/954885b/app/evacuation-capacity.php#L1). Exact excerpt, not pseudocode.
 
 ```php
 <?php
@@ -267,7 +267,7 @@ Closed or archived centers have no currently available capacity. Otherwise capac
 
 ## 9. Checkout preserves the stay
 
-Source: [app/models/Evacuation.php, lines 207–222](../../../app/models/Evacuation.php#L207). Exact excerpt, not pseudocode.
+Source: [app/models/Evacuation.php, lines 207–222](https://github.com/macJil/WEBSYS_PROJECT/blob/954885b/app/models/Evacuation.php#L207). Exact excerpt, not pseudocode.
 
 ```php
     public function checkout(int $centerId, int $recordId, int $staff): void

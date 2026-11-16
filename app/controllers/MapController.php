@@ -9,10 +9,11 @@ class MapController extends Controller
         $model = new MapModel();
         return $model->publicMap();
     }
+
     public function reliefLocation($value): array
     {
         requireRole('admin');
-        $id = is_scalar($value)?filter_var($value, FILTER_VALIDATE_INT):false;
+        $id = is_scalar($value) ? filter_var($value, FILTER_VALIDATE_INT) : false;
         if (!$id || $id < 1) {
             http_response_code(400);
             exit('Invalid location ID.');

@@ -9,10 +9,12 @@ class RecordActionsController extends Controller
         requireRole('admin');
         $this->model = new RecordActionsModel();
     }
+
     public function listing(string $type, string $search, int $page): array
     {
         return $this->model->listing($type, $search, $page);
     }
+
     public function delete(array $rows): void
     {
         requireRole('admin');
@@ -30,7 +32,7 @@ class RecordActionsController extends Controller
                 throw new DomainException('Select records from the displayed page.');
             }
             $row = $visible[$key];
-            $selection[$row['record_type']][(int)$row['id']] = (int)$row['id'];
+            $selection[$row['record_type']][(int) $row['id']] = (int) $row['id'];
         }
         foreach ($selection as $type => $records) {
             $selection[$type] = array_values($records);

@@ -9,10 +9,12 @@ class ReliefLocationController extends Controller
         requireRole('admin');
         $this->model = new ReliefLocationModel();
     }
+
     public function all(): array
     {
         return $this->model->all();
     }
+
     public function find(int $id): array
     {
         $location = $this->model->find($id);
@@ -22,6 +24,7 @@ class ReliefLocationController extends Controller
         }
         return $location;
     }
+
     public function save(?int $id): array
     {
         if (!isPost()) {
@@ -31,17 +34,24 @@ class ReliefLocationController extends Controller
             return ['Archived locations cannot be edited.'];
         }
         $data = [];
-        foreach (['name','location_type','address_details','latitude','longitude'] as $field) {
+        foreach (['name', 'location_type', 'address_details', 'latitude', 'longitude'] as $field) {
             $data[$field] = input($field);
         }
-        if (input('action') !== 'save_location' || $data['name'] === '' || strlen($data['name']) > 150 || $data['address_details'] === '' || strlen($data['address_details']) > 255 || !in_array($data['location_type'], ['storage','distribution','both'], true)) {
+        if (
+            input('action') !== 'save_location' ||
+            $data['name'] === '' ||
+            strlen($data['name']) > 150 ||
+            $data['address_details'] === '' ||
+            strlen($data['address_details']) > 255 ||
+            !in_array($data['location_type'], ['storage', 'distribution', 'both'], true)
+        ) {
             return ['Enter name, address, and valid location type.'];
         }
         $errors = locationErrors($data['address_details'], $data['latitude'], $data['longitude']);
         if ($errors) {
             return $errors;
         }
-        foreach (['latitude','longitude'] as $field) {
+        foreach (['latitude', 'longitude'] as $field) {
             if ($data[$field] === '') {
                 $data[$field] = null;
             }

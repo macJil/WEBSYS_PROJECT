@@ -25,13 +25,24 @@ class UserController extends Controller
             $errors[] = 'Use a password of at most 72 bytes.';
         }
         if ($action === 'register') {
-            $data = ['full_name' => input('full_name'), 'username' => input('username'), 'email' => $email, 'phone' => input('phone')];
+            $data = [
+                'full_name' => input('full_name'),
+                'username' => input('username'),
+                'email' => $email,
+                'phone' => input('phone'),
+            ];
             if ($data['full_name'] === '' || strlen($data['full_name']) > 100) {
                 $errors[] = 'Enter a name of up to 100 bytes.';
             }
             $usernameLength = strlen($data['username']);
-            if ($usernameLength < 3 || $usernameLength > 50
-                || strspn($data['username'], 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_') !== $usernameLength) {
+            if (
+                $usernameLength < 3 ||
+                $usernameLength > 50 ||
+                strspn(
+                    $data['username'],
+                    'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_',
+                ) !== $usernameLength
+            ) {
                 $errors[] = 'Use 3–50 letters, numbers or underscores for your username.';
             }
             if (!validPhone($data['phone'], 7)) {
@@ -55,11 +66,23 @@ class UserController extends Controller
                 $this->success('Registration successful. You can now log in.', 'index.php');
             }
             $user = $users->findByEmail($email);
-            if (!$user || !password_verify($password, $user['password']) || !$user['is_active'] || !in_array($user['role'], ['admin', 'resident'], true)) {
+            if (
+                !$user ||
+                !password_verify($password, $user['password']) ||
+                !$user['is_active'] ||
+                !in_array($user['role'], ['admin', 'resident'], true)
+            ) {
                 return ['Invalid email or password, or the account is inactive.'];
             }
             session_regenerate_id(true);
-            $_SESSION = ['ID' => (int) $user['id'], 'FULL_NAME' => $user['full_name'], 'USERNAME' => $user['username'], 'PHONE' => $user['phone'] ?? '', 'EMAIL' => $user['email'], 'ROLE' => $user['role']];
+            $_SESSION = [
+                'ID' => (int) $user['id'],
+                'FULL_NAME' => $user['full_name'],
+                'USERNAME' => $user['username'],
+                'PHONE' => $user['phone'] ?? '',
+                'EMAIL' => $user['email'],
+                'ROLE' => $user['role'],
+            ];
             $this->success('You are now signed in.', dashboardPath());
         } catch (PDOException $error) {
             if ($action === 'register' && $error->getCode() === '23000') {

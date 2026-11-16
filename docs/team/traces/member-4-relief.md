@@ -1,6 +1,6 @@
 # Member 4 — Multi-good relief distribution and protected removal
 
-These are study notes for the current source, not application changes or a claim that a live demonstration has passed. Use fictional examples. The complete primary request is traced below, with exact source excerpts and explanations. Source links are relative to the repository and include line anchors. The main presentation should show only the marked 60–90 second segment; use the rest to prepare for questions.
+These are study notes for the pre-formatting source at commit 954885b, not application changes or a claim that a live demonstration has passed. Use fictional examples. The complete primary request is traced below, with exact source excerpts and explanations. Source links are relative to the repository and include line anchors. The main presentation should show only the marked 60–90 second segment; use the rest to prepare for questions.
 
 All PHP save paths run on the server through MAMP. The browser sends form values, not PHP objects. A successful POST redirects to a new GET; validation errors remain on the form. `[]` means an empty array, `$this` means the current object, `->` accesses an object, `?int` accepts integer or null, and `: array` declares a returned array. `prepare()` creates a SQL statement and `execute()` supplies its values.
 ## Focus and example
@@ -13,7 +13,7 @@ GET list/form; admin guard; load active goods/households. POST quantities keyed 
 
 ## 1. Choose form mode or historical detail
 
-Source: [resources/views/admin/relief/distributions.php, lines 1–17](../../../resources/views/admin/relief/distributions.php#L1). Exact excerpt, not pseudocode.
+Source: [resources/views/admin/relief/distributions.php, lines 1–17](https://github.com/macJil/WEBSYS_PROJECT/blob/954885b/resources/views/admin/relief/distributions.php#L1). Exact excerpt, not pseudocode.
 
 ```php
 <?php
@@ -39,7 +39,7 @@ A missing ID means list/create mode. An ID means historical detail. POST to a de
 
 ## 2. Validate the posted good-to-quantity map
 
-Source: [app/controllers/ReliefController.php, lines 124–158](../../../app/controllers/ReliefController.php#L124). Exact excerpt, not pseudocode.
+Source: [app/controllers/ReliefController.php, lines 124–158](https://github.com/macJil/WEBSYS_PROJECT/blob/954885b/app/controllers/ReliefController.php#L124). Exact excerpt, not pseudocode.
 
 ```php
     public function distribute(): array
@@ -83,7 +83,7 @@ The form's `goods[itemId]` names become an associative array. `$raw` is untruste
 
 ## 3. Positive whole-number quantity rule
 
-Source: [app/controllers/ReliefController.php, lines 79–82](../../../app/controllers/ReliefController.php#L79). Exact excerpt, not pseudocode.
+Source: [app/controllers/ReliefController.php, lines 79–82](https://github.com/macJil/WEBSYS_PROJECT/blob/954885b/app/controllers/ReliefController.php#L79). Exact excerpt, not pseudocode.
 
 ```php
     private function quantity($value)
@@ -96,7 +96,7 @@ Scalar input avoids arrays masquerading as a number. The integer filter accepts 
 
 ## 4. Save every related change in one transaction
 
-Source: [app/models/Relief.php, lines 107–149](../../../app/models/Relief.php#L107). Exact excerpt, not pseudocode.
+Source: [app/models/Relief.php, lines 107–149](https://github.com/macJil/WEBSYS_PROJECT/blob/954885b/app/models/Relief.php#L107). Exact excerpt, not pseudocode.
 
 ```php
     public function distribute(int $household, string $receiver, string $notes, array $goods, int $staff): int
@@ -154,7 +154,7 @@ In the example, goods 3 and 9 each produce one detail and one movement. There is
 
 ## 5. Record the stock movement
 
-Source: [app/models/Relief.php, lines 52–56](../../../app/models/Relief.php#L52). Exact excerpt, not pseudocode.
+Source: [app/models/Relief.php, lines 52–56](https://github.com/macJil/WEBSYS_PROJECT/blob/954885b/app/models/Relief.php#L52). Exact excerpt, not pseudocode.
 
 ```php
     private function movement(int $item, string $type, int $quantity, ?int $distribution, int $staff, string $notes): void
@@ -168,7 +168,7 @@ This helper inserts the item, movement type, quantity, distribution link, staff 
 
 ## 6. Reload distribution metadata
 
-Source: [app/models/Relief.php, lines 154–157](../../../app/models/Relief.php#L154). Exact excerpt, not pseudocode.
+Source: [app/models/Relief.php, lines 154–157](https://github.com/macJil/WEBSYS_PROJECT/blob/954885b/app/models/Relief.php#L154). Exact excerpt, not pseudocode.
 
 ```php
     public function distribution(int $id): array
@@ -181,7 +181,7 @@ The detail query joins the household and staff names for display. It does not re
 
 ## 7. Reload each distributed good
 
-Source: [app/models/Relief.php, lines 158–161](../../../app/models/Relief.php#L158). Exact excerpt, not pseudocode.
+Source: [app/models/Relief.php, lines 158–161](https://github.com/macJil/WEBSYS_PROJECT/blob/954885b/app/models/Relief.php#L158). Exact excerpt, not pseudocode.
 
 ```php
     public function distributedGoods(int $id): array

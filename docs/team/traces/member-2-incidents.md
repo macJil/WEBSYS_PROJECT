@@ -1,6 +1,6 @@
 # Member 2 — Incident submission, image storage and response
 
-These are study notes for the current source, not application changes or a claim that a live demonstration has passed. Use fictional examples. The complete primary request is traced below, with exact source excerpts and explanations. Source links are relative to the repository and include line anchors. The main presentation should show only the marked 60–90 second segment; use the rest to prepare for questions.
+These are study notes for the pre-formatting source at commit 954885b, not application changes or a claim that a live demonstration has passed. Use fictional examples. The complete primary request is traced below, with exact source excerpts and explanations. Source links are relative to the repository and include line anchors. The main presentation should show only the marked 60–90 second segment; use the rest to prepare for questions.
 
 All PHP save paths run on the server through MAMP. The browser sends form values, not PHP objects. A successful POST redirects to a new GET; validation errors remain on the form. `[]` means an empty array, `$this` means the current object, `->` accesses an object, `?int` accepts integer or null, and `: array` declares a returned array. `prepare()` creates a SQL statement and `execute()` supplies its values.
 ## Focus and example
@@ -13,7 +13,7 @@ GET form; check session; construct controller; collect fields; return without sa
 
 ## 1. The multipart form and page entry
 
-Source: [resources/views/incidents/create.php, lines 1–20](../../../resources/views/incidents/create.php#L1). Exact excerpt, not pseudocode.
+Source: [resources/views/incidents/create.php, lines 1–20](https://github.com/macJil/WEBSYS_PROJECT/blob/954885b/resources/views/incidents/create.php#L1). Exact excerpt, not pseudocode.
 
 ```php
 <?php
@@ -42,7 +42,7 @@ The controller uses the current session role, not a posted role. On GET the repo
 
 ## 2. Read the allowed values
 
-Source: [app/controllers/ReportController.php, lines 68–75](../../../app/controllers/ReportController.php#L68). Exact excerpt, not pseudocode.
+Source: [app/controllers/ReportController.php, lines 68–75](https://github.com/macJil/WEBSYS_PROJECT/blob/954885b/app/controllers/ReportController.php#L68). Exact excerpt, not pseudocode.
 
 ```php
     public function values(): array
@@ -59,7 +59,7 @@ This list establishes the expected report fields. The staff source selector is v
 
 ## 3. Validate and coordinate the save
 
-Source: [app/controllers/ReportController.php, lines 133–185](../../../app/controllers/ReportController.php#L133). Exact excerpt, not pseudocode.
+Source: [app/controllers/ReportController.php, lines 133–185](https://github.com/macJil/WEBSYS_PROJECT/blob/954885b/app/controllers/ReportController.php#L133). Exact excerpt, not pseudocode.
 
 ```php
     public function create(array $data): array
@@ -123,7 +123,7 @@ The method checks action, required strings, type, phone and paired coordinates. 
 
 ## 4. Validate the image itself
 
-Source: [app/controllers/ReportController.php, lines 97–132](../../../app/controllers/ReportController.php#L97). Exact excerpt, not pseudocode.
+Source: [app/controllers/ReportController.php, lines 97–132](https://github.com/macJil/WEBSYS_PROJECT/blob/954885b/app/controllers/ReportController.php#L97). Exact excerpt, not pseudocode.
 
 ```php
     private function upload(): ?array
@@ -168,7 +168,7 @@ No supplied file returns null. Other upload errors, a fake uploaded-file path, e
 
 ## 5. Private storage location
 
-Source: [app/controllers/ReportController.php, lines 76–96](../../../app/controllers/ReportController.php#L76). Exact excerpt, not pseudocode.
+Source: [app/controllers/ReportController.php, lines 76–96](https://github.com/macJil/WEBSYS_PROJECT/blob/954885b/app/controllers/ReportController.php#L76). Exact excerpt, not pseudocode.
 
 ```php
     private function storage(): string
@@ -198,7 +198,7 @@ The configured path must be absolute and outside both the project and document r
 
 ## 6. Save the incident and optional image reference
 
-Source: [app/models/Report.php, lines 62–80](../../../app/models/Report.php#L62). Exact excerpt, not pseudocode.
+Source: [app/models/Report.php, lines 62–80](https://github.com/macJil/WEBSYS_PROJECT/blob/954885b/app/models/Report.php#L62). Exact excerpt, not pseudocode.
 
 ```php
     public function create(array $data, ?array $image): int
@@ -226,7 +226,7 @@ The transaction begins before the incident insert. `$data` comes from the contro
 
 ## 7. Ownership on the detail reload
 
-Source: [app/controllers/ReportController.php, lines 14–17](../../../app/controllers/ReportController.php#L14). Exact excerpt, not pseudocode.
+Source: [app/controllers/ReportController.php, lines 14–17](https://github.com/macJil/WEBSYS_PROJECT/blob/954885b/app/controllers/ReportController.php#L14). Exact excerpt, not pseudocode.
 
 ```php
     private function owner(): ?int
@@ -239,7 +239,7 @@ For admins, null means staff-wide access in the model's ownership condition. For
 
 ## 8. Query the saved private report
 
-Source: [app/models/Report.php, lines 38–43](../../../app/models/Report.php#L38). Exact excerpt, not pseudocode.
+Source: [app/models/Report.php, lines 38–43](https://github.com/macJil/WEBSYS_PROJECT/blob/954885b/app/models/Report.php#L38). Exact excerpt, not pseudocode.
 
 ```php
     public function find(int $id, ?int $owner)

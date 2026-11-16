@@ -16,7 +16,9 @@ $now = time();
 $requests = $_SESSION['address_requests'] ?? [];
 $recent = [];
 foreach ($requests as $time) {
-    if ($now - $time < 60) $recent[] = $time;
+    if ($now - $time < 60) {
+        $recent[] = $time;
+    }
 }
 if (count($recent) >= 10) {
     http_response_code(429);

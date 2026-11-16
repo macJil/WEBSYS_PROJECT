@@ -1,3 +1,5 @@
+> Source snapshot before the readable-code branch. For current formatting, open the application files; behavior and method responsibilities are retained.
+
 # Complete maintained-source companion
 
 Snapshot of the working application, 2026-11-14. Read CODE_WALKTHROUGH.md for explanations by module and method. This is source reference, not another runnable application. Third-party libraries, private config, images and historical migrations are intentionally not duplicated.

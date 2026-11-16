@@ -8,8 +8,7 @@
     }
     const lat = Number(element.dataset.lat),
         lng = Number(element.dataset.lng);
-    if (!Number.isFinite(lat) || !Number.isFinite(lng) || Math.abs(lat) > 90 || Math.abs(lng) > 180)
-        return;
+    if (!Number.isFinite(lat) || !Number.isFinite(lng) || Math.abs(lat) > 90 || Math.abs(lng) > 180) return;
     const map = L.map(element).setView([lat, lng], 16);
     L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
         maxZoom: 19,

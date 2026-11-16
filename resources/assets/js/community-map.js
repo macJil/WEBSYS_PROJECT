@@ -3,18 +3,14 @@
     if (!element) return;
     const status = document.getElementById("community-map-status");
     if (typeof L === "undefined") {
-        status.textContent =
-            "Map files could not load. Refresh the page; record pages remain available.";
+        status.textContent = "Map files could not load. Refresh the page; record pages remain available.";
         return;
     }
     const admin = element.dataset.admin === "1";
     const home = [Number(element.dataset.lat), Number(element.dataset.lng)];
     const zoom = Number(element.dataset.zoom);
     const minimumZoom = Number(element.dataset.minZoom || 11);
-    const map = L.map(element, { minZoom: minimumZoom }).setView(
-        home,
-        zoom,
-    );
+    const map = L.map(element, { minZoom: minimumZoom }).setView(home, zoom);
     L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
         maxZoom: 19,
         attribution:
@@ -147,11 +143,7 @@
                     const icon = L.divIcon({
                         className: "map-marker-icon",
                         html:
-                            '<span class="map-symbol ' +
-                            color +
-                            '" aria-hidden="true">' +
-                            symbol +
-                            "</span>",
+                            '<span class="map-symbol ' + color + '" aria-hidden="true">' + symbol + "</span>",
                         iconSize: [28, 28],
                         iconAnchor: [14, 14],
                     });
@@ -175,7 +167,6 @@
             document.getElementById("map-fit").disabled = false;
         })
         .catch((error) => {
-            status.textContent =
-                error.message || "Saved locations could not be loaded. Please refresh.";
+            status.textContent = error.message || "Saved locations could not be loaded. Please refresh.";
         });
 })();

@@ -9,23 +9,27 @@ class ReliefController extends Controller
         requireRole('admin');
         $this->model = new ReliefModel();
     }
+
     public function recordId($value): int
     {
-        $id = is_scalar($value)?filter_var($value, FILTER_VALIDATE_INT):false;
+        $id = is_scalar($value) ? filter_var($value, FILTER_VALIDATE_INT) : false;
         if (!$id || $id < 1) {
             http_response_code(400);
             exit('Invalid ID.');
         }
         return $id;
     }
+
     public function queryValue(string $key): string
     {
-        return is_string($_GET[$key] ?? null)?trim($_GET[$key]):'';
+        return is_string($_GET[$key] ?? null) ? trim($_GET[$key]) : '';
     }
+
     public function items(string $q = ''): array
     {
         return $this->model->items($q);
     }
+
     public function item(int $id): array
     {
         $row = $this->model->item($id);
@@ -35,14 +39,17 @@ class ReliefController extends Controller
         }
         return $row;
     }
+
     public function households(): array
     {
         return $this->model->households();
     }
+
     public function distributions(string $q): array
     {
         return $this->model->distributions($q);
     }
+
     public function distribution(int $id): array
     {
         $row = $this->model->distribution($id);
@@ -52,20 +59,26 @@ class ReliefController extends Controller
         }
         return $row;
     }
+
     public function distributedGoods(int $id): array
     {
         return $this->model->distributedGoods($id);
     }
+
     public function movements(): array
     {
         $type = $this->queryValue('type');
         $date = $this->queryValue('date');
-        if (!in_array($type, ['','stock_in','stock_out','distribution'], true) || ($date !== '' && !validDateInput($date))) {
+        if (
+            !in_array($type, ['', 'stock_in', 'stock_out', 'distribution'], true) ||
+            ($date !== '' && !validDateInput($date))
+        ) {
             http_response_code(400);
             exit('Invalid history filter.');
         }
         return $this->model->movements($this->queryValue('q'), $type, $date);
     }
+
     private function failure(Throwable $e): array
     {
         if ($e instanceof DomainException) {
@@ -76,10 +89,16 @@ class ReliefController extends Controller
         }
         return ['Change could not be saved. Please try again.'];
     }
+
     private function quantity($value)
     {
-        return is_scalar($value)?filter_var($value, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1,'max_range' => 1000000000]]):false;
+        return is_scalar($value)
+            ? filter_var($value, FILTER_VALIDATE_INT, [
+                'options' => ['min_range' => 1, 'max_range' => 1000000000],
+            ])
+            : false;
     }
+
     public function saveItem(?int $id): array
     {
         if (!isPost()) {
@@ -101,6 +120,7 @@ class ReliefController extends Controller
         $this->success('Relief item saved.', 'resources/views/admin/relief/inventory.php');
         return [];
     }
+
     public function stock(): array
     {
         if (!isPost()) {
@@ -109,18 +129,27 @@ class ReliefController extends Controller
         $quantity = $this->quantity(input('quantity'));
         $type = input('movement_type');
         $notes = input('notes');
-        if (input('action') !== 'stock' || !in_array($type, ['stock_in','stock_out'], true) || $quantity === false || $notes === '' || strlen($notes) > 255) {
-            return ['Choose stock-in/out, enter a positive whole quantity (up to 1 billion), and notes/reason (up to 255 bytes).'];
+        if (
+            input('action') !== 'stock' ||
+            !in_array($type, ['stock_in', 'stock_out'], true) ||
+            $quantity === false ||
+            $notes === '' ||
+            strlen($notes) > 255
+        ) {
+            return [
+                'Choose stock-in/out, enter a positive whole quantity (up to 1 billion), and notes/reason (up to 255 bytes).',
+            ];
         }
         $id = $this->recordId(input('item_id'));
         try {
-            $this->model->stock($id, $type, $quantity, (int)$_SESSION['ID'], $notes);
+            $this->model->stock($id, $type, $quantity, (int) $_SESSION['ID'], $notes);
         } catch (Throwable $e) {
             return $this->failure($e);
         }
         $this->success('Stock movement recorded.', 'resources/views/admin/relief/movements.php');
         return [];
     }
+
     public function distribute(): array
     {
         if (!isPost()) {
@@ -129,7 +158,13 @@ class ReliefController extends Controller
         $receiver = input('received_by');
         $notes = input('notes');
         $raw = $_POST['goods'] ?? null;
-        if (input('action') !== 'distribute' || $receiver === '' || strlen($receiver) > 100 || strlen($notes) > 255 || !is_array($raw)) {
+        if (
+            input('action') !== 'distribute' ||
+            $receiver === '' ||
+            strlen($receiver) > 100 ||
+            strlen($notes) > 255 ||
+            !is_array($raw)
+        ) {
             return ['Enter receiving representative (up to 100 bytes), notes (up to 255 bytes), and goods.'];
         }
         $goods = [];
@@ -140,7 +175,9 @@ class ReliefController extends Controller
             $id = $this->recordId($key);
             $quantity = $this->quantity($value);
             if ($quantity === false) {
-                return ['Goods quantities must be positive whole numbers (up to 1 billion), or blank/zero to omit.'];
+                return [
+                    'Goods quantities must be positive whole numbers (up to 1 billion), or blank/zero to omit.',
+                ];
             }
             $goods[$id] = $quantity;
         }
@@ -149,11 +186,14 @@ class ReliefController extends Controller
         }
         $household = $this->recordId(input('household_id'));
         try {
-            $id = $this->model->distribute($household, $receiver, $notes, $goods, (int)$_SESSION['ID']);
+            $id = $this->model->distribute($household, $receiver, $notes, $goods, (int) $_SESSION['ID']);
         } catch (Throwable $e) {
             return $this->failure($e);
         }
-        $this->success('Distribution recorded and stock updated.', 'resources/views/admin/relief/distributions.php?id=' . $id);
+        $this->success(
+            'Distribution recorded and stock updated.',
+            'resources/views/admin/relief/distributions.php?id=' . $id,
+        );
         return [];
     }
 }

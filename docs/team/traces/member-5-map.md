@@ -1,6 +1,6 @@
 # Member 5 — Map request, safe JSON and marker rendering
 
-These are study notes for the current source, not application changes or a claim that a live demonstration has passed. Use fictional examples. The complete primary request is traced below, with exact source excerpts and explanations. Source links are relative to the repository and include line anchors. The main presentation should show only the marked 60–90 second segment; use the rest to prepare for questions.
+These are study notes for the pre-formatting source at commit 954885b, not application changes or a claim that a live demonstration has passed. Use fictional examples. The complete primary request is traced below, with exact source excerpts and explanations. Source links are relative to the repository and include line anchors. The main presentation should show only the marked 60–90 second segment; use the rest to prepare for questions.
 
 All PHP save paths run on the server through MAMP. The browser sends form values, not PHP objects. A successful POST redirects to a new GET; validation errors remain on the form. `[]` means an empty array, `$this` means the current object, `->` accesses an object, `?int` accepts integer or null, and `: array` declares a returned array. `prepare()` creates a SQL statement and `execute()` supplies its values.
 ## Focus and example
@@ -13,7 +13,7 @@ GET map.php; check login; output configuration and endpoint URL; load Leaflet an
 
 ## 1. Guard the map page
 
-Source: [resources/views/maps/map.php, lines 1–10](../../../resources/views/maps/map.php#L1). Exact excerpt, not pseudocode.
+Source: [resources/views/maps/map.php, lines 1–10](https://github.com/macJil/WEBSYS_PROJECT/blob/954885b/resources/views/maps/map.php#L1). Exact excerpt, not pseudocode.
 
 ```php
 <?php
@@ -32,7 +32,7 @@ The page checks session/role before rendering. Its admin flag controls interface
 
 ## 2. Load endpoint and map configuration into the page
 
-Source: [resources/views/maps/map.php, lines 65–80](../../../resources/views/maps/map.php#L65). Exact excerpt, not pseudocode.
+Source: [resources/views/maps/map.php, lines 65–80](https://github.com/macJil/WEBSYS_PROJECT/blob/954885b/resources/views/maps/map.php#L65). Exact excerpt, not pseudocode.
 
 ```php
             data-min-zoom="<?= e($settings['map_min_zoom']) ?>"
@@ -57,7 +57,7 @@ The escaped `data-url` points to a direct PHP JSON page. `data-lat`, `data-lng` 
 
 ## 3. JSON endpoint guards and response
 
-Source: [resources/views/maps/data.php, lines 1–22](../../../resources/views/maps/data.php#L1). Exact excerpt, not pseudocode.
+Source: [resources/views/maps/data.php, lines 1–22](https://github.com/macJil/WEBSYS_PROJECT/blob/954885b/resources/views/maps/data.php#L1). Exact excerpt, not pseudocode.
 
 ```php
 <?php
@@ -88,7 +88,7 @@ The endpoint sets JSON and no-store headers. Missing/invalid account role return
 
 ## 4. Controller delegates to the map model
 
-Source: [app/controllers/MapController.php, lines 6–11](../../../app/controllers/MapController.php#L6). Exact excerpt, not pseudocode.
+Source: [app/controllers/MapController.php, lines 6–11](https://github.com/macJil/WEBSYS_PROJECT/blob/954885b/app/controllers/MapController.php#L6). Exact excerpt, not pseudocode.
 
 ```php
     public function mapData(): array
@@ -103,7 +103,7 @@ The controller requires a session and obtains a MapModel object. Both staff and 
 
 ## 5. Select only intended map fields and rows
 
-Source: [app/models/Map.php, lines 19–27](../../../app/models/Map.php#L19). Exact excerpt, not pseudocode.
+Source: [app/models/Map.php, lines 19–27](https://github.com/macJil/WEBSYS_PROJECT/blob/954885b/app/models/Map.php#L19). Exact excerpt, not pseudocode.
 
 ```php
     public function publicMap(): array
@@ -123,7 +123,7 @@ This protects the omitted personal fields, but the selected incident coordinates
 
 ## 6. Coordinate condition
 
-Source: [app/models/Map.php, lines 15–18](../../../app/models/Map.php#L15). Exact excerpt, not pseudocode.
+Source: [app/models/Map.php, lines 15–18](https://github.com/macJil/WEBSYS_PROJECT/blob/954885b/app/models/Map.php#L15). Exact excerpt, not pseudocode.
 
 ```php
     private function point(string $lat, string $lng): string
@@ -136,7 +136,7 @@ The helper builds SQL from fixed internal column names supplied by this class. L
 
 ## 7. Center markers include live capacity
 
-Source: [app/models/Map.php, lines 34–46](../../../app/models/Map.php#L34). Exact excerpt, not pseudocode.
+Source: [app/models/Map.php, lines 34–46](https://github.com/macJil/WEBSYS_PROJECT/blob/954885b/app/models/Map.php#L34). Exact excerpt, not pseudocode.
 
 ```php
     private function centers(): array
@@ -158,7 +158,7 @@ Only active stays join into occupancy. Grouping produces one result per center r
 
 ## 8. Full browser consumer: fetch, validate and render
 
-Source: [resources/assets/js/community-map.js, lines 1–181](../../../resources/assets/js/community-map.js#L1). Exact excerpt, not pseudocode.
+Source: [resources/assets/js/community-map.js, lines 1–181](https://github.com/macJil/WEBSYS_PROJECT/blob/954885b/resources/assets/js/community-map.js#L1). Exact excerpt, not pseudocode.
 
 ```javascript
 (() => {

@@ -1,6 +1,6 @@
 # Member 1 — Household save and shared PHP foundations
 
-These are study notes for the current source, not application changes or a claim that a live demonstration has passed. Use fictional examples. The complete primary request is traced below, with exact source excerpts and explanations. Source links are relative to the repository and include line anchors. The main presentation should show only the marked 60–90 second segment; use the rest to prepare for questions.
+These are study notes for the pre-formatting source at commit 954885b, not application changes or a claim that a live demonstration has passed. Use fictional examples. The complete primary request is traced below, with exact source excerpts and explanations. Source links are relative to the repository and include line anchors. The main presentation should show only the marked 60–90 second segment; use the rest to prepare for questions.
 
 All PHP save paths run on the server through MAMP. The browser sends form values, not PHP objects. A successful POST redirects to a new GET; validation errors remain on the form. `[]` means an empty array, `$this` means the current object, `->` accesses an object, `?int` accepts integer or null, and `: array` declares a returned array. `prepare()` creates a SQL statement and `execute()` supplies its values.
 ## Focus and example
@@ -20,7 +20,7 @@ Own login/session foundations and household/member CRUD. Present the household s
 
 ## 1. Page entry chooses create/edit and collects the request
 
-Source: [resources/views/admin/households.php, lines 1–15](../../../resources/views/admin/households.php#L1). Exact excerpt, not pseudocode.
+Source: [resources/views/admin/households.php, lines 1–15](https://github.com/macJil/WEBSYS_PROJECT/blob/954885b/resources/views/admin/households.php#L1). Exact excerpt, not pseudocode.
 
 ```php
 <?php
@@ -44,7 +44,7 @@ require __DIR__ . '/../components/header.php';
 
 ## 2. Guard and model construction
 
-Source: [app/controllers/HouseholdController.php, lines 11–15](../../../app/controllers/HouseholdController.php#L11). Exact excerpt, not pseudocode.
+Source: [app/controllers/HouseholdController.php, lines 11–15](https://github.com/macJil/WEBSYS_PROJECT/blob/954885b/app/controllers/HouseholdController.php#L11). Exact excerpt, not pseudocode.
 
 ```php
     public function __construct()
@@ -58,7 +58,7 @@ The constructor requires an admin session before this controller exposes househo
 
 ## 3. Collect only known form keys
 
-Source: [app/controllers/HouseholdController.php, lines 51–58](../../../app/controllers/HouseholdController.php#L51). Exact excerpt, not pseudocode.
+Source: [app/controllers/HouseholdController.php, lines 51–58](https://github.com/macJil/WEBSYS_PROJECT/blob/954885b/app/controllers/HouseholdController.php#L51). Exact excerpt, not pseudocode.
 
 ```php
     public function householdInput(): array
@@ -75,7 +75,7 @@ Each key names a supported input. `input()` returns a posted string or an empty 
 
 ## 4. Validate and normalize before saving
 
-Source: [app/controllers/HouseholdController.php, lines 59–109](../../../app/controllers/HouseholdController.php#L59). Exact excerpt, not pseudocode.
+Source: [app/controllers/HouseholdController.php, lines 59–109](https://github.com/macJil/WEBSYS_PROJECT/blob/954885b/app/controllers/HouseholdController.php#L59). Exact excerpt, not pseudocode.
 
 ```php
     public function saveHousehold(?int $id, array $data): array
@@ -145,7 +145,7 @@ An invalid category or one coordinate alone produces no household insert. A dupl
 
 ## 5. PDO connection
 
-Source: [config/db.php, lines 1–21](../../../config/db.php#L1). Exact excerpt, not pseudocode.
+Source: [config/db.php, lines 1–21](https://github.com/macJil/WEBSYS_PROJECT/blob/954885b/config/db.php#L1). Exact excerpt, not pseudocode.
 
 ```php
 <?php
@@ -175,7 +175,7 @@ function db(): PDO
 
 ## 6. Insert or update the household
 
-Source: [app/models/Household.php, lines 28–48](../../../app/models/Household.php#L28). Exact excerpt, not pseudocode.
+Source: [app/models/Household.php, lines 28–48](https://github.com/macJil/WEBSYS_PROJECT/blob/954885b/app/models/Household.php#L28). Exact excerpt, not pseudocode.
 
 ```php
     public function save(array $data, ?int $id): int
@@ -205,7 +205,7 @@ Source: [app/models/Household.php, lines 28–48](../../../app/models/Household.
 
 ## 7. Success message and redirect
 
-Source: [app/controllers/Controller.php, lines 5–9](../../../app/controllers/Controller.php#L5). Exact excerpt, not pseudocode.
+Source: [app/controllers/Controller.php, lines 5–9](https://github.com/macJil/WEBSYS_PROJECT/blob/954885b/app/controllers/Controller.php#L5). Exact excerpt, not pseudocode.
 
 ```php
     protected function success(string $message, string $path): void
@@ -219,7 +219,7 @@ Source: [app/controllers/Controller.php, lines 5–9](../../../app/controllers/C
 
 ## 8. Reload the household and its calculated count
 
-Source: [app/models/Household.php, lines 22–27](../../../app/models/Household.php#L22). Exact excerpt, not pseudocode.
+Source: [app/models/Household.php, lines 22–27](https://github.com/macJil/WEBSYS_PROJECT/blob/954885b/app/models/Household.php#L22). Exact excerpt, not pseudocode.
 
 ```php
     public function findById(int $id)

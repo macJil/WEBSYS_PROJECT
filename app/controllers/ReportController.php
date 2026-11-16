@@ -3,18 +3,26 @@ require_once __DIR__ . '/Controller.php';
 require_once __DIR__ . '/../models/Report.php';
 class ReportController extends Controller
 {
-    public const TYPES = ['flood' => 'Flooding','fire' => 'Fire','landslide' => 'Landslide','road_obstruction' => 'Road obstruction','other' => 'Other emergency'];
-    public const STATUSES = ['pending','verified','responding','resolved','rejected'];
+    public const TYPES = [
+        'flood' => 'Flooding',
+        'fire' => 'Fire',
+        'landslide' => 'Landslide',
+        'road_obstruction' => 'Road obstruction',
+        'other' => 'Other emergency',
+    ];
+    public const STATUSES = ['pending', 'verified', 'responding', 'resolved', 'rejected'];
     private ReportModel $model;
     public function __construct(string $role)
     {
         requireRole($role);
         $this->model = new ReportModel();
     }
+
     private function owner(): ?int
     {
         return $_SESSION['ROLE'] === 'admin' ? null : (int) $_SESSION['ID'];
     }
+
     public function incidentId(): int
     {
         $id = filter_var($_GET['id'] ?? null, FILTER_VALIDATE_INT);
@@ -24,6 +32,7 @@ class ReportController extends Controller
         }
         return $id;
     }
+
     public function getIncident(int $id): array
     {
         $row = $this->model->find($id, $this->owner());
@@ -33,46 +42,67 @@ class ReportController extends Controller
         }
         return $row;
     }
+
     public function filters(): array
     {
         $filters = [];
-        foreach (['incident_type','status','date','location','search'] as $key) {
+        foreach (['incident_type', 'status', 'date', 'location', 'search'] as $key) {
             $filters[$key] = is_string($_GET[$key] ?? null) ? trim($_GET[$key]) : '';
         }
-        if (($filters['incident_type'] !== '' && !isset(self::TYPES[$filters['incident_type']])) ||
+        if (
+            ($filters['incident_type'] !== '' && !isset(self::TYPES[$filters['incident_type']])) ||
             ($filters['status'] !== '' && !in_array($filters['status'], self::STATUSES, true)) ||
-            ($filters['date'] !== '' && !$this->validDate($filters['date']))) {
+            ($filters['date'] !== '' && !$this->validDate($filters['date']))
+        ) {
             http_response_code(400);
             exit('Invalid search filter.');
         }
         return $filters;
     }
+
     private function validDate(string $date): bool
     {
         return validDateInput($date);
     }
+
     public function listIncidents(array $filters): array
     {
         return $this->model->listing($filters, $this->owner());
     }
+
     public function images(int $id): array
     {
         $this->getIncident($id);
         return $this->model->images($id);
     }
+
     public function history(int $id): array
     {
         requireRole('admin');
         return $this->model->history($id);
     }
+
     public function values(): array
     {
         $data = [];
-        foreach (['incident_type','description','reporter_name','contact_phone','location_description','latitude','longitude','report_source'] as $key) {
+        foreach (
+            [
+                'incident_type',
+                'description',
+                'reporter_name',
+                'contact_phone',
+                'location_description',
+                'latitude',
+                'longitude',
+                'report_source',
+            ]
+            as $key
+        ) {
             $data[$key] = input($key);
         }
         return $data;
     }
+
     private function storage(): string
     {
         global $settings;
@@ -89,11 +119,15 @@ class ReportController extends Controller
             throw new RuntimeException('Uploads must be outside the website directory.');
         }
         $documentRoot = realpath($_SERVER['DOCUMENT_ROOT'] ?? '');
-        if ($documentRoot && ($real === $documentRoot || str_starts_with($real, $documentRoot . DIRECTORY_SEPARATOR))) {
+        if (
+            $documentRoot &&
+            ($real === $documentRoot || str_starts_with($real, $documentRoot . DIRECTORY_SEPARATOR))
+        ) {
             throw new RuntimeException('Uploads must be outside the web server document root.');
         }
         return $real;
     }
+
     private function upload(): ?array
     {
         if (!isset($_FILES['image'])) {
@@ -107,7 +141,9 @@ class ReportController extends Controller
             return null;
         }
         if ($file['error'] !== UPLOAD_ERR_OK) {
-            throw new InvalidArgumentException('Image upload failed or exceeded the server limit. Choose the image again.');
+            throw new InvalidArgumentException(
+                'Image upload failed or exceeded the server limit. Choose the image again.',
+            );
         }
         if (!is_string($file['tmp_name'] ?? null) || !is_uploaded_file($file['tmp_name'])) {
             throw new InvalidArgumentException('Invalid image upload.');
@@ -117,7 +153,7 @@ class ReportController extends Controller
             throw new InvalidArgumentException('Image must be between 1 byte and 5 MiB.');
         }
         $mime = (new finfo(FILEINFO_MIME_TYPE))->file($file['tmp_name']);
-        $types = ['image/jpeg' => 'jpg','image/png' => 'png','image/webp' => 'webp'];
+        $types = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp'];
         $info = @getimagesize($file['tmp_name']);
         if (!isset($types[$mime]) || !$info || $info['mime'] !== $mime) {
             throw new InvalidArgumentException('Choose a valid JPEG, PNG, or WebP image.');
@@ -128,8 +164,15 @@ class ReportController extends Controller
             throw new RuntimeException('Could not store image.');
         }
         chmod($path, 0600);
-        return ['stored_filename' => $name,'original_filename' => substr(basename((string) $file['name']), 0, 255),'mime_type' => $mime,'file_size' => $size,'path' => $path];
+        return [
+            'stored_filename' => $name,
+            'original_filename' => substr(basename((string) $file['name']), 0, 255),
+            'mime_type' => $mime,
+            'file_size' => $size,
+            'path' => $path,
+        ];
     }
+
     public function create(array $data): array
     {
         if (!isPost()) {
@@ -139,7 +182,15 @@ class ReportController extends Controller
             return ['The form was incomplete or exceeded the server upload limit. Please try again.'];
         }
         $errors = [];
-        foreach (['description' => 10000,'reporter_name' => 100,'contact_phone' => 20,'location_description' => 255] as $key => $max) {
+        foreach (
+            [
+                'description' => 10000,
+                'reporter_name' => 100,
+                'contact_phone' => 20,
+                'location_description' => 255,
+            ]
+            as $key => $max
+        ) {
             if ($data[$key] === '' || strlen($data[$key]) > $max) {
                 $errors[] = ucfirst(str_replace('_', ' ', $key)) . " is required (maximum $max bytes).";
             }
@@ -150,8 +201,13 @@ class ReportController extends Controller
         if ($data['contact_phone'] !== '' && !validPhone($data['contact_phone'], 3)) {
             $errors[] = 'Enter a valid contact number.';
         }
-        foreach (['latitude' => 90,'longitude' => 180] as $key => $limit) {
-            if ($data[$key] !== '' && (!is_numeric($data[$key]) || !is_finite((float)$data[$key]) || abs((float)$data[$key]) > $limit)) {
+        foreach (['latitude' => 90, 'longitude' => 180] as $key => $limit) {
+            if (
+                $data[$key] !== '' &&
+                (!is_numeric($data[$key]) ||
+                    !is_finite((float) $data[$key]) ||
+                    abs((float) $data[$key]) > $limit)
+            ) {
                 $errors[] = 'Enter valid coordinates.';
             }
         }
@@ -159,14 +215,14 @@ class ReportController extends Controller
             $errors[] = 'Provide both coordinates, or leave both blank.';
         }
         $admin = $_SESSION['ROLE'] === 'admin';
-        if ($admin && !in_array($data['report_source'], ['walk_in','phone','admin'], true)) {
+        if ($admin && !in_array($data['report_source'], ['walk_in', 'phone', 'admin'], true)) {
             $errors[] = 'Choose how the report was received.';
         }
         if ($errors) {
             return $errors;
         }
         $data['report_source'] = $admin ? $data['report_source'] : 'resident';
-        foreach (['latitude','longitude'] as $key) {
+        foreach (['latitude', 'longitude'] as $key) {
             $data[$key] = $data[$key] === '' ? null : $data[$key];
         }
         $data['reported_by'] = (int) $_SESSION['ID'];
@@ -178,11 +234,19 @@ class ReportController extends Controller
             if ($image && is_file($image['path'])) {
                 unlink($image['path']);
             }
-            return [$error instanceof InvalidArgumentException ? $error->getMessage() : 'Report could not be saved. Please try again; reselect your image.'];
+            return [
+                $error instanceof InvalidArgumentException
+                    ? $error->getMessage()
+                    : 'Report could not be saved. Please try again; reselect your image.',
+            ];
         }
-        $this->success('Incident submitted for staff review.', 'resources/views/incidents/view.php?id=' . $id);
+        $this->success(
+            'Incident submitted for staff review.',
+            'resources/views/incidents/view.php?id=' . $id,
+        );
         return [];
     }
+
     public function updateLocation(int $id): array
     {
         requireRole('admin');
@@ -201,7 +265,14 @@ class ReportController extends Controller
             return $errors;
         }
         try {
-            $this->model->updateLocation($id, $description, $lat === ''?null:$lat, $lng === ''?null:$lng, $notes, (int)$_SESSION['ID']);
+            $this->model->updateLocation(
+                $id,
+                $description,
+                $lat === '' ? null : $lat,
+                $lng === '' ? null : $lng,
+                $notes,
+                (int) $_SESSION['ID'],
+            );
         } catch (DomainException $error) {
             return [$error->getMessage()];
         } catch (Throwable $error) {
@@ -210,17 +281,23 @@ class ReportController extends Controller
         $this->success('Incident location updated.', 'resources/views/incidents/view.php?id=' . $id);
         return [];
     }
+
     public function review(int $id): array
     {
         requireRole('admin');
         if (!isPost()) {
             return [];
         }
-        if (input('action') !== 'review_incident' || !in_array(input('status'), self::STATUSES, true) || input('notes') === '' || strlen(input('notes')) > 255) {
+        if (
+            input('action') !== 'review_incident' ||
+            !in_array(input('status'), self::STATUSES, true) ||
+            input('notes') === '' ||
+            strlen(input('notes')) > 255
+        ) {
             return ['Choose a status and enter review notes (maximum 255 bytes).'];
         }
         try {
-            $this->model->review($id, input('status'), input('notes'), (int)$_SESSION['ID']);
+            $this->model->review($id, input('status'), input('notes'), (int) $_SESSION['ID']);
         } catch (DomainException $error) {
             return [$error->getMessage()];
         } catch (Throwable $error) {
@@ -229,14 +306,18 @@ class ReportController extends Controller
         $this->success('Review saved.', 'resources/views/incidents/view.php?id=' . $id);
         return [];
     }
+
     public function serveImage(int $id): void
     {
         $image = $this->model->image($id, $this->owner());
         $filename = $image['stored_filename'] ?? '';
         $parts = explode('.', $filename);
-        if (count($parts) !== 2 || strlen($parts[0]) !== 48
-            || strspn($parts[0], 'abcdef0123456789') !== 48
-            || !in_array($parts[1], ['jpg', 'png', 'webp'], true)) {
+        if (
+            count($parts) !== 2 ||
+            strlen($parts[0]) !== 48 ||
+            strspn($parts[0], 'abcdef0123456789') !== 48 ||
+            !in_array($parts[1], ['jpg', 'png', 'webp'], true)
+        ) {
             http_response_code(404);
             exit('Image not found.');
         }
@@ -250,6 +331,6 @@ class ReportController extends Controller
         header('Cache-Control: private, no-store');
         header('Content-Length: ' . filesize($path));
         readfile($path);
-        exit;
+        exit();
     }
 }

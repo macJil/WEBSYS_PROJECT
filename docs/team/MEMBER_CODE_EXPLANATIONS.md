@@ -20,7 +20,7 @@ Total target: 35 minutes of explanation and demonstrations, plus 3 minutes for q
 - [Member 4: complete code trace](traces/member-4-relief.md)
 - [Member 5: complete code trace](traces/member-5-map.md)
 
-Each trace follows the actual current PHP/JavaScript, including parameters, returned values, database effects, validation failures and the result seen in the browser. Code blocks are exact excerpts with source links and line anchors, not simplified replacement implementations. The companion excerpt manifest records what was copied so the documentation can be checked after code changes.
+Each trace follows the actual current PHP/JavaScript, including parameters, returned values, database effects, validation failures and the result seen in the browser. Code blocks are exact pre-formatting excerpts with pinned source links and line anchors, not simplified replacement implementations. See READABILITY_CLEANUP.md and open this branch’s actual source for the current indentation. The companion excerpt manifest records what was copied so the documentation can be checked after code changes.
 
 ## Files each member should bookmark
 
