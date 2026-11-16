@@ -1,3 +1,5 @@
+> Current behavior update: team statuses now determine the incident status; all assignments must be completed to resolve it. History can be hidden without deleting stored records. See [response/history update](../RESPONSE_HISTORY_UPDATE.md). Code excerpts below retain their original snapshot.
+
 # Member 2 — Incident submission, image storage and response
 
 These are study notes for the pre-formatting source at commit 954885b, not application changes or a claim that a live demonstration has passed. Use fictional examples. The complete primary request is traced below, with exact source excerpts and explanations. Source links are relative to the repository and include line anchors. The main presentation should show only the marked 60–90 second segment; use the rest to prepare for questions.

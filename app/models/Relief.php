@@ -113,7 +113,7 @@ class ReliefModel
     public function movements(string $q, string $type, string $date): array
     {
         $sql =
-            "SELECT m.*,i.item_name,i.unit,u.full_name FROM relief_stock_movements m JOIN relief_items i ON i.id=m.item_id JOIN users u ON u.id=m.recorded_by WHERE (i.item_name LIKE ? ESCAPE '!' OR m.notes LIKE ? ESCAPE '!' OR u.full_name LIKE ? ESCAPE '!')";
+            "SELECT m.*,i.item_name,i.unit,u.full_name FROM relief_stock_movements m JOIN relief_items i ON i.id=m.item_id JOIN users u ON u.id=m.recorded_by WHERE m.history_hidden_at IS NULL AND (i.item_name LIKE ? ESCAPE '!' OR m.notes LIKE ? ESCAPE '!' OR u.full_name LIKE ? ESCAPE '!')";
         $args = array_fill(0, 3, $this->term($q));
         if ($type !== '') {
             $sql .= ' AND m.movement_type=?';
@@ -192,7 +192,7 @@ class ReliefModel
     public function distributions(string $q): array
     {
         return $this->rows(
-            "SELECT d.*,h.household_code,u.full_name FROM relief_distributions d JOIN households h ON h.id=d.household_id JOIN users u ON u.id=d.distributed_by WHERE h.household_code LIKE ? ESCAPE '!' OR d.received_by LIKE ? ESCAPE '!' ORDER BY d.id DESC",
+            "SELECT d.*,h.household_code,u.full_name FROM relief_distributions d JOIN households h ON h.id=d.household_id JOIN users u ON u.id=d.distributed_by WHERE d.history_hidden_at IS NULL AND (h.household_code LIKE ? ESCAPE '!' OR d.received_by LIKE ? ESCAPE '!') ORDER BY d.id DESC",
             [$this->term($q), $this->term($q)],
         );
     }

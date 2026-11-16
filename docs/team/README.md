@@ -47,3 +47,5 @@ See [member-by-member code explanation](MEMBER_CODE_EXPLANATIONS.md) for exact f
 Every member explains a complete request path. Use the [member focus guide](MEMBER_CODE_EXPLANATIONS.md), its five full trace chapters, and the [current live-presentation speech](../../presentation/LIVE_DEMO_PRESENTATION_SCRIPT.md). Presentation material excludes test results; existing test guides remain for team development use.
 
 See the [presentation Q&A and local-network demo guide](PRESENTATION_QA_AND_LAN_DEMO.md) for likely questions, suggested answers, visitor instructions and MAMP sharing preparation.
+
+Current response synchronization and display-only history actions: [rules and test guide](RESPONSE_HISTORY_UPDATE.md). Earlier source snapshots show the older manual-resolution behavior.

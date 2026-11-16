@@ -50,7 +50,7 @@ require __DIR__ . "/../components/errors.php";
     <p class="mt-3"><a class="btn btn-outline-secondary" href="<?= e(url('resources/views/admin/response/incident.php?id=' . $id)) ?>">Manage response teams and actions</a></p>
     <?php if ($report['archived_at'] === null): ?>
         <h2>Correct incident location</h2>
-        <p>Confirm the written location and pin. A correction is recorded in staff history. The separately approved community-map point is unchanged.</p>
+        <p>Confirm the written location and pin. A correction is recorded in staff history. The shared map uses this saved point when the incident is eligible.</p>
         <form method="post">
             <label class="d-block mb-3">Written location<input class="form-control" name="location_description" maxlength="255" required value="<?= e(isPost() && input('action') === 'update_location'?input('location_description'):$report['location_description']) ?>" /></label>
             <?php
@@ -66,7 +66,7 @@ require __DIR__ . "/../components/errors.php";
         </form>
     <?php endif; ?>
     <h2 class="mt-4">Staff review</h2>
-    <p>Verify before assigning teams. Active assignments keep the incident responding. Complete or cancel them before resolving or rejecting the incident.</p>
+    <p>Verify before assigning teams. Active assignments keep the incident responding. Once teams are assigned, update their status through Manage response teams and actions. Completing every assignment resolves the incident automatically; cancelled work does not count as completed.</p>
     <form method="post">
         <label>Status <select class="form-select" name="status">
                 <?php foreach (ReportController::STATUSES as $status): ?>
@@ -80,6 +80,11 @@ require __DIR__ . "/../components/errors.php";
     <h2 class="mt-4">Staff review history</h2>
     <?php foreach ($history as $entry): ?>
         <p><?= e($entry['created_at']) ?> · <?= e($entry['from_status']) ?> → <?= e($entry['to_status']) ?><br /><?= e($entry['action_taken']) ?></p>
+        <?php
+        $historyType = 'response';
+        $historyId = $entry['id'];
+        require __DIR__ . '/../components/history-action.php';
+        ?>
     <?php endforeach; ?>
 <?php endif; ?>
 <a class="d-block mt-3" href="<?= e(url('resources/views/incidents/list.php')) ?>">Back to reports</a>

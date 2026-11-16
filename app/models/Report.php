@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../../config/db.php';
+require_once __DIR__ . '/Response.php';
 class ReportModel
 {
     private PDO $pdo;
@@ -70,7 +71,7 @@ class ReportModel
     public function history(int $id): array
     {
         $stmt = $this->pdo->prepare(
-            'SELECT action_taken, from_status, to_status, created_at FROM response_updates WHERE incident_id = ? ORDER BY id',
+            'SELECT id, action_taken, from_status, to_status, created_at FROM response_updates WHERE incident_id = ? AND history_hidden_at IS NULL ORDER BY id',
         );
         $stmt->execute([$id]);
         return $stmt->fetchAll();
@@ -161,17 +162,11 @@ class ReportModel
             if ($old === false) {
                 throw new RuntimeException('Incident not found.');
             }
-            $stmt = $this->pdo->prepare(
-                "SELECT COUNT(*) FROM incident_assignments WHERE incident_id=? AND status IN ('assigned','on_scene')",
-            );
-            $stmt->execute([$id]);
-            $active = (int) $stmt->fetchColumn();
-            if ($active > 0 && $status !== 'responding') {
-                throw new DomainException(
-                    'Complete or cancel all active team assignments before changing the incident out of responding.',
-                );
+            $assignmentStatus = (new ResponseModel($this->pdo))->assignmentStatus($id);
+            if ($assignmentStatus !== null && $status !== $assignmentStatus) {
+                throw new DomainException('Update the assigned teams to change this incident status. All assignments must be completed to resolve it.');
             }
-            if ($active === 0 && $status === 'responding' && $old !== 'responding') {
+            if ($assignmentStatus === null && $status === 'responding') {
                 throw new DomainException('Verify the incident, then assign a team to start responding.');
             }
             $stmt = $this->pdo->prepare(

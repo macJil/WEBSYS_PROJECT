@@ -35,7 +35,7 @@ A transaction groups writes: beginTransaction → validation/locking reads → w
 
 `ReportModel::create()` inserts incident and optional image reference in one transaction. `review()` locks the incident, checks active assignments, updates review fields and appends response_updates. `updateLocation()` locks, changes text/point and appends old/new location history. `listing/find/image` implement scope; `images/history` supply private details. Pending is the initial state.
 
-`ResponseController` loads teams/incidents, validates save and assignment actions, and returns readable errors. `ResponseModel::record()` locks the incident, requires verified/responding, validates active team or existing assignment, prevents duplicate assignment, enforces status transitions, writes assignment state and appends action history. Assigned/on_scene makes the incident responding. Completing a team does not automatically resolve the incident. `teams/team/saveTeam`, `assignments` and `history` supply the team editor and incident response page.
+`ResponseController` loads teams/incidents, validates save and assignment actions, and returns readable errors. `ResponseModel::record()` locks the incident, requires verified/responding/resolved, validates active team or existing assignment, prevents duplicate assignment, enforces status transitions, writes assignment state and appends action history. Assigned/on_scene makes the incident responding. The incident resolves only when every assignment is completed. With no active teams and any cancelled assignment, it returns to verified. Reactivating a team returns it to responding. `teams/team/saveTeam`, `assignments` and `history` supply the team editor and incident response page.
 
 ## Evacuation code
 

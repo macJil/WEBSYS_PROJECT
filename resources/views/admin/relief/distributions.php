@@ -111,7 +111,13 @@ require __DIR__ . "/../../components/errors.php";
                     <td><?= e($row['household_code']) ?></td>
                     <td><?= e($row['received_by']) ?></td>
                     <td><?= e($row['full_name']) ?></td>
-                    <td><a href="<?= e(url('resources/views/admin/relief/distributions.php?id=' . $row['id'])) ?>">View #<?= (int)$row['id'] ?></a></td>
+                    <td><a href="<?= e(url('resources/views/admin/relief/distributions.php?id=' . $row['id'])) ?>">View #<?= (int)$row['id'] ?></a>
+                        <?php
+                        $historyType = 'distribution';
+                        $historyId = $row['id'];
+                        require __DIR__ . '/../../components/history-action.php';
+                        ?>
+                    </td>
                 </tr>
             <?php endforeach; ?>
             <?php if (!$history): ?>

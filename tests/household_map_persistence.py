@@ -177,6 +177,8 @@ with tempfile.TemporaryDirectory(prefix='bayanready-address-') as temporary:
         check_acceptance(admin, resident, Client, query, prefix)
         from incident_upload import check_upload
         check_upload(resident, admin, Client, query, base, prefix)
+        from response_history import check_response_history
+        check_response_history(admin, resident, Client, query, prefix)
         if os.environ.get('TEST_BROWSER_PAUSE') == '1':
             Path('/tmp/bayanready-actions-preview.txt').write_text(base)
             print('Fictional browser preview:', base, flush=True)

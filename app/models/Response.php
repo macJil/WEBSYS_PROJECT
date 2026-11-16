@@ -54,11 +54,31 @@ class ResponseModel
     public function history(int $id): array
     {
         $stmt = $this->pdo->prepare(
-            'SELECT h.*, u.full_name AS staff_name FROM response_updates h JOIN users u ON u.id=h.updated_by WHERE h.incident_id=? ORDER BY h.id',
+            'SELECT h.*, u.full_name AS staff_name FROM response_updates h JOIN users u ON u.id=h.updated_by WHERE h.incident_id=? AND h.history_hidden_at IS NULL ORDER BY h.id',
         );
         $stmt->execute([$id]);
         return $stmt->fetchAll();
     }
+    public function assignmentStatus(int $incidentId): ?string
+    {
+        $stmt = $this->pdo->prepare('SELECT status FROM incident_assignments WHERE incident_id=?');
+        $stmt->execute([$incidentId]);
+        $statuses = $stmt->fetchAll(PDO::FETCH_COLUMN);
+        if (!$statuses) {
+            return null;
+        }
+        if (in_array('assigned', $statuses, true) || in_array('on_scene', $statuses, true)) {
+            return 'responding';
+        }
+        foreach ($statuses as $status) {
+            if ($status !== 'completed') {
+                // Cancelled work is not evidence that the incident was resolved.
+                return 'verified';
+            }
+        }
+        return 'resolved';
+    }
+
     // All response writes lock the incident first, just like staff reviews.
     public function record(
         int $incidentId,
@@ -75,7 +95,7 @@ class ResponseModel
             );
             $stmt->execute([$incidentId]);
             $old = $stmt->fetchColumn();
-            if (!in_array($old, ['verified', 'responding'], true)) {
+            if (!in_array($old, ['verified', 'responding', 'resolved'], true)) {
                 throw new DomainException('Verify or reopen the incident before managing its response.');
             }
             if ($teamId !== null) {
@@ -135,8 +155,8 @@ class ResponseModel
                 $action =
                     $assignment['team_name'] . ': ' . $assignment['status'] . ' → ' . $status . '. ' . $notes;
             }
-            // Dispatch/on-scene starts response. Completion never automatically resolves an emergency.
-            $next = in_array($status, ['assigned', 'on_scene'], true) ? 'responding' : $old;
+            // One update saves both the team state and the incident's overall state.
+            $next = $this->assignmentStatus($incidentId);
             $stmt = $this->pdo->prepare('UPDATE incident_reports SET status=? WHERE id=?');
             $stmt->execute([$next, $incidentId]);
             $stmt = $this->pdo->prepare(

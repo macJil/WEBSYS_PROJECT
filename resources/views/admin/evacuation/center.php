@@ -133,6 +133,12 @@ require __DIR__ . "/../../components/saved-point.php";
                                 <input type="hidden" name="record_id" value="<?= (int)$record['id'] ?>" />
                                 <button class="btn btn-outline-secondary" name="action" value="checkout">Check out</button>
                             </form>
+                        <?php else: ?>
+                            <?php
+                            $historyType = 'evacuation';
+                            $historyId = $record['id'];
+                            require __DIR__ . '/../../components/history-action.php';
+                            ?>
                         <?php endif; ?>
                     </td>
                 </tr>

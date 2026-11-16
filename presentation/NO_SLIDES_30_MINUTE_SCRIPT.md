@@ -148,7 +148,7 @@ The redirected detail query checks ownership again. This protects the private pa
 
 Earlier updates remain in history when staff add a new action. The overall incident can be pending, verified, responding, resolved or rejected. Active team assignments must be completed or cancelled before staff move the incident out of responding.
 
-Completing one team's assignment does not automatically resolve the entire incident. The staff member makes that overall decision through the workflow.”
+Completing one team keeps the incident responding while another team is still active. Once every assignment is completed, the incident becomes resolved automatically. Cancelled work does not count as completed.”
 
 **Action/pause:** Verify the fictional report, show an assignment and its action entry. Explain the next transition without racing through the entire lifecycle. Have `screenshots/incident.png` and `screenshots/response.png` available if needed.
 

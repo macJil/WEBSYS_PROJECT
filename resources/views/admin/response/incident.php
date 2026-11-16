@@ -11,7 +11,7 @@ $teams = array_filter(
     $controller->teams(),
     fn($team) => $team["is_active"] && !in_array($team["id"], $assignedTeamIds),
 );
-$open = in_array($incident["status"], ["verified", "responding"], true);
+$open = in_array($incident["status"], ["verified", "responding", "resolved"], true);
 $pageTitle = "Response for incident #" . $id;
 require __DIR__ . "/../../components/header.php";
 require __DIR__ . "/../../components/errors.php";
@@ -19,7 +19,7 @@ require __DIR__ . "/../../components/errors.php";
 <h1><?= e($pageTitle) ?></h1>
 <p><?= e($incident['incident_type']) ?> · <?= e($incident['location_description']) ?> · Status: <strong><?= e($incident['status']) ?></strong></p>
 <a class="btn btn-outline-secondary" href="<?= e(url('resources/views/incidents/view.php?id=' . $id)) ?>">Back to incident details</a>
-<p>Verify an incident before assigning teams. Dispatch changes it to responding. Complete or cancel all active assignments before resolving it in staff review.</p>
+<p>Verify an incident before assigning teams. Dispatch changes it to responding. Completing every assignment resolves the incident automatically. A cancelled assignment does not count as completed. If no team is active and some work is cancelled, the incident returns to verified. Reactivating an assignment starts responding again.</p>
 <?php if (!$open): ?>
     <p class="alert alert-info">Verify or reopen this incident in staff review before adding response updates.</p>
 <?php endif; ?>
@@ -58,7 +58,7 @@ require __DIR__ . "/../../components/errors.php";
                 </select></label>
             <label class="d-block my-2">Action taken<textarea class="form-control" name="notes" maxlength="2000" required>
 <?= $retry ? e(input('notes')) : '' ?></textarea> </label>
-            <button class="btn btn-primary" name="action" value="update_assignment">Record update</button>
+            <button class="btn btn-primary" name="action" value="update_assignment">Save team and incident status</button>
         </form>
     <?php endif; ?>
 </section>
@@ -73,6 +73,11 @@ require __DIR__ . "/../../components/errors.php";
             · Assignment #<?= (int)$entry['assignment_id'] ?>: <?= e($entry['assignment_status']) ?>
         <?php endif; ?>
         <p class="preserve-text"><?= e($entry['action_taken']) ?></p>
+        <?php
+        $historyType = 'response';
+        $historyId = $entry['id'];
+        require __DIR__ . '/../../components/history-action.php';
+        ?>
     </article>
 <?php endforeach; ?>
 <?php
