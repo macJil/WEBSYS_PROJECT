@@ -21,7 +21,11 @@ $pageTitle = "Incident #" . $id;
 require __DIR__ . "/../components/header.php";
 require __DIR__ . "/../components/errors.php";
 ?>
-<h1><?= e($pageTitle) ?></h1>
+<link rel="stylesheet" href="<?= e(url('resources/assets/css/disaster-summary.css')) ?>" />
+<h1>BayanReady incident report #<?= (int) $id ?></h1>
+<p>Generated <?= e((new DateTimeImmutable('now', new DateTimeZone('Asia/Manila')))->format('Y-m-d H:i:s')) ?> Asia/Manila.</p>
+<button type="button" id="print-summary" class="btn btn-outline-secondary no-print">Print incident report</button>
+<script src="<?= e(url('resources/assets/js/print-summary.js')) ?>"></script>
 <p>Barangay: <?= e($report['barangay'] ?? 'Awaiting confirmation') ?></p>
 <dl>
     <dt>Type</dt>
@@ -44,6 +48,8 @@ require __DIR__ . "/../components/errors.php";
     <dd class="preserve-text"><?= e($report['longitude'] ?? 'Not recorded') ?></dd>
     <dt>Received through</dt>
     <dd class="preserve-text"><?= e($report['report_source'] ?? 'Not recorded') ?></dd>
+    <dt>Occurred</dt>
+    <dd><?= e($report['occurred_at'] ?? 'Not recorded') ?></dd>
     <dt>Submitted</dt>
     <dd class="preserve-text"><?= e($report['created_at'] ?? 'Not recorded') ?></dd>
 </dl>
@@ -67,6 +73,7 @@ require __DIR__ . "/../components/errors.php";
     <a href="<?= e(url('resources/views/incidents/image.php?id=' . $image['id'])) ?>"><img class="incident-image" src="<?= e(url('resources/views/incidents/image.php?id=' . $image['id'])) ?>" alt="Image attached to this incident" /></a>
 <?php endforeach; ?>
 <?php if ($admin): ?>
+    <div class="no-print">
     <p class="mt-3"><a class="btn btn-outline-secondary" href="<?= e(url('resources/views/admin/response/incident.php?id=' . $id)) ?>">Manage response teams and actions</a></p>
     <?php if ($report['archived_at'] === null): ?>
         <h2>Correct incident location</h2>
@@ -104,6 +111,7 @@ require __DIR__ . "/../components/errors.php";
 <?= e(input('notes')) ?></textarea> </label>
         <button name="action" value="review_incident" class="btn btn-primary">Save review</button>
     </form>
+    </div>
     <h2 class="mt-4">Staff review history</h2>
     <?php foreach ($history as $entry): ?>
         <p><?= e($entry['created_at']) ?> · <?= e($entry['from_status']) ?> → <?= e($entry['to_status']) ?><br /><?= e($entry['action_taken']) ?></p>
@@ -114,7 +122,7 @@ require __DIR__ . "/../components/errors.php";
         ?>
     <?php endforeach; ?>
 <?php endif; ?>
-<a class="d-block mt-3" href="<?= e(url('resources/views/incidents/list.php')) ?>">Back to reports</a>
+<a class="d-block mt-3 no-print" href="<?= e(url('resources/views/incidents/list.php')) ?>">Back to reports</a>
 <?php
 require __DIR__ . "/../components/footer.php";
 ?>

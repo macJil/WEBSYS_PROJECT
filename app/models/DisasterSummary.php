@@ -16,33 +16,38 @@ class DisasterSummaryModel
         return $stmt->fetchAll();
     }
 
-    public function summarize(string $start, string $endExclusive): array
+    public function summarize(string $start, string $endExclusive, string $barangay = ''): array
     {
+        $area = $barangay === '' ? [] : [$barangay];
+        $period = array_merge([$start, $endExclusive], $area);
+        $filter = $area ? ' AND barangay=?' : '';
+        $centerFilter = $area ? ' WHERE c.barangay=?' : '';
+        $recipientFilter = $area ? ' AND h.barangay=?' : '';
         // A single read transaction keeps the summaries on the same database snapshot.
         $this->pdo->beginTransaction();
         try {
             $affected = $this->rows(
-                "SELECT COUNT(*) AS total FROM households WHERE archived_at IS NULL AND registry_reason IN ('affected','both')",
+                "SELECT COUNT(*) AS total FROM households WHERE archived_at IS NULL AND registry_reason IN ('affected','both')" . $filter, $area,
             )[0]['total'];
             $centers = $this->rows("SELECT c.id, c.name, c.status, c.archived_at, c.capacity,
                 COUNT(e.id) AS occupancy
                 FROM evacuation_centers c
                 LEFT JOIN evacuation_records e ON e.center_id = c.id AND e.checked_out_at IS NULL
-                GROUP BY c.id, c.name, c.status, c.archived_at, c.capacity ORDER BY c.name, c.id");
+                " . $centerFilter . " GROUP BY c.id, c.name, c.status, c.archived_at, c.capacity ORDER BY c.name, c.id", $area);
             foreach ($centers as $index => $center) {
                 $centers[$index]['available'] = availableCapacity($center);
             }
             $incidents = $this->rows(
-                'SELECT incident_type,status,COUNT(*) AS total FROM incident_reports WHERE created_at>=? AND created_at<? GROUP BY incident_type,status',
-                [$start, $endExclusive],
+                'SELECT incident_type,status,COUNT(*) AS total FROM incident_reports WHERE created_at>=? AND created_at<?' . $filter . ' GROUP BY incident_type,status',
+                $period,
             );
             $goods = $this->rows(
-                'SELECT i.id,i.item_name,i.unit,SUM(d.quantity) AS quantity FROM relief_distributions r JOIN relief_distribution_items d ON d.distribution_id=r.id JOIN relief_items i ON i.id=d.item_id WHERE r.distributed_at>=? AND r.distributed_at<? GROUP BY i.id,i.item_name,i.unit ORDER BY i.item_name,i.unit,i.id',
-                [$start, $endExclusive],
+                'SELECT i.id,i.item_name,i.unit,SUM(d.quantity) AS quantity FROM relief_distributions r JOIN households h ON h.id=r.household_id JOIN relief_distribution_items d ON d.distribution_id=r.id JOIN relief_items i ON i.id=d.item_id WHERE r.distributed_at>=? AND r.distributed_at<?' . $recipientFilter . ' GROUP BY i.id,i.item_name,i.unit ORDER BY i.item_name,i.unit,i.id',
+                $period,
             );
             $distributions = $this->rows(
-                'SELECT COUNT(*) AS events,COUNT(DISTINCT household_id) AS households FROM relief_distributions WHERE distributed_at>=? AND distributed_at<?',
-                [$start, $endExclusive],
+                'SELECT COUNT(*) AS events,COUNT(DISTINCT r.household_id) AS households FROM relief_distributions r JOIN households h ON h.id=r.household_id WHERE r.distributed_at>=? AND r.distributed_at<?' . $recipientFilter,
+                $period,
             )[0];
             $this->pdo->commit();
             return [

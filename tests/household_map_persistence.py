@@ -236,6 +236,18 @@ with tempfile.TemporaryDirectory(prefix='bayanready-address-') as temporary:
             if owner == 'admin':
                 assert resident.request(prefix + 'incidents/view.php?id=' + str(row['id']))[0] == 404
         print('PASS reporter prefilling, blank assisted intake, validation retries, contact snapshots and session ownership')
+        summary_page = prefix + 'admin/summaries/disaster.php?from=2000-01-01&to=2000-01-02&barangay='
+        for area in ['Topdac', 'Abiang']:
+            code, page = admin.request(summary_page + area)
+            assert code == 200 and 'Coverage: <strong>' + area in page
+            assert ('Fictional center' in page) == (area == 'Topdac')
+            assert '0 distribution events to 0 distinct households' in page
+        assert resident.request(summary_page + 'Topdac')[0] == 403
+        for client in [resident, admin]:
+            code, page = client.request(prefix + 'incidents/view.php?id=1')
+            assert code == 200 and 'Print incident report' in page and 'Asia/Manila' in page
+            assert ('Staff review history' in page) == (client is admin)
+        print('PASS print controls, current versus historical totals, barangay selection and role-specific content')
         if os.environ.get('TEST_BROWSER_PAUSE') == '1':
             Path('/tmp/bayanready-actions-preview.txt').write_text(base)
             print('Fictional browser preview:', base, flush=True)

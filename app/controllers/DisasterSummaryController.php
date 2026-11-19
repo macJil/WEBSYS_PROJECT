@@ -46,7 +46,13 @@ class DisasterSummaryController extends Controller
             http_response_code(400);
             exit('Start date must be on or before end date.');
         }
+        $barangay = $_GET['barangay'] ?? '';
+        if ($barangay !== '' && !in_array($barangay, ATOK_BARANGAYS, true)) {
+            http_response_code(400);
+            exit('Choose a barangay in Atok.');
+        }
         return $values + [
+            'barangay' => $barangay,
             'start' => $values['from'] . ' 00:00:00',
             'end_exclusive' => $dates['to']->modify('+1 day')->format('Y-m-d') . ' 00:00:00',
         ];
@@ -54,6 +60,6 @@ class DisasterSummaryController extends Controller
 
     public function summary(array $period): array
     {
-        return $this->model->summarize($period['start'], $period['end_exclusive']);
+        return $this->model->summarize($period['start'], $period['end_exclusive'], $period['barangay']);
     }
 }

@@ -25,14 +25,20 @@ require __DIR__ . "/../../components/header.php";
 ?>
 <link rel="stylesheet" href="<?= e(url('resources/assets/css/disaster-summary.css')) ?>" />
 <p class="return-link no-print"><a class="btn btn-outline-secondary" href="<?= e(url(dashboardPath())) ?>">Back to dashboard</a></p>
-<h1>Disaster reports and summaries</h1>
+<h1>BayanReady disaster summary</h1>
 <form method="get" class="filter-form no-print mb-3">
+    <?php
+    $selectedBarangay = $period['barangay'];
+    $barangayPrompt = 'All barangays';
+    require __DIR__ . '/../../components/barangay.php';
+    ?>
     <label>From <input type="date" name="from" value="<?= e($period['from']) ?>" required /></label>
     <label>Through <input type="date" name="to" value="<?= e($period['to']) ?>" required /></label>
-    <button class="btn btn-outline-secondary">Apply period</button>
+    <button class="btn btn-outline-secondary">Apply filters</button>
     <a href="<?= e(url('resources/views/admin/summaries/disaster.php')) ?>">Current month</a>
     <button class="btn btn-outline-secondary" type="button" id="print-summary">Print summary</button>
 </form>
+<p>Coverage: <strong><?= e($period['barangay'] ?: 'All barangays') ?></strong>. Relief follows the receiving household’s current barangay.</p>
 <p>Selected period: <strong><?= e($period['from']) ?> through <?= e($period['to']) ?></strong> (both dates included).</p>
 <p>Generated <?= e((new DateTimeImmutable('now', new DateTimeZone('Asia/Manila')))->format('Y-m-d H:i:s')) ?> Asia/Manila.</p>
 <h2>Current affected households</h2>
