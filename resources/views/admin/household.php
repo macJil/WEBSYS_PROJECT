@@ -11,7 +11,9 @@ $form =
 if (isPost()) {
     $form = ["full_name" => input("full_name"), "age" => input("age"), "notes" => input("notes")];
 }
-$errors = $controller->saveMember($id, $memberId, $form);
+$errors = isPost() && input('action') === 'select_representative'
+    ? $controller->selectRepresentative($id)
+    : $controller->saveMember($id, $memberId, $form);
 $members = $controller->members($id);
 $pageTitle = "Household details";
 require __DIR__ . "/../components/header.php";
@@ -21,7 +23,7 @@ $savedPoint = $household;
 require __DIR__ . "/../components/saved-point.php";
 ?>
 <a class="btn btn-outline-secondary" href="<?= e(url('resources/views/admin/households.php')) ?>">Back to households</a>
-<h1><?= e($household['household_code']) ?> — <?= e($household['representative_name']) ?></h1>
+<h1><?= e($household['household_label']) ?></h1>
 <p>Barangay: <?= e($household['barangay'] ?? 'Awaiting confirmation') ?></p>
 <p><a class="btn btn-outline-secondary" href="<?= e(url('resources/views/admin/records.php?type=members')) ?>">Manage records</a></p>
 <a class="d-inline-block mb-3" href="<?= e(url('resources/views/admin/households.php?edit=' . $id)) ?>">Edit household</a>
@@ -49,6 +51,19 @@ require __DIR__ . "/../components/saved-point.php";
     <dt class="col-sm-4">Members recorded</dt>
     <dd class="col-sm-8"><?= (int)$household['member_count'] ?></dd>
 </dl>
+<?php if ($members && !$household['archived_at']): ?>
+    <form method="post" class="mb-3">
+        <label>Household representative
+            <select class="form-select" name="member_id" required>
+                <option value="">Choose a member</option>
+                <?php foreach ($members as $member): ?>
+                    <option value="<?= (int)$member['id'] ?>" <?= $member['id'] == $household['representative_member_id'] ? 'selected' : '' ?>><?= e($member['full_name']) ?> (#<?= (int)$member['id'] ?>)</option>
+                <?php endforeach; ?>
+            </select>
+        </label>
+        <button class="btn btn-primary" name="action" value="select_representative">Save representative</button>
+    </form>
+<?php endif; ?>
 <h2>Household members</h2>
 <p>Add each person, including the representative if they live in this household. Member records do not create login accounts.</p>
 <div class="table-responsive" tabindex="0" role="region" aria-label="Scrollable records">

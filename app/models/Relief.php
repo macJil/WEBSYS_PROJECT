@@ -129,7 +129,7 @@ class ReliefModel
     public function households(): array
     {
         return $this->rows(
-            'SELECT id,household_code,representative_name FROM households WHERE archived_at IS NULL ORDER BY household_code',
+            'SELECT id,household_label,display_name FROM household_directory WHERE archived_at IS NULL ORDER BY household_label',
         );
     }
 
@@ -192,7 +192,7 @@ class ReliefModel
     public function distributions(string $q): array
     {
         return $this->rows(
-            "SELECT d.*,h.household_code,u.full_name FROM relief_distributions d JOIN households h ON h.id=d.household_id JOIN users u ON u.id=d.distributed_by WHERE d.history_hidden_at IS NULL AND (h.household_code LIKE ? ESCAPE '!' OR d.received_by LIKE ? ESCAPE '!') ORDER BY d.id DESC",
+            "SELECT d.*,h.household_label,u.full_name FROM relief_distributions d JOIN household_directory h ON h.id=d.household_id JOIN users u ON u.id=d.distributed_by WHERE d.history_hidden_at IS NULL AND (h.household_label LIKE ? ESCAPE '!' OR d.received_by LIKE ? ESCAPE '!') ORDER BY d.id DESC",
             [$this->term($q), $this->term($q)],
         );
     }
@@ -200,7 +200,7 @@ class ReliefModel
     public function distribution(int $id): array
     {
         return $this->rows(
-            'SELECT d.*,h.household_code,u.full_name FROM relief_distributions d JOIN households h ON h.id=d.household_id JOIN users u ON u.id=d.distributed_by WHERE d.id=?',
+            'SELECT d.*,h.household_label,u.full_name FROM relief_distributions d JOIN household_directory h ON h.id=d.household_id JOIN users u ON u.id=d.distributed_by WHERE d.id=?',
             [$id],
         )[0] ?? [];
     }

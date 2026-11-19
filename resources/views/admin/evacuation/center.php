@@ -55,7 +55,7 @@ require __DIR__ . "/../../components/saved-point.php";
         <select id="household_id" name="household_id" class="form-select mb-2" required>
             <option value="">Choose a household</option>
             <?php foreach ($households as $household): ?>
-                <option value="<?= (int)$household['id'] ?>" <?= $householdId === (int)$household['id'] ? 'selected' : '' ?>> <?= e($household['household_code'] . ' — ' . $household['representative_name']) ?> (<?= (int)$household['member_count'] ?> members) </option>
+                <option value="<?= (int)$household['id'] ?>" <?= $householdId === (int)$household['id'] ? 'selected' : '' ?>> <?= e($household['household_label']) ?> (<?= (int)$household['member_count'] ?> members) </option>
             <?php endforeach; ?>
         </select>
         <button class="btn btn-outline-secondary">Show members</button>
@@ -142,7 +142,7 @@ require __DIR__ . "/../../components/saved-point.php";
                             <br />Age: <?= (int)$record['walkin_age'] ?><br /><?= e($record['walkin_address']) ?>
                         <?php endif; ?>
                     </td>
-                    <td><?= e($record['household_code'] ?? ('Walk-in #' . ($record['walkin_id'] ?? 'legacy'))) ?><br /><?= e($record['walkin_contact']) ?></td>
+                    <td><?= e($record['household_label'] ?? ('Walk-in #' . ($record['walkin_id'] ?? 'legacy'))) ?><br /><?= e($record['walkin_contact']) ?></td>
                     <td><?= e($record['checked_in_at']) ?><br />By <?= e($record['encoder']) ?></td>
                     <td><?= e($record['checked_out_at'] ?? 'Currently staying') ?>
                         <?php if ($record['checkout_staff']): ?>

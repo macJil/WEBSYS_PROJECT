@@ -22,8 +22,8 @@ require __DIR__ . "/../../components/header.php";
         </tr>
         <?php foreach ($rows as $row): ?>
             <tr>
-                <td><?= e($type === 'households'?$row['household_code']:$row['person_name']) ?></td>
-                <td><a href="<?= e(url($type === 'households'?'resources/views/admin/household.php?id=' . $row['id']:'resources/views/admin/evacuation/center.php?id=' . $row['center_id'])) ?>"><?= e($type === 'households'?$row['representative_name']:$row['center_name']) ?></a></td>
+                <td><?= e($type === 'households'?$row['household_label']:$row['person_name']) ?></td>
+                <td><a href="<?= e(url($type === 'households'?'resources/views/admin/household.php?id=' . $row['id']:'resources/views/admin/evacuation/center.php?id=' . $row['center_id'])) ?>"><?= e($type === 'households'?$row['display_name']:$row['center_name']) ?></a></td>
             </tr>
         <?php endforeach; ?>
     </table>

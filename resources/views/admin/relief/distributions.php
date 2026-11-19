@@ -27,7 +27,7 @@ $formNotes = input('notes');
     <h2>Distribution #<?= (int)$id ?></h2>
     <dl>
         <dt>Household</dt>
-        <dd><?= e($distribution['household_code']) ?></dd>
+        <dd><?= e($distribution['household_label']) ?></dd>
         <dt>Receiving representative</dt>
         <dd><?= e($distribution['received_by']) ?></dd>
         <dt>Staff</dt>
@@ -63,7 +63,7 @@ $formNotes = input('notes');
         <label class="d-block mb-3">Registered household<select class="form-select" name="household_id" required>
                 <option value="">Choose a household</option>
                 <?php foreach ($households as $household): ?>
-                    <option value="<?= (int)$household['id'] ?>" <?= $formHouseholdId === (string)$household['id']?'selected':'' ?>><?= e($household['household_code'] . ' — ' . $household['representative_name']) ?></option>
+                    <option value="<?= (int)$household['id'] ?>" <?= $formHouseholdId === (string)$household['id']?'selected':'' ?>><?= e($household['household_label']) ?></option>
                 <?php endforeach; ?>
             </select></label>
         <label class="d-block mb-3">Receiving representative<input class="form-control" name="received_by" maxlength="100" value="<?= e($formReceivedBy) ?>" required /></label>
@@ -107,7 +107,7 @@ $formNotes = input('notes');
 </form>
 <h2 class="mt-4">Distribution history</h2>
 <form method="get" class="filter-form mb-3">
-    <label>Search household code or receiver <input name="q" value="<?= e($q) ?>" /></label>
+    <label>Search household or receiver <input name="q" value="<?= e($q) ?>" /></label>
     <button class="btn btn-outline-secondary">Search</button> <a href="<?= e(url('resources/views/admin/relief/distributions.php')) ?>">Clear</a>
 </form>
 <div class="table-responsive" tabindex="0" role="region" aria-label="Scrollable records">
@@ -125,7 +125,7 @@ $formNotes = input('notes');
             <?php foreach ($history as $row): ?>
                 <tr>
                     <td><?= e($row['distributed_at']) ?></td>
-                    <td><?= e($row['household_code']) ?></td>
+                    <td><?= e($row['household_label']) ?></td>
                     <td><?= e($row['received_by']) ?></td>
                     <td><?= e($row['full_name']) ?></td>
                     <td><a href="<?= e(url('resources/views/admin/relief/distributions.php?id=' . $row['id'])) ?>">View #<?= (int)$row['id'] ?></a>

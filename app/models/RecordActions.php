@@ -78,6 +78,10 @@ class RecordActionsModel
         $term = '%' . strtr($search, ['!' => '!!', '%' => '!%', '_' => '!_']) . '%';
         foreach ($types as $key => $spec) {
             [$table, $label] = $spec;
+            if ($key === 'households') {
+                $table = 'household_directory';
+                $label = 'household_label';
+            }
             $state = $key === 'teams' ? 'is_active=1' : 'archived_at IS NULL';
             $queries[] = "SELECT id, $label AS label, '$key' AS record_type FROM $table WHERE $state AND ($label LIKE ? ESCAPE '!' OR CAST(id AS CHAR) LIKE ? ESCAPE '!')";
             $values[] = $term;
@@ -175,6 +179,11 @@ class RecordActionsModel
         ) {
             $guide =
                 'Open the assigned incidents → Response management. Complete or cancel this team’s active assignments, then retry.';
+        }
+        if ($type === 'members' && $this->query(
+            'SELECT id FROM households WHERE representative_member_id=? FOR UPDATE', [$id]
+        )) {
+            $guide = 'Select a replacement representative on the household details page first.';
         }
         if ($guide !== '') {
             throw new DomainException(

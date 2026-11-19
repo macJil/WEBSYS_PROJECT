@@ -81,8 +81,6 @@ class HouseholdController extends Controller
         foreach (
             [
                 'barangay',
-                'household_code',
-                'representative_name',
                 'contact_phone',
                 'purok',
                 'address_details',
@@ -115,7 +113,7 @@ class HouseholdController extends Controller
         }
         $old = $id === null ? null : $this->getHousehold($id);
         $errors = locationErrors($data['address_details'], $data['latitude'], $data['longitude']);
-        foreach (['household_code' => 30, 'representative_name' => 100, 'purok' => 100] as $field => $max) {
+        foreach (['purok' => 100] as $field => $max) {
             if ($data[$field] === '' || strlen($data[$field]) > $max) {
                 $errors[] =
                     str_replace('_', ' ', ucfirst($field)) .
@@ -178,10 +176,21 @@ class HouseholdController extends Controller
         } catch (PDOException $error) {
             return [
                 $error->getCode() === '23000'
-                    ? 'That household code is already used, or the record could not be linked. Choose a unique code.'
+                    ? 'The household could not be linked.'
                     : 'The household could not be saved. Please try again.',
             ];
         }
+    }
+
+    public function selectRepresentative(int $id): array
+    {
+        try {
+            $this->households->selectRepresentative($id, $this->recordId(input('member_id')));
+        } catch (DomainException $error) {
+            return [$error->getMessage()];
+        }
+        $this->success('Representative updated.', 'resources/views/admin/household.php?id=' . $id);
+        return [];
     }
 
     public function saveMember(int $householdId, ?int $memberId, array $data): array

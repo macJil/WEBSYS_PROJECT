@@ -26,8 +26,9 @@ CREATE TABLE households (
   barangay VARCHAR(32) NULL,
   archived_at DATETIME NULL,
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  household_code VARCHAR(30) NOT NULL UNIQUE,
-  representative_name VARCHAR(100) NOT NULL,
+  household_code VARCHAR(30) NULL UNIQUE,
+  representative_member_id INT UNSIGNED NULL,
+  representative_name VARCHAR(100) NULL,
   contact_phone VARCHAR(20) NULL,
   purok VARCHAR(100) NOT NULL,
   address_details VARCHAR(255) NULL,
@@ -60,6 +61,17 @@ CREATE TABLE household_members (
   FOREIGN KEY (household_id) REFERENCES households(id) ON DELETE RESTRICT,
   INDEX idx_members_household (household_id)
 ) ENGINE=InnoDB;
+
+ALTER TABLE households ADD CONSTRAINT fk_household_representative
+    FOREIGN KEY (representative_member_id) REFERENCES household_members(id) ON DELETE RESTRICT;
+
+CREATE VIEW household_directory AS
+SELECT h.*, COALESCE(m.full_name, 'Representative not selected') AS display_name,
+       CONCAT_WS(' — ', COALESCE(m.full_name, 'Representative not selected'), h.barangay,
+                 NULLIF(h.purok, ''), NULLIF(h.address_details, '')) AS household_label
+FROM households h
+LEFT JOIN household_members m ON m.id=h.representative_member_id
+    AND m.household_id=h.id;
 
 -- 4. Incidents: private to staff and the submitting account; verification does not publish.
 -- reported_by is always the logged-in creator, including admin-entered walk-in reports.

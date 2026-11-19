@@ -48,7 +48,7 @@ class DashboardModel
     public function affected(): array
     {
         return $this->rows(
-            "SELECT id,household_code,representative_name FROM households WHERE archived_at IS NULL AND registry_reason IN ('affected','both') ORDER BY household_code",
+            "SELECT id,household_label,display_name FROM household_directory WHERE archived_at IS NULL AND registry_reason IN ('affected','both') ORDER BY household_label",
         );
     }
 

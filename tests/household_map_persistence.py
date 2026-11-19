@@ -91,7 +91,7 @@ with tempfile.TemporaryDirectory(prefix='bayanready-address-') as temporary:
             assert code == 200 and 'Log out' in body, body[:300]
         cases = [
             (resident, 'incidents/create.php', 'incident_reports', 'location_description', 'incidents/view.php', dict(action='create_incident', incident_type='other', description='Fictional exercise', reporter_name='Fictional person', contact_phone='0000000000')),
-            (admin, 'admin/households.php', 'households', 'address_details', 'admin/household.php', dict(action='create_household', barangay='Abiang', household_code='DEMO-ADDR', representative_name='Fictional person', contact_phone='', purok='Demo', registry_reason='monitored', hazard_type='unassessed', hazard_notes='', vulnerability_category='unassessed', vulnerability_notes='', evacuation_status='at_home')),
+            (admin, 'admin/households.php', 'households', 'address_details', 'admin/household.php', dict(action='create_household', barangay='Abiang', contact_phone='', purok='Demo', registry_reason='monitored', hazard_type='unassessed', hazard_notes='', vulnerability_category='unassessed', vulnerability_notes='', evacuation_status='at_home')),
             (admin, 'admin/evacuation/centers.php', 'evacuation_centers', 'address_details', 'admin/evacuation/center.php', dict(action='save_center', barangay='Abiang', name='Fictional center', capacity='5', status='open')),
             (admin, 'admin/relief/locations.php', 'relief_locations', 'address_details', 'admin/relief/location.php', dict(action='save_location', barangay='Abiang', name='Fictional relief point', location_type='distribution')),
         ]
@@ -122,7 +122,7 @@ with tempfile.TemporaryDirectory(prefix='bayanready-address-') as temporary:
             row2 = query('SELECT * FROM ' + table + ' WHERE id=' + str(row['id']))[0]
             assert row2['barangay'] == 'Topdac'
             listing = 'incidents/list.php' if table == 'incident_reports' else page
-            marker = {'households': 'DEMO-ADDR', 'incident_reports': 'Fictional exercise', 'evacuation_centers': 'Fictional center', 'relief_locations': 'Fictional relief point'}[table]
+            marker = {'households': 'Representative not selected — Topdac', 'incident_reports': 'Fictional exercise', 'evacuation_centers': 'Fictional center', 'relief_locations': 'Fictional relief point'}[table]
             if table == 'incident_reports':
                 marker = updated[field]
             assert marker in admin.request(prefix + listing + '?barangay=Topdac')[1]
@@ -183,6 +183,18 @@ with tempfile.TemporaryDirectory(prefix='bayanready-address-') as temporary:
         check_actions(admin, resident, query, prefix)
         from integrated_acceptance import check_acceptance
         check_acceptance(admin, resident, Client, query, prefix)
+        # Replace the contact on a household that already has stays and relief history.
+        detail = prefix + 'admin/household.php?id=1'
+        history = 'SELECT id,household_id,received_by FROM relief_distributions ORDER BY id'
+        stays = 'SELECT id,household_member_id FROM evacuation_records ORDER BY id'
+        original = (query(history), query(stays))
+        members = query('SELECT id,full_name FROM household_members WHERE household_id=1 AND archived_at IS NULL ORDER BY id')
+        for member in members[:2]:
+            code, body = admin.request(detail, dict(action='select_representative', member_id=member['id']))
+            assert code == 200 and query('SELECT display_name FROM household_directory WHERE id=1')[0]['display_name'] == member['full_name']
+            code, body = admin.request(prefix+'admin/records.php?type=members', [('action','delete'),('ids[]','members:'+str(member['id']))])
+            assert 'replacement representative' in body
+        assert len(members) >= 2 and original == (query(history), query(stays))
         from incident_upload import check_upload
         check_upload(resident, admin, Client, query, base, prefix)
         from response_history import check_response_history

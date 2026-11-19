@@ -5,8 +5,6 @@ $id = isset($_GET['edit']) ? $controller->recordId($_GET['edit']) : null;
 $form =
     $id === null
         ? [
-            'household_code' => '',
-            'representative_name' => '',
             'contact_phone' => '',
             'purok' => '',
             'address_details' => '',
@@ -45,7 +43,7 @@ require __DIR__ . '/../components/header.php';
         name="q"
         maxlength="255"
         value="<?= e($search) ?>"
-        placeholder="Code, representative, purok, address or contact"
+        placeholder="Member, representative, purok, address or contact"
     />
     <button class="btn btn-outline-secondary">Search</button><a class="btn btn-outline-secondary" href="<?= e(url('resources/views/admin/households.php')) ?>">Clear</a>
 </form>
@@ -53,7 +51,6 @@ require __DIR__ . '/../components/header.php';
     <table class="table">
         <thead>
             <tr>
-                <th>Code</th>
                 <th>Representative</th>
                 <th>Purok</th>
                 <th>Members</th>
@@ -63,8 +60,7 @@ require __DIR__ . '/../components/header.php';
         <tbody>
             <?php foreach ($rows as $row): ?>
                 <tr>
-                    <td><?= e($row['household_code']) ?></td>
-                    <td><?= e($row['representative_name']) ?></td>
+                    <td><?= e($row['household_label']) ?></td>
                     <td><?= e($row['purok']) ?>
                         <?php if (!hasMapPoint($row)): ?>
                             <br /><small>No map point</small>
@@ -94,28 +90,6 @@ require __DIR__ . "/../components/errors.php";
     ?>
     <input type="hidden" name="action" value="<?= $id === null ? 'create_household' : 'update_household' ?>" />
     <div class="row">
-        <div class="col-md-6 mb-3">
-            <label for="household_code" class="form-label">Household code *</label>
-            <input
-                class="form-control"
-                id="household_code"
-                name="household_code"
-                maxlength="30"
-                required
-                value="<?= e($form['household_code']) ?>"
-            />
-        </div>
-        <div class="col-md-6 mb-3">
-            <label for="representative_name" class="form-label">Representative / emergency contact name *</label>
-            <input
-                class="form-control"
-                id="representative_name"
-                name="representative_name"
-                maxlength="100"
-                required
-                value="<?= e($form['representative_name']) ?>"
-            />
-        </div>
         <div class="col-md-6 mb-3">
             <label for="contact_phone" class="form-label">Emergency contact number</label>
             <input
