@@ -1,14 +1,10 @@
-# BayanReady team handbook
-
-Current implementation, 14 November 2026. Start here; older phase documents describe earlier designs and may mention removed publication switches, archive buttons or demo-location search.
-
-Read [five-member ownership](TEAM_ASSIGNMENTS.md), [code walkthrough and complete source companion](CODE_WALKTHROUGH.md), [manual acceptance guide](TESTING_GUIDE.md), and [final verification](FINAL_VERIFICATION.md).
+# BayanReady municipal team handbook
 
 ## What the website does
 
 BayanReady helps staff record households, incidents, response actions, evacuees, supplies, distributions and notices. Residents register, submit reports and view their own reports, published notices, open centers and the community map. Staff use the admin role. Public registration always creates a resident, never an admin.
 
-The final scope is one barangay. Atok, Benguet is currently a municipal demonstration focus, not the confirmed stakeholder or an approved boundary. The map opens at zoom 14 and allows panning. A pin does not calculate risk.
+The shared municipal map supports all eight barangays in Atok, opens at zoom 11 and allows panning. The client is the MDRRM Office at the Municipality of Atok. A pin does not calculate risk.
 
 ## Normal operating sequence
 
@@ -30,22 +26,6 @@ Available capacity (people) = sum of max(0, capacity − active occupants) acros
 
 Manage Records has one searchable table and All/type filtering. Checkboxes select only the displayed page. Delete asks for JavaScript confirmation. Unlinked records are permanently deleted. Linked records are hidden from active pages while history remains stored. This uses archived_at internally, or is_active for teams. Remaining stock, active occupants and ongoing responses must be handled first; errors provide steps. A blocked batch changes nothing. Removing a linked household also hides its members. History is not a generic audit log of every edit.
 
-## Local setup
+## Setup and study
 
-Use PHP with PDO MySQL, fileinfo and cURL, plus MySQL. Import barangay_drrm.sql only into a new development database. Never re-import the fresh schema over records you need. For an existing database, review the migration files and apply only those missing from that installation.
-
-Copy config/config.example.php to ignored config/config.php. Enter host, port, database, username, password and base_url. Set incident_upload_dir to an absolute, writable directory OUTSIDE the web root. This was the cause of the earlier all-images-fail issue: the running copy had an empty setting. Do not commit local configuration or image files. The address endpoint requires outbound HTTPS; maps need access to OpenStreetMap tiles.
-
-Open index.php through your PHP web server, not directly as a file. Create fictional resident accounts using registration. Have the database/setup owner provide a fictional admin account with a password_hash-generated password; there is no public admin registration. The automatic test runner creates its own accounts and separate database.
-
-## Presentation responsibilities
-
-See [member-by-member code explanation](MEMBER_CODE_EXPLANATIONS.md) for exact files, methods, demonstration steps, likely questions and slide ownership. The timed slide script is in [presentation/SPEAKER_SCRIPT.md](../../presentation/SPEAKER_SCRIPT.md).
-
-## Presentation code study
-
-Every member explains a complete request path. Use the [member focus guide](MEMBER_CODE_EXPLANATIONS.md), its five full trace chapters, and the [current live-presentation speech](../../presentation/LIVE_DEMO_PRESENTATION_SCRIPT.md). Presentation material excludes test results; existing test guides remain for team development use.
-
-See the [presentation Q&A and local-network demo guide](PRESENTATION_QA_AND_LAN_DEMO.md) for likely questions, suggested answers, visitor instructions and MAMP sharing preparation.
-
-Current response synchronization and display-only history actions: [rules and test guide](RESPONSE_HISTORY_UPDATE.md). Earlier source snapshots show the older manual-resolution behavior.
+Use the [municipal setup and self-test guide](../municipal/SETUP_AND_SELF_TEST.md), [file owners and reviewers](../municipal/INVENTORY.md), [nine code walkthroughs](MEMBER_CODE_EXPLANATIONS.md) and [current speaking script](../../presentation/LIVE_DEMO_PRESENTATION_SCRIPT.md).

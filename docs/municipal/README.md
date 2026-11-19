@@ -4,9 +4,20 @@ Frozen at commit 8985790 on 19 November 2026. Use this folder as the starting po
 
 ## Interview record
 
-The project team reports that Atok municipal DRRM personnel and assistant staff reviewed and approved all eight proposed modules. The team also reports approval by the head, who was away during the visit. Staff emphasized the dashboard, requested CAR weather information and asked to print reports. Staff and students exchanged contacts for further suggestions and the team took photographs. Approval covers the proposal and modules. Final system acceptance is a later milestone.
+On 17 November 2026 the team visited the MDRRM Office at the Municipality of Atok, Benguet. The project team reports that municipal DRRM personnel and assistant staff reviewed and approved all eight proposed modules. The team also reports approval by the head, who was away during the visit. Staff emphasized the dashboard, requested CAR weather information and asked to print reports. Staff and students exchanged contacts for further suggestions and the team took photographs. Approval covers the proposal and modules. Final system acceptance is a later milestone.
 
-Member 1 owns confirmation of the exact office name, visit date, participant names and positions, head’s approval date and communication method, permission to show photographs, and the office’s description of its current operational problem. Check the team's visit notes or ask its contact person. These details are pending. Keep private contact numbers outside the repository.
+Member 1 owns confirmation of the official letterhead wording, participant names and positions, head’s approval date and communication method, permission to show photographs, and the office’s description of its current operational problem. Check the team's visit notes or ask its contact person. These details are pending. Keep private contact numbers outside the repository.
+
+## Current delivery status
+
+| Client input | Available in the municipal branch | Office follow-up |
+|---|---|---|
+| Eight modules approved | Registry, incidents, response, evacuation, inventory, distribution, announcements and disaster summaries are implemented. | Final operational acceptance remains open. |
+| Dashboard priority | Staff can filter operational counts by barangay and follow cards to matching records. Residents see their own report counts. | The office did not prescribe a card order. |
+| CAR weather | Both roles see the Atok point forecast, retrieval time and PAGASA regional advisory links. | Confirm that this geographic coverage meets the office’s need. |
+| Printing | Staff can print filtered summaries and individual incidents. Residents can print their own submission. | Confirm headings, paper and signatories. |
+
+[Municipal presentation and photo placement](../../presentation/README.md) · [Technical acceptance record](PHASE_13_ACCEPTANCE.md)
 
 ## Required workflows and revision checklist
 

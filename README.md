@@ -2,13 +2,13 @@
 
 Official project repository: https://github.com/macJil/WEBSYS_PROJECT
 
-A one-barangay classroom project using simple PHP MVC, PDO/MySQL, sessions, and direct PHP pages. Development is in progress.
+BayanReady serves the municipal demonstration across the eight barangays of Atok, Benguet. The application uses PHP, PDO/MySQL, sessions and directly accessible, role-guarded pages.
 
 ## Current team documentation
 
-Start with the [team handbook](docs/team/README.md), [five-member assignments](docs/team/TEAM_ASSIGNMENTS.md), [code walkthrough](docs/team/CODE_WALKTHROUGH.md), [complete maintained source](docs/team/SOURCE_COMPANION.md), [self-test guide](docs/team/TESTING_GUIDE.md), and [latest test results](docs/team/FINAL_VERIFICATION.md).
+Start with the [municipal setup and self-test guide](docs/municipal/SETUP_AND_SELF_TEST.md), [requirements and client inputs](docs/municipal/README.md), [nine-member ownership inventory](docs/municipal/INVENTORY.md), [nine code walkthroughs](docs/team/MEMBER_CODE_EXPLANATIONS.md), [acceptance record](docs/municipal/PHASE_13_ACCEPTANCE.md) and [presentation](presentation/README.md).
 
-The phase documents below are historical. Where they differ, use the current handbook and source: automatic map visibility, household-based check-in, and history-preserving removal are implemented.
+Earlier phase documents below describe the implementation at the time each phase was written.
 
 ## Project documents
 
@@ -19,7 +19,7 @@ The phase documents below are historical. Where they differ, use the current han
 - [One-time upgrade from the original v1.0 schema](database/migrations/001_phase_2.sql)
 - [Read-only disaster summary query examples](database/report_queries.sql)
 
-Read the Phase 2 installation instructions before importing SQL. Use fictional development data; do not commit real household records, contacts, uploaded images, or local credentials. The schema and application are separate deliverables: permissions, file handling, and transaction workflows still need PHP implementation.
+Read the Phase 2 installation instructions before importing SQL. Use fictional development data; do not commit real household records, contacts, uploaded images, or local credentials. The municipal acceptance record covers permissions, file handling and transaction workflows.
 
 ## PHP foundation setup
 

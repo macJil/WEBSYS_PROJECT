@@ -1,34 +1,15 @@
-# Five-member ownership
+# Municipal team assignments
 
-Use Member 1–5 until you replace these labels with names. Assign by complete features, not by language: every member handles their PHP, SQL, forms and tests. These are ownership boundaries in one repository; do not copy the application into five separate websites.
-
-| Member | Primary responsibility and files | Required demonstration | Reviewer |
+| Member | Time | Feature and value to follow | Reviewer |
 |---|---|---|---|
-| 1 | Login and registry: index.php; User and Household models/controllers; admin/households.php, household.php; config/db.php and app/helpers.php | Resident registration/login/logout, rejected login, admin-only household/member CRUD and calculated size | 2 |
-| 2 | Incidents and response: Report and Response models/controllers; incidents/*; admin/response/*; shared picker integration (location-picker.js owned by Member 5) | Valid/private image upload, verification, multiple teams, response updates and resolution | 3 |
-| 3 | Evacuation: Evacuation model/controller; admin/evacuation/*; household-checkin.js; app/evacuation-capacity.php | Household/partial arrivals, walk-ins, duplicate/capacity rejection, checkout/history | 4 |
-| 4 | Inventory/distribution and removal: Relief, ReliefLocation and RecordActions models/controllers; admin/relief/*; records.php, records-all.php; record-selection.js | Multi-good distribution, rollback on insufficient stock, removal with preserved history | 5 |
-| 5 | Announcements, summaries, map/dashboard integration: Announcement, DisasterSummary, Map and Dashboard models/controllers; announcement, summaries, maps and dashboard views; community-map.js, location-picker.js; shared components/CSS | Draft/publish, safe map fields, address fallback, matching totals and responsive navigation | 1 |
+| 1 | 00:00–04:00 | Client evidence, MVC, account email → staff session | 2 |
+| 2 | 04:00–07:15 | Registry, member ID → household representative | 3 |
+| 3 | 07:15–10:45 | Incident, edited callback number → incident snapshot | 4 |
+| 4 | 10:45–14:00 | Response, second completed assignment → resolved incident | 5 |
+| 5 | 14:00–17:15 | Evacuation, two selected people → two active stays | 6 |
+| 6 | 17:15–20:30 | Relief inventory and distribution, quantities → two balances | 7 |
+| 7 | 20:30–23:30 | Announcement, Publish → resident notice; forecast panel | 8 |
+| 8 | 23:30–27:00 | Dashboard, selected barangay → count, drill-down and print | 9 |
+| 9 | 27:00–30:00 | Shared map, selected barangay → eligible marker; documentation | 1 |
 
-Members 2 and 4 own the heavier transaction workflows. Member 5's breadth is balanced by integrating shared query/display components: Members 1–4 must style and test their own forms, not leave their frontend work to Member 5. Member 1 coordinates setup and database migrations; every member reviews any change to tables they use. Member 4 owns removal but must get the affected module owner's review before changing its dependencies. Member 3 owns the shared capacity definition and reviews Member 5's capacity displays.
-
-## Shared-file rules
-
-- Member 1 owns helpers, config examples and database setup; other members request a small reviewed change instead of duplicating a helper.
-- Member 5 owns header/navigation/footer, shared map scripts and CSS. Members 1–4 implement module-specific markup and submit shared changes for review.
-- Each member owns their tests and manual evidence. Test results and fixes count as work, not only code lines.
-- Use short feature branches from the current team branch. Pull before editing; commit only your task. Never commit config.php, real people, image uploads or database dumps.
-- A change is ready when its owner explains the request → controller → model → view flow, tests success/failure/role access, and obtains the assigned review.
-- Integrate one feature at a time. Run the shared fixture after changes to schema, guards, capacity, stock or removal.
-
-## Fairness and weekly handoff
-
-Each member supplies: a working feature, explanation of its methods/tables, two successful examples, two rejected examples, phone/desktop screenshots and a peer review. Review workload weekly; redistribute documentation/testing if one member has more defects. Do not judge fairness by lines of code.
-
-Report: task, files changed, database impact, tests, unresolved issue, reviewer. Everyone should understand sessions, prepared statements, escaping, redirects and transactions even when another member owns the implementation.
-
-## Presentation responsibilities
-
-See [member-by-member code explanation](MEMBER_CODE_EXPLANATIONS.md) for exact files, methods, demonstration steps, likely questions and slide ownership. The timed slide script is in [presentation/LIVE_DEMO_PRESENTATION_SCRIPT.md](../../presentation/LIVE_DEMO_PRESENTATION_SCRIPT.md).
-
-Every member must present their assigned code on slides 8, 12, 15, 19 or 23, respectively. Follow the complete trace chapters linked from the member guide. This supplements module ownership; it does not divide the website into five separate copies.
+Each presenter owns the workflow and practices it with the reviewer shown. [File ownership](../municipal/INVENTORY.md) · [Request traces](MEMBER_CODE_EXPLANATIONS.md) · [Speaking script](../../presentation/LIVE_DEMO_PRESENTATION_SCRIPT.md)

@@ -1,5 +1,7 @@
 # Team self-test guide
 
+For the municipal revision use the [setup and self-test guide](../municipal/SETUP_AND_SELF_TEST.md), [nine-member inventory](../municipal/INVENTORY.md) and [current code traces](MEMBER_CODE_EXPLANATIONS.md). Earlier material below describes the previous revision.
+
 Use an isolated development database and fictional records only. Copy it or take a backup before destructive tests. Do not use real emergency reports or contacts. Record each result with date, tester, URL, steps, expected result, actual result and screenshot.
 
 ## 1. Prepare

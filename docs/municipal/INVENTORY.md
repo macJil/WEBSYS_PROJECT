@@ -1,4 +1,4 @@
-# Inventory at 8985790
+# Municipal ownership inventory · application baseline f64d389
 
 Paths are repository-relative. Shared schema edits coordinate through Member 2. Member 8 owns dashboard queries and printing, with Member 3 reviewing incident disclosure. Member 9 coordinates integration checks.
 
@@ -118,6 +118,14 @@ Paths are repository-relative. Shared schema edits coordinate through Member 2. 
 | `tests/revision7_http.py` | 9 | 1 |
 | `tests/simple_actions.py` | 9 | 1 |
 | `tests/simplification_config.py` | 9 | 1 |
+| `app/barangays.php` | 2 | 3 |
+| `database/migrations/009_atok_barangay.sql` | 2 | 3 |
+| `database/migrations/010_household_representative.sql` | 2 | 3 |
+| `database/migrations/011_incident_reporter_email.sql` | 3 | 2 |
+| `resources/assets/js/atok-weather.js` | 7 | 8 |
+| `resources/views/components/barangay.php` | 2 | 3 |
+| `resources/views/components/weather.php` | 7 | 8 |
+| `tests/municipal_browser.js` | 9 | 1 |
 
 ## Tables in the fresh schema
 
