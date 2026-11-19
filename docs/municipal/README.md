@@ -45,3 +45,5 @@ Every row is retained. Member 2 coordinates shared barangay values and migration
 - Retain password hashing and verification, ownership checks, image type/size checks and transactions for related writes. Validate on the server.
 - Coordinate shared schema, configuration, navigation and dashboard edits with their listed owners. Pair fresh schema changes with an upgrade migration and fictional upgrade check.
 - Review each small change and check its normal form, denial case, redirect and downstream totals before integrating. Add issue, fix and recheck to the log.
+
+The [reviewed cleanup checklist](CLEANUP.md) covers the fixed forms, helper call sites and configuration readers for the revised implementation sequence. Existing module owners and reviewers own their view cleanup. Member 1 owns configuration and shared helpers, reviewed by Member 2. Member 8 confirms print formatting and dashboard priorities with staff.
