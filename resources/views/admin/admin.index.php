@@ -21,6 +21,7 @@ require __DIR__ . "/../components/header.php";
 </form>
 <?php
 require __DIR__ . "/../components/dashboard-cards.php";
+require __DIR__ . "/../components/weather.php";
 ?>
 <p><a class="btn btn-primary" href="<?= e(url('resources/views/maps/map.php')) ?>">Explore saved locations on the map</a></p>
 <p>Use the shared records to manage incidents, response teams, evacuation, and relief.</p>
