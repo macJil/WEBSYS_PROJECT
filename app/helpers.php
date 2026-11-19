@@ -7,7 +7,6 @@ if (!is_file(__DIR__ . '/../config/config.php')) {
 }
 require_once __DIR__ . '/../config/config.php';
 
-
 if (session_status() !== PHP_SESSION_ACTIVE) {
     ini_set('session.use_strict_mode', '1');
     session_start();
@@ -17,59 +16,76 @@ function e($value): string
 {
     return htmlspecialchars((string) ($value ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 }
+
 function url(string $path): string
 {
     return rtrim(BASE_URL, '/') . '/' . ltrim($path, '/');
 }
+
 function redirect(string $path): void
 {
     header('Location: ' . url($path), true, 303);
     exit();
 }
+
 function isPost(): bool
 {
     return ($_SERVER['REQUEST_METHOD'] ?? '') === 'POST';
 }
+
 function input(string $key, bool $trim = true): string
 {
     $value = $_POST[$key] ?? '';
-    return is_string($value) ? ($trim ? trim($value) : $value) : '';
+    if (!is_string($value)) {
+        return '';
+    }
+    if ($trim) {
+        return trim($value);
+    }
+    return $value;
 }
+
 function validDateInput(string $value): bool
 {
-    // Reject malformed bytes before PHP's date parser, which can throw on null bytes.
-    if (
-        strlen($value) !== 10 ||
-        $value[4] !== '-' ||
-        $value[7] !== '-' ||
-        !ctype_digit(str_replace('-', '', $value))
-    ) {
+    if (strlen($value) !== 10 || $value[4] !== '-' || $value[7] !== '-') {
+        return false;
+    }
+    $digits = str_replace('-', '', $value);
+    if (strlen($digits) !== 8 || !ctype_digit($digits)) {
         return false;
     }
     $date = DateTimeImmutable::createFromFormat('!Y-m-d', $value);
     return $date !== false && $date->format('Y-m-d') === $value;
 }
+
 function validPhone(string $value, int $minimum): bool
 {
     $length = strlen($value);
-    return $length >= $minimum && $length <= 20 && strspn($value, '0123456789+() .-') === $length;
+    if ($length < $minimum || $length > 20) {
+        return false;
+    }
+    return strspn($value, '0123456789+() .-') === $length;
 }
+
 function flash(string $message): void
 {
     $_SESSION['message'] = ['text' => $message, 'type' => 'success'];
 }
+
 function dashboardPath(): string
 {
     return ($_SESSION['ROLE'] ?? '') === 'admin'
         ? 'resources/views/admin/admin.index.php'
         : 'resources/views/user/user.index.php';
 }
+
 function session_checker(): void
 {
     if (empty($_SESSION['ID']) || !in_array($_SESSION['ROLE'] ?? '', ['admin', 'resident'], true)) {
         redirect('index.php');
     }
 }
+
 function requireRole(string $role): void
 {
     session_checker();
@@ -91,19 +107,14 @@ set_exception_handler(function (Throwable $error): void {
 
 function locationErrors(string $description, string $lat, string $lng): array
 {
-    if (($lat === '') !== ($lng === '')) {
+    if ($lat === '' && $lng === '') {
+        return [];
+    }
+    if ($lat === '' || $lng === '') {
         return ['Enter both coordinates or clear both.'];
     }
-    if (
-        $lat !== '' &&
-        (!is_numeric($lat) ||
-            !is_numeric($lng) ||
-            !is_finite((float) $lat) ||
-            !is_finite((float) $lng) ||
-            abs((float) $lat) > 90 ||
-            abs((float) $lng) > 180 ||
-            trim($description) === '')
-    ) {
+    $point = ['latitude' => $lat, 'longitude' => $lng];
+    if (!hasMapPoint($point) || trim($description) === '') {
         return ['Enter valid coordinates and a written location.'];
     }
     return [];
@@ -114,10 +125,8 @@ function hasMapPoint(array $record): bool
 {
     $lat = $record['latitude'] ?? null;
     $lng = $record['longitude'] ?? null;
-    return is_numeric($lat) &&
-        is_numeric($lng) &&
-        is_finite((float) $lat) &&
-        is_finite((float) $lng) &&
-        abs((float) $lat) <= 90 &&
-        abs((float) $lng) <= 180;
+    if (!is_numeric($lat) || !is_numeric($lng)) {
+        return false;
+    }
+    return abs((float) $lat) <= 90 && abs((float) $lng) <= 180;
 }

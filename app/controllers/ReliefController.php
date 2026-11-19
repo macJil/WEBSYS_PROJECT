@@ -10,16 +10,6 @@ class ReliefController extends Controller
         $this->model = new ReliefModel();
     }
 
-    public function recordId($value): int
-    {
-        $id = is_scalar($value) ? filter_var($value, FILTER_VALIDATE_INT) : false;
-        if (!$id || $id < 1) {
-            http_response_code(400);
-            exit('Invalid ID.');
-        }
-        return $id;
-    }
-
     public function queryValue(string $key): string
     {
         return is_string($_GET[$key] ?? null) ? trim($_GET[$key]) : '';

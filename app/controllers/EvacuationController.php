@@ -10,16 +10,6 @@ class EvacuationController extends Controller
         $this->model = new EvacuationModel();
     }
 
-    public function recordId($value): int
-    {
-        $id = is_scalar($value) ? filter_var($value, FILTER_VALIDATE_INT) : false;
-        if (!$id || $id < 1) {
-            http_response_code(400);
-            exit('Invalid ID.');
-        }
-        return $id;
-    }
-
     public function center(int $id): array
     {
         $row = $this->model->center($id);

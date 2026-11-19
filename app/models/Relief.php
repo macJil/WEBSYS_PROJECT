@@ -20,7 +20,7 @@ class ReliefModel
         return '%' . strtr($q, ['!' => '!!', '%' => '!%', '_' => '!_']) . '%';
     }
 
-    public function items(string $q = ''): array
+    public function items(string $q): array
     {
         return $this->rows(
             "SELECT * FROM relief_items WHERE archived_at IS NULL AND (item_name LIKE ? ESCAPE '!' OR unit LIKE ? ESCAPE '!') ORDER BY item_name,unit",
