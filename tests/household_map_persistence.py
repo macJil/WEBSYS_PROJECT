@@ -166,6 +166,15 @@ with tempfile.TemporaryDirectory(prefix='bayanready-address-') as temporary:
                 assert admin.request(cards.cards[label][1])[0] == 200
             code, body = admin.request(prefix + 'admin/evacuation/center.php?id=1')
             assert 'Available capacity (people): <strong>' + str(5 - occupants) + '</strong>' in body
+            for barangay, places, people, centers in [('Topdac', 5 - occupants, occupants, 1), ('Abiang', 0, 0, 0)]:
+                filtered = Cards()
+                filtered.feed(admin.request(prefix + 'admin/admin.index.php?barangay=' + barangay)[1])
+                for label, total in [('Available capacity (people)', places), ('Active evacuees', people), ('Open centers', centers)]:
+                    value, link = filtered.cards[label]
+                    assert value == total and 'barangay=' + barangay in link
+                    body = admin.request(link)[1]
+                    assert (str(people) + ' records.' if label == 'Active evacuees' else str(centers) + ' centers.') in body
+                assert filtered.cards['Municipal inventory items'] == cards.cards['Municipal inventory items']
             print('PASS HTTP dashboard/detail totals and card links:', available, occupants)
 
         verify_dashboard(12, 0)

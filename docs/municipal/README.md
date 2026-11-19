@@ -47,3 +47,9 @@ Every row is retained. Member 2 coordinates shared barangay values and migration
 - Review each small change and check its normal form, denial case, redirect and downstream totals before integrating. Add issue, fix and recheck to the log.
 
 The [reviewed cleanup checklist](CLEANUP.md) covers the fixed forms, helper call sites and configuration readers for the revised implementation sequence. Existing module owners and reviewers own their view cleanup. Member 1 owns configuration and shared helpers, reviewed by Member 2. Member 8 confirms print formatting and dashboard priorities with staff.
+
+## Dashboard priorities and counts
+
+The team’s provisional staff order is pending, verified and responding incidents, active evacuees, available capacity, open centers, affected households, then municipal inventory items. Staff confirmation of the order and instructor clarification on low-stock alerts are pending. The inventory card counts active catalog items, including zero-stock items. Stock quantities are listed per good and unit on its linked page.
+
+The barangay filter uses the incident location, registered household location or evacuation center location according to the card. All barangays includes records awaiting identification. A missing map point does not exclude a center. Active evacuees have a stay without checkout. Available capacity sums remaining places across open, non-archived centers. Incident cards link to matching status and barangay filters. Resident incident counts use the signed-in account. Reload or apply the filter to refresh the figures.

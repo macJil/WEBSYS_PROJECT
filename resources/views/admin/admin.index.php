@@ -11,6 +11,14 @@ require __DIR__ . "/../components/header.php";
     <h1><?= e(APP_NAME) ?> — staff dashboard</h1>
     <p>A current overview of incidents, evacuation, and relief.</p>
 </div>
+<form method="get" class="mb-3">
+    <?php
+    $barangayPrompt = 'All barangays';
+    $selectedBarangay = $overview['barangay'];
+    require __DIR__ . '/../components/barangay.php';
+    ?>
+    <button class="btn btn-primary">Apply filter</button>
+</form>
 <?php
 require __DIR__ . "/../components/dashboard-cards.php";
 ?>

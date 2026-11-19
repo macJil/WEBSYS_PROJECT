@@ -13,13 +13,21 @@ class DashboardController extends Controller
     public function dashboardData(): array
     {
         $admin = $_SESSION['ROLE'] === 'admin';
+        $barangay = $admin ? ($_GET['barangay'] ?? '') : '';
+        if ($barangay !== '' && !in_array($barangay, ATOK_BARANGAYS, true)) {
+            http_response_code(400);
+            exit('Choose a barangay in Atok.');
+        }
         $data = [
-            'incidents' => $this->model->incidents($admin ? null : (int) $_SESSION['ID']),
+            'barangay' => $barangay,
+            'incidents' => $this->model->incidents($admin ? null : (int) $_SESSION['ID'], $barangay),
             'centers' => $this->model->centers(),
         ];
         if ($admin) {
-            $data['affected'] = $this->model->affected();
-            $data['stays'] = $this->model->stays();
+            $data['centers'] = filterBarangay($data['centers']);
+            $data['affected'] = filterBarangay($this->model->affected());
+            $data['stays'] = filterBarangay($this->model->stays());
+            $data['inventory'] = $this->model->inventoryItemCount();
         } else {
             $data['notices'] = $this->model->notices();
         }
