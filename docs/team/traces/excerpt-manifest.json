@@ -1,242 +1,219 @@
 [
   {
-    "file": "resources/views/admin/households.php",
-    "start": 1,
-    "end": 15,
-    "sha256": "c4c81750696c5bca3fdd6aa6369924b0e8358988866d26a325f61a0590ff2c93"
+    "member": 1,
+    "file": "index.php",
+    "start": 29,
+    "end": 39,
+    "sha256": "2e23e88f13b9dea02ce8dc70b1722ef8f0afbcb7e1b1084b26e6f19638840115"
   },
   {
-    "file": "app/controllers/HouseholdController.php",
-    "start": 11,
-    "end": 15,
-    "sha256": "d0c1626e99e8339ce575728e585cc46b989232c9c92f1636ed74f782d13890c4"
-  },
-  {
-    "file": "app/controllers/HouseholdController.php",
-    "start": 51,
-    "end": 58,
-    "sha256": "6b27edd0b94d98c3d11ad0464dcc3569acd8eab44634d8f08644da934f5a318c"
-  },
-  {
-    "file": "app/controllers/HouseholdController.php",
-    "start": 59,
-    "end": 109,
-    "sha256": "b58d043b9476ba0a5aefe6cbd80861be09bcd22c583461f2d20954dc1cf1bc4f"
-  },
-  {
-    "file": "config/db.php",
-    "start": 1,
-    "end": 21,
-    "sha256": "28e355258858b7609c58adc82d9051fa0f73244398b2e02dc30d1542c6566b10"
-  },
-  {
-    "file": "app/models/Household.php",
-    "start": 28,
-    "end": 48,
-    "sha256": "5016a32ef12613e18022841e3b4d9fea7762f2eddca7ca10d6e70bc11584e0c6"
-  },
-  {
-    "file": "app/controllers/Controller.php",
-    "start": 5,
-    "end": 9,
-    "sha256": "477b3e7bcce52edad592c3ed1aa40af8e15259df598d52a2a4cc679ce8f6adf3"
-  },
-  {
-    "file": "app/models/Household.php",
-    "start": 22,
-    "end": 27,
-    "sha256": "a44877b1e4c1158fe62b24db18ba874578d28b4fa80b659ce1e40360159cbb85"
-  },
-  {
-    "file": "resources/views/incidents/create.php",
-    "start": 1,
-    "end": 20,
-    "sha256": "bef6a5ff5076d2b0fe934aff61710df097845b221e52ceb11a9c926f5c334ebf"
-  },
-  {
-    "file": "app/controllers/ReportController.php",
+    "member": 1,
+    "file": "app/controllers/UserController.php",
     "start": 68,
-    "end": 75,
-    "sha256": "9ecfa1ca2a76f10bdc45da99ca8a49113153817ba7c194aa1baaec0673c30c92"
+    "end": 86,
+    "sha256": "d3e1193d4e9614f132bde79e236851de00fb666e43f9c005c0dce545e336325c"
   },
   {
-    "file": "app/controllers/ReportController.php",
-    "start": 133,
-    "end": 185,
-    "sha256": "1ca860cc9a2feb37da67b69975a307a186380f05acb14e5857df58af86a6a184"
+    "member": 1,
+    "file": "app/models/User.php",
+    "start": 11,
+    "end": 16,
+    "sha256": "d04da4904b94da6d003a2c370958bcb78a935b7ee6f43e46f1680f1dbbadb0d5"
   },
   {
-    "file": "app/controllers/ReportController.php",
-    "start": 97,
-    "end": 132,
-    "sha256": "33db75eb4a073f50bf93b63931b8a6872612b1a9deef642aa4d8f1a79d3d6699"
+    "member": 2,
+    "file": "resources/views/admin/household.php",
+    "start": 54,
+    "end": 65,
+    "sha256": "45994a4f35ee00efc9b306b1fe7297f3ef577b89d0830ef7448fd9b62954ccaf"
   },
   {
-    "file": "app/controllers/ReportController.php",
-    "start": 76,
-    "end": 96,
-    "sha256": "abd422c97635553ccf63c8512666c67a5162e61e85ddfd48eeb37db409d28b2b"
+    "member": 2,
+    "file": "app/controllers/HouseholdController.php",
+    "start": 185,
+    "end": 193,
+    "sha256": "167b623f20388a5761bfb33193e414695d827059e193a5548997e30354e36d4b"
   },
   {
-    "file": "app/models/Report.php",
-    "start": 62,
-    "end": 80,
-    "sha256": "da681314680d85b453be7f42d92f9dbdf27c6bc70909fdd620d949c50320b11b"
+    "member": 2,
+    "file": "app/models/Household.php",
+    "start": 78,
+    "end": 95,
+    "sha256": "15e7efe0f0a364e3c066d774637a9ffc71c561196bc577f09fcd67bb6339bee2"
   },
   {
-    "file": "app/controllers/ReportController.php",
-    "start": 14,
-    "end": 17,
-    "sha256": "3315b86d38b0242307bba9dc52d34cafa6296462e6f5317bb514ef21409b2706"
-  },
-  {
-    "file": "app/models/Report.php",
-    "start": 38,
-    "end": 43,
-    "sha256": "5d328934a146ded8c65fe2fbe24e2f96320cdfcb6868a4534e07e63ad08bd7dd"
-  },
-  {
-    "file": "resources/views/admin/evacuation/center.php",
-    "start": 1,
-    "end": 30,
-    "sha256": "85073103104fb313c3d092a14730059f0891d910cb4d46544512ac6099009403"
-  },
-  {
-    "file": "resources/views/admin/evacuation/center.php",
-    "start": 62,
-    "end": 80,
-    "sha256": "872f5acba81b04a7dbe9d1e3ff04a54064a3ab150b76dbee3657ae7c29f610a1"
-  },
-  {
-    "file": "app/controllers/EvacuationController.php",
-    "start": 90,
-    "end": 128,
-    "sha256": "5a1dbcdfd8726aa792042759e0e886ade336b8c0ef1c7680bfc54ac28b3fac21"
-  },
-  {
-    "file": "app/models/Evacuation.php",
-    "start": 96,
-    "end": 148,
-    "sha256": "3749f6ed1cb97e792b6a209f4c1babf0cdcf6785be04568d18e6ebe20c41e0a7"
-  },
-  {
-    "file": "app/models/Evacuation.php",
-    "start": 36,
-    "end": 43,
-    "sha256": "e37416c6ebd00c0818319f8ba65e3bb7a6d84bc0e91e3f56a7888b9d5271e218"
-  },
-  {
-    "file": "app/models/Evacuation.php",
-    "start": 44,
-    "end": 48,
-    "sha256": "8f13c73ba22a81f8ea1be4ff445d9810b26567822d043c1847846d28b837bb93"
-  },
-  {
-    "file": "app/models/Evacuation.php",
-    "start": 26,
-    "end": 35,
-    "sha256": "bcc2b8b4a9336f5489d8aab03a1f1e97cb9b71ae754519cf9580cdf824492d53"
-  },
-  {
-    "file": "app/evacuation-capacity.php",
-    "start": 1,
+    "member": 3,
+    "file": "resources/views/incidents/create.php",
+    "start": 2,
     "end": 9,
-    "sha256": "1bab3a1eb49a54c06a801a188793e72cb9ad27cea22c17a5b110a59796dc0161"
+    "sha256": "eac0fbdc1378df576e83622f6317c875d9823111f7c966fea69b0d50a3635a95"
   },
   {
+    "member": 3,
+    "file": "app/controllers/ReportController.php",
+    "start": 248,
+    "end": 263,
+    "sha256": "9e537263b0eb9d11f5515881535976eb5eb4c8ed028769ac17806ba9e10e793d"
+  },
+  {
+    "member": 3,
+    "file": "app/models/Report.php",
+    "start": 92,
+    "end": 125,
+    "sha256": "04fec5307b2e451aa1f9c18910435414d14d168569a5ea8eaf2a1bc6a584d9be"
+  },
+  {
+    "member": 4,
+    "file": "resources/views/admin/response/incident.php",
+    "start": 58,
+    "end": 67,
+    "sha256": "fb006f879d770cbe43c2bcddbce25a7eddcfc0dee4014b1c77f182fa8130f996"
+  },
+  {
+    "member": 4,
+    "file": "app/controllers/ResponseController.php",
+    "start": 102,
+    "end": 114,
+    "sha256": "2c42a6f34dfaef7d3521a7d69e69ec6659a104435b1ff7d2023b031d513ba33b"
+  },
+  {
+    "member": 4,
+    "file": "app/models/Response.php",
+    "start": 148,
+    "end": 169,
+    "sha256": "07f85f8877969384517b2e12e43e1e6bad99c96790b9805f67bb87168f2de727"
+  },
+  {
+    "member": 5,
+    "file": "resources/views/admin/evacuation/center.php",
+    "start": 67,
+    "end": 79,
+    "sha256": "33dd226ff7ac8f20b74acf01086e2082253010522afa5aacf1e0ff096ac92781"
+  },
+  {
+    "member": 5,
+    "file": "app/controllers/EvacuationController.php",
+    "start": 113,
+    "end": 125,
+    "sha256": "4ccd0ebcdd70649732aa295b859dc2efa5bfc5da84f7d965093783ce07b7f30b"
+  },
+  {
+    "member": 5,
     "file": "app/models/Evacuation.php",
-    "start": 207,
-    "end": 222,
-    "sha256": "d22ab5d452470f71f770a087d6e535e80ee75de75ea6c6049dc735908f62a360"
+    "start": 165,
+    "end": 173,
+    "sha256": "575e007fbe9b105627725b1a473562936a67a3cbf99d02e0855c3d4c9471489d"
   },
   {
+    "member": 5,
+    "file": "app/models/Evacuation.php",
+    "start": 188,
+    "end": 205,
+    "sha256": "c77831ec5657e876e4548feb3ea33c6cedfef31bea05bc3aa99c5fa4eff4f5e5"
+  },
+  {
+    "member": 6,
     "file": "resources/views/admin/relief/distributions.php",
-    "start": 1,
-    "end": 17,
-    "sha256": "557804096bb43860ec21aa44c164ecfcf9c65208d66ce2777159ec79ab740ee6"
+    "start": 92,
+    "end": 105,
+    "sha256": "8b951eeecc763769d981908c8671691b1c20fda6189c460b6db4dbdd4ebffb8b"
   },
   {
+    "member": 6,
     "file": "app/controllers/ReliefController.php",
-    "start": 124,
-    "end": 158,
-    "sha256": "5fbbfdae58d4de9714897884ec6babcef7997c4f4412574bea9d50c6cdab368b"
+    "start": 168,
+    "end": 183,
+    "sha256": "ba443c053dc0f52ad96fefcdef19a45b1e485e744b55f0a1263843807877ccf4"
   },
   {
-    "file": "app/controllers/ReliefController.php",
-    "start": 79,
-    "end": 82,
-    "sha256": "8e70ef32078c41d4e7d3aaa5f79221787e9572e18dc0da4b03c0d8e2f6a867f9"
-  },
-  {
+    "member": 6,
     "file": "app/models/Relief.php",
-    "start": 107,
-    "end": 149,
-    "sha256": "241cb8b6af9e74e7d879e44f16937cc27e3f9c575299059f75b74d980e5bf799"
+    "start": 163,
+    "end": 189,
+    "sha256": "dff8c514500749b789ae845cc1bdeee5baf6dca6cad304cf66464d94e5addc1e"
   },
   {
-    "file": "app/models/Relief.php",
-    "start": 52,
+    "member": 7,
+    "file": "resources/views/admin/announcement/editor.php",
+    "start": 17,
+    "end": 21,
+    "sha256": "ca638213951546ff399e6027f80f1c9749ded474c693eb52a758116386c947c2"
+  },
+  {
+    "member": 7,
+    "file": "app/controllers/AnnouncementController.php",
+    "start": 72,
+    "end": 84,
+    "sha256": "dfcdce292830cd67119e95130d5465e9898535118c35192472eb251ac8a5572c"
+  },
+  {
+    "member": 7,
+    "file": "app/models/Announcement.php",
+    "start": 11,
+    "end": 21,
+    "sha256": "e24ac383e80293de5a1e93d37b418be4e92d0738116fce5c5403842efc5ae2df"
+  },
+  {
+    "member": 7,
+    "file": "resources/assets/js/atok-weather.js",
+    "start": 41,
     "end": 56,
-    "sha256": "ad6da8c3b779e2a5d82294af4337f7fe9cdc450a435942c6c27a12333ecc663b"
+    "sha256": "1f373a6fb74212675d6f062cf2c5de8065d97fbf7a55e986b10634a0dfeab7eb"
   },
   {
-    "file": "app/models/Relief.php",
-    "start": 154,
-    "end": 157,
-    "sha256": "9a955d9a9b70d56982bdca06205dc936b2deae09a407e2b5e0f9eb8d7de6d940"
+    "member": 8,
+    "file": "resources/views/admin/admin.index.php",
+    "start": 14,
+    "end": 23,
+    "sha256": "0d76e4dde68bf0a83ee48b0c0d706432d34ee7a497eb2b26952a0fb3cfd670f8"
   },
   {
-    "file": "app/models/Relief.php",
-    "start": 158,
-    "end": 161,
-    "sha256": "18349f56fcff231f2fc4ee25c358b3203c45c135f2f1af7259f91dff223ed749"
+    "member": 8,
+    "file": "app/controllers/DashboardController.php",
+    "start": 20,
+    "end": 35,
+    "sha256": "a7665162ea801688559c658b8bf605a3ab66a6abd33a5a94dbb3ab9ed6b60c72"
   },
   {
+    "member": 8,
+    "file": "app/models/Dashboard.php",
+    "start": 59,
+    "end": 65,
+    "sha256": "fcc063ca196a19bc61e2003173e3c64b64d386c2573dc7add4870381c8b6d3d7"
+  },
+  {
+    "member": 8,
+    "file": "app/models/DisasterSummary.php",
+    "start": 29,
+    "end": 45,
+    "sha256": "4fcd0dd860b12fe57858739c4effeab470191d268d513f2cb56da58bb043e2f9"
+  },
+  {
+    "member": 9,
     "file": "resources/views/maps/map.php",
-    "start": 1,
-    "end": 10,
-    "sha256": "5c1b326ff615a1fe761d2c8dee8277afdc1b1220ba083752f1fe7e0aa9db1c4c"
+    "start": 7,
+    "end": 13,
+    "sha256": "c36147d812f063f5efff740ce0d81ce5d56b6438ac362e38eedd439df99a50b8"
   },
   {
-    "file": "resources/views/maps/map.php",
-    "start": 65,
-    "end": 80,
-    "sha256": "5dcd9d910633f4dbc62efb8fdfd2d6b5e0a8906023d711662330bfa4d76b965c"
-  },
-  {
-    "file": "resources/views/maps/data.php",
-    "start": 1,
-    "end": 22,
-    "sha256": "ba1346ca3472e194cee6b52f8c12c260a7ec30c70d2a162a46c3ae678cc9c171"
-  },
-  {
+    "member": 9,
     "file": "app/controllers/MapController.php",
     "start": 6,
-    "end": 11,
-    "sha256": "cbc6f86feb6be67e84b4d9d81d032685b71d69bf1c323208ef8628820e036ceb"
+    "end": 16,
+    "sha256": "b1b05f53d29ad4f81547a8d0d4442140ad312b61dcb49624417c43516d08a230"
   },
   {
+    "member": 9,
     "file": "app/models/Map.php",
-    "start": 19,
-    "end": 27,
-    "sha256": "02b6731e397a70d91aad770b8f23f5b3c0bc90f5a42eb61f0963251fd8b674fd"
+    "start": 24,
+    "end": 41,
+    "sha256": "fe4f1f6a6a7067100717d912b0828842b06c8c2cf8f96145cb5936a250717ee6"
   },
   {
-    "file": "app/models/Map.php",
-    "start": 15,
-    "end": 18,
-    "sha256": "939f1cb53e7346c844ed3342de29578ff1c0038a3282e5c1585db417f4c9e1b8"
-  },
-  {
-    "file": "app/models/Map.php",
-    "start": 34,
-    "end": 46,
-    "sha256": "47a10ba58c587ad60729c9250cb8f5edf67d7285fa3bd6a683c97a9d49a8a78a"
-  },
-  {
+    "member": 9,
     "file": "resources/assets/js/community-map.js",
-    "start": 1,
-    "end": 181,
-    "sha256": "ecc3e9677ea9ba110dce280b360837a78278bd556b886c4b311116a0fccf9151"
+    "start": 94,
+    "end": 107,
+    "sha256": "f9455dc4a4929b96ede1a1c566d8065432565769de34f9f33293fdc007a90f12"
   }
 ]

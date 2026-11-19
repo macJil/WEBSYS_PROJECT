@@ -16,7 +16,7 @@ require __DIR__ . "/../components/header.php";
 <link rel="stylesheet" href="<?= e(url('resources/assets/vendor/leaflet/leaflet.css')) ?>" />
 <p class="return-link no-print"><a class="btn btn-outline-secondary" href="<?= e(url(dashboardPath())) ?>">Back to dashboard</a></p>
 <h1><?= $admin?'Staff map':'Community map' ?></h1>
-<p><?= e(DEMO_BARANGAY_NAME) ?>. Markers show saved locations; they do not predict danger or guarantee safety. The map opens focused on Atok; you can pan to review other saved points. No approved boundary is enforced.</p>
+<p><?= e(DEMO_BARANGAY_NAME) ?>. Markers show saved locations; they do not predict danger or guarantee safety. Choose a barangay to zoom to its saved points. All barangays opens on the Atok overview. No approved boundary is enforced.</p>
 <p>Verified incidents, open centers, and distribution points with saved coordinates appear automatically. Pending reports and household records stay off this map.</p>
 <form method="get" class="mb-3">
     <?php
@@ -46,7 +46,7 @@ require __DIR__ . "/../components/header.php";
     </aside>
     <div>
         <p class="map-status" id="community-map-status" role="status" aria-live="polite">Loading saved locations…</p>
-        <div id="community-map" data-admin="<?= $admin?'1':'0' ?>" data-url="<?= e(url('resources/views/maps/data.php' . $query)) ?>" data-base="<?= e(BASE_URL) ?>" data-lat="16.60" data-lng="120.71" data-zoom="11" data-min-zoom="10">
+        <div id="community-map" data-barangay="<?= e($selectedBarangay) ?>" data-admin="<?= $admin?'1':'0' ?>" data-url="<?= e(url('resources/views/maps/data.php' . $query)) ?>" data-base="<?= e(BASE_URL) ?>" data-lat="16.60" data-lng="120.71" data-zoom="11" data-min-zoom="10">
         </div>
         <p id="community-tile-status" role="status" class="small">Map tiles require internet. The background map does not confirm the accuracy of a reported point.</p>
         <noscript>Enable JavaScript to explore this map. Your regular record pages remain available through navigation.</noscript>

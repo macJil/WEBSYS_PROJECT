@@ -22,6 +22,7 @@
         })
         .addTo(map);
     const groups = {};
+    const savedBounds = L.latLngBounds([]);
     const types = {
         flood: "Flooding",
         fire: "Fire",
@@ -90,21 +91,19 @@
         map.setView(home, zoom);
         status.textContent = "Atok demo view. Use Show all locations to see saved points outside this view.";
     });
+    function fitSavedLocations() {
+        // Distant records must still fit. A single point stops at street-level zoom.
+        map.setMinZoom(1);
+        map.fitBounds(savedBounds, { padding: [30, 30], maxZoom: 17 });
+    }
     document.getElementById("map-fit").addEventListener("click", () => {
-        const bounds = L.latLngBounds([]);
+        if (!savedBounds.isValid()) return;
         boxes.forEach((box) => {
             box.checked = true;
             groups[box.dataset.layer].addTo(map);
-            groups[box.dataset.layer].eachLayer((marker) => bounds.extend(marker.getLatLng()));
         });
-        if (bounds.isValid()) {
-            // Saved points can be anywhere; fit them without imposing a demo boundary.
-            map.setMinZoom(1);
-            map.fitBounds(bounds, { padding: [30, 30], maxZoom: 16 });
-            status.textContent = "Showing all saved locations. Select a marker for details.";
-        } else {
-            status.textContent = "No saved locations have map points yet. The demo view is unchanged.";
-        }
+        fitSavedLocations();
+        status.textContent = "Showing all saved locations for this selection. Select a marker for details.";
     });
     fetch(element.dataset.url, { credentials: "same-origin", cache: "no-store" })
         .then((response) => {
@@ -154,6 +153,7 @@
                     })
                         .bindPopup(popup(layer, row))
                         .addTo(group);
+                    savedBounds.extend([lat, lng]);
                     count++;
                 });
                 document.getElementById("count-" + layer).textContent = "(" + count + ")";
@@ -164,7 +164,14 @@
                 : admin
                   ? "No active saved locations have map points yet. Add a point using a record form."
                   : "No verified incidents, open centers, or distribution points have map coordinates yet. Your submissions remain in My reports.";
-            document.getElementById("map-fit").disabled = false;
+            if (element.dataset.barangay) {
+                if (total) {
+                    fitSavedLocations();
+                } else {
+                    status.textContent = "No saved map points in " + element.dataset.barangay + ". Showing the Atok overview.";
+                }
+            }
+            document.getElementById("map-fit").disabled = !total;
         })
         .catch((error) => {
             status.textContent = error.message || "Saved locations could not be loaded. Please refresh.";

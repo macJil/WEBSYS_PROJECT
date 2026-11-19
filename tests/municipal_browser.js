@@ -54,8 +54,8 @@ async function run() {
         const pages = role === 0 ? ['admin/admin.index.php','admin/households.php','incidents/list.php',
             'admin/response/teams.php','admin/evacuation/centers.php','admin/relief/inventory.php',
             'admin/announcement/announcement.php','admin/summaries/disaster.php?barangay=Topdac','admin/records.php',
-            'maps/map.php','incidents/view.php?id=1'] : ['user/user.index.php?outage','incidents/create.php',
-            'maps/map.php','incidents/view.php?id=1'];
+            'maps/map.php','maps/map.php?barangay=Topdac','incidents/view.php?id=1'] : ['user/user.index.php?outage','incidents/create.php',
+            'maps/map.php','maps/map.php?barangay=Topdac','incidents/view.php?id=1'];
         for (const width of [375,1280]) {
             await send('Emulation.setDeviceMetricsOverride',{width,height:800,deviceScaleFactor:1,mobile:false});
             for (const path of pages) {
@@ -68,6 +68,22 @@ async function run() {
                 }
                 assert.equal(await evaluate('location.href'),url);
                 assert.ok(await evaluate('document.querySelector("main") && document.documentElement.scrollWidth<=innerWidth+1'),width+' '+path);
+                if (path.endsWith('barangay=Topdac') && path.startsWith('maps/')) {
+                    // These fictional records share a point, so the map reaches its close-up zoom.
+                    async function waitForTilesAt(zoom) {
+                        const selector = '.leaflet-tile[src*="/' + zoom + '/"]';
+                        for (let attempt = 0; attempt < 60; attempt++) {
+                            if (await evaluate('!!document.querySelector(' + JSON.stringify(selector) + ')')) return;
+                            await new Promise(resolve => setTimeout(resolve, 50));
+                        }
+                        assert.fail('Expected filtered map tiles at zoom ' + zoom);
+                    }
+                    await waitForTilesAt(17);
+                    await evaluate('document.getElementById("map-home").click()');
+                    await waitForTilesAt(11);
+                    await evaluate('document.getElementById("map-fit").click()');
+                    await waitForTilesAt(17);
+                }
                 if (path.includes('.index')) {
                     const forecast = await evaluate('document.querySelector("#atok-forecast").textContent');
                     assert.ok(forecast.includes(role ? 'unavailable' : '42%'),forecast);
