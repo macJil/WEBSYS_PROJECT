@@ -22,6 +22,7 @@ require __DIR__ . "/../components/saved-point.php";
 ?>
 <a class="btn btn-outline-secondary" href="<?= e(url('resources/views/admin/households.php')) ?>">Back to households</a>
 <h1><?= e($household['household_code']) ?> — <?= e($household['representative_name']) ?></h1>
+<p>Barangay: <?= e($household['barangay'] ?? 'Awaiting confirmation') ?></p>
 <p><a class="btn btn-outline-secondary" href="<?= e(url('resources/views/admin/records.php?type=members')) ?>">Manage records</a></p>
 <a class="d-inline-block mb-3" href="<?= e(url('resources/views/admin/households.php?edit=' . $id)) ?>">Edit household</a>
 <dl class="row">

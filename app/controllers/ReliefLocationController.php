@@ -33,8 +33,11 @@ class ReliefLocationController extends Controller
         if ($id !== null && !empty($this->model->find($id)['archived_at'])) {
             return ['Archived locations cannot be edited.'];
         }
+        if (!in_array(input('barangay'), ATOK_BARANGAYS, true)) {
+            return ['Choose an Atok barangay.'];
+        }
         $data = [];
-        foreach (['name', 'location_type', 'address_details', 'latitude', 'longitude'] as $field) {
+        foreach (['barangay', 'name', 'location_type', 'address_details', 'latitude', 'longitude'] as $field) {
             $data[$field] = input($field);
         }
         if (

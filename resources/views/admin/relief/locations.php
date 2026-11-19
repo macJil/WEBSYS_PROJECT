@@ -16,6 +16,8 @@ if (isPost()) {
         $d[$k] = input($k);
     };
 }
+$locations = $c->all();
+$locations = filterBarangay($locations);
 $pageTitle = "Relief locations";
 require __DIR__ . "/../../components/header.php";
 require __DIR__ . "/../../components/errors.php";
@@ -23,8 +25,16 @@ require __DIR__ . "/../../components/errors.php";
 <p class="return-link no-print"><a class="btn btn-outline-secondary" href="<?= e(url('resources/views/admin/relief/inventory.php')) ?>">Back to relief inventory</a></p>
 <h1>Relief locations</h1>
 <p><a class="btn btn-outline-secondary" href="<?= e(url('resources/views/admin/records.php?type=locations')) ?>">Manage records</a></p>
+<form method="get">
+    <?php
+    $barangayPrompt = 'All barangays';
+    $selectedBarangay = $_GET['barangay'] ?? '';
+    require __DIR__ . '/../../components/barangay.php';
+    ?>
+    <button class="btn btn-outline-secondary">Filter</button>
+</form>
 <ul>
-    <?php foreach ($c->all() as $row): ?>
+    <?php foreach ($locations as $row): ?>
         <li><?= e($row['name']) ?>
             <?php if (!hasMapPoint($row)): ?>
                 <small>(No map point)</small>
@@ -34,6 +44,11 @@ require __DIR__ . "/../../components/errors.php";
 </ul>
 <h2><?= $id?'Edit':'Add' ?> location</h2>
 <form method="post">
+    <?php
+    $barangayPrompt = 'Choose barangay';
+    $selectedBarangay = isPost() ? input('barangay') : ($d['barangay'] ?? '');
+    require __DIR__ . '/../../components/barangay.php';
+    ?>
     <label class="d-block mb-3">Name
         <input class="form-control" name="name" value="<?= e($d['name']) ?>" required />
     </label>

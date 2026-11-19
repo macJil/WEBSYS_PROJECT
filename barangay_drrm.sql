@@ -23,6 +23,7 @@ CREATE TABLE users (
 
 -- 2. Households: monitored OR newly affected (registered before relief distribution).
 CREATE TABLE households (
+  barangay VARCHAR(32) NULL,
   archived_at DATETIME NULL,
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   household_code VARCHAR(30) NOT NULL UNIQUE,
@@ -63,6 +64,7 @@ CREATE TABLE household_members (
 -- 4. Incidents: private to staff and the submitting account; verification does not publish.
 -- reported_by is always the logged-in creator, including admin-entered walk-in reports.
 CREATE TABLE incident_reports (
+  barangay VARCHAR(32) NULL,
   archived_at DATETIME NULL,
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   reported_by INT UNSIGNED NOT NULL,
@@ -160,6 +162,7 @@ CREATE TABLE announcements (
 
 -- 9. Centers: capacity is in individuals; occupancy comes from active evacuation_records.
 CREATE TABLE evacuation_centers (
+  barangay VARCHAR(32) NULL,
   archived_at DATETIME NULL,
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(150) NOT NULL,
@@ -227,6 +230,7 @@ CREATE TABLE relief_items (
 
 -- 12. Warehouse/storage/distribution points shown on the staff map.
 CREATE TABLE relief_locations (
+  barangay VARCHAR(32) NULL,
   archived_at DATETIME NULL,
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(150) NOT NULL,

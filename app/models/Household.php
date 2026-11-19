@@ -36,6 +36,7 @@ class HouseholdModel
             throw new DomainException('Archived households cannot be edited.');
         }
         $fields = [
+            'barangay',
             'household_code',
             'representative_name',
             'contact_phone',

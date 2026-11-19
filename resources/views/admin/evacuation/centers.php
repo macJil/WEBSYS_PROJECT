@@ -13,6 +13,7 @@ if (isPost()) {
 }
 $q = is_string($_GET["q"] ?? null) ? trim($_GET["q"]) : "";
 $centers = $controller->centers($q);
+$centers = filterBarangay($centers);
 $pageTitle = "Evacuation centers";
 require __DIR__ . "/../../components/header.php";
 require __DIR__ . "/../../components/errors.php";
@@ -21,6 +22,11 @@ require __DIR__ . "/../../components/errors.php";
 <h1>Evacuation centers</h1>
 <p><a class="btn btn-outline-secondary" href="<?= e(url('resources/views/admin/records.php?type=centers')) ?>">Manage records</a></p>
 <form method="get" class="filter-form mb-3">
+    <?php
+    $barangayPrompt = 'All barangays';
+    $selectedBarangay = $_GET['barangay'] ?? '';
+    require __DIR__ . '/../../components/barangay.php';
+    ?>
     <label>Search name or address <input name="q" value="<?= e($q) ?>" /></label>
     <button class="btn btn-outline-secondary">Search</button> <a href="<?= e(url('resources/views/admin/evacuation/centers.php')) ?>">Clear</a>
 </form>
@@ -61,6 +67,11 @@ require __DIR__ . "/../../components/errors.php";
 </div>
 <h2><?= $id?'Edit center':'Add center' ?></h2>
 <form method="post">
+    <?php
+    $barangayPrompt = 'Choose barangay';
+    $selectedBarangay = isPost() ? input('barangay') : ($data['barangay'] ?? '');
+    require __DIR__ . '/../../components/barangay.php';
+    ?>
     <label class="d-block mb-3">Center name
         <input class="form-control" name="name" maxlength="150" value="<?= e($data['name']) ?>" required />
     </label>

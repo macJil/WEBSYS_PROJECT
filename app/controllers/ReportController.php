@@ -224,6 +224,11 @@ class ReportController extends Controller
         foreach (['latitude', 'longitude'] as $key) {
             $data[$key] = $data[$key] === '' ? null : $data[$key];
         }
+        $barangay = $_POST['barangay'] ?? '';
+        if ($barangay !== '' && !in_array($barangay, ATOK_BARANGAYS, true)) {
+            return ['Choose an Atok barangay or leave it awaiting confirmation.'];
+        }
+        $data['barangay'] = $barangay === '' ? null : $barangay;
         $data['reported_by'] = (int) $_SESSION['ID'];
         $image = null;
         try {
@@ -249,6 +254,10 @@ class ReportController extends Controller
     public function updateLocation(int $id): array
     {
         requireRole('admin');
+        $barangay = $_POST['barangay'] ?? '';
+        if ($barangay !== '' && !in_array($barangay, ATOK_BARANGAYS, true)) {
+            return ['Choose an Atok barangay or leave it awaiting confirmation.'];
+        }
         $description = input('location_description');
         $lat = input('latitude');
         $lng = input('longitude');
@@ -266,6 +275,7 @@ class ReportController extends Controller
         try {
             $this->model->updateLocation(
                 $id,
+                $barangay === '' ? null : $barangay,
                 $description,
                 $lat === '' ? null : $lat,
                 $lng === '' ? null : $lng,

@@ -114,6 +114,7 @@ class ReportModel
 
     public function updateLocation(
         int $id,
+        ?string $barangay,
         string $description,
         ?string $lat,
         ?string $lng,
@@ -131,9 +132,9 @@ class ReportModel
                 throw new DomainException('Archived or missing incidents cannot be edited.');
             }
             $stmt = $this->pdo->prepare(
-                'UPDATE incident_reports SET location_description=?,latitude=?,longitude=? WHERE id=?',
+                'UPDATE incident_reports SET barangay=?,location_description=?,latitude=?,longitude=? WHERE id=?',
             );
-            $stmt->execute([$description, $lat, $lng, $id]);
+            $stmt->execute([$barangay, $description, $lat, $lng, $id]);
             $previousPoint = '[' . ($old['latitude'] ?? 'none') . ', ' . ($old['longitude'] ?? 'none') . ']';
             $updatedPoint = '[' . ($lat ?? 'none') . ', ' . ($lng ?? 'none') . ']';
             $action = 'Location correction: ' . $notes;

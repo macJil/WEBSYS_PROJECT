@@ -64,12 +64,16 @@ class EvacuationController extends Controller
         if (input('action') !== 'save_center') {
             return ['Unknown form action.'];
         }
+        if (!in_array(input('barangay'), ATOK_BARANGAYS, true)) {
+            return ['Choose an Atok barangay.'];
+        }
         $capacity = filter_var(input('capacity'), FILTER_VALIDATE_INT, [
             'options' => ['min_range' => 0, 'max_range' => 1000000],
         ]);
         $data = [
             'name' => input('name'),
             'address_details' => input('address_details'),
+            'barangay' => input('barangay'),
             'capacity' => $capacity,
             'status' => input('status'),
         ];

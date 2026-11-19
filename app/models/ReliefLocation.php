@@ -25,6 +25,7 @@ class ReliefLocationModel
     public function save(?int $id, array $data): void
     {
         $values = [
+            $data['barangay'],
             $data['name'],
             $data['location_type'],
             $data['address_details'],
@@ -33,12 +34,12 @@ class ReliefLocationModel
         ];
         if ($id) {
             $stmt = $this->pdo->prepare(
-                'UPDATE relief_locations SET name=?,location_type=?,address_details=?,latitude=?,longitude=? WHERE id=? AND archived_at IS NULL',
+                'UPDATE relief_locations SET barangay=?,name=?,location_type=?,address_details=?,latitude=?,longitude=? WHERE id=? AND archived_at IS NULL',
             );
             $values[] = $id;
         } else {
             $stmt = $this->pdo->prepare(
-                'INSERT INTO relief_locations(name,location_type,address_details,latitude,longitude) VALUES(?,?,?,?,?)',
+                'INSERT INTO relief_locations(barangay,name,location_type,address_details,latitude,longitude) VALUES(?,?,?,?,?,?)',
             );
         }
         $stmt->execute($values);

@@ -4,6 +4,7 @@ session_checker();
 $controller = new ReportController($_SESSION["ROLE"]);
 $filters = $controller->filters();
 $reports = $controller->listIncidents($filters);
+$reports = filterBarangay($reports);
 $pageTitle = $_SESSION["ROLE"] === "admin" ? "Incident reports" : "My incident reports";
 require __DIR__ . "/../components/header.php";
 ?>
@@ -14,6 +15,11 @@ require __DIR__ . "/../components/header.php";
 <?php endif; ?>
 <a class="btn btn-primary mb-3" href="<?= e(url('resources/views/incidents/create.php')) ?>">Enter incident report</a>
 <form method="get" class="filter-form row g-2 mb-4">
+    <?php
+    $barangayPrompt = 'All barangays';
+    $selectedBarangay = $_GET['barangay'] ?? '';
+    require __DIR__ . '/../components/barangay.php';
+    ?>
     <label class="col-md-3">Type<select class="form-select" name="incident_type">
             <option value="">All types</option>
             <option value="flood" <?= $filters['incident_type'] === 'flood' ? 'selected' : '' ?>>Flooding</option>

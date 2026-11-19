@@ -91,9 +91,9 @@ with tempfile.TemporaryDirectory(prefix='bayanready-address-') as temporary:
             assert code == 200 and 'Log out' in body, body[:300]
         cases = [
             (resident, 'incidents/create.php', 'incident_reports', 'location_description', 'incidents/view.php', dict(action='create_incident', incident_type='other', description='Fictional exercise', reporter_name='Fictional person', contact_phone='0000000000')),
-            (admin, 'admin/households.php', 'households', 'address_details', 'admin/household.php', dict(action='create_household', household_code='DEMO-ADDR', representative_name='Fictional person', contact_phone='', purok='Demo', registry_reason='monitored', hazard_type='unassessed', hazard_notes='', vulnerability_category='unassessed', vulnerability_notes='', evacuation_status='at_home')),
-            (admin, 'admin/evacuation/centers.php', 'evacuation_centers', 'address_details', 'admin/evacuation/center.php', dict(action='save_center', name='Fictional center', capacity='5', status='open')),
-            (admin, 'admin/relief/locations.php', 'relief_locations', 'address_details', 'admin/relief/location.php', dict(action='save_location', name='Fictional relief point', location_type='distribution')),
+            (admin, 'admin/households.php', 'households', 'address_details', 'admin/household.php', dict(action='create_household', barangay='Abiang', household_code='DEMO-ADDR', representative_name='Fictional person', contact_phone='', purok='Demo', registry_reason='monitored', hazard_type='unassessed', hazard_notes='', vulnerability_category='unassessed', vulnerability_notes='', evacuation_status='at_home')),
+            (admin, 'admin/evacuation/centers.php', 'evacuation_centers', 'address_details', 'admin/evacuation/center.php', dict(action='save_center', barangay='Abiang', name='Fictional center', capacity='5', status='open')),
+            (admin, 'admin/relief/locations.php', 'relief_locations', 'address_details', 'admin/relief/location.php', dict(action='save_location', barangay='Abiang', name='Fictional relief point', location_type='distribution')),
         ]
         prefix = '/resources/views/'
         for client, page, table, field, detail, values in cases:
@@ -104,13 +104,14 @@ with tempfile.TemporaryDirectory(prefix='bayanready-address-') as temporary:
             assert code == 200 and 'alert-danger' not in body, body[-1500:]
             # The SQL helper executes one query at a time after USE through exec below.
             row = query('SELECT * FROM ' + table + ' ORDER BY id DESC LIMIT 1')[0]
+            assert row['barangay'] == values.get('barangay')
             assert row[field] == values[field] and row['latitude'] == values['latitude'] and row['longitude'] == values['longitude'], row
             code, body = client.request(prefix + detail + '?id=' + str(row['id']))
             assert code == 200 and values[field] in body and values['latitude'] in body
             edit = prefix + (detail + '?id=' + str(row['id']) if table == 'incident_reports' else page + '?edit=' + str(row['id']))
             code, body = admin.request(edit)
             assert code == 200 and values[field] in body and 'data-address-status' in body
-            updated = dict(values)
+            updated = dict(values, barangay='Topdac')
             updated.update({field: 'Fictional manually confirmed landmark', 'latitude': '16.6280000', 'longitude': '120.7680000'})
             if table == 'incident_reports':
                 updated.update(action='update_location', location_notes='Fictional correction')
@@ -119,6 +120,13 @@ with tempfile.TemporaryDirectory(prefix='bayanready-address-') as temporary:
             code, body = admin.request(edit, updated)
             assert code == 200 and 'alert-danger' not in body, body[-1500:]
             row2 = query('SELECT * FROM ' + table + ' WHERE id=' + str(row['id']))[0]
+            assert row2['barangay'] == 'Topdac'
+            listing = 'incidents/list.php' if table == 'incident_reports' else page
+            marker = {'households': 'DEMO-ADDR', 'incident_reports': 'Fictional exercise', 'evacuation_centers': 'Fictional center', 'relief_locations': 'Fictional relief point'}[table]
+            if table == 'incident_reports':
+                marker = updated[field]
+            assert marker in admin.request(prefix + listing + '?barangay=Topdac')[1]
+            assert marker not in admin.request(prefix + listing + '?barangay=Abiang')[1]
             assert row2[field] == updated[field] and row2['latitude'] == updated['latitude'] and row2['longitude'] == updated['longitude'], row2
             code, body = admin.request(edit)
             assert code == 200 and updated[field] in body and updated['latitude'] in body

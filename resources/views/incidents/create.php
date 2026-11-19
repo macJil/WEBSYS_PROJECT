@@ -15,6 +15,11 @@ require __DIR__ . "/../components/errors.php";
 <h1>Report an incident</h1>
 <p>Reports are reviewed by barangay staff. This website does not guarantee an immediate emergency response.</p>
 <form method="post" enctype="multipart/form-data">
+    <?php
+    $barangayPrompt = 'Awaiting confirmation';
+    $selectedBarangay = isPost() ? input('barangay') : ($data['barangay'] ?? '');
+    require __DIR__ . '/../components/barangay.php';
+    ?>
     <?php if ($_SESSION['ROLE'] === 'admin'): ?>
         <label class="d-block mb-3">Report received through <select name="report_source" class="form-select" required>
                 <option value="walk_in" <?= $data['report_source'] === 'walk_in' ? 'selected' : '' ?>>In person</option>

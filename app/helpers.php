@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/barangays.php';
 if (!is_file(__DIR__ . '/../config/config.php')) {
     http_response_code(503);
     exit(

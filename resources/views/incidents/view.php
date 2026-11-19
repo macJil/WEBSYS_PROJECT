@@ -22,6 +22,7 @@ require __DIR__ . "/../components/header.php";
 require __DIR__ . "/../components/errors.php";
 ?>
 <h1><?= e($pageTitle) ?></h1>
+<p>Barangay: <?= e($report['barangay'] ?? 'Awaiting confirmation') ?></p>
 <dl>
     <dt>Type</dt>
     <dd class="preserve-text"><?= e($report['incident_type'] ?? 'Not recorded') ?></dd>
@@ -69,6 +70,11 @@ require __DIR__ . "/../components/errors.php";
         <h2>Correct incident location</h2>
         <p>Confirm the written location and pin. A correction is recorded in staff history. The shared map uses this saved point when the incident is eligible.</p>
         <form method="post">
+    <?php
+    $barangayPrompt = 'Awaiting confirmation';
+    $selectedBarangay = isPost() ? input('barangay') : ($report['barangay'] ?? '');
+    require __DIR__ . '/../components/barangay.php';
+    ?>
             <label class="d-block mb-3">Written location<input class="form-control" name="location_description" maxlength="255" required value="<?= e(isPost() && input('action') === 'update_location'?input('location_description'):$report['location_description']) ?>" /></label>
             <?php
             $point = $report;

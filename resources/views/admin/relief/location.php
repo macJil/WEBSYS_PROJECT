@@ -10,6 +10,7 @@ require __DIR__ . "/../../components/saved-point.php";
 ?>
 <p class="return-link no-print"><a class="btn btn-outline-secondary" href="<?= e(url('resources/views/admin/relief/locations.php')) ?>">Back to relief locations</a></p>
 <h1><?= e($location['name']) ?></h1>
+<p>Barangay: <?= e($location['barangay'] ?? 'Awaiting confirmation') ?></p>
 <dl>
     <dt>Type</dt>
     <dd><?= e($location['location_type'] ?? 'Not recorded') ?></dd>

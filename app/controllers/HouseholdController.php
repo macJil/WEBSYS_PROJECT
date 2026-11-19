@@ -80,6 +80,7 @@ class HouseholdController extends Controller
         $data = [];
         foreach (
             [
+                'barangay',
                 'household_code',
                 'representative_name',
                 'contact_phone',
@@ -108,6 +109,9 @@ class HouseholdController extends Controller
         }
         if (input('action') !== ($id === null ? 'create_household' : 'update_household')) {
             return ['Invalid form action.'];
+        }
+        if (!in_array(input('barangay'), ATOK_BARANGAYS, true)) {
+            return ['Choose an Atok barangay.'];
         }
         $old = $id === null ? null : $this->getHousehold($id);
         $errors = locationErrors($data['address_details'], $data['latitude'], $data['longitude']);

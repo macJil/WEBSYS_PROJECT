@@ -80,9 +80,10 @@ class EvacuationModel
                     throw new DomainException('Check out all evacuees before closing this center.');
                 }
                 $stmt = $this->pdo->prepare(
-                    'UPDATE evacuation_centers SET latitude=?,longitude=?,name=?, address_details=?, capacity=?, status=? WHERE id=?',
+                    'UPDATE evacuation_centers SET barangay=?,latitude=?,longitude=?,name=?, address_details=?, capacity=?, status=? WHERE id=?',
                 );
                 $stmt->execute([
+                    $data['barangay'],
                     $data['latitude'],
                     $data['longitude'],
                     $data['name'],
@@ -93,9 +94,10 @@ class EvacuationModel
                 ]);
             } else {
                 $stmt = $this->pdo->prepare(
-                    'INSERT INTO evacuation_centers (latitude,longitude,name,address_details,capacity,status) VALUES (?,?,?,?,?,?)',
+                    'INSERT INTO evacuation_centers (barangay,latitude,longitude,name,address_details,capacity,status) VALUES (?,?,?,?,?,?,?)',
                 );
                 $stmt->execute([
+                    $data['barangay'],
                     $data['latitude'],
                     $data['longitude'],
                     $data['name'],

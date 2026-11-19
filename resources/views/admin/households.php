@@ -25,6 +25,7 @@ $errors = $controller->saveHousehold($id, $form);
 $search = is_string($_GET['q'] ?? '') ? trim($_GET['q'] ?? '') : '';
 $rows = $controller->listHouseholds(substr($search, 0, 255));
 
+$rows = filterBarangay($rows);
 $pageTitle = 'Household registry';
 require __DIR__ . '/../components/header.php';
 ?>
@@ -32,6 +33,11 @@ require __DIR__ . '/../components/header.php';
 <h1>Household registry</h1>
 <p><a class="btn btn-outline-secondary" href="<?= e(url('resources/views/admin/records.php?type=households')) ?>">Manage records</a></p>
 <form method="get" class="filter-form d-flex gap-2 mb-3">
+    <?php
+    $barangayPrompt = 'All barangays';
+    $selectedBarangay = $_GET['barangay'] ?? '';
+    require __DIR__ . '/../components/barangay.php';
+    ?>
     <label for="search" class="visually-hidden">Search households</label>
     <input
         id="search"
@@ -81,6 +87,11 @@ require __DIR__ . '/../components/header.php';
 require __DIR__ . "/../components/errors.php";
 ?>
 <form method="post" action="<?= e(url('resources/views/admin/households.php' . ($id === null ? '' : '?edit=' . $id))) ?>">
+    <?php
+    $barangayPrompt = 'Choose barangay';
+    $selectedBarangay = isPost() ? input('barangay') : ($form['barangay'] ?? '');
+    require __DIR__ . '/../components/barangay.php';
+    ?>
     <input type="hidden" name="action" value="<?= $id === null ? 'create_household' : 'update_household' ?>" />
     <div class="row">
         <div class="col-md-6 mb-3">
