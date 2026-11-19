@@ -9,9 +9,11 @@ class MapModel
         $this->pdo = $pdo ?? db();
     }
 
-    private function rows(string $sql): array
+    private function rows(string $sql, string $barangay): array
     {
-        return $this->pdo->query($sql)->fetchAll();
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($barangay === '' ? [] : [$barangay]);
+        return $stmt->fetchAll();
     }
 
     private function point(string $lat, string $lng): string
@@ -19,18 +21,21 @@ class MapModel
         return "$lat IS NOT NULL AND $lng IS NOT NULL AND $lat BETWEEN -90 AND 90 AND $lng BETWEEN -180 AND 180";
     }
 
-    public function publicMap(): array
+    public function publicMap(string $barangay = ''): array
     {
+        $filter = $barangay === '' ? '' : ' AND barangay=?';
         // Explicit allowlists: never select private incident fields for the resident response.
         return [
             'incidents' => $this->rows(
                 "SELECT id,incident_type,latitude,longitude,status,DATE(created_at) AS report_date FROM incident_reports WHERE archived_at IS NULL AND status IN ('verified','responding','resolved') AND " .
-                    $this->point('latitude', 'longitude'),
+                    $this->point('latitude', 'longitude') . $filter,
+                $barangay,
             ),
-            'centers' => $this->centers(),
+            'centers' => $this->centers($barangay),
             'relief_locations' => $this->rows(
                 "SELECT id,name,address_details,latitude,longitude,location_type FROM relief_locations WHERE archived_at IS NULL AND location_type IN ('distribution','both') AND " .
-                    $this->point('latitude', 'longitude'),
+                    $this->point('latitude', 'longitude') . $filter,
+                $barangay,
             ),
         ];
     }
@@ -44,17 +49,19 @@ class MapModel
         return $stmt->fetch() ?: [];
     }
 
-    private function centers(): array
+    private function centers(string $barangay): array
     {
+        $filter = $barangay === '' ? '' : ' AND c.barangay=?';
         $centers = $this->rows(
             "SELECT c.id, c.name, c.address_details, c.latitude, c.longitude,
             c.status, c.capacity, COUNT(e.id) AS occupancy
             FROM evacuation_centers c
             LEFT JOIN evacuation_records e ON e.center_id = c.id AND e.checked_out_at IS NULL
             WHERE c.archived_at IS NULL AND c.status = 'open' AND " .
-                $this->point('c.latitude', 'c.longitude') .
+                $this->point('c.latitude', 'c.longitude') . $filter .
                 "
             GROUP BY c.id, c.name, c.address_details, c.latitude, c.longitude, c.status, c.capacity",
+            $barangay,
         );
         foreach ($centers as $index => $center) {
             $centers[$index]['available'] = availableCapacity($center);

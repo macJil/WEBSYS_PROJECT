@@ -7,7 +7,11 @@ class MapController extends Controller
     {
         session_checker();
         $model = new MapModel();
-        return $model->publicMap();
+        $barangay = $_GET['barangay'] ?? '';
+        if ($barangay !== '' && !in_array($barangay, ATOK_BARANGAYS, true)) {
+            throw new InvalidArgumentException('Choose a barangay in Atok.');
+        }
+        return $model->publicMap($barangay);
     }
 
     public function reliefLocation($value): array

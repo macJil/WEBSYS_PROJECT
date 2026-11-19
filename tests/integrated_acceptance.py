@@ -32,6 +32,17 @@ def check_acceptance(admin, resident, Client, query, prefix):
             for row in data['incidents']:
                 assert set(row) == {'id','incident_type','latitude','longitude','status','report_date'}
     query("UPDATE incident_reports SET status='responding' WHERE id=1")
+    for client in [admin, resident]:
+        for barangay, expected in [('Topdac', True), ('Abiang', False)]:
+            code, body = client.request(prefix + 'maps/data.php?barangay=' + barangay)
+            assert code == 200
+            layers = json.loads(body)
+            assert set(layers) == {'incidents', 'centers', 'relief_locations'}
+            for markers in layers.values():
+                assert any(int(row['id']) == 1 for row in markers) == expected
+            for row in layers['incidents']:
+                assert set(row) == {'id','incident_type','latitude','longitude','status','report_date'}
+        assert client.request(prefix + 'maps/data.php?barangay=unknown')[0] == 400
     query("UPDATE relief_locations SET location_type='storage' WHERE id=1")
     assert not json.loads(resident.request(prefix + 'maps/data.php')[1])['relief_locations']
     query("UPDATE relief_locations SET location_type='distribution' WHERE id=1")

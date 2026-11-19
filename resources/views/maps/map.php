@@ -4,6 +4,12 @@ session_checker();
 requireRole($_SESSION["ROLE"]);
 header("Cache-Control: private, no-store");
 $admin = $_SESSION["ROLE"] === "admin";
+$selectedBarangay = $_GET['barangay'] ?? '';
+if ($selectedBarangay !== '' && !in_array($selectedBarangay, ATOK_BARANGAYS, true)) {
+    http_response_code(400);
+    exit('Choose a barangay in Atok.');
+}
+$query = $selectedBarangay === '' ? '' : '?' . http_build_query(['barangay' => $selectedBarangay]);
 $pageTitle = "Community map";
 require __DIR__ . "/../components/header.php";
 ?>
@@ -12,10 +18,17 @@ require __DIR__ . "/../components/header.php";
 <h1><?= $admin?'Staff map':'Community map' ?></h1>
 <p><?= e(DEMO_BARANGAY_NAME) ?>. Markers show saved locations; they do not predict danger or guarantee safety. The map opens focused on Atok; you can pan to review other saved points. No approved boundary is enforced.</p>
 <p>Verified incidents, open centers, and distribution points with saved coordinates appear automatically. Pending reports and household records stay off this map.</p>
+<form method="get" class="mb-3">
+    <?php
+    $barangayPrompt = 'All barangays';
+    require __DIR__ . '/../components/barangay.php';
+    ?>
+    <button class="btn btn-primary">Apply filter</button>
+</form>
 <div class="map-layout">
     <aside class="map-key border rounded p-3" aria-label="Map layers and legend">
         <h2 class="h5">Layers and legend</h2>
-        <p>Uncheck a layer to hide its markers. Show all locations turns every layer back on.</p>
+        <p>Uncheck a layer to hide its markers. Show all locations fits every layer in the selected barangay.</p>
         <label class="map-layer">
             <input type="checkbox" data-layer="incidents" checked />
             <span class="map-symbol incident" aria-hidden="true">⚠</span> Incidents <span id="count-incidents"></span></label>
@@ -26,14 +39,14 @@ require __DIR__ . "/../components/header.php";
         <label class="map-layer">
             <input type="checkbox" data-layer="relief_locations" checked />
             <span class="map-symbol relief" aria-hidden="true">▣</span> Relief locations <span id="count-relief_locations"></span></label>
-        <button type="button" id="map-home" class="btn btn-outline-secondary my-2">Return to demo area</button>
+        <button type="button" id="map-home" class="btn btn-outline-secondary my-2">Return to Atok</button>
         <button type="button" id="map-fit" class="btn btn-outline-secondary my-2" disabled>Show all locations</button>
-        <a class="d-block" href="<?= e(url('resources/views/maps/map.php')) ?>">Refresh saved locations</a>
+        <a class="d-block" href="<?= e(url('resources/views/maps/map.php' . $query)) ?>">Refresh saved locations</a>
         <p class="small mt-3">Refresh saved locations after adding or changing a report. Some points may be outside the current view. Counts represent mapped records only. Records without a valid point remain in their normal lists and totals.</p>
     </aside>
     <div>
         <p class="map-status" id="community-map-status" role="status" aria-live="polite">Loading saved locations…</p>
-        <div id="community-map" data-admin="<?= $admin?'1':'0' ?>" data-url="<?= e(url('resources/views/maps/data.php')) ?>" data-base="<?= e(BASE_URL) ?>" data-lat="<?= e(MAP_LATITUDE) ?>" data-lng="<?= e(MAP_LONGITUDE) ?>" data-zoom="<?= e(MAP_ZOOM) ?>" data-min-zoom="<?= e(MAP_MIN_ZOOM) ?>">
+        <div id="community-map" data-admin="<?= $admin?'1':'0' ?>" data-url="<?= e(url('resources/views/maps/data.php' . $query)) ?>" data-base="<?= e(BASE_URL) ?>" data-lat="16.60" data-lng="120.71" data-zoom="11" data-min-zoom="10">
         </div>
         <p id="community-tile-status" role="status" class="small">Map tiles require internet. The background map does not confirm the accuracy of a reported point.</p>
         <noscript>Enable JavaScript to explore this map. Your regular record pages remain available through navigation.</noscript>
