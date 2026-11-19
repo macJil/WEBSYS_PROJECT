@@ -17,6 +17,7 @@ import uuid
 
 ROOT = Path(__file__).resolve().parents[1]
 PHP = os.environ.get('TEST_PHP', '/Applications/MAMP/bin/php/php8.3.30/bin/php')
+MYSQL_SOCKET = os.environ.get('TEST_MYSQL_SOCKET', '/Applications/MAMP/tmp/mysql/mysql.sock')
 DB_NAME = 'bayanready_address_test_' + uuid.uuid4().hex[:10]
 
 with tempfile.TemporaryDirectory(prefix='bayanready-address-') as temporary:
@@ -25,7 +26,7 @@ with tempfile.TemporaryDirectory(prefix='bayanready-address-') as temporary:
     shutil.copytree(ROOT, site, ignore=shutil.ignore_patterns('.git', 'config.php', 'node_modules'))
     helper = folder / 'database.php'
     helper.write_text('''<?php
-    $pdo = new PDO('mysql:unix_socket=/Applications/MAMP/tmp/mysql/mysql.sock;charset=utf8mb4', 'root', 'root', [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC]);
+    $pdo = new PDO('mysql:unix_socket=' . getenv('TEST_MYSQL_SOCKET') . ';charset=utf8mb4', 'root', 'root', [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC]);
     $sql = stream_get_contents(STDIN);
     if (str_starts_with($sql, 'USE `')) {
         $end = strpos($sql, ';');
@@ -41,7 +42,7 @@ with tempfile.TemporaryDirectory(prefix='bayanready-address-') as temporary:
     ''')
 
     def sql(query):
-        output = subprocess.check_output([PHP, str(helper)], input=query.encode())
+        output = subprocess.check_output([PHP, str(helper)], input=query.encode(), env=dict(os.environ, TEST_MYSQL_SOCKET=MYSQL_SOCKET))
         return json.loads(output)
 
     def query(query):
@@ -51,9 +52,25 @@ with tempfile.TemporaryDirectory(prefix='bayanready-address-') as temporary:
     server = None
     try:
         schema = (ROOT / 'barangay_drrm.sql').read_text()
+        upgrade = os.environ.get('TEST_MUNICIPAL_UPGRADE') == '1'
+        if upgrade:
+            schema = subprocess.check_output(
+                ['git', 'show', '8ebceef:barangay_drrm.sql'], cwd=ROOT, text=True
+            )
         schema = schema.replace('CREATE DATABASE IF NOT EXISTS barangay_drrm CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;', '')
         schema = schema.replace('USE barangay_drrm;', 'USE `' + DB_NAME + '`;')
         sql(schema)
+        if upgrade:
+            query("INSERT INTO households (household_code, representative_name, purok) VALUES ('DEMO-OLD', 'Fictional legacy', 'Demo')")
+            for number in ('009', '010', '011'):
+                migration, = (ROOT / 'database/migrations').glob(number + '_*.sql')
+                query(migration.read_text())
+            legacy, = query("SELECT * FROM household_directory WHERE household_code='DEMO-OLD'")
+            assert legacy['barangay'] is None and legacy['representative_member_id'] is None
+            assert legacy['representative_name'] == 'Fictional legacy'
+            query("DELETE FROM households WHERE household_code='DEMO-OLD'")
+            query("ALTER TABLE households AUTO_INCREMENT=1")
+            print('PASS pre-municipal household survives migrations 009 through 011')
         password_hash = subprocess.check_output([PHP, '-r', "echo password_hash('DemoPass123!', PASSWORD_DEFAULT);"]).decode()
         query("INSERT INTO users(full_name,username,email,password,role) VALUES " +
               ','.join("('Fictional " + role + "','" + role + "','" + role + "@example.invalid','" + password_hash + "','" + role + "')" for role in ['admin', 'resident']))
@@ -65,7 +82,7 @@ with tempfile.TemporaryDirectory(prefix='bayanready-address-') as temporary:
             listener.bind(('127.0.0.1', 0))
             port = listener.getsockname()[1]
         log = open(folder / 'server.log', 'w')
-        server = subprocess.Popen([PHP, '-d', 'pdo_mysql.default_socket=/Applications/MAMP/tmp/mysql/mysql.sock', '-S', '127.0.0.1:' + str(port), '-t', str(site)], stdout=log, stderr=log)
+        server = subprocess.Popen([PHP, '-d', 'pdo_mysql.default_socket=' + MYSQL_SOCKET, '-S', '127.0.0.1:' + str(port), '-t', str(site)], stdout=log, stderr=log)
         base = 'http://127.0.0.1:' + str(port)
 
         class Client:
@@ -248,6 +265,55 @@ with tempfile.TemporaryDirectory(prefix='bayanready-address-') as temporary:
             assert code == 200 and 'Print incident report' in page and 'Asia/Manila' in page
             assert ('Staff review history' in page) == (client is admin)
         print('PASS print controls, current versus historical totals, barangay selection and role-specific content')
+        # Test two different units together, including an insufficient second item.
+        goods = {}
+        for name, unit in [('Fictional water', 'bottles'), ('Fictional noodles', 'packs')]:
+            admin.request(prefix + 'admin/relief/inventory.php', dict(action='save_item', item_name=name, unit=unit))
+            item = query('SELECT MAX(id) id FROM relief_items')[0]['id']
+            admin.request(prefix + 'admin/relief/movements.php', dict(action='stock', item_id=item,
+                          movement_type='stock_in', quantity='5', notes='Fictional delivery'))
+            goods['goods[' + str(item) + ']'] = '2'
+        def relief_snapshot():
+            return [query(statement) for statement in (
+                'SELECT id,quantity_on_hand FROM relief_items ORDER BY id',
+                'SELECT id FROM relief_stock_movements ORDER BY id',
+                'SELECT id FROM relief_distributions ORDER BY id',
+                'SELECT * FROM relief_distribution_items ORDER BY distribution_id,item_id')]
+        distribution = dict(action='distribute', household_id='1', received_by='Fictional Receiver', **goods)
+        before = relief_snapshot()
+        distribution_path = prefix + 'admin/relief/distributions.php'
+        invalid = distribution.copy()
+        invalid[list(goods)[-1]] = '6'
+        assert 'alert-danger' in admin.request(distribution_path, invalid)[1]
+        assert before == relief_snapshot()
+        assert 'alert-danger' not in admin.request(distribution_path, distribution)[1]
+        after = relief_snapshot()
+        for old_rows, new_rows, delta in zip(before[1:], after[1:], [2, 1, 2]):
+            assert len(new_rows) == len(old_rows) + delta
+        assert [row['quantity_on_hand'] for row in after[0][-2:]] == [3, 3]
+        print('PASS multi-good distribution deducts both goods and preserves all four tables on failure')
+        newcomer = Client()
+        registration = dict(action='register', email='new@example.invalid', username='fictional_new',
+                            full_name='Fictional New', phone='0000000000', role='admin',
+                            password='DemoPass123!', password_confirmation='incorrect')
+        assert 'passwords do not match' in newcomer.request('/index.php', registration)[1]
+        registration['password_confirmation'] = registration['password']
+        assert 'Registration successful' in newcomer.request('/index.php', registration)[1]
+        assert 'already registered' in newcomer.request('/index.php', registration)[1]
+        assert 'Log out' in newcomer.request('/index.php', dict(registration, action='login'))[1]
+        assert newcomer.request(summary_page + 'Topdac')[0] == 403
+        home = prefix + 'user/user.index.php'
+        newcomer.request(home, dict(action='logout'))
+        newcomer.request(home)
+        assert newcomer.last_url.endswith('/index.php')
+        print('PASS registration retry, duplicate rejection, resident role, login and logout')
+        if os.environ.get('TEST_BROWSER'):
+            sessions = []
+            for client in (admin, resident):
+                handler = next(h for h in client.client.handlers if hasattr(h, 'cookiejar'))
+                sessions.append(next(c.value for c in handler.cookiejar if c.name == 'PHPSESSID'))
+            subprocess.run(['node', str(ROOT / 'tests/municipal_browser.js'), base, str(folder)],
+                           input=json.dumps(sessions), text=True, check=True, timeout=120)
         if os.environ.get('TEST_BROWSER_PAUSE') == '1':
             Path('/tmp/bayanready-actions-preview.txt').write_text(base)
             print('Fictional browser preview:', base, flush=True)

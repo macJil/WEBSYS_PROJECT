@@ -8,7 +8,8 @@ require __DIR__ . '/../app/models/Dashboard.php';
 require __DIR__ . '/../app/models/DisasterSummary.php';
 require __DIR__ . '/../app/models/Map.php';
 require __DIR__ . '/../app/models/Report.php';
-$pdo = new PDO('mysql:unix_socket=/Applications/MAMP/tmp/mysql/mysql.sock;charset=utf8mb4', 'root', 'root', [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC]);
+$socket = getenv('TEST_MYSQL_SOCKET') ?: '/Applications/MAMP/tmp/mysql/mysql.sock';
+$pdo = new PDO('mysql:unix_socket=' . $socket . ';charset=utf8mb4', 'root', 'root', [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC]);
 $name = 'bayanready_household_test_' . bin2hex(random_bytes(4));
 $pdo->exec("CREATE DATABASE `$name`");
 try {
