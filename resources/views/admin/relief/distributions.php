@@ -12,9 +12,13 @@ $items = $id ? $controller->distributedGoods($id) : $controller->items();
 $households = $id ? [] : $controller->households();
 $q = $controller->queryValue("q");
 $history = $id ? [] : $controller->distributions($q);
+$submitted = is_array($_POST['goods'] ?? null) ? $_POST['goods'] : [];
 $pageTitle = "Relief distributions";
 require __DIR__ . "/../../components/header.php";
 require __DIR__ . "/../../components/errors.php";
+$formHouseholdId = input('household_id');
+$formReceivedBy = input('received_by');
+$formNotes = input('notes');
 ?>
 <p class="return-link no-print"><a class="btn btn-outline-secondary" href="<?= e(url('resources/views/admin/relief/inventory.php')) ?>">Back to relief inventory</a></p>
 <h1>Relief distributions</h1>
@@ -22,10 +26,16 @@ require __DIR__ . "/../../components/errors.php";
 <?php if ($distribution): ?>
     <h2>Distribution #<?= (int)$id ?></h2>
     <dl>
-        <?php foreach (['household_code' => 'Household','received_by' => 'Receiving representative','full_name' => 'Staff','distributed_at' => 'Date/time','notes' => 'Notes'] as $key => $label): ?>
-            <dt><?= e($label) ?></dt>
-            <dd><?= e($distribution[$key]) ?></dd>
-        <?php endforeach; ?>
+        <dt>Household</dt>
+        <dd><?= e($distribution['household_code']) ?></dd>
+        <dt>Receiving representative</dt>
+        <dd><?= e($distribution['received_by']) ?></dd>
+        <dt>Staff</dt>
+        <dd><?= e($distribution['full_name']) ?></dd>
+        <dt>Date/time</dt>
+        <dd><?= e($distribution['distributed_at']) ?></dd>
+        <dt>Notes</dt>
+        <dd><?= e($distribution['notes']) ?></dd>
     </dl>
     <div class="table-responsive" tabindex="0" role="region" aria-label="Scrollable records">
         <table class="table">
@@ -53,12 +63,12 @@ require __DIR__ . "/../../components/errors.php";
         <label class="d-block mb-3">Registered household<select class="form-select" name="household_id" required>
                 <option value="">Choose a household</option>
                 <?php foreach ($households as $household): ?>
-                    <option value="<?= (int)$household['id'] ?>" <?= input('household_id') === (string)$household['id']?'selected':'' ?>><?= e($household['household_code'] . ' — ' . $household['representative_name']) ?></option>
+                    <option value="<?= (int)$household['id'] ?>" <?= $formHouseholdId === (string)$household['id']?'selected':'' ?>><?= e($household['household_code'] . ' — ' . $household['representative_name']) ?></option>
                 <?php endforeach; ?>
             </select></label>
-        <label class="d-block mb-3">Receiving representative<input class="form-control" name="received_by" maxlength="100" value="<?= e(input('received_by')) ?>" required /></label>
+        <label class="d-block mb-3">Receiving representative<input class="form-control" name="received_by" maxlength="100" value="<?= e($formReceivedBy) ?>" required /></label>
         <label class="d-block mb-3">Notes<textarea class="form-control" name="notes" maxlength="255">
-<?= e(input('notes')) ?></textarea> </label>
+<?= e($formNotes) ?></textarea> </label>
         <p>Enter quantities for all goods received in this distribution. Leave other quantities blank or zero. Date/time and staff are recorded automatically.</p>
         <div class="table-responsive" tabindex="0" role="region" aria-label="Scrollable records">
             <table class="table">
@@ -71,14 +81,21 @@ require __DIR__ . "/../../components/errors.php";
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ($items as $item): $submitted = is_array($_POST['goods'] ?? null)?$_POST['goods']:[];
+                    <?php foreach ($items as $item):
                         $value = $submitted[$item['id']] ?? ''; ?>
                     <tr>
                         <td><?= e($item['item_name']) ?></td>
                         <td><?= e($item['unit']) ?></td>
                         <td><?= (int)$item['quantity_on_hand'] ?></td>
                         <td>
-                            <input aria-label="<?= e('Quantity of ' . $item['item_name']) ?>" type="number" min="0" max="1000000000" name="goods[<?= (int)$item['id'] ?>]" value="<?= e(is_scalar($value)?$value:'') ?>" />
+                            <input
+                                aria-label="<?= e('Quantity of ' . $item['item_name']) ?>"
+                                type="number"
+                                min="0"
+                                max="1000000000"
+                                name="goods[<?= (int)$item['id'] ?>]"
+                                value="<?= e(is_scalar($value)?$value:'') ?>"
+                            />
                         </td>
                     </tr>
                 <?php endforeach; ?>

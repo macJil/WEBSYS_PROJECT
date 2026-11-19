@@ -30,6 +30,12 @@ $walkins = $controller->walkins();
 $pageTitle = $center["name"];
 require __DIR__ . "/../../components/header.php";
 require __DIR__ . "/../../components/errors.php";
+$formKind = input('kind');
+$formWalkinId = input('walkin_id');
+$formFullName = input('full_name');
+$formAddressDetails = input('address_details');
+$formContactPhone = input('contact_phone');
+$formAge = input('age');
 ?>
 <?php
 $savedPoint = $center;
@@ -77,22 +83,37 @@ require __DIR__ . "/../../components/saved-point.php";
     <p>Search the household registry and existing walk-ins before creating a new walk-in. Confirm identity with the person or guardian. To transfer centers, check out the previous stay first.</p>
     <form method="post">
         <label class="d-block mb-3">Record type<select class="form-select" name="kind">
-                <?php foreach (['walkin' => 'Existing walk-in','new_walkin' => 'New walk-in'] as $key => $label): ?>
-                    <option value="<?= e($key) ?>" <?= input('kind') === $key?'selected':'' ?>><?= e($label) ?></option>
-                <?php endforeach; ?>
+                <option value="walkin" <?= $formKind === 'walkin'?'selected':'' ?>>Existing walk-in</option>
+                <option value="new_walkin" <?= $formKind === 'new_walkin'?'selected':'' ?>>New walk-in</option>
             </select></label>
         <label class="d-block mb-3">Existing walk-in<select class="form-select" name="walkin_id">
                 <option value="">Select for returning walk-in</option>
                 <?php foreach ($walkins as $person): ?>
-                    <option value="<?= (int)$person['id'] ?>" <?= input('walkin_id') === (string)$person['id']?'selected':'' ?>><?= e('#' . $person['id'] . ' — ' . $person['full_name'] . ' — ' . $person['address_details'] . ' — ' . $person['contact_phone']) ?></option>
+                    <option value="<?= (int)$person['id'] ?>" <?= $formWalkinId === (string)$person['id']?'selected':'' ?>><?= e('#' . $person['id'] . ' — ' . $person['full_name'] . ' — ' . $person['address_details'] . ' — ' . $person['contact_phone']) ?></option>
                 <?php endforeach; ?>
             </select></label>
         <fieldset class="border p-3 mb-3">
             <legend>New walk-in details only</legend>
-            <?php foreach (['full_name' => ['Full name',100],'address_details' => ['Home address / purok',255],'contact_phone' => ['Contact number (personal or guardian)',20]] as $key => $field): ?>
-                <label class="d-block mb-2"><?= e($field[0]) ?><input class="form-control" name="<?= e($key) ?>" maxlength="<?= $field[1] ?>" value="<?= e(input($key)) ?>" /></label>
-            <?php endforeach; ?>
-            <label>Age in years<input class="form-control" name="age" type="number" min="0" max="130" value="<?= e(input('age')) ?>" /></label>
+            <label class="d-block mb-2">Full name
+                <input class="form-control" name="full_name" maxlength="100" value="<?= e($formFullName) ?>" />
+            </label>
+            <label class="d-block mb-2">Home address / purok
+                <input
+                    class="form-control"
+                    name="address_details"
+                    maxlength="255"
+                    value="<?= e($formAddressDetails) ?>"
+                />
+            </label>
+            <label class="d-block mb-2">Contact number (personal or guardian)
+                <input
+                    class="form-control"
+                    name="contact_phone"
+                    maxlength="20"
+                    value="<?= e($formContactPhone) ?>"
+                />
+            </label>
+            <label>Age in years<input class="form-control" name="age" type="number" min="0" max="130" value="<?= e($formAge) ?>" /></label>
         </fieldset>
         <button class="btn btn-primary" name="action" value="checkin">Check in walk-in</button>
         <a href="<?= e(url('resources/views/admin/evacuation/centers.php')) ?>">Cancel and return to evacuation centers</a>

@@ -24,23 +24,6 @@ if (isPost()) {
 $errors = $controller->saveHousehold($id, $form);
 $search = is_string($_GET['q'] ?? '') ? trim($_GET['q'] ?? '') : '';
 $rows = $controller->listHouseholds(substr($search, 0, 255));
-$householdFields = [
-    'household_code' => ['Household code', 30, true],
-    'representative_name' => ['Representative / emergency contact name', 100, true],
-    'contact_phone' => ['Emergency contact number', 20, false],
-    'purok' => ['Purok / sitio', 100, true],
-    'address_details' => ['Address and location description / landmark', 255, false],
-];
-$householdCategories = [
-    'registry_reason' => ['Registry reason', HouseholdController::REASONS],
-    'hazard_type' => ['Hazard concern', HouseholdController::HAZARDS],
-    'vulnerability_category' => ['Assistance classification', HouseholdController::VULNERABILITY],
-    'evacuation_status' => ['Household advisory status', HouseholdController::EVACUATION],
-];
-$householdNotes = [
-    'hazard_notes' => 'Hazard notes',
-    'vulnerability_notes' => 'Assessment source and assistance notes',
-];
 
 $pageTitle = 'Household registry';
 require __DIR__ . '/../components/header.php';
@@ -50,7 +33,14 @@ require __DIR__ . '/../components/header.php';
 <p><a class="btn btn-outline-secondary" href="<?= e(url('resources/views/admin/records.php?type=households')) ?>">Manage records</a></p>
 <form method="get" class="filter-form d-flex gap-2 mb-3">
     <label for="search" class="visually-hidden">Search households</label>
-    <input id="search" class="form-control" name="q" maxlength="255" value="<?= e($search) ?>" placeholder="Code, representative, purok, address or contact" />
+    <input
+        id="search"
+        class="form-control"
+        name="q"
+        maxlength="255"
+        value="<?= e($search) ?>"
+        placeholder="Code, representative, purok, address or contact"
+    />
     <button class="btn btn-outline-secondary">Search</button><a class="btn btn-outline-secondary" href="<?= e(url('resources/views/admin/households.php')) ?>">Clear</a>
 </form>
 <div class="table-responsive" tabindex="0" role="region" aria-label="Scrollable records">
@@ -93,32 +83,102 @@ require __DIR__ . "/../components/errors.php";
 <form method="post" action="<?= e(url('resources/views/admin/households.php' . ($id === null ? '' : '?edit=' . $id))) ?>">
     <input type="hidden" name="action" value="<?= $id === null ? 'create_household' : 'update_household' ?>" />
     <div class="row">
-        <?php foreach ($householdFields as $key => $field): ?>
-            <div class="col-md-6 mb-3">
-                <label for="<?= e($key) ?>" class="form-label"><?= e($field[0]) ?><?= $field[2] ? ' *' : '' ?></label>
-                <input class="form-control" id="<?= e($key) ?>" name="<?= e($key) ?>" maxlength="<?= $field[1] ?>" <?= $field[2] ? 'required' : '' ?> value="<?= e($form[$key]) ?>" />
-            </div>
-        <?php endforeach; ?>
-        <?php foreach ($householdCategories as $key => $field): ?>
-            <div class="col-md-6 mb-3">
-                <label for="<?= e($key) ?>" class="form-label"><?= e($field[0]) ?></label>
-                <select class="form-select" id="<?= e($key) ?>" name="<?= e($key) ?>">
-                    <?php foreach ($field[1] as $value => $label): ?>
-                        <option value="<?= e($value) ?>" <?= $form[$key] === $value ? 'selected' : '' ?>><?= e($label) ?></option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
-        <?php endforeach; ?>
-        <?php foreach ($householdNotes as $key => $label): ?>
-            <div class="col-md-6 mb-3">
-                <label for="<?= e($key) ?>" class="form-label"><?= e($label) ?></label>
-                <textarea class="form-control" id="<?= e($key) ?>"
-                name="<?= e($key) ?>"
+        <div class="col-md-6 mb-3">
+            <label for="household_code" class="form-label">Household code *</label>
+            <input
+                class="form-control"
+                id="household_code"
+                name="household_code"
+                maxlength="30"
+                required
+                value="<?= e($form['household_code']) ?>"
+            />
+        </div>
+        <div class="col-md-6 mb-3">
+            <label for="representative_name" class="form-label">Representative / emergency contact name *</label>
+            <input
+                class="form-control"
+                id="representative_name"
+                name="representative_name"
+                maxlength="100"
+                required
+                value="<?= e($form['representative_name']) ?>"
+            />
+        </div>
+        <div class="col-md-6 mb-3">
+            <label for="contact_phone" class="form-label">Emergency contact number</label>
+            <input
+                class="form-control"
+                id="contact_phone"
+                name="contact_phone"
+                maxlength="20"
+                value="<?= e($form['contact_phone']) ?>"
+            />
+        </div>
+        <div class="col-md-6 mb-3">
+            <label for="purok" class="form-label">Purok / sitio *</label>
+            <input
+                class="form-control"
+                id="purok"
+                name="purok"
+                maxlength="100"
+                required
+                value="<?= e($form['purok']) ?>"
+            />
+        </div>
+        <div class="col-md-6 mb-3">
+            <label for="address_details" class="form-label">Address and location description / landmark</label>
+            <input
+                class="form-control"
+                id="address_details"
+                name="address_details"
                 maxlength="255"
-            >
-<?= e($form[$key]) ?></textarea>
-            </div>
-        <?php endforeach; ?>
+                value="<?= e($form['address_details']) ?>"
+            />
+        </div>
+        <div class="col-md-6 mb-3">
+            <label for="registry_reason" class="form-label">Registry reason</label>
+            <select class="form-select" id="registry_reason" name="registry_reason">
+                <option value="monitored" <?= $form['registry_reason'] === 'monitored' ? 'selected' : '' ?>>Monitored</option>
+                <option value="affected" <?= $form['registry_reason'] === 'affected' ? 'selected' : '' ?>>Affected</option>
+                <option value="both" <?= $form['registry_reason'] === 'both' ? 'selected' : '' ?>>Monitored and affected</option>
+            </select>
+        </div>
+        <div class="col-md-6 mb-3">
+            <label for="hazard_type" class="form-label">Hazard concern</label>
+            <select class="form-select" id="hazard_type" name="hazard_type">
+                <option value="unassessed" <?= $form['hazard_type'] === 'unassessed' ? 'selected' : '' ?>>Not assessed</option>
+                <option value="landslide" <?= $form['hazard_type'] === 'landslide' ? 'selected' : '' ?>>Landslide</option>
+                <option value="flood" <?= $form['hazard_type'] === 'flood' ? 'selected' : '' ?>>Flood</option>
+                <option value="fire" <?= $form['hazard_type'] === 'fire' ? 'selected' : '' ?>>Fire</option>
+                <option value="other" <?= $form['hazard_type'] === 'other' ? 'selected' : '' ?>>Other</option>
+            </select>
+        </div>
+        <div class="col-md-6 mb-3">
+            <label for="vulnerability_category" class="form-label">Assistance classification</label>
+            <select class="form-select" id="vulnerability_category" name="vulnerability_category">
+                <option value="unassessed" <?= $form['vulnerability_category'] === 'unassessed' ? 'selected' : '' ?>>Not yet assessed</option>
+                <option value="no_additional_need_identified" <?= $form['vulnerability_category'] === 'no_additional_need_identified' ? 'selected' : '' ?>>No additional assistance need identified</option>
+                <option value="assistance_needed" <?= $form['vulnerability_category'] === 'assistance_needed' ? 'selected' : '' ?>>Additional assistance needed</option>
+            </select>
+        </div>
+        <div class="col-md-6 mb-3">
+            <label for="evacuation_status" class="form-label">Household advisory status</label>
+            <select class="form-select" id="evacuation_status" name="evacuation_status">
+                <option value="at_home" <?= $form['evacuation_status'] === 'at_home' ? 'selected' : '' ?>>At home</option>
+                <option value="advised" <?= $form['evacuation_status'] === 'advised' ? 'selected' : '' ?>>Advised to evacuate</option>
+                <option value="evacuated" <?= $form['evacuation_status'] === 'evacuated' ? 'selected' : '' ?>>Evacuated</option>
+                <option value="returned" <?= $form['evacuation_status'] === 'returned' ? 'selected' : '' ?>>Returned</option>
+            </select>
+        </div>
+        <div class="col-md-6 mb-3">
+            <label for="hazard_notes" class="form-label">Hazard notes</label>
+            <textarea class="form-control" id="hazard_notes" name="hazard_notes" maxlength="255"><?= e($form['hazard_notes']) ?></textarea>
+        </div>
+        <div class="col-md-6 mb-3">
+            <label for="vulnerability_notes" class="form-label">Assessment source and assistance notes</label>
+            <textarea class="form-control" id="vulnerability_notes" name="vulnerability_notes" maxlength="255"><?= e($form['vulnerability_notes']) ?></textarea>
+        </div>
     </div>
     <p>Not yet assessed: no assessment recorded. No additional assistance need identified: reviewed without an identified need; this does not mean disaster-safe. Additional assistance needed: record the practical help required. Choosing “Not yet assessed” clears prior assessment notes and metadata.</p>
     <?php

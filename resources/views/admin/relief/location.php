@@ -11,10 +11,14 @@ require __DIR__ . "/../../components/saved-point.php";
 <p class="return-link no-print"><a class="btn btn-outline-secondary" href="<?= e(url('resources/views/admin/relief/locations.php')) ?>">Back to relief locations</a></p>
 <h1><?= e($location['name']) ?></h1>
 <dl>
-    <?php foreach (['location_type' => 'Type','address_details' => 'Address','latitude' => 'Latitude','longitude' => 'Longitude'] as $key => $label): ?>
-        <dt><?= e($label) ?></dt>
-        <dd><?= e($location[$key] ?? 'Not recorded') ?></dd>
-    <?php endforeach; ?>
+    <dt>Type</dt>
+    <dd><?= e($location['location_type'] ?? 'Not recorded') ?></dd>
+    <dt>Address</dt>
+    <dd><?= e($location['address_details'] ?? 'Not recorded') ?></dd>
+    <dt>Latitude</dt>
+    <dd><?= e($location['latitude'] ?? 'Not recorded') ?></dd>
+    <dt>Longitude</dt>
+    <dd><?= e($location['longitude'] ?? 'Not recorded') ?></dd>
     <dt>Archived</dt>
     <dd><?= $location['archived_at']?'Yes':'No' ?></dd>
     <dt>Community map</dt>

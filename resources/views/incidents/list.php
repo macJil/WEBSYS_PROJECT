@@ -16,19 +16,29 @@ require __DIR__ . "/../components/header.php";
 <form method="get" class="filter-form row g-2 mb-4">
     <label class="col-md-3">Type<select class="form-select" name="incident_type">
             <option value="">All types</option>
-            <?php foreach (ReportController::TYPES as $value => $label): ?>
-                <option value="<?= e($value) ?>" <?= $filters['incident_type'] === $value ? 'selected' : '' ?>><?= e($label) ?></option>
-            <?php endforeach; ?>
+            <option value="flood" <?= $filters['incident_type'] === 'flood' ? 'selected' : '' ?>>Flooding</option>
+            <option value="fire" <?= $filters['incident_type'] === 'fire' ? 'selected' : '' ?>>Fire</option>
+            <option value="landslide" <?= $filters['incident_type'] === 'landslide' ? 'selected' : '' ?>>Landslide</option>
+            <option value="road_obstruction" <?= $filters['incident_type'] === 'road_obstruction' ? 'selected' : '' ?>>Road obstruction</option>
+            <option value="other" <?= $filters['incident_type'] === 'other' ? 'selected' : '' ?>>Other emergency</option>
         </select></label>
     <label class="col-md-3">Status<select class="form-select" name="status">
             <option value="">All statuses</option>
-            <?php foreach (ReportController::STATUSES as $value): ?>
-                <option <?= $filters['status'] === $value ? 'selected' : '' ?> value="<?= e($value) ?>"><?= e(ucfirst($value)) ?></option>
-            <?php endforeach; ?>
+            <option <?= $filters['status'] === 'pending' ? 'selected' : '' ?> value="pending">Pending</option>
+            <option <?= $filters['status'] === 'verified' ? 'selected' : '' ?> value="verified">Verified</option>
+            <option <?= $filters['status'] === 'responding' ? 'selected' : '' ?> value="responding">Responding</option>
+            <option <?= $filters['status'] === 'resolved' ? 'selected' : '' ?> value="resolved">Resolved</option>
+            <option <?= $filters['status'] === 'rejected' ? 'selected' : '' ?> value="rejected">Rejected</option>
         </select></label>
-    <?php foreach (['date' => 'Submission date','location' => 'Location contains','search' => 'Description contains'] as $key => $label): ?>
-        <label class="col-md-3"><?= e($label) ?><input class="form-control" type="<?= $key === 'date' ? 'date' : 'text' ?>" name="<?= e($key) ?>" value="<?= e($filters[$key]) ?>" /></label>
-    <?php endforeach; ?>
+    <label class="col-md-3">Submission date
+        <input class="form-control" type="date" name="date" value="<?= e($filters['date']) ?>" />
+    </label>
+    <label class="col-md-3">Location contains
+        <input class="form-control" type="text" name="location" value="<?= e($filters['location']) ?>" />
+    </label>
+    <label class="col-md-3">Description contains
+        <input class="form-control" type="text" name="search" value="<?= e($filters['search']) ?>" />
+    </label>
     <div>
         <button class="btn btn-outline-secondary">Search</button>
         <a href="<?= e(url('resources/views/incidents/list.php')) ?>">Clear filters</a>

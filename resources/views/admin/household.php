@@ -25,14 +25,26 @@ require __DIR__ . "/../components/saved-point.php";
 <p><a class="btn btn-outline-secondary" href="<?= e(url('resources/views/admin/records.php?type=members')) ?>">Manage records</a></p>
 <a class="d-inline-block mb-3" href="<?= e(url('resources/views/admin/households.php?edit=' . $id)) ?>">Edit household</a>
 <dl class="row">
-    <?php foreach (['contact_phone' => 'Emergency contact number','purok' => 'Purok / sitio','address_details' => 'Address and location description','hazard_notes' => 'Hazard notes','vulnerability_notes' => 'Assessment notes / source','vulnerability_assessed_at' => 'Assessment date'] as $field => $label): ?>
-        <dt class="col-sm-4"><?= e($label) ?></dt>
-        <dd class="col-sm-8"><?= e($household[$field] ?: 'Not recorded') ?></dd>
-    <?php endforeach; ?>
-    <?php foreach (['registry_reason' => ['Registry reason',HouseholdController::REASONS],'hazard_type' => ['Hazard concern',HouseholdController::HAZARDS],'vulnerability_category' => ['Assistance classification',HouseholdController::VULNERABILITY],'evacuation_status' => ['Household advisory status',HouseholdController::EVACUATION]] as $field => $info): ?>
-        <dt class="col-sm-4"><?= e($info[0]) ?></dt>
-        <dd class="col-sm-8"><?= e($info[1][$household[$field]]) ?></dd>
-    <?php endforeach; ?>
+    <dt class="col-sm-4">Emergency contact number</dt>
+    <dd class="col-sm-8"><?= e($household['contact_phone'] ?: 'Not recorded') ?></dd>
+    <dt class="col-sm-4">Purok / sitio</dt>
+    <dd class="col-sm-8"><?= e($household['purok'] ?: 'Not recorded') ?></dd>
+    <dt class="col-sm-4">Address and location description</dt>
+    <dd class="col-sm-8"><?= e($household['address_details'] ?: 'Not recorded') ?></dd>
+    <dt class="col-sm-4">Hazard notes</dt>
+    <dd class="col-sm-8"><?= e($household['hazard_notes'] ?: 'Not recorded') ?></dd>
+    <dt class="col-sm-4">Assessment notes / source</dt>
+    <dd class="col-sm-8"><?= e($household['vulnerability_notes'] ?: 'Not recorded') ?></dd>
+    <dt class="col-sm-4">Assessment date</dt>
+    <dd class="col-sm-8"><?= e($household['vulnerability_assessed_at'] ?: 'Not recorded') ?></dd>
+    <dt class="col-sm-4">Registry reason</dt>
+    <dd class="col-sm-8"><?= e(HouseholdController::REASONS[$household['registry_reason']]) ?></dd>
+    <dt class="col-sm-4">Hazard concern</dt>
+    <dd class="col-sm-8"><?= e(HouseholdController::HAZARDS[$household['hazard_type']]) ?></dd>
+    <dt class="col-sm-4">Assistance classification</dt>
+    <dd class="col-sm-8"><?= e(HouseholdController::VULNERABILITY[$household['vulnerability_category']]) ?></dd>
+    <dt class="col-sm-4">Household advisory status</dt>
+    <dd class="col-sm-8"><?= e(HouseholdController::EVACUATION[$household['evacuation_status']]) ?></dd>
     <dt class="col-sm-4">Members recorded</dt>
     <dd class="col-sm-8"><?= (int)$household['member_count'] ?></dd>
 </dl>

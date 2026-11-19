@@ -10,9 +10,30 @@ $point = $point ?? [];
         <p class="small">Selecting or moving a pin, or using current location, sends the selected coordinates to <a href="https://photon.komoot.io/">Photon</a> for an address suggestion. Address data: <a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</a>. Nearby place names may be approximate; correct the address before saving.</p>
     <?php endif; ?>
     <p data-address-status role="status" class="small"></p>
-    <?php foreach (['latitude' => 90,'longitude' => 180] as $field => $limit): ?>
-        <label><?= e(ucfirst($field)) ?><input class="form-control" data-coordinate="<?= e($field) ?>" name="<?= e($field) ?>" type="number" step="any" min="<?= -$limit ?>" max="<?= $limit ?>" value="<?= e($point[$field] ?? '') ?>" /></label>
-    <?php endforeach; ?>
+    <label>Latitude
+        <input
+            class="form-control"
+            data-coordinate="latitude"
+            name="latitude"
+            type="number"
+            step="any"
+            min="-90"
+            max="90"
+            value="<?= e($point['latitude'] ?? '') ?>"
+        />
+    </label>
+    <label>Longitude
+        <input
+            class="form-control"
+            data-coordinate="longitude"
+            name="longitude"
+            type="number"
+            step="any"
+            min="-180"
+            max="180"
+            value="<?= e($point['longitude'] ?? '') ?>"
+        />
+    </label>
     <button type="button" class="btn btn-outline-secondary my-2" data-locate>Use my current location</button>
     <button type="button" class="btn btn-outline-secondary" data-clear>Clear pin</button>
     <div data-picker-map data-lat="<?= e(MAP_LATITUDE) ?>" data-lng="<?= e(MAP_LONGITUDE) ?>" data-zoom="<?= e(MAP_ZOOM) ?>" data-min-zoom="<?= e(MAP_MIN_ZOOM) ?>">

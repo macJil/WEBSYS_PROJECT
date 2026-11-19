@@ -7,6 +7,13 @@ $movements = $controller->movements();
 $pageTitle = "Stock movements";
 require __DIR__ . "/../../components/header.php";
 require __DIR__ . "/../../components/errors.php";
+$formItemId = input('item_id');
+$formMovementType = input('movement_type');
+$formQuantity = input('quantity');
+$formNotes = input('notes');
+$filterQ = $controller->queryValue('q');
+$filterType = $controller->queryValue('type');
+$filterDate = $controller->queryValue('date');
 ?>
 <p class="return-link no-print"><a class="btn btn-outline-secondary" href="<?= e(url('resources/views/admin/relief/inventory.php')) ?>">Back to relief inventory</a></p>
 <h1>Stock movements</h1>
@@ -17,29 +24,29 @@ require __DIR__ . "/../../components/errors.php";
     <label class="d-block mb-2">Good<select class="form-select" name="item_id" required>
             <option value="">Choose a good</option>
             <?php foreach ($items as $item): ?>
-                <option value="<?= (int)$item['id'] ?>" <?= input('item_id') === (string)$item['id']?'selected':'' ?>><?= e($item['item_name'] . ' — ' . $item['unit'] . ' — available: ' . $item['quantity_on_hand']) ?></option>
+                <option value="<?= (int)$item['id'] ?>" <?= $formItemId === (string)$item['id']?'selected':'' ?>><?= e($item['item_name'] . ' — ' . $item['unit'] . ' — available: ' . $item['quantity_on_hand']) ?></option>
             <?php endforeach; ?>
         </select></label>
     <label>Movement<select class="form-select" name="movement_type">
-            <?php foreach (['stock_in' => 'Stock-in','stock_out' => 'Stock-out'] as $key => $label): ?>
-                <option value="<?= e($key) ?>" <?= input('movement_type') === $key?'selected':'' ?>><?= e($label) ?></option>
-            <?php endforeach; ?>
+            <option value="stock_in" <?= $formMovementType === 'stock_in'?'selected':'' ?>>Stock-in</option>
+            <option value="stock_out" <?= $formMovementType === 'stock_out'?'selected':'' ?>>Stock-out</option>
         </select></label>
-    <label>Quantity<input class="form-control" type="number" min="1" max="1000000000" name="quantity" value="<?= e(input('quantity')) ?>" required /></label>
+    <label>Quantity<input class="form-control" type="number" min="1" max="1000000000" name="quantity" value="<?= e($formQuantity) ?>" required /></label>
     <label class="d-block my-2">Notes / reason<textarea class="form-control" name="notes" maxlength="255" required>
-<?= e(input('notes')) ?></textarea> </label>
+<?= e($formNotes) ?></textarea> </label>
     <button class="btn btn-primary" name="action" value="stock">Record movement</button>
     <a href="<?= e(url('resources/views/admin/relief/inventory.php')) ?>">Cancel and return to relief inventory</a>
 </form>
 <h2>Movement history</h2>
 <form method="get" class="filter-form mb-3">
-    <label>Search good, notes, staff<input class="form-control" name="q" value="<?= e($controller->queryValue('q')) ?>" /></label>
+    <label>Search good, notes, staff<input class="form-control" name="q" value="<?= e($filterQ) ?>" /></label>
     <label>Type<select class="form-select" name="type">
-            <?php foreach (['' => 'All','stock_in' => 'Stock-in','stock_out' => 'Stock-out','distribution' => 'Distribution'] as $key => $label): ?>
-                <option value="<?= e($key) ?>" <?= $controller->queryValue('type') === $key?'selected':'' ?>><?= e($label) ?></option>
-            <?php endforeach; ?>
+            <option value="" <?= $filterType === ''?'selected':'' ?>>All</option>
+            <option value="stock_in" <?= $filterType === 'stock_in'?'selected':'' ?>>Stock-in</option>
+            <option value="stock_out" <?= $filterType === 'stock_out'?'selected':'' ?>>Stock-out</option>
+            <option value="distribution" <?= $filterType === 'distribution'?'selected':'' ?>>Distribution</option>
         </select></label>
-    <label>Recorded date<input class="form-control" type="date" name="date" value="<?= e($controller->queryValue('date')) ?>" /></label>
+    <label>Recorded date<input class="form-control" type="date" name="date" value="<?= e($filterDate) ?>" /></label>
     <button class="btn btn-outline-secondary">Search</button> <a href="<?= e(url('resources/views/admin/relief/movements.php')) ?>">Clear</a>
 </form>
 <div class="table-responsive" tabindex="0" role="region" aria-label="Scrollable records">

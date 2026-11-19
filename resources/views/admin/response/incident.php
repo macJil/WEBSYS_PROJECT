@@ -48,20 +48,26 @@ require __DIR__ . "/../../components/errors.php";
     <section class="border rounded p-3 mb-3">
         <h3><?= e($assignment['team_name']) ?></h3>
         <p><?= e($assignment['contact_phone']) ?> · <?= $assignment['is_active'] ? 'Active team' : 'Inactive team' ?> · Assignment: <?= e($assignment['status']) ?><br />Originally assigned by <?= e($assignment['assigned_by_name']) ?> at <?= e($assignment['assigned_at']) ?></p>
-        <?php if ($open): $retry = input('action') === 'update_assignment' && input('assignment_id') === (string)$assignment['id']; ?>
-        <form method="post">
-            <input type="hidden" name="assignment_id" value="<?= (int)$assignment['id'] ?>" />
-            <label>Status<select class="form-select" name="assignment_status">
-                    <?php foreach (ResponseController::STATUSES as $status): ?>
-                        <option value="<?= e($status) ?>" <?= ($retry ? input('assignment_status') : $assignment['status']) === $status ? 'selected' : '' ?>><?= e(str_replace('_', ' ', ucfirst($status))) ?></option>
-                    <?php endforeach; ?>
-                </select></label>
-            <label class="d-block my-2">Action taken<textarea class="form-control" name="notes" maxlength="2000" required>
-<?= $retry ? e(input('notes')) : '' ?></textarea> </label>
-            <button class="btn btn-primary" name="action" value="update_assignment">Save team and incident status</button>
-        </form>
-    <?php endif; ?>
-</section>
+        <?php
+        $retry = input('action') === 'update_assignment' && input('assignment_id') === (string) $assignment['id'];
+        $selectedStatus = $retry ? input('assignment_status') : $assignment['status'];
+        $notes = $retry ? input('notes') : '';
+        ?>
+        <?php if ($open): ?>
+            <form method="post">
+                <input type="hidden" name="assignment_id" value="<?= (int)$assignment['id'] ?>" />
+                <label>Status<select class="form-select" name="assignment_status">
+                        <option value="assigned" <?= $selectedStatus === 'assigned' ? 'selected' : '' ?>>Assigned</option>
+                        <option value="on_scene" <?= $selectedStatus === 'on_scene' ? 'selected' : '' ?>>On scene</option>
+                        <option value="completed" <?= $selectedStatus === 'completed' ? 'selected' : '' ?>>Completed</option>
+                        <option value="cancelled" <?= $selectedStatus === 'cancelled' ? 'selected' : '' ?>>Cancelled</option>
+                    </select></label>
+                <label class="d-block my-2">Action taken<textarea class="form-control" name="notes" maxlength="2000" required>
+<?= e($notes) ?></textarea> </label>
+                <button class="btn btn-primary" name="action" value="update_assignment">Save team and incident status</button>
+            </form>
+        <?php endif; ?>
+    </section>
 <?php endforeach; ?>
 <h2>Response and review history</h2>
 <?php if (!$history): ?>

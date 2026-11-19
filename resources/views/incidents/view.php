@@ -16,16 +16,33 @@ if ($admin && isPost() && input("action") === "update_location") {
 }
 $images = $controller->images($id);
 $history = $admin ? $controller->history($id) : [];
+$reviewStatus = input('action') === 'review_incident' ? input('status') : $report['status'];
 $pageTitle = "Incident #" . $id;
 require __DIR__ . "/../components/header.php";
 require __DIR__ . "/../components/errors.php";
 ?>
 <h1><?= e($pageTitle) ?></h1>
 <dl>
-    <?php foreach (['incident_type' => 'Type','status' => 'Status','description' => 'Description','reporter_name' => 'Reporter/contact name','contact_phone' => 'Contact number','location_description' => 'Location','latitude' => 'Latitude','longitude' => 'Longitude','report_source' => 'Received through','created_at' => 'Submitted'] as $key => $label): ?>
-        <dt><?= e($label) ?></dt>
-        <dd class="preserve-text"><?= e($report[$key] ?? 'Not recorded') ?></dd>
-    <?php endforeach; ?>
+    <dt>Type</dt>
+    <dd class="preserve-text"><?= e($report['incident_type'] ?? 'Not recorded') ?></dd>
+    <dt>Status</dt>
+    <dd class="preserve-text"><?= e($report['status'] ?? 'Not recorded') ?></dd>
+    <dt>Description</dt>
+    <dd class="preserve-text"><?= e($report['description'] ?? 'Not recorded') ?></dd>
+    <dt>Reporter/contact name</dt>
+    <dd class="preserve-text"><?= e($report['reporter_name'] ?? 'Not recorded') ?></dd>
+    <dt>Contact number</dt>
+    <dd class="preserve-text"><?= e($report['contact_phone'] ?? 'Not recorded') ?></dd>
+    <dt>Location</dt>
+    <dd class="preserve-text"><?= e($report['location_description'] ?? 'Not recorded') ?></dd>
+    <dt>Latitude</dt>
+    <dd class="preserve-text"><?= e($report['latitude'] ?? 'Not recorded') ?></dd>
+    <dt>Longitude</dt>
+    <dd class="preserve-text"><?= e($report['longitude'] ?? 'Not recorded') ?></dd>
+    <dt>Received through</dt>
+    <dd class="preserve-text"><?= e($report['report_source'] ?? 'Not recorded') ?></dd>
+    <dt>Submitted</dt>
+    <dd class="preserve-text"><?= e($report['created_at'] ?? 'Not recorded') ?></dd>
 </dl>
 <?php if (!hasMapPoint($report)): ?>
     <p>No map point. This report remains available in lists and totals.</p>
@@ -69,9 +86,11 @@ require __DIR__ . "/../components/errors.php";
     <p>Verify before assigning teams. Active assignments keep the incident responding. Once teams are assigned, update their status through Manage response teams and actions. Completing every assignment resolves the incident automatically; cancelled work does not count as completed.</p>
     <form method="post">
         <label>Status <select class="form-select" name="status">
-                <?php foreach (ReportController::STATUSES as $status): ?>
-                    <option value="<?= e($status) ?>" <?= (isPost() && input('action') === 'review_incident' ? input('status') : $report['status']) === $status ? 'selected' : '' ?>><?= e(ucfirst($status)) ?></option>
-                <?php endforeach; ?>
+                <option value="pending" <?= $reviewStatus === 'pending' ? 'selected' : '' ?>>Pending</option>
+                <option value="verified" <?= $reviewStatus === 'verified' ? 'selected' : '' ?>>Verified</option>
+                <option value="responding" <?= $reviewStatus === 'responding' ? 'selected' : '' ?>>Responding</option>
+                <option value="resolved" <?= $reviewStatus === 'resolved' ? 'selected' : '' ?>>Resolved</option>
+                <option value="rejected" <?= $reviewStatus === 'rejected' ? 'selected' : '' ?>>Rejected</option>
             </select></label>
         <label class="d-block my-3">Review notes / action taken<textarea class="form-control" name="notes" maxlength="255" required >
 <?= e(input('notes')) ?></textarea> </label>

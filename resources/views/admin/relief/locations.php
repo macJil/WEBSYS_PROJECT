@@ -34,13 +34,16 @@ require __DIR__ . "/../../components/errors.php";
 </ul>
 <h2><?= $id?'Edit':'Add' ?> location</h2>
 <form method="post">
-    <?php foreach (['name' => 'Name','address_details' => 'Address / landmark'] as $k => $label): ?>
-        <label class="d-block mb-3"><?= e($label) ?><input class="form-control" name="<?= e($k) ?>" value="<?= e($d[$k]) ?>" required /></label>
-    <?php endforeach; ?>
+    <label class="d-block mb-3">Name
+        <input class="form-control" name="name" value="<?= e($d['name']) ?>" required />
+    </label>
+    <label class="d-block mb-3">Address / landmark
+        <input class="form-control" name="address_details" value="<?= e($d['address_details']) ?>" required />
+    </label>
     <label>Type<select name="location_type">
-            <?php foreach (['storage','distribution','both'] as $type): ?>
-                <option <?= $d['location_type'] === $type?'selected':'' ?>><?= e($type) ?></option>
-            <?php endforeach; ?>
+            <option <?= $d['location_type'] === 'storage'?'selected':'' ?>>storage</option>
+            <option <?= $d['location_type'] === 'distribution'?'selected':'' ?>>distribution</option>
+            <option <?= $d['location_type'] === 'both'?'selected':'' ?>>both</option>
         </select></label>
     <?php
     $point = $d;

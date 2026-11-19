@@ -6,6 +6,9 @@ $announcements = $controller->listAnnouncements();
 $pageTitle = "Manage announcements";
 require __DIR__ . "/../../components/header.php";
 require __DIR__ . "/../../components/errors.php";
+$filterQ = $controller->queryValue('q');
+$filterStatus = $controller->queryValue('status');
+$filterDate = $controller->queryValue('date');
 ?>
 <p class="return-link no-print"><a class="btn btn-outline-secondary" href="<?= e(url(dashboardPath())) ?>">Back to dashboard</a></p>
 <h1>Emergency announcements</h1>
@@ -18,13 +21,13 @@ require __DIR__ . "/editor.php";
 ?>
 <h2 class="mt-4">Announcement history</h2>
 <form method="get" class="filter-form mb-3">
-    <label>Title contains <input name="q" value="<?= e($controller->queryValue('q')) ?>" /></label>
+    <label>Title contains <input name="q" value="<?= e($filterQ) ?>" /></label>
     <label>Status <select name="status">
-            <?php foreach (['' => 'All','draft' => 'Draft / withdrawn','published' => 'Published'] as $key => $label): ?>
-                <option value="<?= e($key) ?>" <?= $controller->queryValue('status') === $key?'selected':'' ?>><?= e($label) ?></option>
-            <?php endforeach; ?>
+            <option value="" <?= $filterStatus === ''?'selected':'' ?>>All</option>
+            <option value="draft" <?= $filterStatus === 'draft'?'selected':'' ?>>Draft / withdrawn</option>
+            <option value="published" <?= $filterStatus === 'published'?'selected':'' ?>>Published</option>
         </select></label>
-    <label>Created date <input type="date" name="date" value="<?= e($controller->queryValue('date')) ?>" /></label>
+    <label>Created date <input type="date" name="date" value="<?= e($filterDate) ?>" /></label>
     <button class="btn btn-outline-secondary">Search</button> <a href="<?= e(url('resources/views/admin/announcement/announcement.php')) ?>">Clear</a>
 </form>
 <div class="table-responsive" tabindex="0" role="region" aria-label="Scrollable records">

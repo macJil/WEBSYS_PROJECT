@@ -17,20 +17,46 @@ require __DIR__ . "/../components/errors.php";
 <form method="post" enctype="multipart/form-data">
     <?php if ($_SESSION['ROLE'] === 'admin'): ?>
         <label class="d-block mb-3">Report received through <select name="report_source" class="form-select" required>
-                <?php foreach (['walk_in' => 'In person','phone' => 'Phone','admin' => 'Staff observation'] as $value => $label): ?>
-                    <option value="<?= e($value) ?>" <?= $data['report_source'] === $value ? 'selected' : '' ?>><?= e($label) ?></option>
-                <?php endforeach; ?>
+                <option value="walk_in" <?= $data['report_source'] === 'walk_in' ? 'selected' : '' ?>>In person</option>
+                <option value="phone" <?= $data['report_source'] === 'phone' ? 'selected' : '' ?>>Phone</option>
+                <option value="admin" <?= $data['report_source'] === 'admin' ? 'selected' : '' ?>>Staff observation</option>
             </select></label>
     <?php endif; ?>
     <label class="d-block mb-3">Incident type <select name="incident_type" class="form-select" required>
             <option value="">Choose type</option>
-            <?php foreach (ReportController::TYPES as $value => $label): ?>
-                <option value="<?= e($value) ?>" <?= $data['incident_type'] === $value ? 'selected' : '' ?>><?= e($label) ?></option>
-            <?php endforeach; ?>
+            <option value="flood" <?= $data['incident_type'] === 'flood' ? 'selected' : '' ?>>Flooding</option>
+            <option value="fire" <?= $data['incident_type'] === 'fire' ? 'selected' : '' ?>>Fire</option>
+            <option value="landslide" <?= $data['incident_type'] === 'landslide' ? 'selected' : '' ?>>Landslide</option>
+            <option value="road_obstruction" <?= $data['incident_type'] === 'road_obstruction' ? 'selected' : '' ?>>Road obstruction</option>
+            <option value="other" <?= $data['incident_type'] === 'other' ? 'selected' : '' ?>>Other emergency</option>
         </select></label>
-    <?php foreach (['reporter_name' => ['Reporter/contact name',100], 'contact_phone' => ['Contact number',20], 'location_description' => ['Location description / purok / nearby landmark',255]] as $key => $field): ?>
-        <label class="d-block mb-3"><?= e($field[0]) ?><input class="form-control" name="<?= e($key) ?>" maxlength="<?= $field[1] ?>" value="<?= e($data[$key]) ?>" required /></label>
-    <?php endforeach; ?>
+    <label class="d-block mb-3">Reporter/contact name
+        <input
+            class="form-control"
+            name="reporter_name"
+            maxlength="100"
+            value="<?= e($data['reporter_name']) ?>"
+            required
+        />
+    </label>
+    <label class="d-block mb-3">Contact number
+        <input
+            class="form-control"
+            name="contact_phone"
+            maxlength="20"
+            value="<?= e($data['contact_phone']) ?>"
+            required
+        />
+    </label>
+    <label class="d-block mb-3">Location description / purok / nearby landmark
+        <input
+            class="form-control"
+            name="location_description"
+            maxlength="255"
+            value="<?= e($data['location_description']) ?>"
+            required
+        />
+    </label>
     <label class="d-block mb-3">Describe what happened<textarea class="form-control" name="description" maxlength="10000" required >
 <?= e($data['description']) ?></textarea> </label>
     <?php
