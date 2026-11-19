@@ -57,9 +57,9 @@ with tempfile.TemporaryDirectory(prefix='bayanready-address-') as temporary:
         password_hash = subprocess.check_output([PHP, '-r', "echo password_hash('DemoPass123!', PASSWORD_DEFAULT);"]).decode()
         query("INSERT INTO users(full_name,username,email,password,role) VALUES " +
               ','.join("('Fictional " + role + "','" + role + "','" + role + "@example.invalid','" + password_hash + "','" + role + "')" for role in ['admin', 'resident']))
-        config = (ROOT / 'config/config.example.php').read_text().replace("'base_url' => '/WEBSYS_PROJECT'", "'base_url' => ''")
-        config = config.replace("'host' => '127.0.0.1'", "'host' => 'localhost'").replace("'database' => 'barangay_drrm'", "'database' => '" + DB_NAME + "'").replace("'password' => ''", "'password' => 'root'")
-        config = config.replace("'incident_upload_dir' => ''", "'incident_upload_dir' => '" + str(folder / 'images') + "'")
+        config = (ROOT / 'config/config.example.php').read_text().replace("const BASE_URL = '/WEBSYS_PROJECT'", "const BASE_URL = ''")
+        config = config.replace("const DB_HOST = '127.0.0.1'", "const DB_HOST = 'localhost'").replace("const DB_NAME = 'barangay_drrm'", "const DB_NAME = '" + DB_NAME + "'").replace("const DB_PASSWORD = ''", "const DB_PASSWORD = 'root'")
+        config = config.replace("const INCIDENT_UPLOAD_DIR = ''", "const INCIDENT_UPLOAD_DIR = '" + str(folder / 'images') + "'")
         (site / 'config/config.php').write_text(config)
         with socket.socket() as listener:
             listener.bind(('127.0.0.1', 0))

@@ -5,8 +5,8 @@ if (!is_file(__DIR__ . '/../config/config.php')) {
         'Setup required: copy config/config.example.php to config/config.php and enter your local settings.'
     );
 }
-$settings = require __DIR__ . '/../config/config.php';
-define('BASE_URL', rtrim($settings['base_url'], '/'));
+require_once __DIR__ . '/../config/config.php';
+
 
 if (session_status() !== PHP_SESSION_ACTIVE) {
     ini_set('session.use_strict_mode', '1');
@@ -19,7 +19,7 @@ function e($value): string
 }
 function url(string $path): string
 {
-    return BASE_URL . '/' . ltrim($path, '/');
+    return rtrim(BASE_URL, '/') . '/' . ltrim($path, '/');
 }
 function redirect(string $path): void
 {

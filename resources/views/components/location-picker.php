@@ -3,10 +3,10 @@ require_once __DIR__ . "/../../../app/helpers.php";
 session_checker();
 $point = $point ?? [];
 ?>
-<fieldset class="location-picker mb-3" data-address-url="<?= e(($settings['address_lookup_url'] ?? 'enabled') === '' ? '' : url('resources/views/maps/address.php')) ?>">
+<fieldset class="location-picker mb-3" data-address-url="<?= e((ADDRESS_LOOKUP_URL) === '' ? '' : url('resources/views/maps/address.php')) ?>">
     <legend>Location point (optional)</legend>
     <p>Confirm the written address or landmark above. A point does not assess hazard risk.</p>
-    <?php if (($settings['address_lookup_url'] ?? 'https://photon.komoot.io/reverse') !== ''): ?>
+    <?php if ((ADDRESS_LOOKUP_URL) !== ''): ?>
         <p class="small">Selecting or moving a pin, or using current location, sends the selected coordinates to <a href="https://photon.komoot.io/">Photon</a> for an address suggestion. Address data: <a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</a>. Nearby place names may be approximate; correct the address before saving.</p>
     <?php endif; ?>
     <p data-address-status role="status" class="small"></p>
@@ -15,7 +15,7 @@ $point = $point ?? [];
     <?php endforeach; ?>
     <button type="button" class="btn btn-outline-secondary my-2" data-locate>Use my current location</button>
     <button type="button" class="btn btn-outline-secondary" data-clear>Clear pin</button>
-    <div data-picker-map data-lat="<?= e($settings['map_latitude']) ?>" data-lng="<?= e($settings['map_longitude']) ?>" data-zoom="<?= e($settings['map_zoom']) ?>" data-min-zoom="<?= e($settings['map_min_zoom']) ?>">
+    <div data-picker-map data-lat="<?= e(MAP_LATITUDE) ?>" data-lng="<?= e(MAP_LONGITUDE) ?>" data-zoom="<?= e(MAP_ZOOM) ?>" data-min-zoom="<?= e(MAP_MIN_ZOOM) ?>">
     </div>
     <p data-picker-availability class="small" role="status">The map background needs internet. Written location and coordinate fields remain available.</p>
     <noscript>JavaScript is needed for map selection. You can still type the location and coordinates.</noscript>

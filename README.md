@@ -93,7 +93,7 @@ BayanReady Phase 5: [shared visual system and map verification](docs/BAYANREADY_
 
 - [Phase 7 acceptance and issue log](docs/BAYANREADY_PHASE_7_ACCEPTANCE.md)
 
-Configuration now uses one ignored `config/config.php` array. Existing teammates should transfer their previous local values using [the configuration migration guide](docs/simplification/PHASE_3_CONFIGURATION.md). Check a clean setup with `python3 tests/simplification_config.py`.
+Local settings use PHP constants. For a fresh installation copy `config/config.example.php` to `config/config.php`. For an upgrade, keep a private backup of the old array and transfer its values to the matching constants in a fresh copy. Set DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD, BASE_URL and a writable private INCIDENT_UPLOAD_DIR outside the web root. BASE_URL is the installation path without a trailing slash, or an empty string at the root. Keep the location and map values appropriate for your installation. An empty ADDRESS_LOOKUP_URL disables suggestions. Check setup with `python3 tests/simplification_config.py`.
 
 Database simplification: fresh installs use 17 tables; existing databases can retain the unused settings table. See the [database review and optional upgrade steps](docs/simplification/PHASE_6_DATABASE_REVIEW.md) before removing any existing table.
 

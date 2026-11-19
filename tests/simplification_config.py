@@ -17,7 +17,7 @@ with tempfile.TemporaryDirectory(prefix='bayanready-config-') as tmp:
         assert 'Setup required:' in r.stdout and 'Warning:' not in r.stdout and 'Fatal error:' not in r.stdout,r
     print('PASS missing config produces controlled setup message for pages and database')
     shutil.copyfile(copy/'config/config.example.php',copy/'config/config.php')
-    r=run(copy,"$s=require 'config/config.php'; if(!is_array($s)||!isset($s['host'],$s['database'],$s['base_url']))exit(1);")
+    r=run(copy,"require_once 'config/config.php'; require_once 'config/config.php'; if(!defined('DB_HOST') || !defined('DB_NAME') || !defined('BASE_URL'))exit(1);")
     assert r.returncode==0,r.stderr
     r=run(copy,"$_SERVER['REQUEST_METHOD']='GET'; require 'index.php';")
     assert r.returncode==0 and 'BayanReady' in r.stdout and 'Register as a resident' in r.stdout and 'Warning:' not in r.stdout,r.stderr

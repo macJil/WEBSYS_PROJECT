@@ -8,7 +8,7 @@ require __DIR__ . "/../components/header.php";
 ?>
 <div class="page-intro">
     <p class="eyebrow">Your community overview</p>
-    <h1><?= e($settings['app_name']) ?> — staff dashboard</h1>
+    <h1><?= e(APP_NAME) ?> — staff dashboard</h1>
     <p>A current overview of incidents, evacuation, and relief.</p>
 </div>
 <?php

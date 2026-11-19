@@ -11,13 +11,18 @@ function db(): PDO
                 'Setup required: copy config/config.example.php to config/config.php and enter your local settings.'
             );
         }
-        $settings = require __DIR__ . '/config.php';
-        $dsn = "mysql:host={$settings['host']};port={$settings['port']};dbname={$settings['database']};charset=utf8mb4";
-        $databaseConnection = new PDO($dsn, $settings['username'], $settings['password'], [
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-            PDO::ATTR_EMULATE_PREPARES => false,
-        ]);
+        require_once __DIR__ . '/config.php';
+        $dsn = 'mysql:host=' . DB_HOST . ';port=' . DB_PORT . ';dbname=' . DB_NAME . ';charset=utf8mb4';
+        try {
+            $databaseConnection = new PDO($dsn, DB_USER, DB_PASSWORD, [
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                PDO::ATTR_EMULATE_PREPARES => false,
+            ]);
+        } catch (PDOException $error) {
+            http_response_code(503);
+            exit('Database unavailable. Check your local database service and connection settings.');
+        }
     }
     return $databaseConnection;
 }

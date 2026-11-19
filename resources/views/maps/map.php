@@ -10,7 +10,7 @@ require __DIR__ . "/../components/header.php";
 <link rel="stylesheet" href="<?= e(url('resources/assets/vendor/leaflet/leaflet.css')) ?>" />
 <p class="return-link no-print"><a class="btn btn-outline-secondary" href="<?= e(url(dashboardPath())) ?>">Back to dashboard</a></p>
 <h1><?= $admin?'Staff map':'Community map' ?></h1>
-<p><?= e($settings['demo_barangay_name']) ?>. Markers show saved locations; they do not predict danger or guarantee safety. The map opens focused on Atok; you can pan to review other saved points. No approved boundary is enforced.</p>
+<p><?= e(DEMO_BARANGAY_NAME) ?>. Markers show saved locations; they do not predict danger or guarantee safety. The map opens focused on Atok; you can pan to review other saved points. No approved boundary is enforced.</p>
 <p>Verified incidents, open centers, and distribution points with saved coordinates appear automatically. Pending reports and household records stay off this map.</p>
 <div class="map-layout">
     <aside class="map-key border rounded p-3" aria-label="Map layers and legend">
@@ -33,7 +33,7 @@ require __DIR__ . "/../components/header.php";
     </aside>
     <div>
         <p class="map-status" id="community-map-status" role="status" aria-live="polite">Loading saved locations…</p>
-        <div id="community-map" data-admin="<?= $admin?'1':'0' ?>" data-url="<?= e(url('resources/views/maps/data.php')) ?>" data-base="<?= e(BASE_URL) ?>" data-lat="<?= e($settings['map_latitude']) ?>" data-lng="<?= e($settings['map_longitude']) ?>" data-zoom="<?= e($settings['map_zoom']) ?>" data-min-zoom="<?= e($settings['map_min_zoom']) ?>">
+        <div id="community-map" data-admin="<?= $admin?'1':'0' ?>" data-url="<?= e(url('resources/views/maps/data.php')) ?>" data-base="<?= e(BASE_URL) ?>" data-lat="<?= e(MAP_LATITUDE) ?>" data-lng="<?= e(MAP_LONGITUDE) ?>" data-zoom="<?= e(MAP_ZOOM) ?>" data-min-zoom="<?= e(MAP_MIN_ZOOM) ?>">
         </div>
         <p id="community-tile-status" role="status" class="small">Map tiles require internet. The background map does not confirm the accuracy of a reported point.</p>
         <noscript>Enable JavaScript to explore this map. Your regular record pages remain available through navigation.</noscript>

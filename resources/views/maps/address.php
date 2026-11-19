@@ -27,7 +27,11 @@ if (count($recent) >= 10) {
 $recent[] = $now;
 $_SESSION['address_requests'] = $recent;
 session_write_close();
-$url = 'https://photon.komoot.io/reverse?' . http_build_query(['lat' => $lat, 'lon' => $lng, 'limit' => 1]);
+if (ADDRESS_LOOKUP_URL === '') {
+    http_response_code(503);
+    exit(json_encode(['error' => 'Address suggestions are disabled.']));
+}
+$url = ADDRESS_LOOKUP_URL . '?' . http_build_query(['lat' => $lat, 'lon' => $lng, 'limit' => 1]);
 $curl = curl_init($url);
 curl_setopt_array($curl, [CURLOPT_RETURNTRANSFER => true, CURLOPT_CONNECTTIMEOUT => 3, CURLOPT_TIMEOUT => 7]);
 $body = curl_exec($curl);
