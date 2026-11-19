@@ -50,6 +50,6 @@ The [reviewed cleanup checklist](CLEANUP.md) covers the fixed forms, helper call
 
 ## Dashboard priorities and counts
 
-The team’s provisional staff order is pending, verified and responding incidents, active evacuees, available capacity, open centers, affected households, then municipal inventory items. Staff confirmation of the order and instructor clarification on low-stock alerts are pending. The inventory card counts active catalog items, including zero-stock items. Stock quantities are listed per good and unit on its linked page.
+The team’s provisional staff order is pending, verified and responding incidents, active evacuees, available capacity, open centers, affected households, then municipal inventory items. The client emphasized having a dashboard and did not specify a card order. The order above is the team’s working choice. Instructor clarification on low-stock alerts is pending. The inventory card counts active catalog items, including zero-stock items. Stock quantities are listed per good and unit on its linked page.
 
 The barangay filter uses the incident location, registered household location or evacuation center location according to the card. All barangays includes records awaiting identification. A missing map point does not exclude a center. Active evacuees have a stay without checkout. Available capacity sums remaining places across open, non-archived centers. Incident cards link to matching status and barangay filters. Resident incident counts use the signed-in account. Reload or apply the filter to refresh the figures.
