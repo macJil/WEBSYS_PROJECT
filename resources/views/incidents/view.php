@@ -32,6 +32,8 @@ require __DIR__ . "/../components/errors.php";
     <dd class="preserve-text"><?= e($report['description'] ?? 'Not recorded') ?></dd>
     <dt>Reporter/contact name</dt>
     <dd class="preserve-text"><?= e($report['reporter_name'] ?? 'Not recorded') ?></dd>
+    <dt>Contact email</dt>
+    <dd><?= e($report['reporter_email'] ?? 'Not recorded') ?></dd>
     <dt>Contact number</dt>
     <dd class="preserve-text"><?= e($report['contact_phone'] ?? 'Not recorded') ?></dd>
     <dt>Location</dt>

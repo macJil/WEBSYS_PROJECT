@@ -82,6 +82,7 @@ CREATE TABLE incident_reports (
   reported_by INT UNSIGNED NOT NULL,
   report_source ENUM('resident','walk_in','phone','admin') NOT NULL DEFAULT 'resident',
   reporter_name VARCHAR(100) NULL,
+  reporter_email VARCHAR(254) NULL,
   occurred_at DATETIME NULL,
   incident_type ENUM('landslide','flood','fire','road_obstruction','other') NOT NULL,
   description TEXT NOT NULL,

@@ -82,7 +82,7 @@ class ReportController extends Controller
         return $this->model->history($id);
     }
 
-    public function values(): array
+    public function values(bool $assisted): array
     {
         $data = [];
         foreach (
@@ -90,6 +90,7 @@ class ReportController extends Controller
                 'incident_type',
                 'description',
                 'reporter_name',
+                'reporter_email',
                 'contact_phone',
                 'location_description',
                 'latitude',
@@ -99,6 +100,17 @@ class ReportController extends Controller
             as $key
         ) {
             $data[$key] = input($key);
+        }
+        if (!isPost()) {
+            if ($assisted) {
+                $data['report_source'] = 'walk_in';
+            } else {
+                $contact = $this->model->accountContact((int) $_SESSION['ID']);
+                $data['reporter_name'] = $contact['full_name'];
+                $data['reporter_email'] = $contact['email'];
+                $data['contact_phone'] = $contact['phone'] ?? '';
+                $data['report_source'] = 'admin';
+            }
         }
         return $data;
     }
@@ -172,7 +184,7 @@ class ReportController extends Controller
         ];
     }
 
-    public function create(array $data): array
+    public function create(array $data, bool $assisted): array
     {
         if (!isPost()) {
             return [];
@@ -214,13 +226,18 @@ class ReportController extends Controller
             $errors[] = 'Provide both coordinates, or leave both blank.';
         }
         $admin = $_SESSION['ROLE'] === 'admin';
-        if ($admin && !in_array($data['report_source'], ['walk_in', 'phone', 'admin'], true)) {
+        if ($data['reporter_email'] !== '' &&
+            (strlen($data['reporter_email']) > 254 || !filter_var($data['reporter_email'], FILTER_VALIDATE_EMAIL))) {
+            $errors[] = 'Enter a valid contact email or leave it blank.';
+        }
+        $data['reporter_email'] = $data['reporter_email'] === '' ? null : $data['reporter_email'];
+        if ($admin && $assisted && !in_array($data['report_source'], ['walk_in', 'phone'], true)) {
             $errors[] = 'Choose how the report was received.';
         }
         if ($errors) {
             return $errors;
         }
-        $data['report_source'] = $admin ? $data['report_source'] : 'resident';
+        $data['report_source'] = $admin ? ($assisted ? $data['report_source'] : 'admin') : 'resident';
         foreach (['latitude', 'longitude'] as $key) {
             $data[$key] = $data[$key] === '' ? null : $data[$key];
         }

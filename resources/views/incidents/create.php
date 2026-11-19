@@ -2,11 +2,10 @@
 require_once __DIR__ . "/../../../app/controllers/ReportController.php";
 session_checker();
 $controller = new ReportController($_SESSION["ROLE"]);
-$data = $controller->values();
-if (!isPost()) {
-    $data["reporter_name"] = $_SESSION["FULL_NAME"] ?? "";
-}
-$errors = $controller->create($data);
+$staff = $_SESSION['ROLE'] === 'admin';
+$assisted = $staff && ($_GET['intake'] ?? '') === 'assisted';
+$data = $controller->values($assisted);
+$errors = $controller->create($data, $assisted);
 $pageTitle = "Report incident";
 require __DIR__ . "/../components/header.php";
 require __DIR__ . "/../components/errors.php";
@@ -14,17 +13,21 @@ require __DIR__ . "/../components/errors.php";
 <p class="return-link no-print"><a class="btn btn-outline-secondary" href="<?= e(url('resources/views/incidents/list.php')) ?>">Back to reports</a></p>
 <h1>Report an incident</h1>
 <p>Reports are reviewed by barangay staff. This website does not guarantee an immediate emergency response.</p>
+<?php if ($staff): ?>
+    <p><a class="btn btn-outline-secondary" href="<?= $assisted ? 'create.php' : '?intake=assisted' ?>">
+        <?= $assisted ? 'Start a staff observation' : 'Start a report on behalf of another person' ?>
+    </a></p>
+<?php endif; ?>
 <form method="post" enctype="multipart/form-data">
     <?php
     $barangayPrompt = 'Awaiting confirmation';
     $selectedBarangay = isPost() ? input('barangay') : ($data['barangay'] ?? '');
     require __DIR__ . '/../components/barangay.php';
     ?>
-    <?php if ($_SESSION['ROLE'] === 'admin'): ?>
+    <?php if ($assisted): ?>
         <label class="d-block mb-3">Report received through <select name="report_source" class="form-select" required>
                 <option value="walk_in" <?= $data['report_source'] === 'walk_in' ? 'selected' : '' ?>>In person</option>
                 <option value="phone" <?= $data['report_source'] === 'phone' ? 'selected' : '' ?>>Phone</option>
-                <option value="admin" <?= $data['report_source'] === 'admin' ? 'selected' : '' ?>>Staff observation</option>
             </select></label>
     <?php endif; ?>
     <label class="d-block mb-3">Incident type <select name="incident_type" class="form-select" required>
@@ -43,6 +46,10 @@ require __DIR__ . "/../components/errors.php";
             value="<?= e($data['reporter_name']) ?>"
             required
         />
+    </label>
+    <label class="d-block mb-3">Contact email (optional)
+        <input class="form-control" type="email" name="reporter_email" maxlength="254"
+            value="<?= e($data['reporter_email']) ?>" />
     </label>
     <label class="d-block mb-3">Contact number
         <input

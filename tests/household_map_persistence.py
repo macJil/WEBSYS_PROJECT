@@ -199,6 +199,34 @@ with tempfile.TemporaryDirectory(prefix='bayanready-address-') as temporary:
         check_upload(resident, admin, Client, query, base, prefix)
         from response_history import check_response_history
         check_response_history(admin, resident, Client, query, prefix)
+        from simple_actions import Controls
+        def contact_fields(client, page, values=None):
+            code, body = client.request(prefix + page, values)
+            assert code == 200
+            controls = Controls()
+            controls.feed(body)
+            return [controls.inputs[k] for k in ('reporter_name', 'reporter_email', 'contact_phone')]
+        form = 'incidents/create.php'
+        assisted = form + '?intake=assisted'
+        assert contact_fields(resident, form) == ['Fictional resident', 'resident@example.invalid', '']
+        query("UPDATE users SET phone='0001112222' WHERE username='admin'")
+        assert contact_fields(admin, form) == ['Fictional admin', 'admin@example.invalid', '0001112222']
+        assert contact_fields(admin, assisted) == ['', '', '']
+        values = dict(action='create_incident', incident_type='other', description='Fictional intake',
+                      location_description='Fictional hall', reporter_name='Fictional Caller',
+                      contact_phone='0003334444', reporter_email='invalid', report_source='phone',
+                      reported_by='999999')
+        assert contact_fields(admin, assisted, values) == ['Fictional Caller', 'invalid', '0003334444']
+        values['reporter_email'] = 'caller@example.invalid'
+        for client, page, owner, source in [(admin, assisted, 'admin', 'phone'), (resident, assisted, 'resident', 'resident')]:
+            code, body = client.request(prefix + page, values)
+            assert code == 200 and 'caller@example.invalid' in body
+            row = query("SELECT r.*, u.username FROM incident_reports r JOIN users u ON u.id=r.reported_by ORDER BY r.id DESC LIMIT 1")[0]
+            assert (row['username'], row['report_source']) == (owner, source)
+            assert [row[k] for k in ('reporter_name','reporter_email','contact_phone')] == ['Fictional Caller','caller@example.invalid','0003334444']
+            if owner == 'admin':
+                assert resident.request(prefix + 'incidents/view.php?id=' + str(row['id']))[0] == 404
+        print('PASS reporter prefilling, blank assisted intake, validation retries, contact snapshots and session ownership')
         if os.environ.get('TEST_BROWSER_PAUSE') == '1':
             Path('/tmp/bayanready-actions-preview.txt').write_text(base)
             print('Fictional browser preview:', base, flush=True)

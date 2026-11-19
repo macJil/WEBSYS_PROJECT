@@ -77,6 +77,18 @@ class ReportModel
         return $stmt->fetchAll();
     }
 
+    public function accountContact(int $id): array
+    {
+        $stmt = $this->pdo->prepare('SELECT full_name, email, phone FROM users WHERE id=?');
+        $stmt->execute([$id]);
+        $account = $stmt->fetch();
+        if (!$account) {
+            http_response_code(403);
+            exit('Please sign in again.');
+        }
+        return $account;
+    }
+
     public function create(array $data, ?array $image): int
     {
         $this->pdo->beginTransaction();
