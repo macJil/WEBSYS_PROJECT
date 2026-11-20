@@ -1,20 +1,20 @@
 [
   {
-    "member": 1,
+    "member": 2,
     "file": "index.php",
     "start": 29,
     "end": 39,
     "sha256": "2e23e88f13b9dea02ce8dc70b1722ef8f0afbcb7e1b1084b26e6f19638840115"
   },
   {
-    "member": 1,
+    "member": 2,
     "file": "app/controllers/UserController.php",
     "start": 68,
     "end": 86,
     "sha256": "d3e1193d4e9614f132bde79e236851de00fb666e43f9c005c0dce545e336325c"
   },
   {
-    "member": 1,
+    "member": 2,
     "file": "app/models/User.php",
     "start": 11,
     "end": 16,

@@ -8,6 +8,8 @@ The remaining earlier decks, scripts and research files describe the previous fi
 
 ## Rehearsal record · 19 November 2026
 
-The technical run exercised the fictional staff and resident sessions, household selection and arrivals, status changes, relief transactions, dashboards, shared map and browser printing. The script was read using an offline synthetic voice in 10:54. The remaining 19:06 of the 30-minute schedule is available for visible actions, code explanations at the editor and handoffs. These measurements are from separate technical and narration runs. An uninterrupted rehearsal with the nine speakers is pending.
+The previous technical run exercised the fictional staff and resident workflows. The revised stakeholder/database and MVC segments have been checked against the code and schema. The updated speaking schedule allocates 30 minutes including window switches, database inspection, live actions and code. A full nine-person timed rehearsal is pending.
 
 For the team run, start the clock with the first word, keep it running during window switches and stop before the first audience question. The reviewer for each speaker should record the actual handoff time from the script, one code decision the speaker explained unaided, and one adjustment. If a segment runs long, open the prepared result tab and proceed to the next speaker.
+
+The current split assigns stakeholder and database explanation to Member 1. Member 2 introduces MVC and demonstrates login plus the household registry. Members 3–9 retain their incident, response, evacuation, relief, announcement/weather, dashboard/print and map code sections.

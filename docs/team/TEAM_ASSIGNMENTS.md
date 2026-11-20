@@ -2,8 +2,8 @@
 
 | Member | Time | Feature and value to follow | Reviewer |
 |---|---|---|---|
-| 1 | 00:00–04:00 | Client evidence, MVC, account email → staff session | 2 |
-| 2 | 04:00–07:15 | Registry, member ID → household representative | 3 |
+| 1 | 00:00–04:00 | Stakeholder evidence and fictional database values | 2 |
+| 2 | 04:00–07:15 | MVC, login/session and household representative | 3 |
 | 3 | 07:15–10:45 | Incident, edited callback number → incident snapshot | 4 |
 | 4 | 10:45–14:00 | Response, second completed assignment → resolved incident | 5 |
 | 5 | 14:00–17:15 | Evacuation, two selected people → two active stays | 6 |

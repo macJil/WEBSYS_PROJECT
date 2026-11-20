@@ -4,8 +4,8 @@ Open the linked entry page, controller and model in adjacent editor tabs. Follow
 
 | Member | Time | Feature and value to follow | Reviewer |
 |---|---|---|---|
-| 1 | 00:00–04:00 | Client evidence, MVC, account email → staff session | 2 |
-| 2 | 04:00–07:15 | Registry, member ID → household representative | 3 |
+| 1 | 00:00–04:00 | Stakeholder evidence and fictional database values | 2 |
+| 2 | 04:00–07:15 | MVC, login/session and household representative | 3 |
 | 3 | 07:15–10:45 | Incident, edited callback number → incident snapshot | 4 |
 | 4 | 10:45–14:00 | Response, second completed assignment → resolved incident | 5 |
 | 5 | 14:00–17:15 | Evacuation, two selected people → two active stays | 6 |
@@ -14,15 +14,13 @@ Open the linked entry page, controller and model in adjacent editor tabs. Follow
 | 8 | 23:30–27:00 | Dashboard, selected barangay → count, drill-down and print | 9 |
 | 9 | 27:00–30:00 | Shared map, selected barangay → eligible marker; documentation | 1 |
 
-### 1. Sign in
+### 1. Stakeholder and database
 
-The form posts its action, email and password to the root page. UserController::handlePost reads them and calls UserModel::findByEmail. The model binds the email to a prepared query. The controller verifies the password hash and account state, regenerates the session ID, stores the account ID and role, and redirects to the corresponding home page. The guard on a staff page checks the session again. Show where this role originates. Public registration calls createResident. [Entry form](../../index.php) · [Controller](../../app/controllers/UserController.php) · [Model](../../app/models/User.php) · [Guards](../../app/helpers.php)
+Explain the visit, confirmed inputs and implemented status using the municipal interview record. Open fictional database rows and explain IDs, meaningful values and relationships. Study the [Member 1 database chapter](traces/member-1-database.md).
 
-[Study the code excerpts](traces/member-1-login.md)
+### 2. Explain MVC, sign in and choose the representative
 
-### 2. Choose the representative
-
-The household detail form sends select_representative and member_id. The controller obtains the household ID from the open record and validates the submitted member ID. HouseholdModel::selectRepresentative checks the household/member relationship and active status before updating the representative. The household_directory view joins the member name to the same household ID for labels used downstream. Show that replacing the representative leaves prior stays and distributions linked. [Form](../../resources/views/admin/household.php) · [Controller](../../app/controllers/HouseholdController.php) · [Model](../../app/models/Household.php) · [Directory definition](../../database/migrations/010_household_representative.sql)
+Start with root index.php → UserController::handlePost → UserModel::findByEmail → verified account session and dashboard redirect. Explain the procedural entry page and ordinary controller/model objects. Then trace the registry operation. The household detail form sends select_representative and member_id. The controller obtains the household ID from the open record and validates the submitted member ID. HouseholdModel::selectRepresentative checks the household/member relationship and active status before updating the representative. The household_directory view joins the member name to the same household ID for labels used downstream. Show that replacing the representative leaves prior stays and distributions linked. [Form](../../resources/views/admin/household.php) · [Controller](../../app/controllers/HouseholdController.php) · [Model](../../app/models/Household.php) · [Directory definition](../../database/migrations/010_household_representative.sql)
 
 [Study the code excerpts](traces/member-2-households.md)
 

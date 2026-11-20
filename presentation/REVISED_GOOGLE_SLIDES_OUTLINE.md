@@ -5,8 +5,8 @@
 | 1 | 1 | 00:00–00:35 | BayanReady for Atok |
 | 2 | 1 | 00:35–01:10 | The stakeholder visit |
 | 3 | 1 | 01:10–02:00 | What staff asked to see |
-| 4 | 1 | 02:00–04:00 | How a sign-in reaches the dashboard |
-| 5 | 2 | 04:00–07:15 | Identify a household by its representative |
+| 4 | 1 | 02:00–04:00 | Read the fictional database records |
+| 5 | 2 | 04:00–07:15 | MVC, login and household registry |
 | 6 | 3 | 07:15–10:45 | Submit an incident as a resident |
 | 7 | 4 | 10:45–14:00 | Keep response and incident status in step |
 | 8 | 5 | 14:00–17:15 | Count the people who actually arrive |

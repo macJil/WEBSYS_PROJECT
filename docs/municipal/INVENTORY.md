@@ -1,11 +1,11 @@
 # Municipal ownership inventory · application baseline f64d389
 
-Paths are repository-relative. Shared schema edits coordinate through Member 2. Member 8 owns dashboard queries and printing, with Member 3 reviewing incident disclosure. Member 9 coordinates integration checks.
+Paths are repository-relative. Member 1 presents the schema and stored data, and coordinates shared schema edits with the affected module owner. Member 2 owns login/session code and registry. Member 8 owns dashboard queries and printing, with Member 3 reviewing incident disclosure. Member 9 coordinates integration checks.
 
 |File|Primary|Reviewer|
 |---|---:|---:|
 | `app/controllers/AnnouncementController.php` | 7 | 8 |
-| `app/controllers/Controller.php` | 1 | 2 |
+| `app/controllers/Controller.php` | 2 | 3 |
 | `app/controllers/DashboardController.php` | 8 | 9 |
 | `app/controllers/DisasterSummaryController.php` | 8 | 9 |
 | `app/controllers/EvacuationController.php` | 5 | 6 |
@@ -17,9 +17,9 @@ Paths are repository-relative. Shared schema edits coordinate through Member 2. 
 | `app/controllers/ReliefLocationController.php` | 6 | 7 |
 | `app/controllers/ReportController.php` | 3 | 4 |
 | `app/controllers/ResponseController.php` | 4 | 5 |
-| `app/controllers/UserController.php` | 1 | 2 |
+| `app/controllers/UserController.php` | 2 | 3 |
 | `app/evacuation-capacity.php` | 5 | 6 |
-| `app/helpers.php` | 1 | 2 |
+| `app/helpers.php` | 2 | 3 |
 | `app/models/Announcement.php` | 7 | 8 |
 | `app/models/Dashboard.php` | 8 | 9 |
 | `app/models/DisasterSummary.php` | 8 | 9 |
@@ -32,10 +32,10 @@ Paths are repository-relative. Shared schema edits coordinate through Member 2. 
 | `app/models/ReliefLocation.php` | 6 | 7 |
 | `app/models/Report.php` | 3 | 4 |
 | `app/models/Response.php` | 4 | 5 |
-| `app/models/User.php` | 1 | 2 |
-| `barangay_drrm.sql` | 2 | 3 |
-| `config/config.example.php` | 1 | 2 |
-| `config/db.php` | 1 | 2 |
+| `app/models/User.php` | 2 | 3 |
+| `barangay_drrm.sql` | 1 | 2 |
+| `config/config.example.php` | 2 | 3 |
+| `config/db.php` | 2 | 3 |
 | `database/migrations/001_phase_2.sql` | 2 | 3 |
 | `database/migrations/002_phase_5.sql` | 2 | 3 |
 | `database/migrations/003_phase_7.sql` | 2 | 3 |
@@ -45,7 +45,7 @@ Paths are repository-relative. Shared schema edits coordinate through Member 2. 
 | `database/migrations/007_automatic_map.sql` | 9 | 1 |
 | `database/migrations/008_history_visibility.sql` | 9 | 1 |
 | `database/report_queries.sql` | 8 | 9 |
-| `index.php` | 1 | 2 |
+| `index.php` | 2 | 3 |
 | `resources/assets/css/bayanready.css` | 9 | 1 |
 | `resources/assets/css/disaster-summary.css` | 8 | 9 |
 | `resources/assets/js/community-map.js` | 9 | 1 |

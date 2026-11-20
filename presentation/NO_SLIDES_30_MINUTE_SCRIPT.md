@@ -25,17 +25,25 @@ During the visit we explained the eight modules and the staff approved them. Our
 
 Staff emphasized having a dashboard. They did not prescribe the order of the cards, so that arrangement is our team’s decision. They also asked for weather information for CAR and a way to print reports. Our revision gives staff a dashboard they can filter by barangay, a forecast for a stated point in Atok with links to official regional advisories, and two printable outputs. Paper size, headings and signatories still need the office’s direction. As we present, watch how one change on a form appears later in another member’s part.
 
-## 02:00–04:00 · Member 1 · How a sign-in reaches the dashboard
+## 02:00–04:00 · Member 1 · Read the fictional database records
 
-*Sign in as the fictional staff account. Show index.php, UserController::handlePost and UserModel::findByEmail. Leave the staff session open.*
+*Open MySQL’s table browser on the isolated demo database. Show the prepared users, household/member, incident, stay and distribution rows. Point to the IDs and values discussed below.*
 
-Here is the entrance to the website. I enter the fictional staff email and password and press Log in. The address changes to the staff dashboard. Notice that I did not choose my role on the form. The account supplies it. In the code, index.php runs ordinary PHP statements in order and renders the form. The controller is an object. Its handlePost method reads the request, checks it and asks the user model to find the account. After password verification it starts the signed-in state for that account and chooses the dashboard. This is what we mean by procedural PHP and object-oriented PHP organized using simple MVC. MDN describes MVC as separating data, presentation and control. You can see that division directly in these three files. Member 2 will use this staff session to identify a household.
+I’ll now show the data behind those modules using fictional records. In users, id identifies the account, role determines staff or resident access, and password holds a hash. In households, id identifies the family record and representative_member_id points to the chosen member. The member rows carry household_id so several people can belong to the same household. Here is our fictional Topdac household and its three members. The number three comes from counting these rows.
 
-## 04:00–07:15 · Member 2 · Identify a household by its representative
+Next, incident_reports stores a description, status, barangay, coordinates and the reporter contact submitted for that incident. reported_by links the report to the account. incident_images holds file references linked by incident_id. The actual image file is stored separately. Teams are stored in responders. incident_assignments connects a team to an incident, and response_updates keeps the actions recorded along the way.
 
-*Filter Households to Topdac. Open the prepared household with three members. Select a different representative, save and search by the new name. Show the two selectRepresentative methods.*
+At the evacuation center, each row in evacuation_records represents one person’s stay. A missing checked_out_at means that stay is active and contributes one occupant. For relief, one distribution header identifies the household, receiver and date. Its distribution item rows hold each good and quantity. Stock movements describe incoming and outgoing supplies. Announcements store the text and publication state.
 
-Our fictional household lives in Topdac. At the top of the page you can see its representative and address. Below are the people registered to this household. A newly created household can remain without a representative while staff enter its members. Once those records exist, staff can select one of them. I am changing the representative and saving. Look at the address bar and the heading after the page reloads. The household’s name on screen has changed. Its record ID is the same. In household.php the form posts the selected member ID. The controller checks the request and the model checks that the selected person is an active member of this household. It stores the relationship. If that person has to be removed later, staff must select a replacement first. I can find the household by its new representative, and the evacuation and relief teams can still use the same household record. Next, Member 3 will open the resident’s incident form.
+These links let one household participate in several workflows while retaining the same ID. In our demonstration, three household members, two arrivals and a two-item distribution are different counts with different meanings. Member 2 will show how PHP reads and writes these records.
+
+## 04:00–07:15 · Member 2 · MVC, login and household registry
+
+*Sign in as fictional staff. Show index.php, UserController and UserModel, then change the prepared household’s representative. Show HouseholdController::selectRepresentative and the corresponding model method.*
+
+I’ll explain the structure and then use it. Our website combines procedural PHP and classes in a simple MVC arrangement. According to MDN, MVC divides data, presentation and control. In our project, index.php displays the login form and calls UserController. The controller checks the submitted email and password against the user returned by UserModel. A successful login stores the account ID and role in the session and redirects to the staff dashboard. Here are those three files.
+
+Now I open our fictional household in Topdac. Three active members are registered. I select a different member as representative and save. The heading changes while the household ID stays the same. The household form sends member_id to HouseholdController::selectRepresentative, which calls the model. The model checks that the person belongs to this household before updating the link. Existing stays and distributions continue using that household ID. That is a complete path from form, through controller and model, back to a visible result. Member 3 will use the resident browser to submit an incident.
 
 ## 07:15–10:45 · Member 3 · Submit an incident as a resident
 

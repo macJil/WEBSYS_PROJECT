@@ -23,7 +23,7 @@ Member 1 owns confirmation of the official letterhead wording, participant names
 
 |Owner / reviewer|Preserve and demonstrate|Planned acceptance check|
 |---|---|---|
-|1 / 2|Registration, login, session and role guards|Current admin and resident access works. Public registration creates residents. Supply authenticated account details to Member 3.|
+|2 / 3|Registration, login, session and role guards|Current admin and resident access works. Public registration creates residents. Supply authenticated account details to Member 3.|
 |2 / 3|Household and resident registry, calculated member counts|Verify the official barangay list for all Atok. Select an active member as household representative, show address for duplicate names, require replacement before deactivation. Keep internal IDs and linked history. Allow households awaiting representative selection.|
 |3 / 4|Incident reporting, private ownership, images and admin-assisted intake|Prefill name, email and phone. Report-specific edits persist independently of account changes. Assisted intake clears caller fields and retains staff encoder. Protect contacts from map and other residents.|
 |4 / 5|Emergency response, assignments and action history|Any active team means responding. Resolve after every assignment completes. Verify cancellation, reactivation and history hiding.|
@@ -57,7 +57,7 @@ Every row is retained. Member 2 coordinates shared barangay values and migration
 - Coordinate shared schema, configuration, navigation and dashboard edits with their listed owners. Pair fresh schema changes with an upgrade migration and fictional upgrade check.
 - Review each small change and check its normal form, denial case, redirect and downstream totals before integrating. Add issue, fix and recheck to the log.
 
-The [reviewed cleanup checklist](CLEANUP.md) covers the fixed forms, helper call sites and configuration readers for the revised implementation sequence. Existing module owners and reviewers own their view cleanup. Member 1 owns configuration and shared helpers, reviewed by Member 2. Member 8 confirms print formatting and dashboard priorities with staff.
+The [reviewed cleanup checklist](CLEANUP.md) covers the fixed forms, helper call sites and configuration readers for the revised implementation sequence. Existing module owners and reviewers own their view cleanup. Member 2 owns configuration and shared helpers, reviewed by Member 3. Member 8 confirms print formatting and dashboard priorities with staff.
 
 ## Dashboard priorities and counts
 

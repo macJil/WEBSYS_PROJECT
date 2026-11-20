@@ -1,5 +1,7 @@
 > Current behavior update: team statuses now determine the incident status; all assignments must be completed to resolve it. History can be hidden without deleting stored records. See [response/history update](RESPONSE_HISTORY_UPDATE.md). Code excerpts below retain their original snapshot.
 
+For the current municipal revision use the [whole application overview](CODE_WALKTHROUGH.md) and [member study chapters](MEMBER_CODE_EXPLANATIONS.md). The collected source below is an earlier snapshot; the linked repository files provide the maintained code.
+
 > Source snapshot before the readable-code branch. For current formatting, open the application files; behavior and method responsibilities are retained.
 
 # Complete maintained-source companion

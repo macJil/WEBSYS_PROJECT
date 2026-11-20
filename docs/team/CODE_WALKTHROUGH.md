@@ -1,8 +1,25 @@
 # Code walkthrough
 
-Start with the [five-member explanation guide](MEMBER_CODE_EXPLANATIONS.md) for assigned live code segments and complete, source-linked execution traces. This page remains the broad reference for all modules.
+Start with the [nine-member explanation guide](MEMBER_CODE_EXPLANATIONS.md) for assigned live code segments and complete, source-linked execution traces. This page remains the broad reference for all modules.
 
 This explains the current team-maintained application. [Complete source companion](SOURCE_COMPANION.md) includes the exact custom PHP, JavaScript, CSS and fresh schema with file/method navigation. Vendor internals are excluded: Bootstrap supplies styling/navigation and Leaflet supplies map rendering. Local credentials and uploaded files are never included.
+
+## Whole application overview and ownership
+
+| Layer | What happens | Presenter |
+|---|---|---|
+| MySQL records and relationships | Account roles, household/member links, incidents, stays and relief transactions supply the website’s operational data. | 1 |
+| Root index and shared PHP | index.php displays login/registration. UserController validates the request, UserModel reads the account, and helpers enforce the resulting session and role. | 2 |
+| Registry | HouseholdController and HouseholdModel save household/member rows and select a representative without replacing the household ID. | 2 |
+| Incidents | ReportController validates the report and upload; ReportModel saves contacts, coordinates and image references. Resident reads are scoped to ownership. | 3 |
+| Response | ResponseController handles assignments and actions. ResponseModel records history and synchronizes incident status. | 4 |
+| Evacuation | EvacuationController receives selected member IDs. EvacuationModel checks duplicates/capacity and saves one stay per arrival. | 5 |
+| Relief | ReliefController validates quantities and receiver. ReliefModel updates stock and distribution history together. ReliefLocationController manages mapped facilities. | 6 |
+| Notices and forecast | AnnouncementController/Model control publication. The weather component and atok-weather.js display provider data or fallback text. | 7 |
+| Dashboard and print | DashboardController/Model query current operational records. DisasterSummaryController/Model build filtered summaries. Existing incident authorization applies to incident printing. | 8 with 3 |
+| Maps and shared display | MapController/Model produce safe marker data. community-map.js fits filtered markers; location-picker.js supports saved points and editable suggestions. Shared navigation and record/history controls connect the modules. | 9 |
+
+Member 1 explains actual fictional database values and the links between them. Members 2–9 each follow their own form, controller, model and visible result. [Detailed study chapters](MEMBER_CODE_EXPLANATIONS.md)
 
 ## Request flow and PHP vocabulary
 
