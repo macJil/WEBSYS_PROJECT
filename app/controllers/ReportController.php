@@ -52,17 +52,12 @@ class ReportController extends Controller
         if (
             ($filters['incident_type'] !== '' && !isset(self::TYPES[$filters['incident_type']])) ||
             ($filters['status'] !== '' && !in_array($filters['status'], self::STATUSES, true)) ||
-            ($filters['date'] !== '' && !$this->validDate($filters['date']))
+            ($filters['date'] !== '' && !validDateInput($filters['date']))
         ) {
             http_response_code(400);
             exit('Invalid search filter.');
         }
         return $filters;
-    }
-
-    private function validDate(string $date): bool
-    {
-        return validDateInput($date);
     }
 
     public function listIncidents(array $filters): array

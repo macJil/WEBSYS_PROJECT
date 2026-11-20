@@ -51,8 +51,7 @@ function validDateInput(string $value): bool
     if (strlen($value) !== 10 || $value[4] !== '-' || $value[7] !== '-') {
         return false;
     }
-    $digits = str_replace('-', '', $value);
-    if (strlen($digits) !== 8 || !ctype_digit($digits)) {
+    if (strspn($value, '0123456789-') !== 10) {
         return false;
     }
     $date = DateTimeImmutable::createFromFormat('!Y-m-d', $value);
@@ -61,9 +60,14 @@ function validDateInput(string $value): bool
 
 function validPhone(string $value): bool
 {
-    $local = strlen($value) === 11 && str_starts_with($value, '09') && ctype_digit($value);
-    $international = strlen($value) === 13 && str_starts_with($value, '+639') && ctype_digit(substr($value, 1));
-    return $local || $international;
+    // Both formats have nine digits after the mobile prefix.
+    if (str_starts_with($value, '09') && strlen($value) === 11) {
+        return strspn($value, '0123456789', 2) === 9;
+    }
+    if (str_starts_with($value, '+639') && strlen($value) === 13) {
+        return strspn($value, '0123456789', 4) === 9;
+    }
+    return false;
 }
 
 function flash(string $message): void

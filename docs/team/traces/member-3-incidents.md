@@ -19,7 +19,7 @@ $pageTitle = "Report incident";
 
 ## Take ownership from the session and pass submitted values
 
-[app/controllers/ReportController.php, lines 248–263](../../../app/controllers/ReportController.php#L248)
+[app/controllers/ReportController.php, lines 243–258](../../../app/controllers/ReportController.php#L243)
 
 ```php
         $data['barangay'] = $barangay === '' ? null : $barangay;
