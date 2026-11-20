@@ -71,7 +71,7 @@ class ReportModel
     public function history(int $id): array
     {
         $stmt = $this->pdo->prepare(
-            'SELECT id, action_taken, from_status, to_status, created_at FROM response_updates WHERE incident_id = ? AND history_hidden_at IS NULL ORDER BY id',
+            'SELECT id, action_taken, from_status, to_status, created_at FROM response_updates WHERE incident_id = ? ORDER BY id',
         );
         $stmt->execute([$id]);
         return $stmt->fetchAll();

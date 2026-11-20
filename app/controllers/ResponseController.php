@@ -99,8 +99,8 @@ class ResponseController extends Controller
         if (!in_array($action, ['assign_team', 'update_assignment'], true)) {
             return ['Unknown form action.'];
         }
-        if ($notes === '' || strlen($notes) > 2000) {
-            return ['Describe the action taken (maximum 2,000 bytes).'];
+        if (strlen($notes) > 2000) {
+            return ['Keep the action note within 2,000 bytes.'];
         }
         $teamId = $action === 'assign_team' ? $this->recordId(input('team_id')) : null;
         $assignmentId = $action === 'update_assignment' ? $this->recordId(input('assignment_id')) : null;

@@ -24,7 +24,7 @@
             !confirm(
                 "Remove " +
                     selected +
-                    " selected record(s)? Unused records will be permanently deleted. Linked history will be kept.",
+                    " selected record(s)? This permanently deletes the selected records and their household members, incident files/actions or completed center stays. Shared stock and distribution records are protected.",
             )
         ) {
             event.preventDefault();

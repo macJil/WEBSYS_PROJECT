@@ -60,8 +60,7 @@ def check_actions(admin, resident, query, prefix):
     # Recreate the team for the navigation crawl and browser check.
     save('admin/response/teams.php', dict(action='save_team', team_name='Fictional UI Team', contact_phone='', is_active='1'), 'admin/response/teams.php')
 
-    save('incidents/view.php?id=1', dict(action='review_incident', status='verified', notes='Fictional verification'), 'incidents/view.php?id=1')
-    save('admin/response/incident.php?id=1', dict(action='assign_team', team_id='2', notes='Fictional dispatch'), 'admin/response/incident.php?id=1')
+    save('admin/response/incident.php?id=1', dict(action='assign_team', team_id='2'), 'admin/response/incident.php?id=1')
     save('admin/response/incident.php?id=1', dict(action='update_assignment', assignment_id='1', assignment_status='on_scene', notes='Fictional arrival'), 'admin/response/incident.php?id=1')
     print('PASS incident review, assignment and response update redirects')
 

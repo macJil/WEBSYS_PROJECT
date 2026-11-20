@@ -82,8 +82,7 @@ def check_acceptance(admin, resident, Client, query, prefix):
     query("UPDATE relief_items SET quantity_on_hand=0 WHERE id=1")
     history = query('SELECT COUNT(*) AS n FROM relief_stock_movements')[0]['n']
     code, body = admin.request(prefix + 'admin/records.php?type=goods', [('action','delete'),('ids[]','goods:1')])
-    assert code == 200 and 'alert-danger' not in body
-    assert query('SELECT archived_at FROM relief_items WHERE id=1')[0]['archived_at'] is not None
+    assert code == 200 and 'Stock history depends' in body
+    assert query('SELECT archived_at FROM relief_items WHERE id=1')[0]['archived_at'] is None
     assert query('SELECT COUNT(*) AS n FROM relief_stock_movements')[0]['n'] == history
-    assert 'value="goods:1"' not in body
-    print('PASS zero-stock good removed from active selection with stock/distribution history preserved')
+    print('PASS shared stock history blocks permanent deletion')

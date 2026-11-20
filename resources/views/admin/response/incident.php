@@ -11,7 +11,7 @@ $teams = array_filter(
     $controller->teams(),
     fn($team) => $team["is_active"] && !in_array($team["id"], $assignedTeamIds),
 );
-$open = in_array($incident["status"], ["verified", "responding", "resolved"], true);
+$open = in_array($incident["status"], ["pending", "verified", "responding", "resolved"], true);
 $pageTitle = "Response for incident #" . $id;
 require __DIR__ . "/../../components/header.php";
 require __DIR__ . "/../../components/errors.php";
@@ -19,9 +19,9 @@ require __DIR__ . "/../../components/errors.php";
 <h1><?= e($pageTitle) ?></h1>
 <p><?= e($incident['incident_type']) ?> · <?= e($incident['location_description']) ?> · Status: <strong><?= e($incident['status']) ?></strong></p>
 <a class="btn btn-outline-secondary" href="<?= e(url('resources/views/incidents/view.php?id=' . $id)) ?>">Back to incident details</a>
-<p>Verify an incident before assigning teams. Dispatch changes it to responding. Completing every assignment resolves the incident automatically. A cancelled assignment does not count as completed. If no team is active and some work is cancelled, the incident returns to verified. Reactivating an assignment starts responding again.</p>
+<p>Assigning the first team confirms staff review. Dispatch changes it to responding. Completing every assignment resolves the incident automatically. A cancelled assignment does not count as completed. If no team is active and some work is cancelled, the incident returns to verified. Reactivating an assignment starts responding again.</p>
 <?php if (!$open): ?>
-    <p class="alert alert-info">Verify or reopen this incident in staff review before adding response updates.</p>
+    <p class="alert alert-info">Reopen this incident in staff review before adding response updates.</p>
 <?php endif; ?>
 <?php if ($open && $teams): ?>
     <h2>Assign a team</h2>
@@ -32,7 +32,7 @@ require __DIR__ . "/../../components/errors.php";
                     <option value="<?= (int)$team['id'] ?>" <?= input('team_id') === (string)$team['id'] ? 'selected' : '' ?>><?= e($team['team_name']) ?></option>
                 <?php endforeach; ?>
             </select></label>
-        <label class="d-block my-2">Dispatch instructions / action taken<textarea class="form-control" name="notes" maxlength="2000" required >
+        <label class="d-block my-2">Dispatch notes (optional)<textarea class="form-control" name="notes" maxlength="2000" >
 <?= input('action') === 'assign_team' ? e(input('notes')) : '' ?></textarea> </label>
         <button class="btn btn-primary" name="action" value="assign_team">Assign team</button>
         <a href="<?= e(url('resources/views/incidents/view.php?id=' . $id)) ?>">Cancel and return to incident details</a>
@@ -62,7 +62,7 @@ require __DIR__ . "/../../components/errors.php";
                         <option value="completed" <?= $selectedStatus === 'completed' ? 'selected' : '' ?>>Completed</option>
                         <option value="cancelled" <?= $selectedStatus === 'cancelled' ? 'selected' : '' ?>>Cancelled</option>
                     </select></label>
-                <label class="d-block my-2">Action taken<textarea class="form-control" name="notes" maxlength="2000" required>
+                <label class="d-block my-2">Additional action notes (optional)<textarea class="form-control" name="notes" maxlength="2000">
 <?= e($notes) ?></textarea> </label>
                 <button class="btn btn-primary" name="action" value="update_assignment">Save team and incident status</button>
             </form>
@@ -79,11 +79,7 @@ require __DIR__ . "/../../components/errors.php";
             · Assignment #<?= (int)$entry['assignment_id'] ?>: <?= e($entry['assignment_status']) ?>
         <?php endif; ?>
         <p class="preserve-text"><?= e($entry['action_taken']) ?></p>
-        <?php
-        $historyType = 'response';
-        $historyId = $entry['id'];
-        require __DIR__ . '/../../components/history-action.php';
-        ?>
+
     </article>
 <?php endforeach; ?>
 <?php

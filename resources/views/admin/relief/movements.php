@@ -73,11 +73,7 @@ $filterDate = $controller->queryValue('date');
                         <?php if ($row['distribution_id']): ?>
                             <br /><a href="<?= e(url('resources/views/admin/relief/distributions.php?id=' . $row['distribution_id'])) ?>">Distribution #<?= (int)$row['distribution_id'] ?></a>
                         <?php endif; ?>
-                        <?php
-                        $historyType = 'stock';
-                        $historyId = $row['id'];
-                        require __DIR__ . '/../../components/history-action.php';
-                        ?>
+
                     </td>
                 </tr>
             <?php endforeach; ?>

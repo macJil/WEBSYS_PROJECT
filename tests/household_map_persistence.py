@@ -62,7 +62,7 @@ with tempfile.TemporaryDirectory(prefix='bayanready-address-') as temporary:
         sql(schema)
         if upgrade:
             query("INSERT INTO households (household_code, representative_name, purok) VALUES ('DEMO-OLD', 'Fictional legacy', 'Demo')")
-            for number in ('009', '010', '011'):
+            for number in ('009', '010', '011', '012'):
                 migration, = (ROOT / 'database/migrations').glob(number + '_*.sql')
                 query(migration.read_text())
             legacy, = query("SELECT * FROM household_directory WHERE household_code='DEMO-OLD'")
@@ -70,7 +70,7 @@ with tempfile.TemporaryDirectory(prefix='bayanready-address-') as temporary:
             assert legacy['representative_name'] == 'Fictional legacy'
             query("DELETE FROM households WHERE household_code='DEMO-OLD'")
             query("ALTER TABLE households AUTO_INCREMENT=1")
-            print('PASS pre-municipal household survives migrations 009 through 011')
+            print('PASS pre-municipal household survives migrations 009 through 012')
         password_hash = subprocess.check_output([PHP, '-r', "echo password_hash('DemoPass123!', PASSWORD_DEFAULT);"]).decode()
         query("INSERT INTO users(full_name,username,email,password,role) VALUES " +
               ','.join("('Fictional " + role + "','" + role + "','" + role + "@example.invalid','" + password_hash + "','" + role + "')" for role in ['admin', 'resident']))
@@ -314,6 +314,20 @@ with tempfile.TemporaryDirectory(prefix='bayanready-address-') as temporary:
                 sessions.append(next(c.value for c in handler.cookiejar if c.name == 'PHPSESSID'))
             subprocess.run(['node', str(ROOT / 'tests/municipal_browser.js'), base, str(folder)],
                            input=json.dumps(sessions), text=True, check=True, timeout=120)
+        # The resolved incident owns its assignments and action history.
+        assert query('SELECT id FROM response_updates WHERE incident_id=1')
+        _, page = admin.request(prefix + 'admin/records.php?type=incidents', [('action','delete'),('ids[]','incidents:1')])
+        assert 'alert-danger' not in page
+        for table in ('incident_assignments', 'response_updates', 'incident_images'):
+            assert not query('SELECT id FROM ' + table + ' WHERE incident_id=1')
+        assert not query('SELECT id FROM incident_reports WHERE id=1')
+        for stay in query('SELECT id FROM evacuation_records WHERE center_id=1 AND checked_out_at IS NULL'):
+            admin.request(prefix + 'admin/evacuation/center.php?id=1', dict(action='checkout', record_id=stay['id']))
+        assert query('SELECT id FROM evacuation_records WHERE center_id=1')
+        admin.request(prefix + 'admin/records.php?type=centers', [('action','delete'),('ids[]','centers:1')])
+        assert not query('SELECT id FROM evacuation_records WHERE center_id=1')
+        assert not query('SELECT id FROM evacuation_centers WHERE id=1')
+        print('PASS resolved incident and empty center permanently removed with owned history')
         if os.environ.get('TEST_BROWSER_PAUSE') == '1':
             Path('/tmp/bayanready-actions-preview.txt').write_text(base)
             print('Fictional browser preview:', base, flush=True)

@@ -54,7 +54,7 @@ class ResponseModel
     public function history(int $id): array
     {
         $stmt = $this->pdo->prepare(
-            'SELECT h.*, u.full_name AS staff_name FROM response_updates h JOIN users u ON u.id=h.updated_by WHERE h.incident_id=? AND h.history_hidden_at IS NULL ORDER BY h.id',
+            'SELECT h.*, u.full_name AS staff_name FROM response_updates h JOIN users u ON u.id=h.updated_by WHERE h.incident_id=? ORDER BY h.id',
         );
         $stmt->execute([$id]);
         return $stmt->fetchAll();
@@ -95,8 +95,8 @@ class ResponseModel
             );
             $stmt->execute([$incidentId]);
             $old = $stmt->fetchColumn();
-            if (!in_array($old, ['verified', 'responding', 'resolved'], true)) {
-                throw new DomainException('Verify or reopen the incident before managing its response.');
+            if (!in_array($old, ['pending', 'verified', 'responding', 'resolved'], true) || ($old === 'pending' && $teamId === null)) {
+                throw new DomainException('Choose a pending or open incident for dispatch.');
             }
             if ($teamId !== null) {
                 $stmt = $this->pdo->prepare('SELECT * FROM responders WHERE id=? FOR UPDATE');
@@ -156,6 +156,10 @@ class ResponseModel
                     $assignment['team_name'] . ': ' . $assignment['status'] . ' → ' . $status . '. ' . $notes;
             }
             // One update saves both the team state and the incident's overall state.
+            if ($old === 'pending') {
+                $review = $this->pdo->prepare('UPDATE incident_reports SET reviewed_by=?, reviewed_at=CURRENT_TIMESTAMP WHERE id=?');
+                $review->execute([$staff, $incidentId]);
+            }
             $next = $this->assignmentStatus($incidentId);
             $stmt = $this->pdo->prepare('UPDATE incident_reports SET status=? WHERE id=?');
             $stmt->execute([$next, $incidentId]);

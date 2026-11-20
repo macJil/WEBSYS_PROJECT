@@ -38,6 +38,6 @@ class RecordActionsController extends Controller
             $selection[$type] = array_values($records);
         }
         $this->model->deleteSelected($selection);
-        flash('Selected records removed. Linked history was preserved.');
+        flash('Selected records and their owned history were permanently deleted.');
     }
 }

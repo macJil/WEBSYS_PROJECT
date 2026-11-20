@@ -27,32 +27,60 @@ require __DIR__ . "/../components/errors.php";
 <button type="button" id="print-summary" class="btn btn-outline-secondary no-print">Print incident report</button>
 <script src="<?= e(url('resources/assets/js/print-summary.js')) ?>"></script>
 <p>Barangay: <?= e($report['barangay'] ?? 'Awaiting confirmation') ?></p>
-<dl>
-    <dt>Type</dt>
-    <dd class="preserve-text"><?= e($report['incident_type'] ?? 'Not recorded') ?></dd>
-    <dt>Status</dt>
-    <dd class="preserve-text"><?= e($report['status'] ?? 'Not recorded') ?></dd>
-    <dt>Description</dt>
-    <dd class="preserve-text"><?= e($report['description'] ?? 'Not recorded') ?></dd>
-    <dt>Reporter/contact name</dt>
-    <dd class="preserve-text"><?= e($report['reporter_name'] ?? 'Not recorded') ?></dd>
-    <dt>Contact email</dt>
-    <dd><?= e($report['reporter_email'] ?? 'Not recorded') ?></dd>
-    <dt>Contact number</dt>
-    <dd class="preserve-text"><?= e($report['contact_phone'] ?? 'Not recorded') ?></dd>
-    <dt>Location</dt>
-    <dd class="preserve-text"><?= e($report['location_description'] ?? 'Not recorded') ?></dd>
-    <dt>Latitude</dt>
-    <dd class="preserve-text"><?= e($report['latitude'] ?? 'Not recorded') ?></dd>
-    <dt>Longitude</dt>
-    <dd class="preserve-text"><?= e($report['longitude'] ?? 'Not recorded') ?></dd>
-    <dt>Received through</dt>
-    <dd class="preserve-text"><?= e($report['report_source'] ?? 'Not recorded') ?></dd>
-    <dt>Occurred</dt>
-    <dd><?= e($report['occurred_at'] ?? 'Not recorded') ?></dd>
-    <dt>Submitted</dt>
-    <dd class="preserve-text"><?= e($report['created_at'] ?? 'Not recorded') ?></dd>
-</dl>
+<div class="table-responsive">
+    <table class="table">
+        <tbody>
+            <tr>
+                <th scope="row">Type</th>
+                <td class="preserve-text"><?= e($report['incident_type'] ?? 'Not recorded') ?></td>
+            </tr>
+            <tr>
+                <th scope="row">Status</th>
+                <td class="preserve-text"><?= e($report['status'] ?? 'Not recorded') ?></td>
+            </tr>
+            <tr>
+                <th scope="row">Description</th>
+                <td class="preserve-text"><?= e($report['description'] ?? 'Not recorded') ?></td>
+            </tr>
+            <tr>
+                <th scope="row">Reporter/contact name</th>
+                <td class="preserve-text"><?= e($report['reporter_name'] ?? 'Not recorded') ?></td>
+            </tr>
+            <tr>
+                <th scope="row">Contact email</th>
+                <td><?= e($report['reporter_email'] ?? 'Not recorded') ?></td>
+            </tr>
+            <tr>
+                <th scope="row">Contact number</th>
+                <td class="preserve-text"><?= e($report['contact_phone'] ?? 'Not recorded') ?></td>
+            </tr>
+            <tr>
+                <th scope="row">Location</th>
+                <td class="preserve-text"><?= e($report['location_description'] ?? 'Not recorded') ?></td>
+            </tr>
+            <tr>
+                <th scope="row">Latitude</th>
+                <td class="preserve-text"><?= e($report['latitude'] ?? 'Not recorded') ?></td>
+            </tr>
+            <tr>
+                <th scope="row">Longitude</th>
+                <td class="preserve-text"><?= e($report['longitude'] ?? 'Not recorded') ?></td>
+            </tr>
+            <tr>
+                <th scope="row">Received through</th>
+                <td class="preserve-text"><?= e($report['report_source'] ?? 'Not recorded') ?></td>
+            </tr>
+            <tr>
+                <th scope="row">Occurred</th>
+                <td><?= e($report['occurred_at'] ?? 'Not recorded') ?></td>
+            </tr>
+            <tr>
+                <th scope="row">Submitted</th>
+                <td class="preserve-text"><?= e($report['created_at'] ?? 'Not recorded') ?></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
 <?php if (!hasMapPoint($report)): ?>
     <p>No map point. This report remains available in lists and totals.</p>
 <?php endif; ?>
@@ -98,7 +126,7 @@ require __DIR__ . "/../components/errors.php";
         </form>
     <?php endif; ?>
     <h2 class="mt-4">Staff review</h2>
-    <p>Verify before assigning teams. Active assignments keep the incident responding. Once teams are assigned, update their status through Manage response teams and actions. Completing every assignment resolves the incident automatically; cancelled work does not count as completed.</p>
+    <p>You can assign a team directly to a pending incident. Active assignments keep the incident responding. Once teams are assigned, update their status through Manage response teams and actions. Completing every assignment resolves the incident automatically; cancelled work does not count as completed.</p>
     <form method="post">
         <label>Status <select class="form-select" name="status">
                 <option value="pending" <?= $reviewStatus === 'pending' ? 'selected' : '' ?>>Pending</option>
@@ -115,11 +143,7 @@ require __DIR__ . "/../components/errors.php";
     <h2 class="mt-4">Staff review history</h2>
     <?php foreach ($history as $entry): ?>
         <p><?= e($entry['created_at']) ?> · <?= e($entry['from_status']) ?> → <?= e($entry['to_status']) ?><br /><?= e($entry['action_taken']) ?></p>
-        <?php
-        $historyType = 'response';
-        $historyId = $entry['id'];
-        require __DIR__ . '/../components/history-action.php';
-        ?>
+
     <?php endforeach; ?>
 <?php endif; ?>
 <a class="d-block mt-3 no-print" href="<?= e(url('resources/views/incidents/list.php')) ?>">Back to reports</a>

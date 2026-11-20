@@ -25,18 +25,32 @@ $formNotes = input('notes');
 <p><a href="<?= e(url('resources/views/admin/relief/inventory.php')) ?>">Inventory</a> · <a href="<?= e(url('resources/views/admin/relief/movements.php')) ?>">Stock movements</a> · <a class="btn btn-outline-secondary" href="<?= e(url('resources/views/admin/relief/distributions.php')) ?>">Back to household distributions</a></p>
 <?php if ($distribution): ?>
     <h2>Distribution #<?= (int)$id ?></h2>
-    <dl>
-        <dt>Household</dt>
-        <dd><?= e($distribution['household_label']) ?></dd>
-        <dt>Receiving representative</dt>
-        <dd><?= e($distribution['received_by']) ?></dd>
-        <dt>Staff</dt>
-        <dd><?= e($distribution['full_name']) ?></dd>
-        <dt>Date/time</dt>
-        <dd><?= e($distribution['distributed_at']) ?></dd>
-        <dt>Notes</dt>
-        <dd><?= e($distribution['notes']) ?></dd>
-    </dl>
+    <div class="table-responsive">
+        <table class="table">
+            <tbody>
+                <tr>
+                    <th scope="row">Household</th>
+                    <td><?= e($distribution['household_label']) ?></td>
+                </tr>
+                <tr>
+                    <th scope="row">Receiving representative</th>
+                    <td><?= e($distribution['received_by']) ?></td>
+                </tr>
+                <tr>
+                    <th scope="row">Staff</th>
+                    <td><?= e($distribution['full_name']) ?></td>
+                </tr>
+                <tr>
+                    <th scope="row">Date/time</th>
+                    <td><?= e($distribution['distributed_at']) ?></td>
+                </tr>
+                <tr>
+                    <th scope="row">Notes</th>
+                    <td><?= e($distribution['notes']) ?></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
     <div class="table-responsive" tabindex="0" role="region" aria-label="Scrollable records">
         <table class="table">
             <thead>
@@ -129,11 +143,7 @@ $formNotes = input('notes');
                     <td><?= e($row['received_by']) ?></td>
                     <td><?= e($row['full_name']) ?></td>
                     <td><a href="<?= e(url('resources/views/admin/relief/distributions.php?id=' . $row['id'])) ?>">View #<?= (int)$row['id'] ?></a>
-                        <?php
-                        $historyType = 'distribution';
-                        $historyId = $row['id'];
-                        require __DIR__ . '/../../components/history-action.php';
-                        ?>
+
                     </td>
                 </tr>
             <?php endforeach; ?>

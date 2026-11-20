@@ -117,7 +117,7 @@ class RecordActionsModel
         return (bool) $this->query("SELECT id FROM $table WHERE $column=? $extra LIMIT 1 FOR UPDATE", [$id]);
     }
 
-    private function removalMode(string $type, array $row): string
+    private function checkRemoval(string $type, array $row): void
     {
         $id = (int) $row['id'];
         $guide = '';
@@ -190,76 +190,67 @@ class RecordActionsModel
                 self::TYPES[$type][2] . ' #' . $id . ': ' . $guide . ' No selected records were changed.',
             );
         }
-        $links = [
-            'households' => [['household_members', 'household_id'], ['relief_distributions', 'household_id']],
-            'members' => [['evacuation_records', 'household_member_id']],
-            'incidents' => [
-                ['incident_images', 'incident_id'],
-                ['incident_assignments', 'incident_id'],
-                ['response_updates', 'incident_id'],
-            ],
-            'teams' => [['incident_assignments', 'responder_id']],
-            'centers' => [['evacuation_records', 'center_id']],
-            'walkins' => [['evacuation_records', 'walkin_id']],
-            'goods' => [['relief_stock_movements', 'item_id'], ['relief_distribution_items', 'item_id']],
-            'locations' => [['relief_distributions', 'relief_location_id']],
+        $dependencies = [
+            'households' => [['relief_distributions', 'household_id', 'This household has a shared relief distribution.']],
+            'members' => [['evacuation_records', 'household_member_id', 'This member has center stay records.']],
+            'walkins' => [['evacuation_records', 'walkin_id', 'This person has center stay records.']],
+            'teams' => [['incident_assignments', 'responder_id', 'An incident still references this team.']],
+            'goods' => [['relief_stock_movements', 'item_id', 'Stock history depends on this good.'],
+                        ['relief_distribution_items', 'item_id', 'A distribution depends on this good.']],
+            'locations' => [['relief_distributions', 'relief_location_id', 'A distribution depends on this location.']],
         ];
-        foreach ($links[$type] ?? [] as [$table, $column]) {
+        foreach ($dependencies[$type] ?? [] as [$table, $column, $reason]) {
             if ($this->linked($table, $column, $id)) {
-                return 'hide';
+                throw new DomainException(self::TYPES[$type][2] . ' #' . $id . ': ' . $reason . ' No selected records were changed.');
             }
         }
-        if (
-            $type === 'announcements' &&
-            ($row['first_published_at'] !== null ||
-                $row['is_published'] ||
-                $row['publication_history_unknown'])
-        ) {
-            return 'hide';
-        }
-        return 'delete';
     }
 
     public function deleteSelected(array $selection): void
     {
+        $files = [];
         $this->pdo->beginTransaction();
         try {
-            // Check the entire batch before deleting anything, including mixed types.
-            $modes = [];
             ksort($selection);
             foreach ($selection as $type => $ids) {
-                foreach ($this->selected($type, $ids, true) as $row) {
-                    $modes[$type][(int) $row['id']] = $this->removalMode($type, $row);
-                }
-            }
-            foreach ($selection as $type => $ids) {
                 [$table] = $this->spec($type);
-                foreach ($ids as $id) {
-                    $sql = "DELETE FROM $table WHERE id=?";
-                    if ($modes[$type][$id] === 'hide') {
-                        $set = $type === 'teams' ? 'is_active=0' : 'archived_at=CURRENT_TIMESTAMP';
-                        if ($type === 'centers') {
-                            $set .= ",status='closed'";
+                foreach ($this->selected($type, $ids, true) as $row) {
+                    $id = (int) $row['id'];
+                    $this->checkRemoval($type, $row);
+                    if ($type === 'incidents') {
+                        foreach ($this->query('SELECT stored_filename FROM incident_images WHERE incident_id=?', [$id]) as $image) {
+                            $name = $image['stored_filename'];
+                            if (INCIDENT_UPLOAD_DIR === '' || basename($name) !== $name || !in_array(pathinfo($name, PATHINFO_EXTENSION), ['jpg','png','webp'], true)) {
+                                throw new DomainException('Check the incident image storage configuration before deleting.');
+                            }
+                            $files[] = INCIDENT_UPLOAD_DIR . '/' . $name;
                         }
-                        if ($type === 'announcements') {
-                            $set .= ',is_published=0';
-                        }
-                        $sql = "UPDATE $table SET $set WHERE id=?";
-                        if ($type === 'households') {
-                            $stmt = $this->pdo->prepare(
-                                'UPDATE household_members SET archived_at=COALESCE(archived_at,CURRENT_TIMESTAMP) WHERE household_id=?',
-                            );
-                            $stmt->execute([$id]);
+                        foreach (['response_updates', 'incident_assignments', 'incident_images'] as $child) {
+                            $this->pdo->prepare("DELETE FROM $child WHERE incident_id=?")->execute([$id]);
                         }
                     }
-                    $stmt = $this->pdo->prepare($sql);
-                    $stmt->execute([$id]);
+                    if ($type === 'households') {
+                        if ($this->query('SELECT e.id FROM evacuation_records e JOIN household_members m ON m.id=e.household_member_id WHERE m.household_id=? LIMIT 1 FOR UPDATE', [$id])) {
+                            throw new DomainException('This household has linked center stays. No selected records were changed.');
+                        }
+                        $this->pdo->prepare('UPDATE households SET representative_member_id=NULL WHERE id=?')->execute([$id]);
+                        $this->pdo->prepare('DELETE FROM household_members WHERE household_id=?')->execute([$id]);
+                    }
+                    if ($type === 'centers') {
+                        $this->pdo->prepare('DELETE FROM evacuation_records WHERE center_id=?')->execute([$id]);
+                    }
+                    $this->pdo->prepare("DELETE FROM $table WHERE id=?")->execute([$id]);
                 }
             }
             $this->pdo->commit();
         } catch (Throwable $error) {
             $this->pdo->rollBack();
             throw $error;
+        }
+        foreach ($files as $path) {
+            if (is_file($path) && !unlink($path)) {
+                throw new DomainException('Records were deleted. Ask the administrator to clean up the remaining private image file.');
+            }
         }
     }
 }

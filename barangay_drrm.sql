@@ -142,7 +142,6 @@ CREATE TABLE incident_assignments (
 
 -- 7. Admin actions/notes for each incident.
 CREATE TABLE response_updates (
-  history_hidden_at DATETIME NULL,
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   incident_id INT UNSIGNED NOT NULL,
   updated_by INT UNSIGNED NOT NULL,
@@ -201,7 +200,6 @@ CREATE TABLE evacuation_walkins (
 ) ENGINE=InnoDB;
 
 CREATE TABLE evacuation_records (
-  history_hidden_at DATETIME NULL,
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   center_id INT UNSIGNED NOT NULL,
   household_member_id INT UNSIGNED NULL,
@@ -255,7 +253,6 @@ CREATE TABLE relief_locations (
 
 -- 13. One distribution event to one registered household, possibly at a relief point.
 CREATE TABLE relief_distributions (
-  history_hidden_at DATETIME NULL,
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   household_id INT UNSIGNED NOT NULL,
   relief_location_id INT UNSIGNED NULL,
@@ -283,7 +280,6 @@ CREATE TABLE relief_distribution_items (
 
 -- 15. Stock history; negative stock prevented by transaction logic in PHP.
 CREATE TABLE relief_stock_movements (
-  history_hidden_at DATETIME NULL,
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   item_id INT UNSIGNED NOT NULL,
   movement_type ENUM('stock_in','stock_out','distribution') NOT NULL,

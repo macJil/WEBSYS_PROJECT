@@ -24,7 +24,7 @@ The shared picker supports map click, dragging, typed coordinates and device loc
 
 Available capacity (people) = sum of max(0, capacity − active occupants) across open, non-archived centers. Centers without coordinates still count. Active stays determine occupancy. Current dashboard incident cards exclude archived records; historical incident summaries retain them. Date filters apply to incident submissions and distributions, not current occupancy or current affected-household designation. Goods with different units are never combined into one quantity.
 
-Manage Records has one searchable table and All/type filtering. Checkboxes select only the displayed page. Delete asks for JavaScript confirmation. Unlinked records are permanently deleted. Linked records are hidden from active pages while history remains stored. This uses archived_at internally, or is_active for teams. Remaining stock, active occupants and ongoing responses must be handled first; errors provide steps. A blocked batch changes nothing. Removing a linked household also hides its members. History is not a generic audit log of every edit.
+Manage Records permanently deletes selected records. A resolved incident owns its assignments, updates and images. An empty center owns its completed stays. Shared stock movements and distributions block deletion of the catalog or household records they reference. Staff see history on the parent pages. Assigning a team directly to a pending incident records the staff review and sets the incident to responding. Team updates synchronize the incident status automatically.
 
 ## Setup and study
 

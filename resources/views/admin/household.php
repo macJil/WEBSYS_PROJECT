@@ -27,30 +27,56 @@ require __DIR__ . "/../components/saved-point.php";
 <p>Barangay: <?= e($household['barangay'] ?? 'Awaiting confirmation') ?></p>
 <p><a class="btn btn-outline-secondary" href="<?= e(url('resources/views/admin/records.php?type=members')) ?>">Manage records</a></p>
 <a class="d-inline-block mb-3" href="<?= e(url('resources/views/admin/households.php?edit=' . $id)) ?>">Edit household</a>
-<dl class="row">
-    <dt class="col-sm-4">Emergency contact number</dt>
-    <dd class="col-sm-8"><?= e($household['contact_phone'] ?: 'Not recorded') ?></dd>
-    <dt class="col-sm-4">Purok / sitio</dt>
-    <dd class="col-sm-8"><?= e($household['purok'] ?: 'Not recorded') ?></dd>
-    <dt class="col-sm-4">Address and location description</dt>
-    <dd class="col-sm-8"><?= e($household['address_details'] ?: 'Not recorded') ?></dd>
-    <dt class="col-sm-4">Hazard notes</dt>
-    <dd class="col-sm-8"><?= e($household['hazard_notes'] ?: 'Not recorded') ?></dd>
-    <dt class="col-sm-4">Assessment notes / source</dt>
-    <dd class="col-sm-8"><?= e($household['vulnerability_notes'] ?: 'Not recorded') ?></dd>
-    <dt class="col-sm-4">Assessment date</dt>
-    <dd class="col-sm-8"><?= e($household['vulnerability_assessed_at'] ?: 'Not recorded') ?></dd>
-    <dt class="col-sm-4">Registry reason</dt>
-    <dd class="col-sm-8"><?= e(HouseholdController::REASONS[$household['registry_reason']]) ?></dd>
-    <dt class="col-sm-4">Hazard concern</dt>
-    <dd class="col-sm-8"><?= e(HouseholdController::HAZARDS[$household['hazard_type']]) ?></dd>
-    <dt class="col-sm-4">Assistance classification</dt>
-    <dd class="col-sm-8"><?= e(HouseholdController::VULNERABILITY[$household['vulnerability_category']]) ?></dd>
-    <dt class="col-sm-4">Household advisory status</dt>
-    <dd class="col-sm-8"><?= e(HouseholdController::EVACUATION[$household['evacuation_status']]) ?></dd>
-    <dt class="col-sm-4">Members recorded</dt>
-    <dd class="col-sm-8"><?= (int)$household['member_count'] ?></dd>
-</dl>
+<div class="table-responsive">
+    <table class="table">
+        <tbody>
+            <tr>
+                <th scope="row">Emergency contact number</th>
+                <td><?= e($household['contact_phone'] ?: 'Not recorded') ?></td>
+            </tr>
+            <tr>
+                <th scope="row">Purok / sitio</th>
+                <td><?= e($household['purok'] ?: 'Not recorded') ?></td>
+            </tr>
+            <tr>
+                <th scope="row">Address and location description</th>
+                <td><?= e($household['address_details'] ?: 'Not recorded') ?></td>
+            </tr>
+            <tr>
+                <th scope="row">Hazard notes</th>
+                <td><?= e($household['hazard_notes'] ?: 'Not recorded') ?></td>
+            </tr>
+            <tr>
+                <th scope="row">Assessment notes / source</th>
+                <td><?= e($household['vulnerability_notes'] ?: 'Not recorded') ?></td>
+            </tr>
+            <tr>
+                <th scope="row">Assessment date</th>
+                <td><?= e($household['vulnerability_assessed_at'] ?: 'Not recorded') ?></td>
+            </tr>
+            <tr>
+                <th scope="row">Registry reason</th>
+                <td><?= e(HouseholdController::REASONS[$household['registry_reason']]) ?></td>
+            </tr>
+            <tr>
+                <th scope="row">Hazard concern</th>
+                <td><?= e(HouseholdController::HAZARDS[$household['hazard_type']]) ?></td>
+            </tr>
+            <tr>
+                <th scope="row">Assistance classification</th>
+                <td><?= e(HouseholdController::VULNERABILITY[$household['vulnerability_category']]) ?></td>
+            </tr>
+            <tr>
+                <th scope="row">Household advisory status</th>
+                <td><?= e(HouseholdController::EVACUATION[$household['evacuation_status']]) ?></td>
+            </tr>
+            <tr>
+                <th scope="row">Members recorded</th>
+                <td><?= (int)$household['member_count'] ?></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
 <?php if ($members && !$household['archived_at']): ?>
     <form method="post" class="mb-3">
         <label>Household representative

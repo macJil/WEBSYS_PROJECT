@@ -9,7 +9,6 @@ Paths are repository-relative. Member 1 presents the schema and stored data, and
 | `app/controllers/DashboardController.php` | 8 | 9 |
 | `app/controllers/DisasterSummaryController.php` | 8 | 9 |
 | `app/controllers/EvacuationController.php` | 5 | 6 |
-| `app/controllers/HistoryController.php` | 9 | 1 |
 | `app/controllers/HouseholdController.php` | 2 | 3 |
 | `app/controllers/MapController.php` | 9 | 1 |
 | `app/controllers/RecordActionsController.php` | 9 | 1 |
@@ -24,7 +23,6 @@ Paths are repository-relative. Member 1 presents the schema and stored data, and
 | `app/models/Dashboard.php` | 8 | 9 |
 | `app/models/DisasterSummary.php` | 8 | 9 |
 | `app/models/Evacuation.php` | 5 | 6 |
-| `app/models/History.php` | 9 | 1 |
 | `app/models/Household.php` | 2 | 3 |
 | `app/models/Map.php` | 9 | 1 |
 | `app/models/RecordActions.php` | 9 | 1 |
@@ -60,7 +58,6 @@ Paths are repository-relative. Member 1 presents the schema and stored data, and
 | `resources/views/admin/announcement/editor.php` | 7 | 8 |
 | `resources/views/admin/evacuation/center.php` | 5 | 6 |
 | `resources/views/admin/evacuation/centers.php` | 5 | 6 |
-| `resources/views/admin/history.php` | 9 | 1 |
 | `resources/views/admin/household.php` | 2 | 3 |
 | `resources/views/admin/households.php` | 2 | 3 |
 | `resources/views/admin/records-all.php` | 9 | 1 |
@@ -78,7 +75,6 @@ Paths are repository-relative. Member 1 presents the schema and stored data, and
 | `resources/views/components/errors.php` | 1 | 2 |
 | `resources/views/components/footer.php` | 9 | 1 |
 | `resources/views/components/header.php` | 9 | 1 |
-| `resources/views/components/history-action.php` | 9 | 1 |
 | `resources/views/components/location-picker.php` | 9 | 1 |
 | `resources/views/components/messages.php` | 1 | 2 |
 | `resources/views/components/navigation.php` | 9 | 1 |
@@ -122,6 +118,7 @@ Paths are repository-relative. Member 1 presents the schema and stored data, and
 | `database/migrations/009_atok_barangay.sql` | 2 | 3 |
 | `database/migrations/010_household_representative.sql` | 2 | 3 |
 | `database/migrations/011_incident_reporter_email.sql` | 3 | 2 |
+| `database/migrations/012_remove_history_visibility.sql` | 1 | 2 |
 | `resources/assets/js/atok-weather.js` | 7 | 8 |
 | `resources/views/components/barangay.php` | 2 | 3 |
 | `resources/views/components/weather.php` | 7 | 8 |
@@ -156,7 +153,6 @@ Literal PHP page destinations found in views and controllers. IDs and filter val
 - `resources/views/admin/announcement/editor.php` → `resources/views/admin/announcement/announcement.php`
 - `resources/views/admin/evacuation/center.php` → `resources/views/admin/evacuation/center.php`, `resources/views/admin/evacuation/centers.php`, `resources/views/admin/records.php`
 - `resources/views/admin/evacuation/centers.php` → `resources/views/admin/evacuation/center.php`, `resources/views/admin/evacuation/centers.php`, `resources/views/admin/records.php`
-- `resources/views/admin/history.php` → `resources/views/admin/admin.index.php`
 - `resources/views/admin/household.php` → `resources/views/admin/household.php`, `resources/views/admin/households.php`, `resources/views/admin/records.php`
 - `resources/views/admin/households.php` → `resources/views/admin/household.php`, `resources/views/admin/households.php`, `resources/views/admin/records.php`
 - `resources/views/admin/records-all.php` → `resources/views/admin/records.php`
@@ -171,7 +167,6 @@ Literal PHP page destinations found in views and controllers. IDs and filter val
 - `resources/views/admin/summaries/current.php` → `resources/views/admin/evacuation/center.php`, `resources/views/admin/household.php`
 - `resources/views/admin/summaries/disaster.php` → `resources/views/admin/summaries/disaster.php`
 - `resources/views/components/dashboard-cards.php` → `resources/views/admin/summaries/current.php`, `resources/views/incidents/list.php`, `resources/views/maps/centers.php`, `resources/views/user/announcement.php`
-- `resources/views/components/history-action.php` → `resources/views/admin/history.php`
 - `resources/views/components/location-picker.php` → `resources/views/maps/address.php`
 - `resources/views/components/navigation.php` → `index.php`, `resources/views/admin/announcement/announcement.php`, `resources/views/admin/evacuation/centers.php`, `resources/views/admin/households.php`, `resources/views/admin/records.php`, `resources/views/admin/relief/inventory.php`, `resources/views/admin/response/teams.php`, `resources/views/admin/summaries/disaster.php`, `resources/views/incidents/create.php`, `resources/views/incidents/list.php`, `resources/views/maps/map.php`, `resources/views/user/announcement.php`
 - `resources/views/incidents/create.php` → `resources/views/incidents/list.php`

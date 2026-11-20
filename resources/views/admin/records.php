@@ -33,7 +33,7 @@ require __DIR__ . "/../components/errors.php";
 ?>
 <p><a class="btn btn-outline-secondary" href="<?= e(url(dashboardPath())) ?>">Back to dashboard</a></p>
 <h1>Manage records</h1>
-<p>Filter or search, then select records to delete. Unused records are permanently deleted. Linked records are removed from active lists while their history is kept. Records still in use show the steps needed first.</p>
+<p>Filter or search, then select records to delete. Deletion permanently removes the selected records along with household members, incident images and response history, or completed center stays. Shared relief and stock records can block deletion.</p>
 <form method="get" class="filter-form mb-3">
     <label>Record type<select name="type">
             <option value="all">All record types</option>
