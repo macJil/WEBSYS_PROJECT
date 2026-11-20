@@ -197,7 +197,7 @@ class ReportController extends Controller
             [
                 'description' => 10000,
                 'reporter_name' => 100,
-                'contact_phone' => 20,
+                'contact_phone' => 13,
                 'location_description' => 255,
             ]
             as $key => $max
@@ -209,8 +209,8 @@ class ReportController extends Controller
         if (!isset(self::TYPES[$data['incident_type']])) {
             $errors[] = 'Choose an incident type.';
         }
-        if ($data['contact_phone'] !== '' && !validPhone($data['contact_phone'], 3)) {
-            $errors[] = 'Enter a valid contact number.';
+        if ($data['contact_phone'] !== '' && !validPhone($data['contact_phone'])) {
+            $errors[] = 'Use 09 plus nine digits or +639 plus nine digits.';
         }
         foreach (['latitude' => 90, 'longitude' => 180] as $key => $limit) {
             if (

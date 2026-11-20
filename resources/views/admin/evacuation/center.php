@@ -110,7 +110,7 @@ require __DIR__ . "/../../components/saved-point.php";
                 <input
                     class="form-control"
                     name="contact_phone"
-                    maxlength="20"
+                    type="tel" maxlength="13" minlength="11" placeholder="09xxxxxxxxx or +639xxxxxxxxx"
                     value="<?= e($formContactPhone) ?>"
                 />
             </label>

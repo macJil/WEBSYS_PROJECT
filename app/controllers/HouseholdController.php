@@ -127,8 +127,8 @@ class HouseholdController extends Controller
                 $errors[] = str_replace('_', ' ', ucfirst($field)) . ' must fit within 255 bytes.';
             }
         }
-        if ($data['contact_phone'] !== '' && !validPhone($data['contact_phone'], 7)) {
-            $errors[] = 'Enter a valid emergency contact number (7–20 characters), or leave it blank.';
+        if ($data['contact_phone'] !== '' && !validPhone($data['contact_phone'])) {
+            $errors[] = 'Use 09 plus nine digits or +639 plus nine digits, or leave the contact blank.';
         }
         foreach (
             [

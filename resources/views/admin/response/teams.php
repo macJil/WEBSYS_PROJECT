@@ -50,7 +50,7 @@ require __DIR__ . "/../../components/errors.php";
 <h2><?= $id ? 'Edit team' : 'Add team' ?></h2>
 <form method="post">
     <label class="d-block mb-3">Team name<input class="form-control" name="team_name" maxlength="120" value="<?= e($team['team_name']) ?>" required /></label>
-    <label class="d-block mb-3">Contact number<input class="form-control" name="contact_phone" maxlength="20" value="<?= e($team['contact_phone']) ?>" /></label>
+    <label class="d-block mb-3">Contact number<input class="form-control" name="contact_phone" type="tel" maxlength="13" minlength="11" placeholder="09xxxxxxxxx or +639xxxxxxxxx" value="<?= e($team['contact_phone']) ?>" /></label>
     <label class="d-block mb-3">Availability<select class="form-select" name="is_active">
             <option value="1" <?= (string)$team['is_active'] === '1' ? 'selected' : '' ?>>Active</option>
             <option value="0" <?= (string)$team['is_active'] === '0' ? 'selected' : '' ?>>Inactive</option>

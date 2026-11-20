@@ -96,7 +96,7 @@ require __DIR__ . "/../components/errors.php";
                 class="form-control"
                 id="contact_phone"
                 name="contact_phone"
-                maxlength="20"
+                type="tel" maxlength="13" minlength="11" placeholder="09xxxxxxxxx or +639xxxxxxxxx"
                 value="<?= e($form['contact_phone']) ?>"
             />
         </div>

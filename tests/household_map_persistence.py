@@ -107,7 +107,7 @@ with tempfile.TemporaryDirectory(prefix='bayanready-address-') as temporary:
             code, body = client.request('/index.php', {'action': 'login', 'email': role + '@example.invalid', 'password': 'DemoPass123!'})
             assert code == 200 and 'Log out' in body, body[:300]
         cases = [
-            (resident, 'incidents/create.php', 'incident_reports', 'location_description', 'incidents/view.php', dict(action='create_incident', incident_type='other', description='Fictional exercise', reporter_name='Fictional person', contact_phone='0000000000')),
+            (resident, 'incidents/create.php', 'incident_reports', 'location_description', 'incidents/view.php', dict(action='create_incident', incident_type='other', description='Fictional exercise', reporter_name='Fictional person', contact_phone='09000000000')),
             (admin, 'admin/households.php', 'households', 'address_details', 'admin/household.php', dict(action='create_household', barangay='Abiang', contact_phone='', purok='Demo', registry_reason='monitored', hazard_type='unassessed', hazard_notes='', vulnerability_category='unassessed', vulnerability_notes='', evacuation_status='at_home')),
             (admin, 'admin/evacuation/centers.php', 'evacuation_centers', 'address_details', 'admin/evacuation/center.php', dict(action='save_center', barangay='Abiang', name='Fictional center', capacity='5', status='open')),
             (admin, 'admin/relief/locations.php', 'relief_locations', 'address_details', 'admin/relief/location.php', dict(action='save_location', barangay='Abiang', name='Fictional relief point', location_type='distribution')),
@@ -235,21 +235,21 @@ with tempfile.TemporaryDirectory(prefix='bayanready-address-') as temporary:
         form = 'incidents/create.php'
         assisted = form + '?intake=assisted'
         assert contact_fields(resident, form) == ['Fictional resident', 'resident@example.invalid', '']
-        query("UPDATE users SET phone='0001112222' WHERE username='admin'")
-        assert contact_fields(admin, form) == ['Fictional admin', 'admin@example.invalid', '0001112222']
+        query("UPDATE users SET phone='09000000001' WHERE username='admin'")
+        assert contact_fields(admin, form) == ['Fictional admin', 'admin@example.invalid', '09000000001']
         assert contact_fields(admin, assisted) == ['', '', '']
         values = dict(action='create_incident', incident_type='other', description='Fictional intake',
                       location_description='Fictional hall', reporter_name='Fictional Caller',
-                      contact_phone='0003334444', reporter_email='invalid', report_source='phone',
+                      contact_phone='+639000000002', reporter_email='invalid', report_source='phone',
                       reported_by='999999')
-        assert contact_fields(admin, assisted, values) == ['Fictional Caller', 'invalid', '0003334444']
+        assert contact_fields(admin, assisted, values) == ['Fictional Caller', 'invalid', '+639000000002']
         values['reporter_email'] = 'caller@example.invalid'
         for client, page, owner, source in [(admin, assisted, 'admin', 'phone'), (resident, assisted, 'resident', 'resident')]:
             code, body = client.request(prefix + page, values)
             assert code == 200 and 'caller@example.invalid' in body
             row = query("SELECT r.*, u.username FROM incident_reports r JOIN users u ON u.id=r.reported_by ORDER BY r.id DESC LIMIT 1")[0]
             assert (row['username'], row['report_source']) == (owner, source)
-            assert [row[k] for k in ('reporter_name','reporter_email','contact_phone')] == ['Fictional Caller','caller@example.invalid','0003334444']
+            assert [row[k] for k in ('reporter_name','reporter_email','contact_phone')] == ['Fictional Caller','caller@example.invalid','+639000000002']
             if owner == 'admin':
                 assert resident.request(prefix + 'incidents/view.php?id=' + str(row['id']))[0] == 404
         print('PASS reporter prefilling, blank assisted intake, validation retries, contact snapshots and session ownership')
@@ -294,7 +294,7 @@ with tempfile.TemporaryDirectory(prefix='bayanready-address-') as temporary:
         print('PASS multi-good distribution deducts both goods and preserves all four tables on failure')
         newcomer = Client()
         registration = dict(action='register', email='new@example.invalid', username='fictional_new',
-                            full_name='Fictional New', phone='0000000000', role='admin',
+                            full_name='Fictional New', phone='09000000000', role='admin',
                             password='DemoPass123!', password_confirmation='incorrect')
         assert 'passwords do not match' in newcomer.request('/index.php', registration)[1]
         registration['password_confirmation'] = registration['password']

@@ -146,10 +146,10 @@ class EvacuationController extends Controller
                         $data['age'] === false ||
                         $data['address_details'] === '' ||
                         strlen($data['address_details']) > 255 ||
-                        !validPhone($data['contact_phone'], 3)
+                        !validPhone($data['contact_phone'])
                     ) {
                         return [
-                            'For a new walk-in, enter name (up to 100 bytes), age 0–130, home address (up to 255 bytes), and contact number (personal or guardian).',
+                            'For a new walk-in, enter name (up to 100 bytes), age 0–130, home address (up to 255 bytes), and mobile number starting with 09 (11 digits) or +639 (13 characters), personal or guardian.',
                         ];
                     }
                 } else {

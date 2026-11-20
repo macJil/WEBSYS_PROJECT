@@ -70,8 +70,8 @@ class ResponseController extends Controller
         if ($name === '' || strlen($name) > 120) {
             return ['Team name is required (maximum 120 bytes).'];
         }
-        if ($phone !== '' && !validPhone($phone, 3)) {
-            return ['Enter a valid contact number, or leave it blank.'];
+        if ($phone !== '' && !validPhone($phone)) {
+            return ['Use 09 plus nine digits or +639 plus nine digits, or leave the contact blank.'];
         }
         if (!in_array($active, ['0', '1'], true)) {
             return ['Choose active or inactive.'];

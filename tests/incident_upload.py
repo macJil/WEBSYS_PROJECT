@@ -5,7 +5,7 @@ import urllib.request
 
 def check_upload(resident, admin, Client, query, base, prefix):
     image = base64.b64decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/l9sAAAAASUVORK5CYII=')
-    fields = dict(action='create_incident', incident_type='other', description='Fictional upload test', reporter_name='Fictional Reporter', contact_phone='0000000000', location_description='Fictional landmark', latitude='', longitude='')
+    fields = dict(action='create_incident', incident_type='other', description='Fictional upload test', reporter_name='Fictional Reporter', contact_phone='09000000000', location_description='Fictional landmark', latitude='', longitude='')
     def upload(content, filename):
         boundary = 'BayanReadyUploadTestBoundary'
         body = b''

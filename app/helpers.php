@@ -59,13 +59,11 @@ function validDateInput(string $value): bool
     return $date !== false && $date->format('Y-m-d') === $value;
 }
 
-function validPhone(string $value, int $minimum): bool
+function validPhone(string $value): bool
 {
-    $length = strlen($value);
-    if ($length < $minimum || $length > 20) {
-        return false;
-    }
-    return strspn($value, '0123456789+() .-') === $length;
+    $local = strlen($value) === 11 && str_starts_with($value, '09') && ctype_digit($value);
+    $international = strlen($value) === 13 && str_starts_with($value, '+639') && ctype_digit(substr($value, 1));
+    return $local || $international;
 }
 
 function flash(string $message): void
