@@ -95,7 +95,9 @@ require __DIR__ . "/resources/views/components/errors.php";
                     class="form-control mb-3"
                     name="phone"
                     type="tel"
-                    maxlength="20"
+                    maxlength="13"
+                    minlength="11"
+                    placeholder="09662638545 or +639662638545"
                     required
                     value="<?= e($registration['phone'] ?? '') ?>"
                 />
