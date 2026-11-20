@@ -46,7 +46,7 @@ class UserController extends Controller
                 $errors[] = 'Use 3–50 letters, numbers or underscores for your username.';
             }
             if (!validPhone($data['phone'])) {
-                $errors[] = 'Enter a mobile number like 09662638545 or +639662638545.';
+                $errors[] = 'Enter a mobile number like 09xxxxxxxxx or +639xxxxxxxxx.';
             }
             if (strlen($password) < 8) {
                 $errors[] = 'Use a password of at least 8 characters.';
