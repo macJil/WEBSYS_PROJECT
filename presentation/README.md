@@ -6,9 +6,13 @@ Use the [Google Slides deck](https://docs.google.com/presentation/d/1BzssWagGBYL
 
 The remaining earlier decks, scripts and research files describe the previous five-member revision. Use the materials linked above for the municipal presentation.
 
-## Rehearsal record · 19 November 2026
+## Demo readiness · 22 November 2026
 
-The previous technical run exercised the fictional staff and resident workflows. The revised stakeholder/database and MVC segments have been checked against the code and schema. The updated speaking schedule allocates 30 minutes including window switches, database inspection, live actions and code. A full nine-person timed rehearsal is pending.
+The current nine-person schedule runs for 30 minutes before Q&A. Member 1 covers the client and fictional database rows. Member 2 introduces MVC and covers login and the registry. Members 3–9 present the incident, response, evacuation, relief, announcements and weather, dashboard and print, and map workflows.
+
+The fresh and upgraded fictional database workflows passed. The browser checked staff and resident access, 35 page states, 63 local links, phone and desktop widths, filtered map zoom and three authenticated PDFs. Forecast success and outage used simulated responses. The code guide’s 31 excerpts match the current source files. All 14 slide layouts were reviewed and the offline speaker notes match the full speaking script.
+
+On the presentation computer, start MAMP, open staff and resident sessions separately, and prepare the fictional records in the [setup guide](../docs/municipal/SETUP_AND_SELF_TEST.md). An existing demo database at migration 011 needs 012. Open the PowerPoint offline copy and check the projector. Keep the demo incident available through the print and map sections. Photograph display depends on permission. A full nine-person rehearsal on the presentation computer is pending.
 
 For the team run, start the clock with the first word, keep it running during window switches and stop before the first audience question. The reviewer for each speaker should record the actual handoff time from the script, one code decision the speaker explained unaided, and one adjustment. If a segment runs long, open the prepared result tab and proceed to the next speaker.
 

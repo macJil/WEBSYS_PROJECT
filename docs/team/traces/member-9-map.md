@@ -18,7 +18,7 @@ $pageTitle = "Community map";
 
 ## Validate the barangay filter
 
-[app/controllers/MapController.php, lines 6–16](../../../app/controllers/MapController.php#L6)
+[app/controllers/MapController.php, lines 6–15](../../../app/controllers/MapController.php#L6)
 
 ```php
     public function mapData(): array

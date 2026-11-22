@@ -82,7 +82,7 @@ A transaction groups writes: beginTransaction → validation/locking reads → w
 
 `DashboardController::dashboardData()` selects staff-wide or resident-owned incident counts. Staff receive affected households and active stays; residents receive published notices. `DashboardModel` queries these rows; card rendering uses the same meanings and matching list links. The capacity helper prevents definitions drifting between model outputs.
 
-`RecordActionsModel::listing()` uses an allowlisted UNION ALL for All record types, ordinary bound search terms and a 50-row page. Each row carries type and ID, so equal IDs from different tables stay distinct. Controller `delete()` validates selected type:ID keys against displayed rows and groups IDs by type. `deleteSelected()` locks/checks the entire batch first. `removalMode()` blocks active use with steps, then chooses permanent delete for unused records or hide/deactivate for linked/published records. Only after every record passes do writes occur. Removing a linked household also hides its members. The transaction preserves all-or-nothing behavior.
+`RecordActionsModel::listing()` uses an allowlisted set of tables and bound search terms. The controller validates selected type and ID values against the displayed page. The model deletes the batch in one transaction and rolls it back if a record is blocked. Deleting a resolved incident removes its assignments and response updates. Deleting an empty center removes its completed stays. Shared distribution, stock or stay references can block deletion. Incident files are cleaned up after the database commits.
 
 ## JavaScript, CSS and views
 

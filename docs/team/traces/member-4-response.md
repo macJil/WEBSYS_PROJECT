@@ -14,7 +14,7 @@ The response form sends update_assignment with assignment ID, status and notes f
                         <option value="completed" <?= $selectedStatus === 'completed' ? 'selected' : '' ?>>Completed</option>
                         <option value="cancelled" <?= $selectedStatus === 'cancelled' ? 'selected' : '' ?>>Cancelled</option>
                     </select></label>
-                <label class="d-block my-2">Action taken<textarea class="form-control" name="notes" maxlength="2000" required>
+                <label class="d-block my-2">Additional action notes (optional)<textarea class="form-control" name="notes" maxlength="2000">
 <?= e($notes) ?></textarea> </label>
                 <button class="btn btn-primary" name="action" value="update_assignment">Save team and incident status</button>
 ```
@@ -24,8 +24,8 @@ The response form sends update_assignment with assignment ID, status and notes f
 [app/controllers/ResponseController.php, lines 102–114](../../../app/controllers/ResponseController.php#L102)
 
 ```php
-        if ($notes === '' || strlen($notes) > 2000) {
-            return ['Describe the action taken (maximum 2,000 bytes).'];
+        if (strlen($notes) > 2000) {
+            return ['Keep the action note within 2,000 bytes.'];
         }
         $teamId = $action === 'assign_team' ? $this->recordId(input('team_id')) : null;
         $assignmentId = $action === 'update_assignment' ? $this->recordId(input('assignment_id')) : null;
@@ -41,7 +41,7 @@ The response form sends update_assignment with assignment ID, status and notes f
 
 ## Synchronize the incident and preserve the action
 
-[app/models/Response.php, lines 148–169](../../../app/models/Response.php#L148)
+[app/models/Response.php, lines 148–173](../../../app/models/Response.php#L148)
 
 ```php
                 ) {
@@ -55,6 +55,10 @@ The response form sends update_assignment with assignment ID, status and notes f
                     $assignment['team_name'] . ': ' . $assignment['status'] . ' → ' . $status . '. ' . $notes;
             }
             // One update saves both the team state and the incident's overall state.
+            if ($old === 'pending') {
+                $review = $this->pdo->prepare('UPDATE incident_reports SET reviewed_by=?, reviewed_at=CURRENT_TIMESTAMP WHERE id=?');
+                $review->execute([$staff, $incidentId]);
+            }
             $next = $this->assignmentStatus($incidentId);
             $stmt = $this->pdo->prepare('UPDATE incident_reports SET status=? WHERE id=?');
             $stmt->execute([$next, $incidentId]);
@@ -70,4 +74,4 @@ The response form sends update_assignment with assignment ID, status and notes f
 
 ## Demonstrate it
 
-Assign two teams. Complete one and then both. Read the overall incident status after each update.
+Assign two teams directly to a pending report. The first assignment records the reviewer and sets the incident to responding. Complete one and then both. Read the overall incident status after each update.

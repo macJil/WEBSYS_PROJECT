@@ -32,7 +32,7 @@ Open the create form as a resident. Initial contact values come from the authent
 
 ### 4. Complete the second team assignment
 
-The response form sends update_assignment with assignment ID, status and notes for the open incident. ResponseController::record validates the status and passes the authenticated staff ID. ResponseModel::record updates the assignment, records the action and synchronizes the incident within the transaction. Point to the rule for the remaining assignments. Completing the first of two active teams leaves the incident responding. Completing both resolves it. Earlier actions remain available in history. [Form and result](../../resources/views/admin/response/incident.php) · [Controller](../../app/controllers/ResponseController.php) · [Model](../../app/models/Response.php)
+Staff can assign the first team directly to a pending incident. The model records the reviewer and moves the incident to responding. The response form sends update_assignment with assignment ID, status and notes for the open incident. ResponseController::record validates the status and passes the authenticated staff ID. ResponseModel::record updates the assignment, records the action and synchronizes the incident within the transaction. Point to the rule for the remaining assignments. Completing the first of two active teams leaves the incident responding. Completing both resolves it. Earlier actions remain available in history. [Form and result](../../resources/views/admin/response/incident.php) · [Controller](../../app/controllers/ResponseController.php) · [Model](../../app/models/Response.php)
 
 [Study the code excerpts](traces/member-4-response.md)
 

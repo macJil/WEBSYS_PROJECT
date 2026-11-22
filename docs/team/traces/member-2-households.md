@@ -4,7 +4,7 @@ The household detail form sends select_representative and member_id. The control
 
 ## Select a member of the displayed household
 
-[resources/views/admin/household.php, lines 54–65](../../../resources/views/admin/household.php#L54)
+[resources/views/admin/household.php, lines 80–91](../../../resources/views/admin/household.php#L80)
 
 ```php
 <?php if ($members && !$household['archived_at']): ?>

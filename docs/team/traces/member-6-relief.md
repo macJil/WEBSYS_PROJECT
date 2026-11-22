@@ -4,7 +4,7 @@ The form submits household_id, received_by and quantities keyed by item ID. Reli
 
 ## Quantities are keyed by relief item ID
 
-[resources/views/admin/relief/distributions.php, lines 92–105](../../../resources/views/admin/relief/distributions.php#L92)
+[resources/views/admin/relief/distributions.php, lines 106–119](../../../resources/views/admin/relief/distributions.php#L106)
 
 ```php
                                 aria-label="<?= e('Quantity of ' . $item['item_name']) ?>"

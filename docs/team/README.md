@@ -10,7 +10,7 @@ The shared municipal map supports all eight barangays in Atok, opens at zoom 11 
 
 1. Staff register households and individual members. Household size comes from active member rows.
 2. A resident submits an incident, written location, optional point and optional image. Staff can enter phone/in-person reports.
-3. Staff verify the incident. Assigning a response team changes it to responding. Staff record actions, complete/cancel assignments and then resolve the incident.
+3. Staff can assign a team directly to a pending incident. The first assignment records review and moves the incident to responding. Completing all assignments resolves the incident automatically.
 4. Staff open evacuation centers with person capacities. Choose a household, uncheck absent members and check in the arriving members. Each person gets a stay record; walk-ins are also supported.
 5. Staff enter relief goods and stock-in. A distribution selects a registered household, receiver and one or more goods. Stock and distribution history commit together.
 6. Staff publish announcements. Residents see only published, active notices.

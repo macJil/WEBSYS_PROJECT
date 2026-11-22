@@ -44,7 +44,7 @@ require __DIR__ . "/../components/dashboard-cards.php";
 
 ## Count stays that have no checkout time
 
-[app/models/Dashboard.php, lines 59–65](../../../app/models/Dashboard.php#L59)
+[app/models/Dashboard.php, lines 59–64](../../../app/models/Dashboard.php#L59)
 
 ```php
     public function stays(): array
