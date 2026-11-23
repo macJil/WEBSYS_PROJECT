@@ -19,7 +19,7 @@ foreach ($overview["incidents"] as $status => $count) {
         ];
     }
 }
-$centerPath = "resources/views/maps/centers.php";
+$centerPath = "resources/views/centers/list.php";
 if ($filter !== '') {
     $centerPath .= '?' . $filter;
 }
@@ -36,7 +36,7 @@ if ($admin) {
 }
 ?>
 <?php if ($admin): ?>
-    <p class="small">Available capacity counts additional people that open, non-archived centers can accommodate. Centers without map points are included. Evacuees are grouped by center location. Municipal inventory counts active catalog items across Atok.</p>
+    <p class="small">Available capacity counts additional people that open, non-archived centers can accommodate. Evacuees are grouped by center location. Municipal inventory counts active catalog items across Atok.</p>
 <?php endif; ?>
 <div class="row g-3 mb-4">
     <?php foreach ($cards as [$label,$value,$path]): ?>

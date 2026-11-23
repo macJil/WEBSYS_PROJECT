@@ -22,7 +22,7 @@ $pageTitle = "Relief locations";
 require __DIR__ . "/../../components/header.php";
 require __DIR__ . "/../../components/errors.php";
 ?>
-<p class="return-link no-print"><a class="btn btn-outline-secondary" href="<?= e(url('resources/views/admin/relief/inventory.php')) ?>">Back to relief inventory</a></p>
+<p class="return-link"><a class="btn btn-outline-secondary" href="<?= e(url('resources/views/admin/relief/inventory.php')) ?>">Back to relief inventory</a></p>
 <h1>Relief locations</h1>
 <p><a class="btn btn-outline-secondary" href="<?= e(url('resources/views/admin/records.php?type=locations')) ?>">Manage records</a></p>
 <form method="get">
@@ -36,9 +36,7 @@ require __DIR__ . "/../../components/errors.php";
 <ul>
     <?php foreach ($locations as $row): ?>
         <li><?= e($row['name']) ?>
-            <?php if (!hasMapPoint($row)): ?>
-                <small>(No map point)</small>
-            <?php endif; ?>
+
             — <a href="<?= e(url('resources/views/admin/relief/location.php?id=' . $row['id'])) ?>">View</a> · <a href="?edit=<?= (int)$row['id'] ?>">Edit</a></li>
     <?php endforeach; ?>
 </ul>
@@ -62,7 +60,7 @@ require __DIR__ . "/../../components/errors.php";
         </select></label>
     <?php
     $point = $d;
-    require __DIR__ . "/../../components/location-picker.php";
+    require __DIR__ . "/../../components/location-fields.php";
     ?>
     <button class="btn btn-primary" name="action" value="save_location">Save location</button>
     <a href="<?= e(url('resources/views/admin/relief/locations.php')) ?>">Cancel and return to relief locations</a>

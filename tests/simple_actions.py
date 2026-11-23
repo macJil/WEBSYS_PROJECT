@@ -73,10 +73,10 @@ def check_actions(admin, resident, query, prefix):
         'admin/relief/distributions.php','admin/relief/distributions.php?id=1','admin/relief/locations.php',
         'admin/relief/locations.php?edit=1','admin/relief/location.php?id=1',
         'admin/announcement/announcement.php','admin/announcement/announcement.update.php?id=1',
-        'admin/summaries/disaster.php','admin/summaries/current.php?type=evacuees','maps/map.php','maps/centers.php','admin/records.php',
+        'admin/summaries/disaster.php','admin/summaries/current.php?type=evacuees','centers/list.php','admin/records.php',
     ]
     visited = set()
-    for client, paths in [(admin,pages),(resident,['user/user.index.php','user/announcement.php','incidents/list.php','incidents/create.php','incidents/view.php?id=1','maps/map.php','maps/centers.php'])]:
+    for client, paths in [(admin,pages),(resident,['user/user.index.php','user/announcement.php','incidents/list.php','incidents/create.php','incidents/view.php?id=1','centers/list.php'])]:
         for page in paths:
             code, body = client.request(prefix + page)
             assert code == 200, (page,code)
@@ -93,4 +93,4 @@ def check_actions(admin, resident, query, prefix):
                     continue
                 visited.add((id(client), target))
                 assert client.request(target)[0] == 200, (page,text,target)
-    print('PASS 35 rendered page states: labelled/styled buttons and', len(visited), 'local link destinations')
+    print('PASS rendered prototype page states: labelled/styled buttons and', len(visited), 'local link destinations')

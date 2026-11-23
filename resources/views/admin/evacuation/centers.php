@@ -18,7 +18,7 @@ $pageTitle = "Evacuation centers";
 require __DIR__ . "/../../components/header.php";
 require __DIR__ . "/../../components/errors.php";
 ?>
-<p class="return-link no-print"><a class="btn btn-outline-secondary" href="<?= e(url(dashboardPath())) ?>">Back to dashboard</a></p>
+<p class="return-link"><a class="btn btn-outline-secondary" href="<?= e(url(dashboardPath())) ?>">Back to dashboard</a></p>
 <h1>Evacuation centers</h1>
 <p><a class="btn btn-outline-secondary" href="<?= e(url('resources/views/admin/records.php?type=centers')) ?>">Manage records</a></p>
 <form method="get" class="filter-form mb-3">
@@ -47,9 +47,7 @@ require __DIR__ . "/../../components/errors.php";
                 <tr>
                     <td><?= e($center['name']) ?></td>
                     <td><?= e($center['address_details']) ?>
-                        <?php if (!hasMapPoint($center)): ?>
-                            <br /><small>No map point</small>
-                        <?php endif; ?>
+
                     </td>
                     <td><span class="status-badge" data-status="<?= e($center['status']) ?>"><?= e($center['status']) ?></span></td>
                     <td><?= (int)$center['occupancy'] ?> / <?= (int)$center['capacity'] ?></td>
@@ -86,7 +84,7 @@ require __DIR__ . "/../../components/errors.php";
     <p>Check out all occupants before closing a center. Capacity cannot be reduced below current occupancy.</p>
     <?php
     $point = $data;
-    require __DIR__ . "/../../components/location-picker.php";
+    require __DIR__ . "/../../components/location-fields.php";
     ?>
     <button class="btn btn-primary" name="action" value="save_center">Save center</button>
     <a href="<?= e(url('resources/views/admin/evacuation/centers.php')) ?>">Cancel and return to evacuation centers</a>

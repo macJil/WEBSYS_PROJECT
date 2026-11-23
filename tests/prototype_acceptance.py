@@ -115,7 +115,7 @@ with tempfile.TemporaryDirectory(prefix='bayanready-address-') as temporary:
         prefix = '/resources/views/'
         for client, page, table, field, detail, values in cases:
             code, body = client.request(prefix + page)
-            assert code == 200 and 'data-address-status' in body and 'location-picker.js' in body
+            assert code == 200 and 'Coordinates (optional)' in body and 'leaflet' not in body
             values.update({field: 'Fictional suggested road, Demo locality', 'latitude': '16.6272000', 'longitude': '120.7672000'})
             code, body = client.request(prefix + page, values)
             assert code == 200 and 'alert-danger' not in body, body[-1500:]
@@ -124,10 +124,10 @@ with tempfile.TemporaryDirectory(prefix='bayanready-address-') as temporary:
             assert row['barangay'] == values.get('barangay')
             assert row[field] == values[field] and row['latitude'] == values['latitude'] and row['longitude'] == values['longitude'], row
             code, body = client.request(prefix + detail + '?id=' + str(row['id']))
-            assert code == 200 and values[field] in body and values['latitude'] in body
+            assert code == 200 and values[field] in body
             edit = prefix + (detail + '?id=' + str(row['id']) if table == 'incident_reports' else page + '?edit=' + str(row['id']))
             code, body = admin.request(edit)
-            assert code == 200 and values[field] in body and 'data-address-status' in body
+            assert code == 200 and values[field] in body and 'Coordinates (optional)' in body
             updated = dict(values, barangay='Topdac')
             updated.update({field: 'Fictional manually confirmed landmark', 'latitude': '16.6280000', 'longitude': '120.7680000'})
             if table == 'incident_reports':
@@ -262,9 +262,9 @@ with tempfile.TemporaryDirectory(prefix='bayanready-address-') as temporary:
         assert resident.request(summary_page + 'Topdac')[0] == 403
         for client in [resident, admin]:
             code, page = client.request(prefix + 'incidents/view.php?id=1')
-            assert code == 200 and 'Print incident report' in page and 'Asia/Manila' in page
+            assert code == 200 and 'Print incident report' not in page and 'Asia/Manila' in page
             assert ('Staff review history' in page) == (client is admin)
-        print('PASS print controls, current versus historical totals, barangay selection and role-specific content')
+        print('PASS on-screen summaries, barangay selection and role-specific details without printing controls')
         # Test two different units together, including an insufficient second item.
         goods = {}
         for name, unit in [('Fictional water', 'bottles'), ('Fictional noodles', 'packs')]:
@@ -312,7 +312,7 @@ with tempfile.TemporaryDirectory(prefix='bayanready-address-') as temporary:
             for client in (admin, resident):
                 handler = next(h for h in client.client.handlers if hasattr(h, 'cookiejar'))
                 sessions.append(next(c.value for c in handler.cookiejar if c.name == 'PHPSESSID'))
-            subprocess.run(['node', str(ROOT / 'tests/municipal_browser.js'), base, str(folder)],
+            subprocess.run(['node', str(ROOT / 'tests/prototype_browser.js'), base, str(folder)],
                            input=json.dumps(sessions), text=True, check=True, timeout=120)
         # The resolved incident owns its assignments and action history.
         assert query('SELECT id FROM response_updates WHERE incident_id=1')

@@ -162,8 +162,7 @@ legend {
 }
 .panel,
 .module-card,
-.notice-card,
-.map-key {
+.notice-card {
     background: var(--br-paper);
     border: 1px solid var(--br-line);
     border-radius: 0.75rem;
@@ -361,108 +360,6 @@ legend {
 .footer-brand {
     font-weight: 700;
 }
-/* Explicit heights keep every Leaflet container visible. */
-.map-layout {
-    display: grid;
-    grid-template-columns: 250px minmax(0, 1fr);
-    gap: 1rem;
-}
-.map-layout > div {
-    min-width: 0;
-}
-.map-key {
-    align-self: start;
-    padding: 1rem;
-}
-.map-key h2 {
-    margin-top: 0;
-}
-.map-layer {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 0.85rem;
-    cursor: pointer;
-    font-size: 0.9rem;
-}
-.map-symbol {
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    width: 28px;
-    height: 28px;
-    border-radius: 5px;
-    color: white;
-    font-size: 22px;
-    font-weight: bold;
-    line-height: 1;
-    border: 2px solid white;
-    box-shadow: 0 0 0 1px #333;
-    flex-shrink: 0;
-}
-.incident {
-    background: #a64200;
-}
-.center-open {
-    background: #175ba3;
-}
-.center-closed {
-    background: #555;
-}
-.relief {
-    background: #246637;
-}
-.household {
-    background: #733a95;
-    border-radius: 50%;
-}
-.map-marker-icon {
-    background: none;
-    border: none;
-}
-.map-popup p {
-    margin: 0.35rem 0;
-    overflow-wrap: anywhere;
-}
-#community-map,
-[data-picker-map],
-#saved-incident-map {
-    width: 100%;
-    height: 360px;
-    min-height: 280px;
-    border: 1px solid #a9bac9;
-    border-radius: 0.6rem;
-    background: #e5ebed;
-    z-index: 0;
-}
-#community-map {
-    height: 65vh;
-    min-height: 360px;
-}
-.location-picker {
-    padding: 1rem;
-    background: #f7f9fc;
-    border: 1px solid var(--br-line);
-    border-radius: 0.6rem;
-}
-.location-picker > label {
-    display: inline-block;
-    width: calc(50% - 0.4rem);
-    margin-bottom: 0.75rem;
-}
-.location-picker input[data-coordinate] {
-    display: block;
-    width: 100%;
-}
-.location-picker [role="status"] {
-    font-weight: 400;
-    margin: 0.8rem 0 0;
-}
-.map-status {
-    padding: 0.75rem 1rem;
-    background: #eaf0f5;
-    border-radius: 0.5rem;
-}
 @media (max-width: 767px) {
     .brand-row {
         gap: 0.6rem;
@@ -486,40 +383,11 @@ legend {
     .notice-card {
         padding: 1rem;
     }
-    .map-layout {
-        grid-template-columns: 1fr;
-    }
-    #community-map {
-        height: 55vh;
-        min-height: 320px;
-    }
-    .location-picker > label {
-        width: 100%;
-    }
     .site-footer {
         font-size: 0.85rem;
     }
 }
-@media print {
-    body {
-        background: white;
-    }
-    .site-header,
-    .skip-link,
-    .btn,
-    .site-footer {
-        display: none;
-    }
-    .app-main {
-        padding: 0;
-    }
-    .stat-card,
-    .panel,
-    .notice-card {
-        box-shadow: none;
-        break-inside: avoid;
-    }
-}
+
 
 /* Responsive module patterns: forms stay ordinary PHP submissions. */
 .navigation-toggle {
@@ -580,15 +448,6 @@ legend {
     display: inline-block;
     padding-block: 0.25rem;
 }
-.location-picker {
-    min-width: 0;
-}
-.location-picker button {
-    margin-bottom: 0.5rem;
-}
-.map-layer {
-    min-height: 2.75rem;
-}
 .map-layer input {
     flex-shrink: 0;
 }
@@ -625,37 +484,14 @@ legend {
     .table th {
         padding: 0.65rem;
     }
-    .location-picker {
-        padding: 0.75rem;
-    }
-    .location-picker > button {
-        display: block;
-        width: 100%;
-    }
     .nav-links a {
         min-height: 44px;
     }
 }
-@media print {
-    .no-print {
-        display: none !important;
-    }
-    .table-responsive {
-        overflow: visible;
-        border: 0;
-    }
-    .table-responsive .table {
-        min-width: 0;
-    }
-    .table th,
-    .table td {
-        padding: 0.3rem;
-        font-size: 0.8rem;
-    }
-}
+
 
 /* Make page actions recognizable while keeping normal link navigation. */
-.app-main a:not(.btn):not(.stat-card):not(.leaflet-container a) {
+.app-main a:not(.btn):not(.stat-card) {
     display: inline-block;
     padding: 0.5rem 0.75rem;
     margin-block: 0.25rem;
@@ -667,7 +503,7 @@ legend {
     max-width: 100%;
     overflow-wrap: anywhere;
 }
-.app-main a:not(.btn):not(.stat-card):not(.leaflet-container a):hover {
+.app-main a:not(.btn):not(.stat-card):hover {
     background: var(--br-primary);
     color: #fff;
 }

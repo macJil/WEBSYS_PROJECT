@@ -15,7 +15,7 @@ $filterQ = $controller->queryValue('q');
 $filterType = $controller->queryValue('type');
 $filterDate = $controller->queryValue('date');
 ?>
-<p class="return-link no-print"><a class="btn btn-outline-secondary" href="<?= e(url('resources/views/admin/relief/inventory.php')) ?>">Back to relief inventory</a></p>
+<p class="return-link"><a class="btn btn-outline-secondary" href="<?= e(url('resources/views/admin/relief/inventory.php')) ?>">Back to relief inventory</a></p>
 <h1>Stock movements</h1>
 <p><a href="<?= e(url('resources/views/admin/relief/inventory.php')) ?>">Inventory</a> · <a href="<?= e(url('resources/views/admin/relief/movements.php')) ?>">Stock movements</a> · <a href="<?= e(url('resources/views/admin/relief/distributions.php')) ?>">Household distributions</a></p>
 <h2>Record stock-in or stock-out</h2>

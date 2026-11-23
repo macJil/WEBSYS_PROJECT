@@ -20,7 +20,7 @@ $formHouseholdId = input('household_id');
 $formReceivedBy = input('received_by');
 $formNotes = input('notes');
 ?>
-<p class="return-link no-print"><a class="btn btn-outline-secondary" href="<?= e(url('resources/views/admin/relief/inventory.php')) ?>">Back to relief inventory</a></p>
+<p class="return-link"><a class="btn btn-outline-secondary" href="<?= e(url('resources/views/admin/relief/inventory.php')) ?>">Back to relief inventory</a></p>
 <h1>Relief distributions</h1>
 <p><a href="<?= e(url('resources/views/admin/relief/inventory.php')) ?>">Inventory</a> · <a href="<?= e(url('resources/views/admin/relief/movements.php')) ?>">Stock movements</a> · <a class="btn btn-outline-secondary" href="<?= e(url('resources/views/admin/relief/distributions.php')) ?>">Back to household distributions</a></p>
 <?php if ($distribution): ?>

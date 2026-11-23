@@ -23,10 +23,9 @@ foreach ($summary["centers"] as $center) {
 $pageTitle = "Disaster reports and summaries";
 require __DIR__ . "/../../components/header.php";
 ?>
-<link rel="stylesheet" href="<?= e(url('resources/assets/css/disaster-summary.css')) ?>" />
-<p class="return-link no-print"><a class="btn btn-outline-secondary" href="<?= e(url(dashboardPath())) ?>">Back to dashboard</a></p>
+<p class="return-link"><a class="btn btn-outline-secondary" href="<?= e(url(dashboardPath())) ?>">Back to dashboard</a></p>
 <h1>BayanReady disaster summary</h1>
-<form method="get" class="filter-form no-print mb-3">
+<form method="get" class="filter-form mb-3">
     <?php
     $selectedBarangay = $period['barangay'];
     $barangayPrompt = 'All barangays';
@@ -36,7 +35,6 @@ require __DIR__ . "/../../components/header.php";
     <label>Through <input type="date" name="to" value="<?= e($period['to']) ?>" required /></label>
     <button class="btn btn-outline-secondary">Apply filters</button>
     <a href="<?= e(url('resources/views/admin/summaries/disaster.php')) ?>">Current month</a>
-    <button class="btn btn-outline-secondary" type="button" id="print-summary">Print summary</button>
 </form>
 <p>Coverage: <strong><?= e($period['barangay'] ?: 'All barangays') ?></strong>. Relief follows the receiving household’s current barangay.</p>
 <p>Selected period: <strong><?= e($period['from']) ?> through <?= e($period['to']) ?></strong> (both dates included).</p>
@@ -45,7 +43,7 @@ require __DIR__ . "/../../components/header.php";
 <p><strong><?= $summary['affected'] ?></strong> households currently marked “affected” or “both” in the registry.</p>
 <p>This is the current registry designation, not a count of households affected during the selected period. The date filter does not apply to this number.</p>
 <h2>Current evacuation centers</h2>
-<p>Occupancy counts individual stays without a checkout timestamp. These are current figures; the date filter does not apply. Available capacity includes only open, non-archived centers, including those without map points.</p>
+<p>Occupancy counts individual stays without a checkout timestamp. These are current figures; the date filter does not apply. Available capacity includes only open, non-archived centers.</p>
 <div class="table-responsive" tabindex="0" role="region" aria-label="Scrollable records">
     <table class="table">
         <thead>
@@ -146,8 +144,7 @@ require __DIR__ . "/../../components/header.php";
     </table>
 </div>
 <p>Quantities are kept separate by good and unit. Manual stock-out movements are excluded. Dates use the distribution timestamp.</p>
-<p class="no-print">This staff-only page contains totals and center/item names, without household codes, personal names, contact details, incident descriptions, or resident locations.</p>
-<script src="<?= e(url('resources/assets/js/print-summary.js')) ?>"></script>
+<p class="mb-3">This staff-only page contains totals and center/item names, without household codes, personal names, contact details, incident descriptions, or resident locations.</p>
 <?php
 require __DIR__ . "/../../components/footer.php";
 ?>

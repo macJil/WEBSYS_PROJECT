@@ -27,7 +27,7 @@ $rows = filterBarangay($rows);
 $pageTitle = 'Household registry';
 require __DIR__ . '/../components/header.php';
 ?>
-<p class="return-link no-print"><a class="btn btn-outline-secondary" href="<?= e(url(dashboardPath())) ?>">Back to dashboard</a></p>
+<p class="return-link"><a class="btn btn-outline-secondary" href="<?= e(url(dashboardPath())) ?>">Back to dashboard</a></p>
 <h1>Household registry</h1>
 <p><a class="btn btn-outline-secondary" href="<?= e(url('resources/views/admin/records.php?type=households')) ?>">Manage records</a></p>
 <form method="get" class="filter-form d-flex gap-2 mb-3">
@@ -62,9 +62,7 @@ require __DIR__ . '/../components/header.php';
                 <tr>
                     <td><?= e($row['household_label']) ?></td>
                     <td><?= e($row['purok']) ?>
-                        <?php if (!hasMapPoint($row)): ?>
-                            <br /><small>No map point</small>
-                        <?php endif; ?>
+
                     </td>
                     <td><?= (int)$row['member_count'] ?></td>
                     <td><a href="<?= e(url('resources/views/admin/household.php?id=' . $row['id'])) ?>">View / members</a> · <a href="<?= e(url('resources/views/admin/households.php?edit=' . $row['id'])) ?>">Edit</a></td>
@@ -168,7 +166,7 @@ require __DIR__ . "/../components/errors.php";
     <p>Not yet assessed: no assessment recorded. No additional assistance need identified: reviewed without an identified need; this does not mean disaster-safe. Additional assistance needed: record the practical help required. Choosing “Not yet assessed” clears prior assessment notes and metadata.</p>
     <?php
     $point = $form;
-    require __DIR__ . "/../components/location-picker.php";
+    require __DIR__ . "/../components/location-fields.php";
     ?>
     <button class="btn btn-primary">Save household</button>
     <a href="<?= e(url('resources/views/admin/households.php')) ?>">Cancel and return to households</a>

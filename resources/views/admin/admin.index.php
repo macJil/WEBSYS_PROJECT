@@ -21,9 +21,7 @@ require __DIR__ . "/../components/header.php";
 </form>
 <?php
 require __DIR__ . "/../components/dashboard-cards.php";
-require __DIR__ . "/../components/weather.php";
 ?>
-<p><a class="btn btn-primary" href="<?= e(url('resources/views/maps/map.php')) ?>">Explore saved locations on the map</a></p>
 <p>Use the shared records to manage incidents, response teams, evacuation, and relief.</p>
 <div class="row g-3">
     <section class="col-md-6">
@@ -65,7 +63,7 @@ require __DIR__ . "/../components/weather.php";
     <section class="col-md-6">
         <div class="module-card">
             <h2 class="h4"><a href="<?= e(url('resources/views/admin/summaries/disaster.php')) ?>">Disaster summaries</a></h2>
-            <p>Review totals and print summaries without personal records.</p>
+            <p>Review disaster summaries without personal records.</p>
         </div>
     </section>
 </div>

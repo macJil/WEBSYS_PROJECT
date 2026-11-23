@@ -8,7 +8,7 @@ $reports = filterBarangay($reports);
 $pageTitle = $_SESSION["ROLE"] === "admin" ? "Incident reports" : "My incident reports";
 require __DIR__ . "/../components/header.php";
 ?>
-<p class="return-link no-print"><a class="btn btn-outline-secondary" href="<?= e(url(dashboardPath())) ?>">Back to dashboard</a></p>
+<p class="return-link"><a class="btn btn-outline-secondary" href="<?= e(url(dashboardPath())) ?>">Back to dashboard</a></p>
 <h1><?= e($pageTitle) ?></h1>
 <?php if ($_SESSION['ROLE'] === 'admin'): ?>
     <p><a class="btn btn-outline-secondary" href="<?= e(url('resources/views/admin/records.php?type=incidents')) ?>">Manage records</a></p>
@@ -68,9 +68,7 @@ require __DIR__ . "/../components/header.php";
                     <td><?= (int)$report['id'] ?></td>
                     <td><?= e(ReportController::TYPES[$report['incident_type']] ?? $report['incident_type']) ?></td>
                     <td><?= e($report['location_description']) ?>
-                        <?php if (!hasMapPoint($report)): ?>
-                            <br /><small>No map point</small>
-                        <?php endif; ?>
+
                     </td>
                     <td><span class="status-badge" data-status="<?= e($report['status']) ?>"><?= e($report['status']) ?></span></td>
                     <td><?= e($report['created_at']) ?></td>

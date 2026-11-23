@@ -13,7 +13,7 @@ $pageTitle = "Relief inventory";
 require __DIR__ . "/../../components/header.php";
 require __DIR__ . "/../../components/errors.php";
 ?>
-<p class="return-link no-print"><a class="btn btn-outline-secondary" href="<?= e(url(dashboardPath())) ?>">Back to dashboard</a></p>
+<p class="return-link"><a class="btn btn-outline-secondary" href="<?= e(url(dashboardPath())) ?>">Back to dashboard</a></p>
 <h1>Relief inventory</h1>
 <p><a class="btn btn-outline-secondary" href="<?= e(url('resources/views/admin/records.php?type=goods')) ?>">Manage records</a></p>
 <p><?= count($items) ?> active goods.</p>

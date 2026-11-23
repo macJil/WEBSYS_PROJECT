@@ -13,9 +13,7 @@ require __DIR__ . "/../components/header.php";
 </div>
 <?php
 require __DIR__ . "/../components/dashboard-cards.php";
-require __DIR__ . "/../components/weather.php";
 ?>
-<p><a class="btn btn-primary" href="<?= e(url('resources/views/maps/map.php')) ?>">Explore saved locations on the map</a></p>
 <p>Submit incident details for staff review, follow your own reports, and read published barangay notices.</p>
 <ul>
     <li><a href="<?= e(url('resources/views/incidents/create.php')) ?>">Report an incident and select its location</a></li>

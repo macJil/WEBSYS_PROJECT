@@ -2,7 +2,7 @@
 $signedIn = !empty($_SESSION["ID"]);
 $links = [];
 if ($signedIn) {
-    $links = ["Home" => dashboardPath(), "Map" => "resources/views/maps/map.php"];
+    $links = ["Home" => dashboardPath()];
     $links +=
         $_SESSION["ROLE"] === "admin"
             ? [

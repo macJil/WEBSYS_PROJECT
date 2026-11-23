@@ -10,7 +10,7 @@ $pageTitle = "Report incident";
 require __DIR__ . "/../components/header.php";
 require __DIR__ . "/../components/errors.php";
 ?>
-<p class="return-link no-print"><a class="btn btn-outline-secondary" href="<?= e(url('resources/views/incidents/list.php')) ?>">Back to reports</a></p>
+<p class="return-link"><a class="btn btn-outline-secondary" href="<?= e(url('resources/views/incidents/list.php')) ?>">Back to reports</a></p>
 <h1>Report an incident</h1>
 <p>Reports are reviewed by barangay staff. This website does not guarantee an immediate emergency response.</p>
 <?php if ($staff): ?>
@@ -73,7 +73,7 @@ require __DIR__ . "/../components/errors.php";
 <?= e($data['description']) ?></textarea> </label>
     <?php
     $point = $data;
-    require __DIR__ . "/../components/location-picker.php";
+    require __DIR__ . "/../components/location-fields.php";
     ?>
     <label class="d-block mb-3">Incident image (optional; JPEG, PNG, WebP; maximum 5 MiB) <input class="form-control" type="file" name="image" accept="image/jpeg,image/png,image/webp" /></label>
     <p>If a form error occurs, choose the image again before submitting.</p>

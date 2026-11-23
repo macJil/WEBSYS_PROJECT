@@ -1,5 +1,5 @@
 // Invoked by the isolated HTTP suite with two fictional sessions on stdin.
-const {spawn, execFileSync} = require('node:child_process');
+const {spawn} = require('node:child_process');
 const fs = require('node:fs');
 const assert = require('node:assert/strict');
 const [base, folder] = process.argv.slice(2);
@@ -39,23 +39,13 @@ async function run() {
     await send('Page.enable');
     await send('Network.enable');
     await send('Network.setBlockedURLs', {urls:['https://*','http://*.tile.*']});
-    await send('Page.addScriptToEvaluateOnNewDocument', {source:`
-        const nativeFetch = window.fetch.bind(window);
-        window.fetch = async (url, options) => {
-            if (!String(url).includes('api.open-meteo.com')) return nativeFetch(url,options);
-            if (location.search.includes('outage')) throw Error('Fictional outage');
-            const today = new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Manila',
-                year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
-            return {ok:true,json:async()=>({daily:{time:[today],temperature_2m_min:[12],
-                temperature_2m_max:[21],precipitation_probability_max:[42]}})};
-        };`});
     for (const [role, cookie] of sessions.entries()) {
         await send('Network.setCookie', {name:'PHPSESSID',value:cookie,url:base});
         const pages = role === 0 ? ['admin/admin.index.php','admin/households.php','incidents/list.php',
             'admin/response/teams.php','admin/evacuation/centers.php','admin/relief/inventory.php',
             'admin/announcement/announcement.php','admin/summaries/disaster.php?barangay=Topdac','admin/records.php',
-            'maps/map.php','maps/map.php?barangay=Topdac','incidents/view.php?id=1'] : ['user/user.index.php?outage','incidents/create.php',
-            'maps/map.php','maps/map.php?barangay=Topdac','incidents/view.php?id=1'];
+            'centers/list.php','incidents/view.php?id=1'] : ['user/user.index.php','incidents/create.php',
+            'centers/list.php','incidents/view.php?id=1'];
         for (const width of [375,1280]) {
             await send('Emulation.setDeviceMetricsOverride',{width,height:800,deviceScaleFactor:1,mobile:false});
             for (const path of pages) {
@@ -68,43 +58,13 @@ async function run() {
                 }
                 assert.equal(await evaluate('location.href'),url);
                 assert.ok(await evaluate('document.querySelector("main") && document.documentElement.scrollWidth<=innerWidth+1'),width+' '+path);
-                if (path.endsWith('barangay=Topdac') && path.startsWith('maps/')) {
-                    // These fictional records share a point, so the map reaches its close-up zoom.
-                    async function waitForTilesAt(zoom) {
-                        const selector = '.leaflet-tile[src*="/' + zoom + '/"]';
-                        for (let attempt = 0; attempt < 60; attempt++) {
-                            if (await evaluate('!!document.querySelector(' + JSON.stringify(selector) + ')')) return;
-                            await new Promise(resolve => setTimeout(resolve, 50));
-                        }
-                        assert.fail('Expected filtered map tiles at zoom ' + zoom);
-                    }
-                    await waitForTilesAt(17);
-                    await evaluate('document.getElementById("map-home").click()');
-                    await waitForTilesAt(11);
-                    await evaluate('document.getElementById("map-fit").click()');
-                    await waitForTilesAt(17);
-                }
-                if (path.includes('.index')) {
-                    const forecast = await evaluate('document.querySelector("#atok-forecast").textContent');
-                    assert.ok(forecast.includes(role ? 'unavailable' : '42%'),forecast);
-                }
-                if (width === 1280 && (path.includes('summaries/') || path.includes('incidents/view'))) {
-                    const {data} = await send('Page.printToPDF',{printBackground:true});
-                    const pdf = folder + '/acceptance.pdf';
-                    fs.writeFileSync(pdf,Buffer.from(data,'base64'));
-                    const text = execFileSync('pdftotext',['-layout',pdf,'-'],{encoding:'utf8'});
-                    assert.match(text,/Asia\/Manila/);
-                    assert.doesNotMatch(text,/Log out|Print incident report|Apply filters/);
-                    if (path.includes('summaries/')) assert.match(text,/Topdac/);
-                    else {
-                        assert.match(text,/incident report #1/i);
-                        assert.equal(text.includes('Staff review history'),role===0);
-                    }
-                }
+                assert.equal(await evaluate('!!document.querySelector("#atok-forecast, #community-map, [data-picker-map], #print-summary")'),false);
+                assert.equal(await evaluate(`!!document.querySelector('script[src*="leaflet"], script[src*="weather"], script[src*="print-summary"]')`),false);
+
             }
         }
     }
-    console.log('PASS 375px and 1280px layouts, weather success/outage and three authenticated PDFs');
+    console.log('PASS 375px and 1280px prototype layouts, no map/weather/print controls');
 }
 const timeout = setTimeout(()=>{console.error('Browser timed out');browser.kill();process.exit(1);},95000);
 run().catch(error=>{console.error(error);process.exitCode=1;}).finally(()=>{clearTimeout(timeout);browser.kill();});

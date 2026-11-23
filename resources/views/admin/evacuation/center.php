@@ -37,10 +37,7 @@ $formAddressDetails = input('address_details');
 $formContactPhone = input('contact_phone');
 $formAge = input('age');
 ?>
-<?php
-$savedPoint = $center;
-require __DIR__ . "/../../components/saved-point.php";
-?>
+
 <h1><?= e($center['name']) ?></h1>
 <p>Barangay: <?= e($center['barangay'] ?? 'Awaiting confirmation') ?></p>
 <p><a class="btn btn-outline-secondary" href="<?= e(url('resources/views/admin/records.php?type=walkins')) ?>">Manage records</a></p>

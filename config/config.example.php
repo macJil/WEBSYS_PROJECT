@@ -9,11 +9,5 @@ const DB_USER = 'root';
 const DB_PASSWORD = '';
 // Absolute private folder OUTSIDE your web server document root; PHP must be able to write here.
 const INCIDENT_UPLOAD_DIR = '';
-// Atok municipality demo view only; choose one barangay before deployment.
+// Municipal demo label.
 const DEMO_BARANGAY_NAME = 'Atok, Benguet (DEMO)';
-const MAP_LATITUDE = 16.6272;
-const MAP_LONGITUDE = 120.7672;
-// Photon-compatible endpoint; empty string disables address suggestions.
-const ADDRESS_LOOKUP_URL = 'https://photon.komoot.io/reverse';
-const MAP_ZOOM = 14;
-const MAP_MIN_ZOOM = 11; // Focused demo view; no official boundary restriction.

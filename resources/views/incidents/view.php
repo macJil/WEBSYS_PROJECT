@@ -21,11 +21,8 @@ $pageTitle = "Incident #" . $id;
 require __DIR__ . "/../components/header.php";
 require __DIR__ . "/../components/errors.php";
 ?>
-<link rel="stylesheet" href="<?= e(url('resources/assets/css/disaster-summary.css')) ?>" />
 <h1>BayanReady incident report #<?= (int) $id ?></h1>
 <p>Generated <?= e((new DateTimeImmutable('now', new DateTimeZone('Asia/Manila')))->format('Y-m-d H:i:s')) ?> Asia/Manila.</p>
-<button type="button" id="print-summary" class="btn btn-outline-secondary no-print">Print incident report</button>
-<script src="<?= e(url('resources/assets/js/print-summary.js')) ?>"></script>
 <p>Barangay: <?= e($report['barangay'] ?? 'Awaiting confirmation') ?></p>
 <div class="table-responsive">
     <table class="table">
@@ -81,18 +78,6 @@ require __DIR__ . "/../components/errors.php";
         </tbody>
     </table>
 </div>
-<?php if (!hasMapPoint($report)): ?>
-    <p>No map point. This report remains available in lists and totals.</p>
-<?php endif; ?>
-<?php if ((!$admin || $report['archived_at'] !== null) && hasMapPoint($report)): ?>
-    <div id="saved-incident-map" data-lat="<?= e($report['latitude']) ?>" data-lng="<?= e($report['longitude']) ?>">
-    </div>
-    <p id="saved-map-status">Saved coordinates are listed above. Map tiles need internet.</p>
-    <link rel="stylesheet" href="<?= e(url('resources/assets/vendor/leaflet/leaflet.css')) ?>" />
-    <script src="<?= e(url('resources/assets/vendor/leaflet/leaflet.js')) ?>"></script>
-    <script src="<?= e(url('resources/assets/js/incident-location.js')) ?>"></script>
-<?php endif; ?>
-<p>Locations are reported points, not verified hazard assessments. No approved barangay boundary or location restriction is applied. DEMO ONLY locations are fictional examples.</p>
 <h2>Incident images</h2>
 <?php if (!$images): ?>
     <p>No image attached.</p>
@@ -101,11 +86,11 @@ require __DIR__ . "/../components/errors.php";
     <a href="<?= e(url('resources/views/incidents/image.php?id=' . $image['id'])) ?>"><img class="incident-image" src="<?= e(url('resources/views/incidents/image.php?id=' . $image['id'])) ?>" alt="Image attached to this incident" /></a>
 <?php endforeach; ?>
 <?php if ($admin): ?>
-    <div class="no-print">
+    <div class="mb-3">
     <p class="mt-3"><a class="btn btn-outline-secondary" href="<?= e(url('resources/views/admin/response/incident.php?id=' . $id)) ?>">Manage response teams and actions</a></p>
     <?php if ($report['archived_at'] === null): ?>
         <h2>Correct incident location</h2>
-        <p>Confirm the written location and pin. A correction is recorded in staff history. The shared map uses this saved point when the incident is eligible.</p>
+        <p>Confirm the written location. A correction is recorded in staff history.</p>
         <form method="post">
     <?php
     $barangayPrompt = 'Awaiting confirmation';
@@ -119,7 +104,7 @@ require __DIR__ . "/../components/errors.php";
                 $point["latitude"] = input("latitude");
                 $point["longitude"] = input("longitude");
             }
-            require __DIR__ . "/../components/location-picker.php";
+            require __DIR__ . "/../components/location-fields.php";
             ?>
             <label class="d-block mb-3">Reason for correction<input class="form-control" name="location_notes" maxlength="255" required value="<?= e(input('location_notes')) ?>" /></label>
             <button class="btn btn-primary" name="action" value="update_location">Save location correction</button>
@@ -146,7 +131,7 @@ require __DIR__ . "/../components/errors.php";
 
     <?php endforeach; ?>
 <?php endif; ?>
-<a class="d-block mt-3 no-print" href="<?= e(url('resources/views/incidents/list.php')) ?>">Back to reports</a>
+<a class="d-block mt-3" href="<?= e(url('resources/views/incidents/list.php')) ?>">Back to reports</a>
 <?php
 require __DIR__ . "/../components/footer.php";
 ?>

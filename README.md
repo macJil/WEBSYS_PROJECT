@@ -1,106 +1,14 @@
-# BayanReady — WEBSYS1
+# BayanReady core prototype
 
-Official project repository: https://github.com/macJil/WEBSYS_PROJECT
+This branch keeps login sessions, admin/resident access, dashboards, and all eight core modules: household registry, incident reports, emergency response, evacuation, relief inventory, relief distribution, announcements, and disaster summaries.
 
-BayanReady serves the municipal demonstration across the eight barangays of Atok, Benguet. The application uses PHP, PDO/MySQL, sessions and directly accessible, role-guarded pages.
+Maps, current-location/address lookup, weather panels, and application printing controls are excluded. Enter addresses manually; coordinates remain optional for compatibility with existing records. The schema and upgrade migrations are retained without deleting stored data.
 
-## Current team documentation
+## Local setup
 
-Start with the [municipal setup and self-test guide](docs/municipal/SETUP_AND_SELF_TEST.md), [requirements and client inputs](docs/municipal/README.md), [nine-member ownership inventory](docs/municipal/INVENTORY.md), [nine code walkthroughs](docs/team/MEMBER_CODE_EXPLANATIONS.md), [acceptance record](docs/municipal/PHASE_13_ACCEPTANCE.md) and [presentation](presentation/README.md).
+1. Import `barangay_drrm.sql` into a new local MySQL database. Existing installations should use the numbered migrations appropriate to their current schema instead of reimporting.
+2. Copy `config/config.example.php` to ignored `config/config.php`. Set database credentials and `BASE_URL` (empty when served at the web root).
+3. Set `INCIDENT_UPLOAD_DIR` to a writable absolute folder outside the web root.
+4. Open root `index.php`. Registration creates resident accounts. For fictional testing, promote a test account to admin directly in the local database.
 
-Earlier phase documents below describe the implementation at the time each phase was written.
-
-## Project documents
-
-- [Phase 1 baseline and five-member review assignments](docs/PHASE_1_PROJECT_BASELINE.md)
-- [Phase 2 database installation, relationships, and implementation rules](docs/PHASE_2_DATABASE_SCHEMA.md)
-- [Field dictionary](docs/PHASE_2_FIELD_DICTIONARY.md)
-- [Fresh-install schema v1.4](barangay_drrm.sql)
-- [One-time upgrade from the original v1.0 schema](database/migrations/001_phase_2.sql)
-- [Read-only disaster summary query examples](database/report_queries.sql)
-
-Read the Phase 2 installation instructions before importing SQL. Use fictional development data; do not commit real household records, contacts, uploaded images, or local credentials. The municipal acceptance record covers permissions, file handling and transaction workflows.
-
-## PHP foundation setup
-
-See [Phase 3 setup and reusable page pattern](docs/PHASE_3_PHP_FOUNDATIONS.md). Copy `config/config.example.php` to the ignored `config/config.php`, configure your local connection/base URL, and open root `index.php`. The account screens use ordinary forms and PHP sessions.
-
-## Household registry
-
-[Phase 4 guide](docs/PHASE_4_HOUSEHOLD_REGISTRY.md): sign in as an admin and select **Households** to manage household details, emergency contacts, vulnerability assessments, and individual members. Member totals are calculated automatically.
-
-## Incident reporting
-
-[Phase 5 setup and workflow](docs/PHASE_5_INCIDENT_REPORTING.md): residents submit incidents and view their own reports; admins enter in-person/phone reports and review incidents. Images require a writable private directory outside the web server document root. Existing databases need `database/migrations/002_phase_5.sql` before using phone reports.
-
-## Emergency response
-
-[Phase 6 guide](docs/PHASE_6_EMERGENCY_RESPONSE.md): admins manage active/inactive response teams, assign teams from incident details, and record actions with history. Dispatch sets an incident to responding; staff close active assignments before resolving it. No additional database migration is required for this phase.
-
-## Evacuation centers
-
-[Phase 7 guide](docs/PHASE_7_EVACUATION.md): admins manage centers, check in registered members or walk-ins, and check out occupants while preserving stays. Apply migration 003 on an existing database before using this module.
-
-## Relief inventory and distribution
-
-[Phase 8 guide](docs/PHASE_8_RELIEF.md): admins manage goods, record stock-in/out, search movement history, and distribute multiple goods to registered households. Stock deductions and distribution history are saved in one transaction. No additional database migration is required for this phase.
-
-## Emergency announcements
-
-[Phase 9 guide](docs/PHASE_9_ANNOUNCEMENTS.md): admins create/edit drafts, publish notices, and withdraw them. Residents see only published notices. Includes title/status/date filtering and fictional classroom contact guidance. No new migration is required.
-
-## Disaster reports and summaries
-
-[Phase 10 guide](docs/PHASE_10_DISASTER_SUMMARIES.md): admin summaries for current affected households and occupancy, date-filtered incident counts, and relief distributed by good/unit. Includes a print layout without personal records and reproducible fictional-data total checks. No new migration required.
-
-## Map search and locations
-
-[Phase 11 guide](docs/PHASE_11_MAP_LOCATIONS.md): incident forms support fictional purok/landmark search, map point selection, manual coordinates, and staff review of saved locations. No boundary or automatic hazard prediction is applied. No new migration required.
-
-## Integration review
-
-[Phase 12 results and repeatable test setup](docs/PHASE_12_INTEGRATION_REVIEW.md): all modules exercised together against isolated MySQL, 189 main HTTP checks passed, upgrade migrations and concurrent stock/capacity protections checked, and issues resolved. Browser visual/print and deployment acceptance checks remain separate.
-
-## Planned revisions
-
-[Shared map, dashboard, and bulk-action revision phases](docs/REVISION_PHASES_MAP_DASHBOARD_BULK_ACTIONS.md) define the agreed demo-area behavior, role-specific map data, location picker, dashboard counts, history-preserving admin actions, checkpoints, and five-member ownership. The revision plan is on `revision-map-dashboard-bulk-actions`; feature implementation follows in later commits.
-
-[Earlier revision rules](docs/REVISION_1_DATA_AND_PRIVACY_RULES.md) record the former map behavior. The current demo map opens on Atok, Benguet and automatically shows verified incidents, open centers, and distribution points with coordinates. No official boundary is enforced.
-
-[Revision 2 schema and map data](docs/REVISION_2_SCHEMA_AND_MAP_DATA.md): apply migration 004 before using the guarded map JSON endpoint. Fresh schema is v1.4; public flags default to private and resident queries use explicit safe fields.
-
-[Revision 3 shared map](docs/REVISION_3_SHARED_MAP.md): both roles have a Map link, persistent legend, layer controls, and saved markers from their authorized data. Admin markers link to protected records; resident popups contain safe summaries only.
-
-[Revision 4 location picker](docs/REVISION_4_LOCATION_PICKER.md): shared manual/map/device-location selection across incidents and staff location forms, plus relief-location management and saved-point views.
-
-[Revision 5 dashboards](docs/REVISION_5_DASHBOARDS.md): current role-specific counts, matching list links, latest resident notices, public open-center list, and editable per-good minimum-stock thresholds.
-
-[Revision 6 record actions](docs/REVISION_6_RECORD_ACTIONS.md): admin management lists with checkboxes, review/confirmation, transactional delete/archive rules, and protected history. Relevant module lists link to the shared management page.
-
-Revision 7 review: [integration log](docs/REVISION_7_INTEGRATION_LOG.md).
-
-BayanReady Phase 1: [map investigation and locked behavior](docs/BAYANREADY_PHASE_1_MAP_REVIEW.md).
-
-BayanReady Phase 2: [location saving and fixture review](docs/BAYANREADY_PHASE_2_LOCATIONS.md).
-
-BayanReady Phase 3: [address suggestions and provider/privacy review](docs/BAYANREADY_PHASE_3_ADDRESS_SUGGESTIONS.md).
-
-BayanReady Phase 4: [visible product name](docs/BAYANREADY_PHASE_4_PRODUCT_NAME.md).
-
-BayanReady Phase 5: [shared visual system and map verification](docs/BAYANREADY_PHASE_5_VISUAL_SYSTEM.md).
-
-- [Phase 6 responsive layouts and checks](docs/BAYANREADY_PHASE_6_RESPONSIVE_LAYOUTS.md)
-
-- [Phase 7 acceptance and issue log](docs/BAYANREADY_PHASE_7_ACCEPTANCE.md)
-
-Local settings use PHP constants. For a fresh installation copy `config/config.example.php` to `config/config.php`. For an upgrade, keep a private backup of the old array and transfer its values to the matching constants in a fresh copy. Set DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD, BASE_URL and a writable private INCIDENT_UPLOAD_DIR outside the web root. BASE_URL is the installation path without a trailing slash, or an empty string at the root. Keep the location and map values appropriate for your installation. An empty ADDRESS_LOOKUP_URL disables suggestions. Check setup with `python3 tests/simplification_config.py`.
-
-Database simplification: fresh installs use 17 tables; existing databases can retain the unused settings table. See the [database review and optional upgrade steps](docs/simplification/PHASE_6_DATABASE_REVIEW.md) before removing any existing table.
-
-Current household/map revision: [Phase 3 shared address suggestions](docs/simplification/HOUSEHOLD_MAP_PHASE_3.md). Uses the shared picker with Photon, editable suggestions, manual fallback, and save/reload checks.
-
-Current household/map revision: [Phase 4 Atok map view and responsive checks](docs/simplification/HOUSEHOLD_MAP_PHASE_4.md).
-
-Current household/map revision: [Phase 5 accurate dashboard counts](docs/simplification/HOUSEHOLD_MAP_PHASE_5.md).
-
-Current household/map revision: [Phase 6 buttons, confirmations and return links](docs/simplification/HOUSEHOLD_MAP_PHASE_6.md).
+Do not commit real resident records, private configuration, or uploaded images.

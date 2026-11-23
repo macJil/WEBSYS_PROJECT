@@ -10,7 +10,7 @@ $filterQ = $controller->queryValue('q');
 $filterStatus = $controller->queryValue('status');
 $filterDate = $controller->queryValue('date');
 ?>
-<p class="return-link no-print"><a class="btn btn-outline-secondary" href="<?= e(url(dashboardPath())) ?>">Back to dashboard</a></p>
+<p class="return-link"><a class="btn btn-outline-secondary" href="<?= e(url(dashboardPath())) ?>">Back to dashboard</a></p>
 <h1>Emergency announcements</h1>
 <p><a class="btn btn-outline-secondary" href="<?= e(url('resources/views/admin/records.php?type=announcements')) ?>">Manage records</a></p>
 <p>Use drafts while preparing a notice. Publishing makes the saved text visible to residents. During classroom development, use clearly labeled fictional contacts only.</p>
