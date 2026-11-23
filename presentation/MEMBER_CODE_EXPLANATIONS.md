@@ -10,6 +10,6 @@
 | 6 | `relief-inventory/movements.php`, `relief-distribution/index.php` | Receive stock and distribute two goods to the household. Follow the transaction through quantities, distribution lines and movements. |
 | 7 | `announcements/index.php`, `announcements/published.php` | Draft, publish and withdraw a notice while checking resident visibility. |
 | 8 | `dashboard/staff.php`, `disaster-reports/current.php`, `disaster-reports/index.php` | Follow the occupants card to the two arrivals, check one out, refresh and print the summary. |
-| 9 | `map/map.php`, `map/data.php`, `resources/assets/js/community-map.js` | Locate the same incident, explain marker eligibility and show which fields residents receive. |
+| 9 | `map/map.php`, `map/data.php`, `assets/js/community-map.js` | Locate the same incident, explain marker eligibility and show which fields residents receive. |
 
 Use the [timed script](LIVE_DEMO_PRESENTATION_SCRIPT.md) for handoffs.

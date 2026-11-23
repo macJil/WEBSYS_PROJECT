@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../app/helpers.php';
+require_once __DIR__ . '/../includes/helpers.php';
 require_once __DIR__ . '/../config/db.php';
 
 function reliefDbRows(string $sql, array $args = []): array

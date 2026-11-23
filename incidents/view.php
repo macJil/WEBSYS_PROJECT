@@ -216,9 +216,9 @@ require __DIR__ . "/../includes/errors.php";
     <div id="saved-incident-map" data-lat="<?= e($report['latitude']) ?>" data-lng="<?= e($report['longitude']) ?>">
     </div>
     <p id="saved-map-status">Saved coordinates are listed above. Map tiles need internet.</p>
-    <link rel="stylesheet" href="<?= e(url('resources/assets/vendor/leaflet/leaflet.css')) ?>" />
-    <script src="<?= e(url('resources/assets/vendor/leaflet/leaflet.js')) ?>"></script>
-    <script src="<?= e(url('resources/assets/js/incident-location.js')) ?>"></script>
+    <link rel="stylesheet" href="<?= e(url('assets/vendor/leaflet/leaflet.css')) ?>" />
+    <script src="<?= e(url('assets/vendor/leaflet/leaflet.js')) ?>"></script>
+    <script src="<?= e(url('assets/js/incident-location.js')) ?>"></script>
 <?php endif; ?>
 <p>Locations are reported points, not verified hazard assessments. No approved barangay boundary or location restriction is applied. DEMO ONLY locations are fictional examples.</p>
 <h2>Incident images</h2>

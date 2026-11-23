@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/app/helpers.php';
+require_once __DIR__ . '/includes/helpers.php';
 session_checker();
 if (!isPost()) {
     header('Allow: POST');

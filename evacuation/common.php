@@ -1,7 +1,7 @@
 <?php
-require_once __DIR__ . '/../app/helpers.php';
+require_once __DIR__ . '/../includes/helpers.php';
 require_once __DIR__ . '/../config/db.php';
-require_once __DIR__ . '/../app/evacuation-capacity.php';
+require_once __DIR__ . '/../includes/evacuation-capacity.php';
 
 
 function evacuationDbRows(string $sql, array $values = []): array

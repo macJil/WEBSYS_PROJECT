@@ -112,7 +112,7 @@ foreach ($summary["centers"] as $center) {
 $pageTitle = "Disaster reports and summaries";
 require __DIR__ . "/../includes/header.php";
 ?>
-<link rel="stylesheet" href="<?= e(url('resources/assets/css/disaster-summary.css')) ?>" />
+<link rel="stylesheet" href="<?= e(url('assets/css/disaster-summary.css')) ?>" />
 <p class="return-link no-print"><a class="btn btn-outline-secondary" href="<?= e(url(dashboardPath())) ?>">Back to dashboard</a></p>
 <h1>Disaster reports and summaries</h1>
 <form method="get" class="filter-form no-print mb-3">
@@ -230,7 +230,7 @@ require __DIR__ . "/../includes/header.php";
 </div>
 <p>Quantities are kept separate by good and unit. Manual stock-out movements are excluded. Dates use the distribution timestamp.</p>
 <p class="no-print">This staff-only page contains totals and center/item names, without household codes, personal names, contact details, incident descriptions, or resident locations.</p>
-<script src="<?= e(url('resources/assets/js/print-summary.js')) ?>"></script>
+<script src="<?= e(url('assets/js/print-summary.js')) ?>"></script>
 <?php
 require __DIR__ . "/../includes/footer.php";
 ?>

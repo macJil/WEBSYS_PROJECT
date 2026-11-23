@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . "/../app/helpers.php";
+require_once __DIR__ . "/helpers.php";
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -7,8 +7,8 @@ require_once __DIR__ . "/../app/helpers.php";
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title><?= e(($pageTitle ?? 'Home') . ' | ' . $settings['app_name']) ?></title>
-        <link rel="stylesheet" href="<?= e(url('resources/assets/css/bootstrap.min.css')) ?>" />
-        <link rel="stylesheet" href="<?= e(url('resources/assets/css/bayanready.css?v=20261114-buttons')) ?>" /><noscript>
+        <link rel="stylesheet" href="<?= e(url('assets/css/bootstrap.min.css')) ?>" />
+        <link rel="stylesheet" href="<?= e(url('assets/css/bayanready.css?v=20261114-buttons')) ?>" /><noscript>
             <style>
                 .navigation-collapse.collapse {
                 display: block;

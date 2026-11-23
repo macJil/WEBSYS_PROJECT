@@ -29,13 +29,13 @@ set_error_handler(function ($severity, $message, $file, $line) {
 with tempfile.TemporaryDirectory(prefix='bayanready-config-regression-') as temp:
     site = Path(temp) / 'site'
     site.mkdir()
-    for folder in ['app', 'resources', 'includes']:
+    for folder in ['assets', 'includes']:
         shutil.copytree(ROOT / folder, site / folder)
     (site / 'config').mkdir()
-    for name in ['bootstrap.php', 'db.php']:
+    for name in ['db.php']:
         shutil.copyfile(ROOT / 'config' / name, site / 'config' / name)
     shutil.copyfile(ROOT / 'index.php', site / 'index.php')
-    example = (ROOT / 'config/config.example.php').read_text()
+    example = (ROOT / 'setup/config.example.php').read_text()
     constants = '''<?php
 const APP_NAME = 'BayanReady';
 const BASE_URL = '/fictional-demo/';
@@ -57,10 +57,10 @@ const ADDRESS_LOOKUP_URL = '';
         # A counter also verifies that db() does not execute config.php again.
         config = config.replace('<?php', "<?php\n$GLOBALS['config_loads'] = ($GLOBALS['config_loads'] ?? 0) + 1;", 1)
         (site / 'config/config.php').write_text(config)
-        for first, second in [('app/helpers.php', 'config/db.php'),
-                              ('config/db.php', 'app/helpers.php')]:
+        for first, second in [('includes/helpers.php', 'config/db.php'),
+                              ('config/db.php', 'includes/helpers.php')]:
             output = run(site, f'''require_once '{first}'; require_once '{second}';
-require_once 'config/bootstrap.php';
+require_once 'config/db.php';
 if ($GLOBALS['config_loads'] !== 1) throw new Exception('Config loaded more than once');
 if (url('index.php') !== '{base}/index.php') throw new Exception('Incorrect URL');
 if ($settings['app_name'] !== 'BayanReady') throw new Exception('Missing app name');
@@ -89,7 +89,7 @@ if ($GLOBALS['config_loads'] !== 1) throw new Exception('Page reloaded config');
         constant_database = constant_database.replace("DB_PASSWORD = ''", "DB_PASSWORD = 'root'")
         for label, config in [('array', array_database), ('constants', constant_database)]:
             (site / 'config/config.php').write_text(config)
-            for first, second in [('app/helpers.php', 'config/db.php'), ('config/db.php', 'app/helpers.php')]:
+            for first, second in [('includes/helpers.php', 'config/db.php'), ('config/db.php', 'includes/helpers.php')]:
                 output = run(site, f"""require_once '{first}'; require_once '{second}';
 $connection = db();
 if ($connection->query('SELECT 1')->fetchColumn() != 1 || $connection !== db()) {{
@@ -102,6 +102,6 @@ echo 'connected';
 
     for invalid in ['<?php return 1;', "<?php return ['base_url' => []];"]:
         (site / 'config/config.php').write_text(invalid)
-        output = run(site, "require 'config/bootstrap.php';")
+        output = run(site, "require 'config/db.php';")
         assert 'Setup required:' in output
     print('PASS malformed configuration returns controlled setup message')

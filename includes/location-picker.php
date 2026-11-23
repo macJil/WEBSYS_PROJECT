@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . "/../app/helpers.php";
+require_once __DIR__ . "/helpers.php";
 session_checker();
 $point = $point ?? [];
 ?>
@@ -21,6 +21,6 @@ $point = $point ?? [];
     <noscript>JavaScript is needed for map selection. You can still type the location and coordinates.</noscript>
     <p data-picker-status role="status">Click the map or enter coordinates. Confirm the location before saving.</p>
 </fieldset>
-<link rel="stylesheet" href="<?= e(url('resources/assets/vendor/leaflet/leaflet.css')) ?>" />
-<script src="<?= e(url('resources/assets/vendor/leaflet/leaflet.js')) ?>"></script>
-<script src="<?= e(url('resources/assets/js/location-picker.js?v=20261114-address')) ?>" defer></script>
+<link rel="stylesheet" href="<?= e(url('assets/vendor/leaflet/leaflet.css')) ?>" />
+<script src="<?= e(url('assets/vendor/leaflet/leaflet.js')) ?>"></script>
+<script src="<?= e(url('assets/js/location-picker.js?v=20261114-address')) ?>" defer></script>

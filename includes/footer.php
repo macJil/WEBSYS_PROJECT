@@ -5,6 +5,6 @@
         <p class="small"><?= e($settings['demo_barangay_name']) ?>. Demo area only; no confirmed stakeholder or approved boundary.</p>
     </div>
 </footer>
-<script src="<?= e(url('resources/assets/js/bootstrap.bundle.min.js')) ?>"></script>
+<script src="<?= e(url('assets/js/bootstrap.bundle.min.js')) ?>"></script>
 </body>
 </html>

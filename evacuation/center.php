@@ -426,7 +426,7 @@ require __DIR__ . "/../includes/saved-point.php";
         </tbody>
     </table>
 </div>
-<script src="<?= e(url('resources/assets/js/household-checkin.js')) ?>" defer></script>
+<script src="<?= e(url('assets/js/household-checkin.js')) ?>" defer></script>
 <?php
 require __DIR__ . "/../includes/footer.php";
 ?>

@@ -8,15 +8,15 @@ with tempfile.TemporaryDirectory(prefix='bayanready-config-') as tmp:
     copy=Path(tmp)/'site'
     subprocess.run(['git','checkout-index','--all','--prefix='+str(copy)+'/'],cwd=root,check=True)
     # Overlay the working files relevant to this phase before it is committed.
-    for name in ['app/helpers.php','config/db.php','config/bootstrap.php','config/config.example.php']:
+    for name in ['includes/helpers.php','config/db.php','setup/config.example.php']:
         shutil.copyfile(root/name,copy/name)
     for name in ['config/config.php','config/local.php','config/settings.php','config/local.example.php']:
         (copy/name).unlink(missing_ok=True)
-    for code in ["require 'app/helpers.php';", "require 'config/db.php'; db();"]:
+    for code in ["require 'includes/helpers.php';", "require 'config/db.php'; db();"]:
         r=run(copy,code)
         assert 'Setup required:' in r.stdout and 'Warning:' not in r.stdout and 'Fatal error:' not in r.stdout,r
     print('PASS missing config produces controlled setup message for pages and database')
-    shutil.copyfile(copy/'config/config.example.php',copy/'config/config.php')
+    shutil.copyfile(copy/'setup/config.example.php',copy/'config/config.php')
     r=run(copy,"$s=require 'config/config.php'; if(!is_array($s)||!isset($s['host'],$s['database'],$s['base_url']))exit(1);")
     assert r.returncode==0,r.stderr
     r=run(copy,"$_SERVER['REQUEST_METHOD']='GET'; require 'index.php';")

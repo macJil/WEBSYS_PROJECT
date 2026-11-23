@@ -58,7 +58,7 @@ with tempfile.TemporaryDirectory(prefix='bayanready-address-') as temporary:
         password_hash = subprocess.check_output([PHP, '-r', "echo password_hash('DemoPass123!', PASSWORD_DEFAULT);"]).decode()
         query("INSERT INTO users(full_name,username,email,password,role) VALUES " +
               ','.join("('Fictional " + role + "','" + role + "','" + role + "@example.invalid','" + password_hash + "','" + role + "')" for role in ['admin', 'resident']))
-        config = (ROOT / 'config/config.example.php').read_text().replace("'base_url' => '/WEBSYS_PROJECT'", "'base_url' => ''")
+        config = (ROOT / 'setup/config.example.php').read_text().replace("'base_url' => '/WEBSYS_PROJECT'", "'base_url' => ''")
         config = config.replace("'host' => '127.0.0.1'", "'host' => 'localhost'").replace("'database' => 'barangay_drrm'", "'database' => '" + DB_NAME + "'").replace("'password' => ''", "'password' => 'root'")
         config = config.replace("'incident_upload_dir' => ''", "'incident_upload_dir' => '" + str(folder / 'images') + "'")
         (site / 'config/config.php').write_text(config)

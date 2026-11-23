@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../app/helpers.php';
+require_once __DIR__ . '/../includes/helpers.php';
 require_once __DIR__ . '/../config/db.php';
 requireRole('admin');
 const RECORD_TYPES = [
@@ -357,7 +357,7 @@ require __DIR__ . "/../includes/errors.php";
         <a href="?<?= e(http_build_query(array_replace($params, ['page' => $page + 1]))) ?>">Next</a>
     <?php endif; ?>
 </p>
-<script src="<?= e(url('resources/assets/js/record-selection.js?v=delete-confirm')) ?>"></script>
+<script src="<?= e(url('assets/js/record-selection.js?v=delete-confirm')) ?>"></script>
 <?php
 require __DIR__ . "/../includes/footer.php";
 ?>

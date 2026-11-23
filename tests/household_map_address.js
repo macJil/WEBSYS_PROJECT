@@ -10,7 +10,7 @@ function fixture(initial='',withMap=true){
  const map={setView(){return this;},on(type,fn){this[type]=fn;},removeLayer(){}};
  const context={window:{location:{href:'http://localhost/index.php',origin:'http://localhost'}},document:{querySelectorAll:()=>[root]},Event:class{constructor(type){this.type=type;}},URL,AbortController,TextEncoder,Map,Date:{now:()=>time},setTimeout(fn,ms){const id=++sequence;timers.set(id,{at:time+ms,fn});return id;},clearTimeout(id){timers.delete(id);},navigator:{geolocation:{getCurrentPosition(ok,fail){geoOk=ok;geoFail=fail;}}},fetch:(url,options)=>new Promise((resolve,reject)=>{calls.push({url,options,resolve,reject});})};
  if(withMap)context.L={map:()=>map,tileLayer:()=>({on(){return this;},addTo(){}}),marker:()=>({addTo(){return this;},on(){}})};
- for(const file of ['location-picker.js'])vm.runInNewContext(fs.readFileSync(__dirname+'/../resources/assets/js/'+file,'utf8'),context);
+ for(const file of ['location-picker.js'])vm.runInNewContext(fs.readFileSync(__dirname+'/../assets/js/'+file,'utf8'),context);
  const flush=async()=>{for(let i=0;i<8;i++)await Promise.resolve();};
  async function tick(ms){time+=ms;for(const [id,t] of [...timers])if(t.at<=time){timers.delete(id);t.fn();}await flush();}
  function select(lat='16.6272',lng='120.7672'){items['[data-coordinate="latitude"]'].value=lat;items['[data-coordinate="longitude"]'].value=lng;map.click({latlng:{lat:Number(lat),lng:Number(lng)}});}

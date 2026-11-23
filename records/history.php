@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../app/helpers.php';
+require_once __DIR__ . '/../includes/helpers.php';
 require_once __DIR__ . '/../config/db.php';
 requireRole('admin');
 function historyHide(string $type, int $id): string

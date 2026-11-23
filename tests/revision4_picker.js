@@ -10,7 +10,7 @@ for(const withMap of [true,false]){
  const map={setView(point,zoom){views.push([point,zoom]);return this;},on(k,f){this[k]=f;},removeLayer(){currentMarker=null;}};
  const context={Map,clearTimeout(){},Event:class {constructor(type){this.type=type;}},document:{querySelectorAll:()=>[root]},navigator:{geolocation:{getCurrentPosition(a,b){calls++;ok=a;fail=b;}}}};
  if(withMap)context.L={map:(element,options)=>{assert.equal(options.minZoom,14);assert(!options.maxBounds);return map;},tileLayer:()=>({on(){return this;},addTo(){}}),marker:(point)=>{currentMarker={point,events:{},addTo(){return this;},on(k,f){this.events[k]=f;},getLatLng(){return {lat:16.4168,lng:120.5597};}};return currentMarker;}};
- vm.runInNewContext(fs.readFileSync(__dirname+'/../resources/assets/js/location-picker.js','utf8'),context);
+ vm.runInNewContext(fs.readFileSync(__dirname+'/../assets/js/location-picker.js','utf8'),context);
  assert.equal(calls,0);
  if(withMap){assert.equal(currentMarker.point[0],16.4192);assert.equal(views.at(-1)[0][1],120.5623);}
  const locate=items['[data-locate]'],status=items['[data-picker-status]'];

@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . "/../app/helpers.php";
+require_once __DIR__ . "/../includes/helpers.php";
 session_checker();
 requireRole($_SESSION["ROLE"]);
 header("Cache-Control: private, no-store");
@@ -7,7 +7,7 @@ $admin = $_SESSION["ROLE"] === "admin";
 $pageTitle = "Community map";
 require __DIR__ . "/../includes/header.php";
 ?>
-<link rel="stylesheet" href="<?= e(url('resources/assets/vendor/leaflet/leaflet.css')) ?>" />
+<link rel="stylesheet" href="<?= e(url('assets/vendor/leaflet/leaflet.css')) ?>" />
 <p class="return-link no-print"><a class="btn btn-outline-secondary" href="<?= e(url(dashboardPath())) ?>">Back to dashboard</a></p>
 <h1><?= $admin?'Staff map':'Community map' ?></h1>
 <p><?= e($settings['demo_barangay_name']) ?>. Markers show saved locations; they do not predict danger or guarantee safety. The map opens focused on Atok; you can pan to review other saved points. No approved boundary is enforced.</p>
@@ -39,8 +39,8 @@ require __DIR__ . "/../includes/header.php";
         <noscript>Enable JavaScript to explore this map. Your regular record pages remain available through navigation.</noscript>
     </div>
 </div>
-<script src="<?= e(url('resources/assets/vendor/leaflet/leaflet.js')) ?>"></script>
-<script src="<?= e(url('resources/assets/js/community-map.js')) ?>"></script>
+<script src="<?= e(url('assets/vendor/leaflet/leaflet.js')) ?>"></script>
+<script src="<?= e(url('assets/js/community-map.js')) ?>"></script>
 <?php
 require __DIR__ . "/../includes/footer.php";
 ?>
