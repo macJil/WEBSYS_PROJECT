@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/common.php';
 requireRole('admin');
+require_once __DIR__ . '/../includes/barangays.php';
 
 function evacuationDbCenters(string $search): array
 {
@@ -32,9 +33,10 @@ function evacuationDbSaveCenter(?int $id, array $data): void
                 throw new DomainException('Check out all evacuees before closing this center.');
             }
             $stmt = db()->prepare(
-                'UPDATE evacuation_centers SET latitude=?,longitude=?,name=?, address_details=?, capacity=?, status=? WHERE id=?',
+                'UPDATE evacuation_centers SET barangay=?,latitude=?,longitude=?,name=?, address_details=?, capacity=?, status=? WHERE id=?',
             );
             $stmt->execute([
+                $data['barangay'],
                 $data['latitude'],
                 $data['longitude'],
                 $data['name'],
@@ -45,9 +47,10 @@ function evacuationDbSaveCenter(?int $id, array $data): void
             ]);
         } else {
             $stmt = db()->prepare(
-                'INSERT INTO evacuation_centers (latitude,longitude,name,address_details,capacity,status) VALUES (?,?,?,?,?,?)',
+                'INSERT INTO evacuation_centers (barangay,latitude,longitude,name,address_details,capacity,status) VALUES (?,?,?,?,?,?,?)',
             );
             $stmt->execute([
+                $data['barangay'],
                 $data['latitude'],
                 $data['longitude'],
                 $data['name'],
@@ -76,6 +79,7 @@ function evacuationSaveCenter(?int $id): array
         'options' => ['min_range' => 0, 'max_range' => 1000000],
     ]);
     $data = [
+        'barangay' => input('barangay') ?: null,
         'name' => input('name'),
         'address_details' => input('address_details'),
         'capacity' => $capacity,
@@ -92,6 +96,9 @@ function evacuationSaveCenter(?int $id): array
         return [
             'Enter name (up to 150 bytes), address (up to 255 bytes), whole-person capacity (0–1,000,000), and valid status.',
         ];
+    }
+    if ($data['barangay'] !== null && !in_array($data['barangay'], ATOK_BARANGAYS, true)) {
+        return ['Choose a valid Atok barangay.'];
     }
     $errors = locationErrors($data['address_details'], input('latitude'), input('longitude'));
     if ($errors) {
@@ -116,7 +123,7 @@ $data = $id
     : ["name" => "", "address_details" => "", "capacity" => 0, "status" => "closed"];
 $errors = evacuationSaveCenter($id);
 if (isPost()) {
-    foreach (["name", "address_details", "capacity", "status", "latitude", "longitude"] as $key) {
+    foreach (["barangay", "name", "address_details", "capacity", "status", "latitude", "longitude"] as $key) {
         $data[$key] = input($key);
     }
 }
@@ -170,6 +177,14 @@ require __DIR__ . "/../includes/errors.php";
 </div>
 <h2><?= $id?'Edit center':'Add center' ?></h2>
 <form method="post">
+    <label class="d-block mb-3">Center barangay
+        <select name="barangay" class="form-select">
+            <option value="">Awaiting confirmation</option>
+            <?php foreach (ATOK_BARANGAYS as $area): ?>
+                <option <?= ($data['barangay'] ?? '') === $area ? 'selected' : '' ?>><?= e($area) ?></option>
+            <?php endforeach; ?>
+        </select>
+    </label>
     <?php foreach (['name' => ['Center name',150],'address_details' => ['Address / location',255]] as $key => $field): ?>
         <label class="d-block mb-3"><?= e($field[0]) ?><input class="form-control" name="<?= e($key) ?>" maxlength="<?= $field[1] ?>" value="<?= e($data[$key]) ?>" required /></label>
     <?php endforeach; ?>

@@ -234,6 +234,7 @@ require __DIR__ . "/../includes/header.php";
 require __DIR__ . "/../includes/errors.php";
 ?>
 <h1><?= e($pageTitle) ?></h1>
+<a class="btn btn-outline-secondary no-print" href="<?= e(url('incidents/print.php?id=' . $id)) ?>">Printable incident report</a>
 <dl>
     <?php foreach (['incident_type' => 'Type','status' => 'Status','description' => 'Description','reporter_name' => 'Reporter/contact name','contact_phone' => 'Contact number','barangay' => 'Incident barangay','location_description' => 'Location','latitude' => 'Latitude','longitude' => 'Longitude','report_source' => 'Received through','created_at' => 'Submitted'] as $key => $label): ?>
         <dt><?= e($label) ?></dt>

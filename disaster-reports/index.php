@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/common.php';
 requireRole('admin');
+require_once __DIR__ . '/../includes/barangays.php';
 
 function disasterSummaryDbRows(string $sql, array $values = []): array
 {
@@ -9,36 +10,51 @@ function disasterSummaryDbRows(string $sql, array $values = []): array
     return $stmt->fetchAll();
 }
 
-function disasterSummaryDbSummarize(string $start, string $endExclusive): array
+function disasterSummaryDbSummarize(string $start, string $endExclusive, string $area): array
 {
     // A single read transaction keeps the summaries on the same database snapshot.
     db()->beginTransaction();
     try {
+        // Each scope is applied to the entity whose barangay the section describes.
+        $areaCondition = $area === '' ? '' : ($area === 'unknown' ? ' IS NULL' : ' = ?');
+        $areaValues = $area === '' || $area === 'unknown' ? [] : [$area];
+        $householdFilter = $areaCondition ? ' AND h.barangay' . $areaCondition : '';
+        $incidentFilter = $areaCondition ? ' AND barangay' . $areaCondition : '';
+        $centerFilter = $areaCondition ? ' WHERE c.barangay' . $areaCondition : '';
+        $periodValues = array_merge([$start, $endExclusive], $areaValues);
         $affected = disasterSummaryDbRows(
-            "SELECT COUNT(*) AS total FROM households WHERE archived_at IS NULL AND registry_reason IN ('affected','both')",
+            "SELECT COUNT(*) AS total FROM households h WHERE archived_at IS NULL AND registry_reason IN ('affected','both')" . $householdFilter, $areaValues,
         )[0]['total'];
         $centers = disasterSummaryDbRows("SELECT c.id, c.name, c.status, c.archived_at, c.capacity,
             COUNT(e.id) AS occupancy
             FROM evacuation_centers c
             LEFT JOIN evacuation_records e ON e.center_id = c.id AND e.checked_out_at IS NULL
-            GROUP BY c.id, c.name, c.status, c.archived_at, c.capacity ORDER BY c.name, c.id");
+            $centerFilter
+            GROUP BY c.id, c.name, c.status, c.archived_at, c.capacity ORDER BY c.name, c.id", $areaValues);
         foreach ($centers as $index => $center) {
             $centers[$index]['available'] = availableCapacity($center);
         }
         $incidents = disasterSummaryDbRows(
-            'SELECT incident_type,status,COUNT(*) AS total FROM incident_reports WHERE created_at>=? AND created_at<? GROUP BY incident_type,status',
-            [$start, $endExclusive],
+            'SELECT incident_type,status,COUNT(*) AS total FROM incident_reports WHERE created_at>=? AND created_at<?' . $incidentFilter . ' GROUP BY incident_type,status',
+            $periodValues,
         );
         $goods = disasterSummaryDbRows(
-            'SELECT i.id,i.item_name,i.unit,SUM(d.quantity) AS quantity FROM relief_distributions r JOIN relief_distribution_items d ON d.distribution_id=r.id JOIN relief_items i ON i.id=d.item_id WHERE r.distributed_at>=? AND r.distributed_at<? GROUP BY i.id,i.item_name,i.unit ORDER BY i.item_name,i.unit,i.id',
-            [$start, $endExclusive],
+            'SELECT i.id,i.item_name,i.unit,SUM(d.quantity) AS quantity FROM relief_distributions r JOIN households h ON h.id=r.household_id JOIN relief_distribution_items d ON d.distribution_id=r.id JOIN relief_items i ON i.id=d.item_id WHERE r.distributed_at>=? AND r.distributed_at<?' . $householdFilter . ' GROUP BY i.id,i.item_name,i.unit ORDER BY i.item_name,i.unit,i.id',
+            $periodValues,
         );
         $distributions = disasterSummaryDbRows(
-            'SELECT COUNT(*) AS events,COUNT(DISTINCT household_id) AS households FROM relief_distributions WHERE distributed_at>=? AND distributed_at<?',
-            [$start, $endExclusive],
+            'SELECT COUNT(*) AS events,COUNT(DISTINCT household_id) AS households FROM relief_distributions r JOIN households h ON h.id=r.household_id WHERE distributed_at>=? AND distributed_at<?' . $householdFilter,
+            $periodValues,
+        )[0];
+        $stays = disasterSummaryDbRows(
+            "SELECT COUNT(CASE WHEN e.checked_in_at >= ? AND e.checked_in_at < ? THEN 1 END) AS arrivals,
+                    COUNT(CASE WHEN e.checked_out_at >= ? AND e.checked_out_at < ? THEN 1 END) AS departures
+             FROM evacuation_records e JOIN evacuation_centers c ON c.id=e.center_id" . $centerFilter,
+            array_merge([$start, $endExclusive, $start, $endExclusive], $areaValues)
         )[0];
         db()->commit();
         return [
+            'stays' => $stays,
             'affected' => (int) $affected,
             'centers' => $centers,
             'incidents' => $incidents,
@@ -85,13 +101,14 @@ function disasterSummaryPeriod(): array
     ];
 }
 
-function disasterSummarySummary(array $period): array
-{
-    return disasterSummaryDbSummarize($period['start'], $period['end_exclusive']);
+$area = $_GET['barangay'] ?? '';
+if (!in_array($area, array_merge(['', 'unknown'], ATOK_BARANGAYS), true)) {
+    http_response_code(400);
+    exit('Choose a valid barangay.');
 }
-
+$areaLabel = $area === '' ? 'All barangays' : ($area === 'unknown' ? 'Awaiting confirmation' : $area);
 $period = disasterSummaryPeriod();
-$summary = disasterSummarySummary($period);
+$summary = disasterSummaryDbSummarize($period['start'], $period['end_exclusive'], $area);
 $matrix = [];
 $statusTotals = array_fill_keys(DISASTERSUMMARY_STATUSES, 0);
 foreach (DISASTERSUMMARY_TYPES as $key => $label) {
@@ -114,15 +131,21 @@ require __DIR__ . "/../includes/header.php";
 ?>
 <link rel="stylesheet" href="<?= e(url('assets/css/disaster-summary.css')) ?>" />
 <p class="return-link no-print"><a class="btn btn-outline-secondary" href="<?= e(url(dashboardPath())) ?>">Back to dashboard</a></p>
-<h1>Disaster reports and summaries</h1>
+<header class="report-heading"><p>Municipality of Atok · Benguet</p><h1>Disaster summary report</h1></header>
 <form method="get" class="filter-form no-print mb-3">
     <label>From <input type="date" name="from" value="<?= e($period['from']) ?>" required /></label>
     <label>Through <input type="date" name="to" value="<?= e($period['to']) ?>" required /></label>
-    <button class="btn btn-outline-secondary">Apply period</button>
+    <label>Barangay <select name="barangay">
+        <option value="">All barangays</option>
+        <?php foreach (array_merge(['unknown' => 'Awaiting confirmation'], array_combine(ATOK_BARANGAYS, ATOK_BARANGAYS)) as $key => $label): ?>
+            <option value="<?= e($key) ?>" <?= $area === $key ? 'selected' : '' ?>><?= e($label) ?></option>
+        <?php endforeach; ?>
+    </select></label>
+    <button class="btn btn-outline-secondary">Apply filters</button>
     <a href="<?= e(url('disaster-reports/index.php')) ?>">Current month</a>
-    <button class="btn btn-outline-secondary" type="button" id="print-summary">Print summary</button>
+    <button class="btn btn-outline-secondary" type="button" id="print-summary">Print / Save as PDF</button>
 </form>
-<p>Selected period: <strong><?= e($period['from']) ?> through <?= e($period['to']) ?></strong> (both dates included).</p>
+<p>Barangay: <strong><?= e($areaLabel) ?></strong> · Selected period: <strong><?= e($period['from']) ?> through <?= e($period['to']) ?></strong> (both dates included).</p>
 <p>Generated <?= e((new DateTimeImmutable('now', new DateTimeZone('Asia/Manila')))->format('Y-m-d H:i:s')) ?> Asia/Manila.</p>
 <h2>Current affected households</h2>
 <p><strong><?= $summary['affected'] ?></strong> households currently marked “affected” or “both” in the registry.</p>
@@ -166,6 +189,8 @@ require __DIR__ . "/../includes/header.php";
         </tfoot>
     </table>
 </div>
+<h2 class="report-page-break">Activity during the selected period</h2>
+<p>Center arrivals: <strong><?= (int)$summary['stays']['arrivals'] ?></strong> · Checkouts: <strong><?= (int)$summary['stays']['departures'] ?></strong>. Each stay counts once per event, grouped by the center’s barangay.</p>
 <h2>Incident reports submitted in the selected period</h2>
 <p>Grouped by type and their current status. Dates use submission time, not occurrence time or the time a status changed. Historical incident counts include archived reports; dashboard cards and their lists count non-archived reports.</p>
 <div class="table-responsive" tabindex="0" role="region" aria-label="Scrollable records">
@@ -202,7 +227,7 @@ require __DIR__ . "/../includes/header.php";
     </table>
 </div>
 <h2>Relief distributed in the selected period</h2>
-<p><?= (int)$summary['distributions']['events'] ?> distribution events to <?= (int)$summary['distributions']['households'] ?> distinct households. Repeated visits to a household count once in the household total.</p>
+<p><?= (int)$summary['distributions']['events'] ?> distribution events to <?= (int)$summary['distributions']['households'] ?> distinct households. Barangay follows the receiving household’s current registry entry. Repeated visits to a household count once in the household total.</p>
 <div class="table-responsive" tabindex="0" role="region" aria-label="Scrollable records">
     <table class="table">
         <thead>

@@ -47,3 +47,17 @@
         break-inside: avoid;
     }
 }
+
+.report-heading {
+    border-bottom: 2px solid currentColor;
+    padding-bottom: .5rem;
+    margin-bottom: 1rem;
+}
+@page { size: A4 portrait; margin: 16mm; }
+@media print {
+    .report-heading p { margin: 0; }
+    .report-page-break { break-before: page; }
+    .site-header, .site-footer, .alert, .skip-link { display: none !important; }
+    td, .preserve-text { overflow-wrap: anywhere; }
+    p { orphans: 3; widows: 3; }
+}

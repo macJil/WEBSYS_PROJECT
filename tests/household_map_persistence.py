@@ -226,6 +226,46 @@ with tempfile.TemporaryDirectory(prefix='bayanready-address-') as temporary:
             assert name in report
         assert '0 distribution events to 0 distinct households' in admin.request('/disaster-reports/index.php?from=2000-01-01&to=2000-01-02')[1]
         assert resident.request('/disaster-reports/index.php')[0] == 403
+        query("UPDATE evacuation_centers SET barangay='Paoay' WHERE id=1")
+        summary_path = '/disaster-reports/index.php?from=2000-01-01&to=2099-12-31&barangay='
+        scoped = admin.request(summary_path + 'Paoay')[1]
+        assert '2 distribution events to 1 distinct households' in scoped
+        assert 'Center arrivals: <strong>6</strong> · Checkouts: <strong>1</strong>' in scoped
+        assert '0 distribution events' in admin.request(summary_path + 'Topdac')[1]
+        quiet = admin.request('/disaster-reports/index.php?from=2000-01-01&to=2000-01-01&barangay=Paoay')[1]
+        assert 'Center arrivals: <strong>0</strong>' in quiet and '<td>5</td>' in quiet
+        assert admin.request(summary_path + 'invalid')[0] == 400
+        print_path = '/incidents/print.php?id=1'
+        other = Client()
+        other.request('/index.php', dict(action='login',email='other@example.invalid',password='DemoPass123!'))
+        assert other.request(print_path)[0] == 404
+        public = Client()
+        public.request(print_path)
+        assert public.last_url.endswith('/index.php')
+        own = resident.request(print_path)[1]
+        staff = admin.request(print_path)[1]
+        assert 'Resident submission copy' in own and 'Staff review and response history' not in own
+        assert 'Fictional arrival' in staff and 'Fictional arrival' not in own
+        print('PASS scoped print totals, current occupancy, period arrivals, and incident copy permissions')
+        if os.environ.get('TEST_PRINT_BROWSER'):
+            for name, html in [('summary', scoped), ('resident', own), ('staff', staff)]:
+                snapshot = folder / (name + '.html')
+                snapshot.write_text(html.replace('<head>', '<head><base href="' + base + '/">'))
+                pdf = folder / (name + '.pdf')
+                subprocess.run([os.environ['TEST_PRINT_BROWSER'], '--headless', '--disable-gpu',
+                                '--user-data-dir=' + str(folder / 'browser'), '--no-pdf-header-footer',
+                                '--print-to-pdf=' + str(pdf), snapshot.as_uri()], check=True,
+                               stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=40)
+                info = subprocess.check_output(['pdfinfo', str(pdf)]).decode()
+                assert 'A4' in info, info
+                printed = subprocess.check_output(['pdftotext', '-layout', str(pdf), '-']).decode()
+                assert 'Save as PDF' not in printed and 'Back to dashboard' not in printed
+                if name == 'summary':
+                    assert 'Activity during the selected period' in printed.split('\f')[1]
+                    assert '2 distribution events' in printed
+                else:
+                    assert 'Incident report #1' in printed and ('Fictional arrival' in printed) == (name == 'staff')
+            print('PASS browser A4 PDFs, summary page break, printed totals and staff-only history')
         print('PASS multi-good distribution, four-table rollback and filtered disaster summary')
 
         title = 'Fictional visibility exercise'

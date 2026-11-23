@@ -168,6 +168,7 @@ CREATE TABLE announcements (
 
 -- 9. Centers: capacity is in individuals; occupancy comes from active evacuation_records.
 CREATE TABLE evacuation_centers (
+  barangay VARCHAR(40) NULL,
   archived_at DATETIME NULL,
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(150) NOT NULL,
