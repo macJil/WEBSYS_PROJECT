@@ -112,3 +112,9 @@ Current household/map revision: [Phase 4 Atok map view and responsive checks](do
 Current household/map revision: [Phase 5 accurate dashboard counts](docs/simplification/HOUSEHOLD_MAP_PHASE_5.md).
 
 Current household/map revision: [Phase 6 buttons, confirmations and return links](docs/simplification/HOUSEHOLD_MAP_PHASE_6.md).
+
+## Atok demo map
+
+The map opens near Sayangan in Paoay. **Show all Atok** fits the municipal outline, including areas without saved markers. The picker and PHP save checks read one Polygon with a single exterior ring in `assets/data/atok.geojson`. No database migration is needed.
+
+The approximate outline is the Atok feature extracted from the [Benguet municipal boundaries dataset](https://github.com/faeldon/philippines-json-maps/blob/680e32e62baeccbcd8845d3b1387bc67c1baf78a/latest/geojson/provdists/medres/municities-provdist-1401100000.0.01.json). The opening view uses the [DepEd Sayangan locality reference](https://www.deped.gov.ph/wp-content/uploads/2019/10/Annex-A-Recipient-List.pdf). Confirm the outline and treatment of border locations with the municipality before operational use. A resident can submit a written landmark without coordinates when the demo outline or address suggestion is inaccurate.

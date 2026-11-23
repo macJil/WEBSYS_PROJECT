@@ -17,6 +17,10 @@ if ($lat === false || $lng === false || abs($lat) > 90 || abs($lng) > 180) {
     http_response_code(400);
     exit(json_encode(['error' => 'Invalid coordinates.']));
 }
+if (!insideAtok($lat, $lng)) {
+    http_response_code(400);
+    exit(json_encode(['error' => 'Point outside the approximate Atok demo boundary.']));
+}
 $now = time();
 $requests = $_SESSION['address_requests'] ?? [];
 $recent = [];

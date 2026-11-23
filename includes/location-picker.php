@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . "/helpers.php";
 session_checker();
+$boundary = atokBoundary();
 $point = $point ?? [];
 ?>
 <fieldset class="location-picker mb-3" data-address-url="<?= e(($settings['address_lookup_url'] ?? 'enabled') === '' ? '' : url('map/address.php')) ?>">
@@ -15,7 +16,9 @@ $point = $point ?? [];
     <?php endforeach; ?>
     <button type="button" class="btn btn-outline-secondary my-2" data-locate>Use my current location</button>
     <button type="button" class="btn btn-outline-secondary" data-clear>Clear pin</button>
-    <div data-picker-map data-lat="<?= e($settings['map_latitude']) ?>" data-lng="<?= e($settings['map_longitude']) ?>" data-zoom="<?= e($settings['map_zoom']) ?>" data-min-zoom="<?= e($settings['map_min_zoom']) ?>">
+    <button type="button" class="btn btn-outline-secondary" data-show-atok disabled>Show all Atok</button>
+    <p>Approximate Atok demo boundary, pending municipal confirmation. Choose a pin inside the outline.</p>
+    <div data-picker-map data-boundary="<?= e(json_encode($boundary)) ?>" data-lat="<?= e($boundary['properties']['opening_view'][0]) ?>" data-lng="<?= e($boundary['properties']['opening_view'][1]) ?>" data-zoom="<?= e($settings['map_zoom']) ?>" data-min-zoom="8">
     </div>
     <p data-picker-availability class="small" role="status">The map background needs internet. Written location and coordinate fields remain available.</p>
     <noscript>JavaScript is needed for map selection. You can still type the location and coordinates.</noscript>
@@ -23,4 +26,5 @@ $point = $point ?? [];
 </fieldset>
 <link rel="stylesheet" href="<?= e(url('assets/vendor/leaflet/leaflet.css')) ?>" />
 <script src="<?= e(url('assets/vendor/leaflet/leaflet.js')) ?>"></script>
-<script src="<?= e(url('assets/js/location-picker.js?v=20261114-address')) ?>" defer></script>
+<script src="<?= e(url('assets/js/atok-boundary.js')) ?>"></script>
+<script src="<?= e(url('assets/js/location-picker.js?v=atok-boundary')) ?>" defer></script>

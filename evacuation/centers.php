@@ -173,6 +173,10 @@ require __DIR__ . "/../includes/errors.php";
     <?php foreach (['name' => ['Center name',150],'address_details' => ['Address / location',255]] as $key => $field): ?>
         <label class="d-block mb-3"><?= e($field[0]) ?><input class="form-control" name="<?= e($key) ?>" maxlength="<?= $field[1] ?>" value="<?= e($data[$key]) ?>" required /></label>
     <?php endforeach; ?>
+    <?php
+    $point = $data;
+    require __DIR__ . "/../includes/location-picker.php";
+    ?>
     <label class="d-block mb-3">Capacity (people)<input class="form-control" type="number" min="0" max="1000000" name="capacity" value="<?= e($data['capacity']) ?>" required /></label>
     <label class="d-block mb-3">Status<select class="form-select" name="status">
             <?php foreach (['open','closed'] as $status): ?>
@@ -180,10 +184,7 @@ require __DIR__ . "/../includes/errors.php";
             <?php endforeach; ?>
         </select></label>
     <p>Check out all occupants before closing a center. Capacity cannot be reduced below current occupancy.</p>
-    <?php
-    $point = $data;
-    require __DIR__ . "/../includes/location-picker.php";
-    ?>
+
     <button class="btn btn-primary" name="action" value="save_center">Save center</button>
     <a href="<?= e(url('evacuation/centers.php')) ?>">Cancel and return to evacuation centers</a>
 </form>

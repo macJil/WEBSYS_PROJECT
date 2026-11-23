@@ -11,6 +11,7 @@
     const zoom = Number(element.dataset.zoom);
     const minimumZoom = Number(element.dataset.minZoom || 11);
     const map = L.map(element, { minZoom: minimumZoom }).setView(home, zoom);
+    drawAtok(map, JSON.parse(element.dataset.boundary), document.getElementById("show-atok"));
     L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
         maxZoom: 19,
         attribution:

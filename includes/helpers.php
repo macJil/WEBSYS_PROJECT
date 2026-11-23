@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../config/db.php';
+require_once __DIR__ . '/atok-boundary.php';
 
 if (session_status() !== PHP_SESSION_ACTIVE) {
     ini_set('session.use_strict_mode', '1');
@@ -95,6 +96,9 @@ set_exception_handler(function (Throwable $error): void {
 
 function locationErrors(string $description, string $lat, string $lng): array
 {
+    if (!is_string($_POST['latitude'] ?? '') || !is_string($_POST['longitude'] ?? '')) {
+        return ['Enter a numeric coordinate pair or clear both fields.'];
+    }
     if (($lat === '') !== ($lng === '')) {
         return ['Enter both coordinates or clear both.'];
     }
@@ -109,6 +113,9 @@ function locationErrors(string $description, string $lat, string $lng): array
             trim($description) === '')
     ) {
         return ['Enter valid coordinates and a written location.'];
+    }
+    if ($lat !== '' && !insideAtok(round((float) $lat, 7), round((float) $lng, 7))) {
+        return ['Choose a point inside the approximate Atok demo boundary, or enter the address without a pin.'];
     }
     return [];
 }

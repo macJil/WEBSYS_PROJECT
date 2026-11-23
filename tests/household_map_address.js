@@ -4,21 +4,22 @@ function check(ok,label){assert(ok,label);checks++;console.log('PASS '+label);}
 function element(value=''){return {value,dataset:{},events:{},checked:true,hidden:true,textContent:'',addEventListener(k,fn){(this.events[k]??=[]).push(fn);},dispatchEvent(e){for(const fn of this.events[e.type]||[])fn(e);},fire(type){this.dispatchEvent({type});}};}
 function fixture(initial='',withMap=true){
  const address=element(initial),form=element(),root=element();form.querySelector=()=>address;root.closest=()=>form;
- const keys=['[data-address-enabled]','[data-address-status]','[data-use-address]','[data-coordinate="latitude"]','[data-coordinate="longitude"]','[data-picker-status]','[data-picker-map]','[data-clear]','[data-locate]'];
- const items=Object.fromEntries(keys.map(k=>[k,element()]));root.querySelector=k=>items[k];root.dataset.addressUrl='https://photon.komoot.io/reverse';items['[data-picker-map]'].dataset={lat:16.6272,lng:120.7672,zoom:15};
+ const keys=['[data-address-enabled]','[data-address-status]','[data-use-address]','[data-coordinate="latitude"]','[data-coordinate="longitude"]','[data-picker-status]','[data-picker-map]','[data-show-atok]','[data-clear]','[data-locate]'];
+ const items=Object.fromEntries(keys.map(k=>[k,element()]));root.querySelector=k=>items[k];root.dataset.addressUrl='https://photon.komoot.io/reverse';items['[data-picker-map]'].dataset={boundary:fs.readFileSync(__dirname+"/../assets/data/atok.geojson","utf8"),lat:16.6272,lng:120.7672,zoom:15};
  let time=10000,sequence=0,geoOk,geoFail;const timers=new Map(),calls=[];
- const map={setView(){return this;},on(type,fn){this[type]=fn;},removeLayer(){}};
+ const map={fitBounds(bounds){this.fitted=bounds;},setView(){return this;},on(type,fn){this[type]=fn;},removeLayer(){}};
  const context={window:{location:{href:'http://localhost/index.php',origin:'http://localhost'}},document:{querySelectorAll:()=>[root]},Event:class{constructor(type){this.type=type;}},URL,AbortController,TextEncoder,Map,Date:{now:()=>time},setTimeout(fn,ms){const id=++sequence;timers.set(id,{at:time+ms,fn});return id;},clearTimeout(id){timers.delete(id);},navigator:{geolocation:{getCurrentPosition(ok,fail){geoOk=ok;geoFail=fail;}}},fetch:(url,options)=>new Promise((resolve,reject)=>{calls.push({url,options,resolve,reject});})};
- if(withMap)context.L={map:()=>map,tileLayer:()=>({on(){return this;},addTo(){}}),marker:()=>({addTo(){return this;},on(){}})};
- for(const file of ['location-picker.js'])vm.runInNewContext(fs.readFileSync(__dirname+'/../assets/js/'+file,'utf8'),context);
+ if(withMap)context.L={geoJSON:feature=>({getBounds(){return feature.geometry.coordinates;},addTo(){return this;}}),map:()=>map,tileLayer:()=>({on(){return this;},addTo(){}}),marker:()=>({addTo(){return this;},on(){},setLatLng(){}})};
+ for(const file of ['atok-boundary.js','location-picker.js'])vm.runInNewContext(fs.readFileSync(__dirname+'/../assets/js/'+file,'utf8'),context);
  const flush=async()=>{for(let i=0;i<8;i++)await Promise.resolve();};
  async function tick(ms){time+=ms;for(const [id,t] of [...timers])if(t.at<=time){timers.delete(id);t.fn();}await flush();}
- function select(lat='16.6272',lng='120.7672'){items['[data-coordinate="latitude"]'].value=lat;items['[data-coordinate="longitude"]'].value=lng;map.click({latlng:{lat:Number(lat),lng:Number(lng)}});}
+ function select(lat='16.6272',lng='120.7672'){map.click({latlng:{lat:Number(lat),lng:Number(lng)}});}
  async function reply(properties={street:'Demo Road',district:'Demo Purok',city:'Demo City'},index=calls.length-1){calls[index].resolve({ok:true,json:async()=>({features:[{properties}]})});await flush();}
  return {items,address,root,form,map,calls,tick,select,reply,flush,geo:()=>({ok:geoOk,fail:geoFail})};
 }
 (async()=>{
  const f=fixture('Saved address');
+ f.items['[data-show-atok]'].fire('click');check(f.map.fitted[0].length>3,'Show all Atok fits the boundary before a pin is selected');
  await f.tick(5000);check(f.calls.length===0 && f.address.value==='Saved address','edit load preserves saved address without request');
  f.select('16.6272','120.7672');await f.tick(300);f.select('16.628','120.768');await f.tick(700);
  check(f.calls.length===1 && new URL(f.calls[0].url).searchParams.get('lat')==='16.6280000','debounce requests latest selected point');
@@ -42,6 +43,11 @@ function fixture(initial='',withMap=true){
  check(geo.address.value==='Demo locality','current location suggests address without Leaflet');
  geo.items['[data-locate]'].fire('click');geo.address.value='Typed while waiting';geo.address.fire('input');geo.geo().ok({coords:{latitude:16.628,longitude:120.768,accuracy:12}});await geo.tick(2000);
  check(geo.address.value==='Typed while waiting' && geo.calls.length===1,'manual edit during geolocation survives');
+ const previous=f.items['[data-coordinate="latitude"]'].value;
+ f.select('16.4','120.6');await f.tick(2000);
+ check(f.items['[data-coordinate="latitude"]'].value===previous && f.items['[data-picker-status]'].textContent.includes('Outside'),'outside click preserves selected coordinates');
+ f.items['[data-locate]'].fire('click');f.geo().ok({coords:{latitude:16.4,longitude:120.6,accuracy:10}});
+ check(f.items['[data-coordinate="latitude"]'].value===previous && f.items['[data-picker-status]'].textContent.includes('Outside'),'outside GPS preserves selected coordinates');
  const empty=fixture();empty.select();await empty.tick(700);empty.calls[0].resolve({ok:true,json:async()=>({features:[]})});await empty.flush();check(empty.address.value==='' && empty.items['[data-address-status]'].textContent.includes('manually'),'no result leaves manual fallback');
  const timeout=fixture();timeout.select();await timeout.tick(700);await timeout.tick(8000);check(timeout.calls[0].options.signal.aborted,'timeout aborts lookup');timeout.calls[0].reject(new Error('timeout'));await timeout.flush();check(timeout.items['[data-address-status]'].textContent.includes('manually'),'timeout explains fallback');
  const limit=fixture();for(let i=0;i<11;i++){limit.select(String(16.62+i/1000),'120.76');await limit.tick(2000);if(i<10)await limit.reply({name:'Demo'});}check(limit.calls.length===10,'ten requests per minute cap');

@@ -47,6 +47,10 @@ require __DIR__ . "/../includes/errors.php";
                 <input class="form-control" id="<?= e($key) ?>" name="<?= e($key) ?>" maxlength="<?= $field[1] ?>" <?= $field[2] ? 'required' : '' ?> value="<?= e($form[$key]) ?>" />
             </div>
         <?php endforeach; ?>
+    <?php
+    $point = $form;
+    require __DIR__ . "/../includes/location-picker.php";
+    ?>
         <?php foreach ($householdCategories as $key => $field): ?>
             <div class="col-md-6 mb-3">
                 <label for="<?= e($key) ?>" class="form-label"><?= e($field[0]) ?></label>
@@ -69,10 +73,7 @@ require __DIR__ . "/../includes/errors.php";
         <?php endforeach; ?>
     </div>
     <p>Not yet assessed: no assessment recorded. No additional assistance need identified: reviewed without an identified need; this does not mean disaster-safe. Additional assistance needed: record the practical help required. Choosing “Not yet assessed” clears prior assessment notes and metadata.</p>
-    <?php
-    $point = $form;
-    require __DIR__ . "/../includes/location-picker.php";
-    ?>
+
     <button class="btn btn-primary">Save household</button>
     <a href="<?= e(url('households/index.php')) ?>">Cancel and return to households</a>
 </form>

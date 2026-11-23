@@ -103,6 +103,10 @@ with tempfile.TemporaryDirectory(prefix='bayanready-address-') as temporary:
             code, body = client.request(page_url)
             assert code == 200 and 'data-address-status' in body and 'location-picker.js' in body
             values.update({field: 'Fictional suggested road, Demo locality', 'latitude': '16.6272000', 'longitude': '120.7672000'})
+            outside = dict(values, latitude='16.4', longitude='120.6')
+            before = query('SELECT COUNT(*) AS total FROM ' + table)
+            assert 'inside the approximate Atok' in client.request(page_url, outside)[1]
+            assert before == query('SELECT COUNT(*) AS total FROM ' + table)
             code, body = client.request(page_url, values)
             assert code == 200 and 'alert-danger' not in body, body[-1500:]
             # The SQL helper executes one query at a time after USE through exec below.
@@ -116,7 +120,7 @@ with tempfile.TemporaryDirectory(prefix='bayanready-address-') as temporary:
             code, body = admin.request(edit)
             assert code == 200 and values[field] in body and 'data-address-status' in body
             updated = dict(values)
-            updated.update({field: 'Fictional manually confirmed landmark', 'latitude': '16.6280000', 'longitude': '120.7680000'})
+            updated.update({field: 'Fictional manually confirmed landmark', 'latitude': '16.5498834', 'longitude': '120.6533397'})
             if table == 'incident_reports':
                 updated.update(action='update_location', location_notes='Fictional correction')
             elif table == 'households':

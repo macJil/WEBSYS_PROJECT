@@ -5,6 +5,7 @@ document.querySelectorAll(".location-picker").forEach((root) => {
         lng = root.querySelector('[data-coordinate="longitude"]'),
         status = root.querySelector("[data-picker-status]"),
         el = root.querySelector("[data-picker-map]");
+    const boundary = JSON.parse(el.dataset.boundary);
     const form = root.closest("form");
     const address = form.querySelector('[name="location_description"], [name="address_details"]');
     const addressStatus = root.querySelector("[data-address-status]");
@@ -121,6 +122,7 @@ document.querySelectorAll(".location-picker").forEach((root) => {
             [Number(el.dataset.lat), Number(el.dataset.lng)],
             Number(el.dataset.zoom),
         );
+        drawAtok(map, boundary, root.querySelector("[data-show-atok]"));
         L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
             maxZoom: 19,
             attribution:
@@ -155,6 +157,10 @@ document.querySelectorAll(".location-picker").forEach((root) => {
             status.textContent = "Enter both valid coordinates.";
             return;
         }
+        if (!insideAtok(a, b, boundary)) {
+            status.textContent = "Outside the approximate Atok boundary. Correct the coordinates or clear the pin.";
+            return;
+        }
         if (map) {
             marker = L.marker([a, b], { draggable: true }).addTo(map);
             map.setView([a, b], 16);
@@ -172,6 +178,11 @@ document.querySelectorAll(".location-picker").forEach((root) => {
             ". Confirm the point and written location before saving.";
     }
     function setPoint(a, b) {
+        if (!insideAtok(Number(a.toFixed(7)), Number(b.toFixed(7)), boundary)) {
+            if (marker) marker.setLatLng([Number(lat.value), Number(lng.value)]);
+            status.textContent = "Outside the approximate Atok boundary. Your previous selection is kept.";
+            return;
+        }
         lat.value = a.toFixed(7);
         lng.value = b.toFixed(7);
         show();

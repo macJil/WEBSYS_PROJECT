@@ -131,19 +131,7 @@ function reportCreate(array $data): array
     if ($data['contact_phone'] !== '' && !validPhone($data['contact_phone'], 3)) {
         $errors[] = 'Enter a valid contact number.';
     }
-    foreach (['latitude' => 90, 'longitude' => 180] as $key => $limit) {
-        if (
-            $data[$key] !== '' &&
-            (!is_numeric($data[$key]) ||
-                !is_finite((float) $data[$key]) ||
-                abs((float) $data[$key]) > $limit)
-        ) {
-            $errors[] = 'Enter valid coordinates.';
-        }
-    }
-    if (($data['latitude'] === '') !== ($data['longitude'] === '')) {
-        $errors[] = 'Provide both coordinates, or leave both blank.';
-    }
+    $errors = array_merge($errors, locationErrors($data['location_description'], $data['latitude'], $data['longitude']));
     $admin = $_SESSION['ROLE'] === 'admin';
     if ($admin && !in_array($data['report_source'], ['walk_in', 'phone', 'admin'], true)) {
         $errors[] = 'Choose how the report was received.';

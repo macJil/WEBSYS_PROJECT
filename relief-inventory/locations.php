@@ -113,15 +113,16 @@ require __DIR__ . "/../includes/errors.php";
     <?php foreach (['name' => 'Name','address_details' => 'Address / landmark'] as $k => $label): ?>
         <label class="d-block mb-3"><?= e($label) ?><input class="form-control" name="<?= e($k) ?>" value="<?= e($d[$k]) ?>" required /></label>
     <?php endforeach; ?>
+    <?php
+    $point = $d;
+    require __DIR__ . "/../includes/location-picker.php";
+    ?>
     <label>Type<select name="location_type">
             <?php foreach (['storage','distribution','both'] as $type): ?>
                 <option <?= $d['location_type'] === $type?'selected':'' ?>><?= e($type) ?></option>
             <?php endforeach; ?>
         </select></label>
-    <?php
-    $point = $d;
-    require __DIR__ . "/../includes/location-picker.php";
-    ?>
+
     <button class="btn btn-primary" name="action" value="save_location">Save location</button>
     <a href="<?= e(url('relief-inventory/locations.php')) ?>">Cancel and return to relief locations</a>
 </form>
