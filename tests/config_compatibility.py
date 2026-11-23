@@ -10,7 +10,7 @@ PHP = os.environ.get('TEST_PHP', 'php')
 
 
 def run(site, code):
-    # Treat warnings and deprecations as failures, including duplicate constants.
+    # Treat warnings and deprecations as failures, including duplicate array.
     strict = '''error_reporting(E_ALL);
 set_error_handler(function ($severity, $message, $file, $line) {
     throw new ErrorException($message, 0, $severity, $file, $line);
@@ -36,7 +36,7 @@ with tempfile.TemporaryDirectory(prefix='bayanready-config-regression-') as temp
         shutil.copyfile(ROOT / 'config' / name, site / 'config' / name)
     shutil.copyfile(ROOT / 'index.php', site / 'index.php')
     example = (ROOT / 'setup/config.example.php').read_text()
-    for label, config, base in [('constants', example.replace('/WEBSYS_PROJECT', '/fictional-demo/'), '/fictional-demo')]:
+    for label, config, base in [('array', example.replace('/WEBSYS_PROJECT', '/fictional-demo/'), '/fictional-demo')]:
         # A counter also verifies that db() does not execute config.php again.
         config = config.replace('<?php', "<?php\n$GLOBALS['config_loads'] = ($GLOBALS['config_loads'] ?? 0) + 1;", 1)
         (site / 'config/config.php').write_text(config)
@@ -46,7 +46,7 @@ with tempfile.TemporaryDirectory(prefix='bayanready-config-regression-') as temp
 require_once 'config/db.php';
 if ($GLOBALS['config_loads'] !== 1) throw new Exception('Config loaded more than once');
 if (url('index.php') !== '{base}/index.php') throw new Exception('Incorrect URL');
-if (APP_NAME !== 'BayanReady') throw new Exception('Missing app name');
+if ($settings['app_name'] !== 'BayanReady') throw new Exception('Missing app name');
 // A local SQLite connection checks connection reuse without opening MySQL.
 $databaseConnection = new PDO('sqlite::memory:');
 if (db() !== $databaseConnection || db()->query('SELECT 1')->fetchColumn() != 1) {{
@@ -63,10 +63,10 @@ if ($GLOBALS['config_loads'] !== 1) throw new Exception('Page reloaded config');
 
     if os.environ.get('TEST_MYSQL_SOCKET'):
         # Read-only connection check; no application records or private config are used.
-        config = example.replace("DB_HOST = '127.0.0.1'", "DB_HOST = 'localhost'")
-        config = config.replace("DB_NAME = 'barangay_drrm'", "DB_NAME = 'information_schema'")
-        config = config.replace("DB_PASSWORD = ''", "DB_PASSWORD = 'root'")
-        for label, config in [('constants', config)]:
+        config = example.replace("'host' => '127.0.0.1'", "'host' => 'localhost'")
+        config = config.replace("'database' => 'barangay_drrm'", "'database' => 'information_schema'")
+        config = config.replace("'password' => ''", "'password' => 'root'")
+        for label, config in [('array', config)]:
             (site / 'config/config.php').write_text(config)
             for first, second in [('includes/helpers.php', 'config/db.php'), ('config/db.php', 'includes/helpers.php')]:
                 output = run(site, f"""require_once '{first}'; require_once '{second}';

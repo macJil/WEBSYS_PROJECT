@@ -28,7 +28,8 @@ function reportIncidentId(): int
 
 function reportStorage(): string
 {
-    $path = INCIDENT_UPLOAD_DIR;
+    global $settings;
+    $path = $settings['incident_upload_dir'] ?? '';
     $root = dirname(__DIR__);
     if ($path === '' || $path[0] !== '/') {
         throw new RuntimeException('Configure an absolute private upload directory.');

@@ -93,7 +93,7 @@ BayanReady Phase 5: [shared visual system and map verification](docs/BAYANREADY_
 
 - [Phase 7 acceptance and issue log](docs/BAYANREADY_PHASE_7_ACCEPTANCE.md)
 
-Configuration uses one ignored `config/config.php`. Use PHP constants as shown in `setup/config.example.php`. If an older local file starts with `return [`, copy its values into the matching constants in the example before replacing your local file. `config/db.php` loads it once and supplies the settings used by existing pages; keep your local database credentials, base URL, and private upload path. Existing teammates should transfer their previous local values using [the configuration migration guide](docs/simplification/PHASE_3_CONFIGURATION.md). Check a clean setup with `python3 tests/simplification_config.py`.
+Configuration uses one ignored `config/config.php`. Use the returned array in `setup/config.example.php`. When upgrading a constants-based installation, transfer its values into the corresponding array entries before loading the site. `config/db.php` loads it once and supplies the settings used by existing pages; keep your local database credentials, base URL, and private upload path. Existing teammates should transfer their previous local values using [the configuration migration guide](docs/simplification/PHASE_3_CONFIGURATION.md). Check a clean setup with `python3 tests/simplification_config.py`.
 
 Database simplification: fresh installs use 17 tables; existing databases can retain the unused settings table. See the [database review and optional upgrade steps](docs/simplification/PHASE_6_DATABASE_REVIEW.md) before removing any existing table.
 

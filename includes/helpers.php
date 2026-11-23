@@ -12,7 +12,8 @@ function e($value): string
 }
 function url(string $path): string
 {
-    return rtrim((string) BASE_URL, '/') . '/' . ltrim($path, '/');
+    global $settings;
+    return rtrim($settings['base_url'], '/') . '/' . ltrim($path, '/');
 }
 function redirect(string $path): void
 {

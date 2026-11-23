@@ -5,21 +5,20 @@ if (!is_file(__DIR__ . '/config.php')) {
     exit('Setup required: copy setup/config.example.php to config/config.php and enter your local settings.');
 }
 
-require_once __DIR__ . '/config.php';
-
-if (!defined('DB_HOST') || !defined('BASE_URL') || !defined('APP_NAME')) {
+$settings = require __DIR__ . '/config.php';
+if (!is_array($settings) || !isset($settings['base_url'], $settings['database'], $settings['app_name'])) {
     http_response_code(503);
-    exit('Setup required: use the constants in setup/config.example.php and keep your local values.');
+    exit('Setup required: use the settings array in setup/config.example.php.');
 }
 
 $databaseConnection = null;
 
 function db(): PDO
 {
-    global $databaseConnection;
+    global $databaseConnection, $settings;
     if ($databaseConnection === null) {
-        $dsn = 'mysql:host=' . DB_HOST . ';port=' . DB_PORT . ';dbname=' . DB_NAME . ';charset=utf8mb4';
-        $databaseConnection = new PDO($dsn, DB_USER, DB_PASSWORD, [
+        $dsn = "mysql:host={$settings['host']};port={$settings['port']};dbname={$settings['database']};charset=utf8mb4";
+        $databaseConnection = new PDO($dsn, $settings['username'], $settings['password'], [
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
             PDO::ATTR_EMULATE_PREPARES => false,
