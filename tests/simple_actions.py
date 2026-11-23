@@ -60,8 +60,16 @@ def check_actions(admin, resident, query, prefix):
     # Recreate the team for the navigation crawl and browser check.
     save('response/teams.php', dict(action='save_team', team_name='Fictional UI Team', contact_phone='', is_active='1'), 'response/teams.php')
 
-    save('incidents/view.php?id=1', dict(action='review_incident', status='verified', notes='Fictional verification'), 'incidents/view.php?id=1')
-    save('response/incident.php?id=1', dict(action='assign_team', team_id='2', notes='Fictional dispatch'), 'response/incident.php?id=1')
+    review = 'incidents/view.php?id=1'
+    dispatch = dict(action='verify_assign', team_id='2', notes='Fictional verification and dispatch')
+    assert resident.request(prefix + review, dispatch)[0] == 403
+    assert 'Choose an active response team' in admin.request(prefix + review, dict(dispatch, team_id='999999'))[1]
+    assert query('SELECT status, reviewed_by FROM incident_reports WHERE id=1')[0] == dict(status='pending', reviewed_by=None)
+    assert not query("SELECT id FROM response_updates WHERE incident_id=1 AND to_status='verified'")
+    save(review, dispatch, review)
+    assert query('SELECT status FROM incident_reports WHERE id=1')[0]['status'] == 'responding'
+    assert 'already changed' in admin.request(prefix + review, dispatch)[1]
+    assert len(query('SELECT id FROM incident_assignments WHERE incident_id=1')) == 1
     save('response/incident.php?id=1', dict(action='update_assignment', assignment_id='1', assignment_status='on_scene', notes='Fictional arrival'), 'response/incident.php?id=1')
     print('PASS incident review, assignment and response update redirects')
 

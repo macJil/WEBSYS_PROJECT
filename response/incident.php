@@ -46,28 +46,9 @@ function responseDbRecord(
             throw new DomainException('Verify or reopen the incident before managing its response.');
         }
         if ($teamId !== null) {
-            $stmt = db()->prepare('SELECT * FROM responders WHERE id=? FOR UPDATE');
-            $stmt->execute([$teamId]);
-            $team = $stmt->fetch();
-            if (!$team || !$team['is_active']) {
-                throw new DomainException('Choose an active response team.');
-            }
-            $stmt = db()->prepare(
-                'SELECT id FROM incident_assignments WHERE incident_id=? AND responder_id=?',
-            );
-            $stmt->execute([$incidentId, $teamId]);
-            if ($stmt->fetchColumn()) {
-                throw new DomainException(
-                    'This team already has an assignment. Update or reactivate that assignment below.',
-                );
-            }
-            $stmt = db()->prepare(
-                'INSERT INTO incident_assignments (incident_id,responder_id,assigned_by) VALUES (?,?,?)',
-            );
-            $stmt->execute([$incidentId, $teamId, $staff]);
-            $assignmentId = (int) db()->lastInsertId();
+            [$assignmentId, $teamName] = responseAssignTeam($incidentId, $teamId, $staff);
             $status = 'assigned';
-            $action = 'Assigned team ' . $team['team_name'] . '. ' . $notes;
+            $action = 'Assigned team ' . $teamName . '. ' . $notes;
         } else {
             $stmt = db()->prepare(
                 'SELECT a.*, r.team_name, r.is_active FROM incident_assignments a JOIN responders r ON r.id=a.responder_id WHERE a.id=? AND a.incident_id=? FOR UPDATE',
@@ -170,7 +151,7 @@ $teams = array_filter(
     responseDbTeams(),
     fn($team) => $team["is_active"] && !in_array($team["id"], $assignedTeamIds),
 );
-$open = in_array($incident["status"], ["verified", "responding", "resolved"], true);
+$open = $incident['archived_at'] === null && in_array($incident["status"], ["verified", "responding", "resolved"], true);
 $pageTitle = "Response for incident #" . $id;
 require __DIR__ . "/../includes/header.php";
 require __DIR__ . "/../includes/errors.php";
@@ -179,6 +160,9 @@ require __DIR__ . "/../includes/errors.php";
 <p><?= e($incident['incident_type']) ?> · <?= e($incident['location_description']) ?> · Status: <strong><?= e($incident['status']) ?></strong></p>
 <a class="btn btn-outline-secondary" href="<?= e(url('incidents/view.php?id=' . $id)) ?>">Back to incident details</a>
 <p>Verify an incident before assigning teams. Dispatch changes it to responding. Completing every assignment resolves the incident automatically. A cancelled assignment does not count as completed. If no team is active and some work is cancelled, the incident returns to verified. Reactivating an assignment starts responding again.</p>
+<?php if ($incident['status'] === 'verified' && in_array('cancelled', array_column($assignments, 'status'), true)): ?>
+    <p class="alert alert-info">Staff decision needed after cancellation. Keep this incident verified while awaiting action, assign another team, or reactivate the cancelled assignment. Automatic resolution requires every assignment to be completed.</p>
+<?php endif; ?>
 <?php if (!$open): ?>
     <p class="alert alert-info">Verify or reopen this incident in staff review before adding response updates.</p>
 <?php endif; ?>

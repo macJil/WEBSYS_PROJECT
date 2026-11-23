@@ -31,7 +31,7 @@ def check_response_history(admin, resident, Client, query, prefix):
     update(second, 'assigned')
     update(second, 'completed')
     assert state() == 'resolved'
-    admin.request(prefix + 'incidents/view.php?id=1', dict(action='review_incident', status='verified', notes='Conflicting manual change'))
+    admin.request(prefix + 'incidents/view.php?id=1', dict(action='reopen', notes='Conflicting manual change'))
     assert state() == 'resolved'
     endpoint = prefix + 'records/history.php'
     values = dict(history_type='response', history_id='1')

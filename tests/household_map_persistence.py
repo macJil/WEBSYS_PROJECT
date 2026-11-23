@@ -59,6 +59,7 @@ with tempfile.TemporaryDirectory(prefix='bayanready-address-') as temporary:
         password_hash = subprocess.check_output([PHP, '-r', "echo password_hash('DemoPass123!', PASSWORD_DEFAULT);"]).decode()
         query("INSERT INTO users(full_name,username,email,password,role) VALUES " +
               ','.join("('Fictional " + role + "','" + role + "','" + role + "@example.invalid','" + password_hash + "','" + role + "')" for role in ['admin', 'resident']))
+        query("UPDATE users SET phone='00000000001' WHERE role='resident'")
         config = (ROOT / 'setup/config.example.php').read_text().replace("'base_url' => '/WEBSYS_PROJECT'", "'base_url' => ''")
         config = config.replace("'host' => '127.0.0.1'", "'host' => 'localhost'").replace("'database' => 'barangay_drrm'", "'database' => '" + DB_NAME + "'").replace("'password' => ''", "'password' => 'root'")
         config = config.replace("'incident_upload_dir' => ''", "'incident_upload_dir' => '" + str(folder / 'images') + "'")
@@ -102,6 +103,8 @@ with tempfile.TemporaryDirectory(prefix='bayanready-address-') as temporary:
             page_url = '/households/add.php' if table == 'households' else prefix + page
             code, body = client.request(page_url)
             assert code == 200 and 'data-address-status' in body and 'location-picker.js' in body
+            if table == 'incident_reports':
+                assert 'value="Fictional resident"' in body and 'value="00000000001"' in body
             values.update({field: 'Fictional suggested road, Demo locality', 'latitude': '16.6272000', 'longitude': '120.7672000'})
             outside = dict(values, latitude='16.4', longitude='120.6')
             before = query('SELECT COUNT(*) AS total FROM ' + table)
@@ -111,6 +114,10 @@ with tempfile.TemporaryDirectory(prefix='bayanready-address-') as temporary:
             assert code == 200 and 'alert-danger' not in body, body[-1500:]
             # The SQL helper executes one query at a time after USE through exec below.
             row = query('SELECT * FROM ' + table + ' ORDER BY id DESC LIMIT 1')[0]
+            if table == 'incident_reports':
+                assert row['reporter_name'] == values['reporter_name'] and row['contact_phone'] == values['contact_phone']
+                profile = query("SELECT id,full_name,phone FROM users WHERE role='resident'")[0]
+                assert row['reported_by'] == profile['id'] and profile['phone'] == '00000000001' and profile['full_name'] == 'Fictional resident'
             assert row[field] == values[field] and row['latitude'] == values['latitude'] and row['longitude'] == values['longitude'], row
             code, body = client.request(prefix + detail + '?id=' + str(row['id']))
             assert code == 200 and values[field] in body and values['latitude'] in body
@@ -285,6 +292,14 @@ with tempfile.TemporaryDirectory(prefix='bayanready-address-') as temporary:
         assert 'Fictional New Representative' in admin.request('/households/edit.php?id=1', edit_values)[1]
         assert before == (query(history), query(distributions))
         print('PASS scoped enrollment, first-login guards, password replacement and representative history')
+        for action, expected in [('verify_only', 'verified'), ('reject', 'rejected')]:
+            resident.request('/incidents/create.php', cases[0][-1])
+            incident = query('SELECT MAX(id) id FROM incident_reports')[0]['id']
+            url = '/incidents/view.php?id=' + str(incident)
+            assert 'alert-danger' not in admin.request(url, dict(action=action, notes='Fictional review'))[1]
+            assert query('SELECT status FROM incident_reports WHERE id=' + str(incident))[0]['status'] == expected
+            assert not query('SELECT id FROM incident_assignments WHERE incident_id=' + str(incident))
+        print('PASS editable contact defaults, atomic dispatch, verification only and rejection')
         assert '<h2>Login</h2>' in admin.request('/logout.php', {'action':'logout'})[1]
         assert '<h2>Login</h2>' in admin.request(detail)[1]
         print('PASS direct household search, member create/edit, role guards and logout')

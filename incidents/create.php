@@ -164,7 +164,8 @@ function reportCreate(array $data): array
 }
 
 $data = reportValues();
-if (!isPost()) {
+if (!isPost() && $_SESSION['ROLE'] === 'resident') {
+    $data["contact_phone"] = $_SESSION["PHONE"] ?? "";
     $data["reporter_name"] = $_SESSION["FULL_NAME"] ?? "";
 }
 $errors = reportCreate($data);

@@ -66,7 +66,7 @@ function reportDbUpdateLocation(
     }
 }
 
-function reportDbReview(int $id, string $status, string $notes, int $staff): void
+function reportDbReview(int $id, string $action, string $notes, int $staff, ?int $teamId): void
 {
     db()->beginTransaction();
     try {
@@ -78,12 +78,23 @@ function reportDbReview(int $id, string $status, string $notes, int $staff): voi
         if ($old === false) {
             throw new RuntimeException('Incident not found.');
         }
-        $assignmentStatus = responseDbAssignmentStatus($id);
-        if ($assignmentStatus !== null && $status !== $assignmentStatus) {
-            throw new DomainException('Update the assigned teams to change this incident status. All assignments must be completed to resolve it.');
+        $allowed = [
+            'pending' => ['verify_assign', 'verify_only', 'reject'],
+            'verified' => ['resolve'],
+            'resolved' => ['reopen'],
+            'rejected' => ['reopen'],
+        ];
+        if (!in_array($action, $allowed[$old] ?? [], true)) {
+            throw new DomainException('This incident has already changed. Review its current status.');
         }
-        if ($assignmentStatus === null && $status === 'responding') {
-            throw new DomainException('Verify the incident, then assign a team to start responding.');
+        if (responseDbAssignmentStatus($id) !== null) {
+            throw new DomainException('Use the team assignments to update this incident.');
+        }
+        $status = 'verified';
+        if ($action === 'reject') {
+            $status = 'rejected';
+        } elseif ($action === 'resolve') {
+            $status = 'resolved';
         }
         $stmt = db()->prepare(
             'UPDATE incident_reports SET status=?, reviewed_by=?, reviewed_at=CURRENT_TIMESTAMP, review_notes=? WHERE id=?',
@@ -93,6 +104,15 @@ function reportDbReview(int $id, string $status, string $notes, int $staff): voi
             'INSERT INTO response_updates (incident_id,updated_by,action_taken,from_status,to_status) VALUES (?,?,?,?,?)',
         );
         $stmt->execute([$id, $staff, $notes, $old, $status]);
+        if ($action === 'verify_assign') {
+            [$assignmentId, $teamName] = responseAssignTeam($id, $teamId, $staff);
+            $stmt = db()->prepare("UPDATE incident_reports SET status='responding' WHERE id=?");
+            $stmt->execute([$id]);
+            $stmt = db()->prepare("INSERT INTO response_updates
+                (incident_id, updated_by, action_taken, from_status, to_status, assignment_id, assignment_status)
+                VALUES (?, ?, ?, 'verified', 'responding', ?, 'assigned')");
+            $stmt->execute([$id, $staff, 'Dispatched ' . $teamName . '.', $assignmentId]);
+        }
         db()->commit();
     } catch (Throwable $error) {
         db()->rollBack();
@@ -164,16 +184,20 @@ function reportReview(int $id): array
     if (!isPost()) {
         return [];
     }
-    if (
-        input('action') !== 'review_incident' ||
-        !in_array(input('status'), REPORT_STATUSES, true) ||
-        input('notes') === '' ||
-        strlen(input('notes')) > 255
-    ) {
-        return ['Choose a status and enter review notes (maximum 255 bytes).'];
+    $action = input('action');
+    $notes = input('notes');
+    if ($notes === '' || strlen($notes) > 255) {
+        return ['Enter review notes (maximum 255 bytes).'];
+    }
+    $teamId = null;
+    if ($action === 'verify_assign') {
+        $teamId = filter_var(input('team_id'), FILTER_VALIDATE_INT);
+        if (!$teamId || $teamId < 1) {
+            return ['Choose an active team to verify and assign.'];
+        }
     }
     try {
-        reportDbReview($id, input('status'), input('notes'), (int) $_SESSION['ID']);
+        reportDbReview($id, $action, $notes, (int) $_SESSION['ID'], $teamId);
     } catch (DomainException $error) {
         return [$error->getMessage()];
     } catch (Throwable $error) {
@@ -220,7 +244,7 @@ require __DIR__ . "/../includes/errors.php";
     <script src="<?= e(url('assets/vendor/leaflet/leaflet.js')) ?>"></script>
     <script src="<?= e(url('assets/js/incident-location.js')) ?>"></script>
 <?php endif; ?>
-<p>Locations are reported points, not verified hazard assessments. No approved barangay boundary or location restriction is applied. DEMO ONLY locations are fictional examples.</p>
+<p>Locations are reported points, not verified hazard assessments. New pins are checked against the approximate Atok demo outline. DEMO ONLY locations are fictional examples.</p>
 <h2>Incident images</h2>
 <?php if (!$images): ?>
     <p>No image attached.</p>
@@ -248,17 +272,38 @@ require __DIR__ . "/../includes/errors.php";
         </form>
     <?php endif; ?>
     <h2 class="mt-4">Staff review</h2>
-    <p>Verify before assigning teams. Active assignments keep the incident responding. Once teams are assigned, update their status through Manage response teams and actions. Completing every assignment resolves the incident automatically; cancelled work does not count as completed.</p>
-    <form method="post">
-        <label>Status <select class="form-select" name="status">
-                <?php foreach (REPORT_STATUSES as $status): ?>
-                    <option value="<?= e($status) ?>" <?= (isPost() && input('action') === 'review_incident' ? input('status') : $report['status']) === $status ? 'selected' : '' ?>><?= e(ucfirst($status)) ?></option>
-                <?php endforeach; ?>
-            </select></label>
-        <label class="d-block my-3">Review notes / action taken<textarea class="form-control" name="notes" maxlength="255" required >
-<?= e(input('notes')) ?></textarea> </label>
-        <button name="action" value="review_incident" class="btn btn-primary">Save review</button>
-    </form>
+    <?php if ($report['archived_at'] === null && $report['status'] === 'pending'): ?>
+        <form method="post">
+            <label class="d-block">Response team for dispatch
+                <select class="form-select" name="team_id">
+                    <option value="">Choose a team for Verify and assign</option>
+                    <?php foreach (responseDbTeams() as $team): ?>
+                        <option value="<?= (int) $team['id'] ?>" <?= input('team_id') === (string) $team['id'] ? 'selected' : '' ?>><?= e($team['team_name']) ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </label>
+            <label class="d-block my-3">Review notes
+                <textarea class="form-control" name="notes" maxlength="255" required><?= e(input('notes')) ?></textarea>
+            </label>
+            <button name="action" value="verify_assign" class="btn btn-primary">Verify and assign</button>
+            <button name="action" value="verify_only" class="btn btn-outline-secondary">Verify only</button>
+            <button name="action" value="reject" class="btn btn-outline-danger">Reject</button>
+        </form>
+    <?php elseif ($report['archived_at'] === null && responseDbAssignmentStatus($id) !== null): ?>
+        <p>Team updates determine the incident status.</p>
+        <a class="btn btn-outline-secondary" href="<?= e(url('response/incident.php?id=' . $id)) ?>">Review team assignments</a>
+    <?php elseif ($report['archived_at'] === null && in_array($report['status'], ['verified', 'resolved', 'rejected'], true)): ?>
+        <form method="post">
+            <label class="d-block my-3">Reason
+                <textarea class="form-control" name="notes" maxlength="255" required><?= e(input('notes')) ?></textarea>
+            </label>
+            <?php if ($report['status'] === 'verified'): ?>
+                <button class="btn btn-outline-secondary" name="action" value="resolve">Resolve without dispatch</button>
+            <?php else: ?>
+                <button class="btn btn-outline-secondary" name="action" value="reopen">Reopen as verified</button>
+            <?php endif; ?>
+        </form>
+    <?php endif; ?>
     <h2 class="mt-4">Staff review history</h2>
     <?php foreach ($history as $entry): ?>
         <p><?= e($entry['created_at']) ?> · <?= e($entry['from_status']) ?> → <?= e($entry['to_status']) ?><br /><?= e($entry['action_taken']) ?></p>

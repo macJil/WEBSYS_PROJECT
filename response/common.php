@@ -38,3 +38,28 @@ function responseRecordId($value): int
     }
     return $id;
 }
+
+// Caller holds the incident row lock and commits the assignment with its status history.
+function responseAssignTeam(int $incidentId, int $teamId, int $staff): array
+{
+    $stmt = db()->prepare('SELECT * FROM responders WHERE id=? FOR UPDATE');
+    $stmt->execute([$teamId]);
+    $team = $stmt->fetch();
+    if (!$team || !$team['is_active']) {
+        throw new DomainException('Choose an active response team.');
+    }
+    $stmt = db()->prepare(
+        'SELECT id FROM incident_assignments WHERE incident_id=? AND responder_id=?',
+    );
+    $stmt->execute([$incidentId, $teamId]);
+    if ($stmt->fetchColumn()) {
+        throw new DomainException(
+            'This team already has an assignment. Update or reactivate that assignment below.',
+        );
+    }
+    $stmt = db()->prepare(
+        'INSERT INTO incident_assignments (incident_id,responder_id,assigned_by) VALUES (?,?,?)',
+    );
+    $stmt->execute([$incidentId, $teamId, $staff]);
+    return [(int) db()->lastInsertId(), $team['team_name']];
+}
