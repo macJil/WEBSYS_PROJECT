@@ -36,24 +36,7 @@ with tempfile.TemporaryDirectory(prefix='bayanready-config-regression-') as temp
         shutil.copyfile(ROOT / 'config' / name, site / 'config' / name)
     shutil.copyfile(ROOT / 'index.php', site / 'index.php')
     example = (ROOT / 'setup/config.example.php').read_text()
-    constants = '''<?php
-const APP_NAME = 'BayanReady';
-const BASE_URL = '/fictional-demo/';
-const DB_HOST = '127.0.0.1';
-const DB_PORT = '1';
-const DB_NAME = 'fictional_only';
-const DB_USER = 'fictional';
-const DB_PASSWORD = '';
-const INCIDENT_UPLOAD_DIR = '/tmp/fictional-upload-directory';
-const DEMO_BARANGAY_NAME = 'Atok, Benguet (DEMO)';
-const MAP_LATITUDE = 16.6272;
-const MAP_LONGITUDE = 120.7672;
-const MAP_ZOOM = 14;
-const MAP_MIN_ZOOM = 11;
-const ADDRESS_LOOKUP_URL = '';
-'''
-    for label, config, base in [('array', example, '/WEBSYS_PROJECT'),
-                                 ('constants', constants, '/fictional-demo')]:
+    for label, config, base in [('constants', example.replace('/WEBSYS_PROJECT', '/fictional-demo/'), '/fictional-demo')]:
         # A counter also verifies that db() does not execute config.php again.
         config = config.replace('<?php', "<?php\n$GLOBALS['config_loads'] = ($GLOBALS['config_loads'] ?? 0) + 1;", 1)
         (site / 'config/config.php').write_text(config)
@@ -63,7 +46,7 @@ const ADDRESS_LOOKUP_URL = '';
 require_once 'config/db.php';
 if ($GLOBALS['config_loads'] !== 1) throw new Exception('Config loaded more than once');
 if (url('index.php') !== '{base}/index.php') throw new Exception('Incorrect URL');
-if ($settings['app_name'] !== 'BayanReady') throw new Exception('Missing app name');
+if (APP_NAME !== 'BayanReady') throw new Exception('Missing app name');
 // A local SQLite connection checks connection reuse without opening MySQL.
 $databaseConnection = new PDO('sqlite::memory:');
 if (db() !== $databaseConnection || db()->query('SELECT 1')->fetchColumn() != 1) {{
@@ -80,14 +63,10 @@ if ($GLOBALS['config_loads'] !== 1) throw new Exception('Page reloaded config');
 
     if os.environ.get('TEST_MYSQL_SOCKET'):
         # Read-only connection check; no application records or private config are used.
-        array_database = example.replace("'host' => '127.0.0.1'", "'host' => 'localhost'")
-        array_database = array_database.replace("'database' => 'barangay_drrm'", "'database' => 'information_schema'")
-        array_database = array_database.replace("'password' => ''", "'password' => 'root'")
-        constant_database = constants.replace("DB_HOST = '127.0.0.1'", "DB_HOST = 'localhost'")
-        constant_database = constant_database.replace("DB_NAME = 'fictional_only'", "DB_NAME = 'information_schema'")
-        constant_database = constant_database.replace("DB_USER = 'fictional'", "DB_USER = 'root'")
-        constant_database = constant_database.replace("DB_PASSWORD = ''", "DB_PASSWORD = 'root'")
-        for label, config in [('array', array_database), ('constants', constant_database)]:
+        config = example.replace("DB_HOST = '127.0.0.1'", "DB_HOST = 'localhost'")
+        config = config.replace("DB_NAME = 'barangay_drrm'", "DB_NAME = 'information_schema'")
+        config = config.replace("DB_PASSWORD = ''", "DB_PASSWORD = 'root'")
+        for label, config in [('constants', config)]:
             (site / 'config/config.php').write_text(config)
             for first, second in [('includes/helpers.php', 'config/db.php'), ('config/db.php', 'includes/helpers.php')]:
                 output = run(site, f"""require_once '{first}'; require_once '{second}';

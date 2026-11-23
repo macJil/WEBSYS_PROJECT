@@ -6,7 +6,7 @@ require_once __DIR__ . "/helpers.php";
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title><?= e(($pageTitle ?? 'Home') . ' | ' . $settings['app_name']) ?></title>
+        <title><?= e(($pageTitle ?? 'Home') . ' | ' . APP_NAME) ?></title>
         <link rel="stylesheet" href="<?= e(url('assets/css/bootstrap.min.css')) ?>" />
         <link rel="stylesheet" href="<?= e(url('assets/css/bayanready.css?v=20261114-buttons')) ?>" /><noscript>
             <style>

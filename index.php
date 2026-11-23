@@ -111,7 +111,7 @@ require __DIR__ . "/includes/header.php";
 ?>
 <div class="page-intro">
     <p class="eyebrow">Community preparedness &amp; response</p>
-    <h1><?= e($settings['app_name']) ?></h1>
+    <h1><?= e(APP_NAME) ?></h1>
     <p>Report incidents, follow community notices, and coordinate help.</p>
 </div>
 <?php
