@@ -18,17 +18,17 @@ require __DIR__ . "/../components/dashboard-cards.php";
 <p>Use the shared records to manage incidents, response teams, evacuation, and relief.</p>
 <div class="row g-3">
     <?php foreach ([
-        ['Household registry','Register households and members before evacuation and household relief distribution.','households.php'],
-        ['Incidents','Review reports and assign response teams from an incident’s details.','../incidents/list.php'],
-        ['Response teams','Maintain teams and their availability.','response/teams.php'],
-        ['Evacuation centers','Manage capacity, check-ins, checkouts, and stay history.','evacuation/centers.php'],
-        ['Relief goods','Record supplies and distribute goods to registered households.','relief/inventory.php'],
-        ['Announcements','Prepare drafts and publish notices to residents.','announcement/announcement.php'],
-        ['Disaster summaries','Review totals and print summaries without personal records.','summaries/disaster.php']
+        ['Household registry','Register households and members before evacuation and household relief distribution.','households/index.php'],
+        ['Incidents','Review reports and assign response teams from an incident’s details.','resources/views/incidents/list.php'],
+        ['Response teams','Maintain teams and their availability.','resources/views/admin/response/teams.php'],
+        ['Evacuation centers','Manage capacity, check-ins, checkouts, and stay history.','resources/views/admin/evacuation/centers.php'],
+        ['Relief goods','Record supplies and distribute goods to registered households.','resources/views/admin/relief/inventory.php'],
+        ['Announcements','Prepare drafts and publish notices to residents.','resources/views/admin/announcement/announcement.php'],
+        ['Disaster summaries','Review totals and print summaries without personal records.','resources/views/admin/summaries/disaster.php']
     ] as [$title,$description,$path]): ?>
         <section class="col-md-6">
             <div class="module-card">
-                <h2 class="h4"><a href="<?= e(url('resources/views/admin/' . $path)) ?>"><?= e($title) ?></a></h2>
+                <h2 class="h4"><a href="<?= e(url($path)) ?>"><?= e($title) ?></a></h2>
                 <p><?= e($description) ?></p>
             </div>
         </section>

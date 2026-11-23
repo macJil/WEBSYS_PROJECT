@@ -6,7 +6,7 @@ if ($signedIn) {
     $links +=
         $_SESSION["ROLE"] === "admin"
             ? [
-                "Households" => "resources/views/admin/households.php",
+                "Households" => "households/index.php",
                 "Incidents" => "resources/views/incidents/list.php",
                 "Response teams" => "resources/views/admin/response/teams.php",
                 "Evacuation centers" => "resources/views/admin/evacuation/centers.php",
@@ -28,7 +28,7 @@ if ($signedIn) {
             <a class="brand" href="<?= e(url($signedIn?dashboardPath():'index.php')) ?>"><span class="brand-mark" aria-hidden="true">BR</span><?= e($settings['app_name']) ?></a>
             <?php if ($signedIn): ?>
                 <div class="account-menu"><span class="account-name"><?= e($_SESSION['FULL_NAME']) ?> · <?= $_SESSION['ROLE'] === 'admin'?'Staff':'Resident' ?></span>
-                    <form method="post" action="<?= e(url(dashboardPath())) ?>">
+                    <form method="post" action="<?= e(url('logout.php')) ?>">
                         <button class="btn btn-outline-secondary btn-sm" name="action" value="logout">Log out</button>
                     </form>
                 </div>

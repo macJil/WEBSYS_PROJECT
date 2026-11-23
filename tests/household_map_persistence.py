@@ -17,6 +17,7 @@ import uuid
 
 ROOT = Path(__file__).resolve().parents[1]
 PHP = os.environ.get('TEST_PHP', '/Applications/MAMP/bin/php/php8.3.30/bin/php')
+MYSQL_SOCKET = os.environ.get('TEST_MYSQL_SOCKET', '/Applications/MAMP/tmp/mysql/mysql.sock')
 DB_NAME = 'bayanready_address_test_' + uuid.uuid4().hex[:10]
 
 with tempfile.TemporaryDirectory(prefix='bayanready-address-') as temporary:
@@ -25,7 +26,7 @@ with tempfile.TemporaryDirectory(prefix='bayanready-address-') as temporary:
     shutil.copytree(ROOT, site, ignore=shutil.ignore_patterns('.git', 'config.php', 'node_modules'))
     helper = folder / 'database.php'
     helper.write_text('''<?php
-    $pdo = new PDO('mysql:unix_socket=/Applications/MAMP/tmp/mysql/mysql.sock;charset=utf8mb4', 'root', 'root', [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC]);
+    $pdo = new PDO('mysql:unix_socket=' . getenv('TEST_MYSQL_SOCKET') . ';charset=utf8mb4', 'root', 'root', [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC]);
     $sql = stream_get_contents(STDIN);
     if (str_starts_with($sql, 'USE `')) {
         $end = strpos($sql, ';');
@@ -41,7 +42,7 @@ with tempfile.TemporaryDirectory(prefix='bayanready-address-') as temporary:
     ''')
 
     def sql(query):
-        output = subprocess.check_output([PHP, str(helper)], input=query.encode())
+        output = subprocess.check_output([PHP, str(helper)], input=query.encode(), env=dict(os.environ, TEST_MYSQL_SOCKET=MYSQL_SOCKET))
         return json.loads(output)
 
     def query(query):
@@ -65,7 +66,7 @@ with tempfile.TemporaryDirectory(prefix='bayanready-address-') as temporary:
             listener.bind(('127.0.0.1', 0))
             port = listener.getsockname()[1]
         log = open(folder / 'server.log', 'w')
-        server = subprocess.Popen([PHP, '-d', 'pdo_mysql.default_socket=/Applications/MAMP/tmp/mysql/mysql.sock', '-S', '127.0.0.1:' + str(port), '-t', str(site)], stdout=log, stderr=log)
+        server = subprocess.Popen([PHP, '-d', 'pdo_mysql.default_socket=' + MYSQL_SOCKET, '-S', '127.0.0.1:' + str(port), '-t', str(site)], stdout=log, stderr=log)
         base = 'http://127.0.0.1:' + str(port)
 
         class Client:
@@ -97,10 +98,11 @@ with tempfile.TemporaryDirectory(prefix='bayanready-address-') as temporary:
         ]
         prefix = '/resources/views/'
         for client, page, table, field, detail, values in cases:
-            code, body = client.request(prefix + page)
+            page_url = '/households/add.php' if table == 'households' else prefix + page
+            code, body = client.request(page_url)
             assert code == 200 and 'data-address-status' in body and 'location-picker.js' in body
             values.update({field: 'Fictional suggested road, Demo locality', 'latitude': '16.6272000', 'longitude': '120.7672000'})
-            code, body = client.request(prefix + page, values)
+            code, body = client.request(page_url, values)
             assert code == 200 and 'alert-danger' not in body, body[-1500:]
             # The SQL helper executes one query at a time after USE through exec below.
             row = query('SELECT * FROM ' + table + ' ORDER BY id DESC LIMIT 1')[0]
@@ -108,6 +110,8 @@ with tempfile.TemporaryDirectory(prefix='bayanready-address-') as temporary:
             code, body = client.request(prefix + detail + '?id=' + str(row['id']))
             assert code == 200 and values[field] in body and values['latitude'] in body
             edit = prefix + (detail + '?id=' + str(row['id']) if table == 'incident_reports' else page + '?edit=' + str(row['id']))
+            if table == 'households':
+                edit = '/households/edit.php?id=' + str(row['id'])
             code, body = admin.request(edit)
             assert code == 200 and values[field] in body and 'data-address-status' in body
             updated = dict(values)
@@ -179,6 +183,19 @@ with tempfile.TemporaryDirectory(prefix='bayanready-address-') as temporary:
         check_upload(resident, admin, Client, query, base, prefix)
         from response_history import check_response_history
         check_response_history(admin, resident, Client, query, prefix)
+        detail = '/households/details.php?id=1'
+        assert resident.request(detail)[0] == 403
+        assert 'Register as a resident' in Client().request('/households/add.php')[1]
+        assert 'DEMO-ADDR' in admin.request('/households/index.php?q=DEMO-ADDR')[1]
+        assert 'DEMO-ADDR' not in admin.request('/households/index.php?q=absent')[1]
+        data = dict(action='create_member', full_name='Fictional Arrival', age='24', notes='')
+        assert 'Fictional Arrival' in admin.request(detail, data)[1]
+        member = query("SELECT id FROM household_members WHERE full_name='Fictional Arrival'")[0]['id']
+        data.update(action='update_member', full_name='Fictional Updated')
+        assert 'Fictional Updated' in admin.request(detail + '&member=' + str(member), data)[1]
+        assert 'Register as a resident' in admin.request('/logout.php', {'action':'logout'})[1]
+        assert 'Register as a resident' in admin.request(detail)[1]
+        print('PASS direct household search, member create/edit, role guards and logout')
         if os.environ.get('TEST_BROWSER_PAUSE') == '1':
             Path('/tmp/bayanready-actions-preview.txt').write_text(base)
             print('Fictional browser preview:', base, flush=True)

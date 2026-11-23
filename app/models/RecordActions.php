@@ -8,7 +8,7 @@ class RecordActionsModel
             'households',
             'household_code',
             'Households',
-            'resources/views/admin/household.php?id=',
+            'households/details.php?id=',
         ],
         'members' => ['household_members', 'full_name', 'Household members', ''],
         'incidents' => [
