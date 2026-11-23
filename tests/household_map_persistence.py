@@ -307,16 +307,22 @@ with tempfile.TemporaryDirectory(prefix='bayanready-address-') as temporary:
         data.update(action='update_member', full_name='Fictional Updated')
         assert 'Fictional Updated' in admin.request(detail + '&member=' + str(member), data)[1]
         endpoint = '/households/account.php?member=' + str(member)
+        assert 'id="enrollment-help"' in admin.request(detail)[1]
+        assert 'disabled aria-describedby="enrollment-help">Create resident account' in admin.request(detail)[1]
         credentials = dict(confirmed='yes', email='new@example.invalid')
         assert admin.request(endpoint, credentials)[0] == 403
         query("UPDATE users SET assigned_barangay='Topdac' WHERE role='admin'")
         assert admin.request(endpoint, credentials)[0] == 403
         query("UPDATE users SET assigned_barangay='Paoay' WHERE role='admin'")
+        assert 'href="' + endpoint + '"' in admin.request(detail)[1]
+        assert 'Resident email for login' in admin.request(endpoint)[1]
         assert resident.request(endpoint, credentials)[0] == 403
         assert 'Confirm residency' in admin.request(endpoint, dict(credentials, confirmed=''))[1]
         guest = Client()
         assert 'Invalid form action' in guest.request('/index.php', dict(action='register', **credentials))[1]
         temporary = re.search(r'<strong>([a-f0-9]{20})</strong>', admin.request(endpoint, credentials)[1]).group(1)
+        enrolled_page = admin.request(detail)[1]
+        assert 'Resident account already created' in enrolled_page and 'href="' + endpoint + '"' not in enrolled_page
         assert 'already has an account' in admin.request(endpoint, credentials)[1]
         login = dict(action='login', email=credentials['email'], password=temporary)
         assert 'Choose your password' in guest.request('/index.php', login)[1]

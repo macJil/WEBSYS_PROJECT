@@ -76,7 +76,16 @@ $stmt = db()->prepare(
 $stmt->execute([$id]);
 $members = $stmt->fetchAll();
 $area = assignedBarangay();
-$canEnroll = in_array($area, ATOK_BARANGAYS, true) && $area === $household['barangay'] && !$household['archived_at'];
+$enrollmentMessage = '';
+if ($household['archived_at']) {
+    $enrollmentMessage = 'Restore this household before enrolling a resident.';
+} elseif (!in_array($area, ATOK_BARANGAYS, true)) {
+    $enrollmentMessage = 'Ask your database administrator to assign your staff account its authorized barangay.';
+} elseif (!$household['barangay']) {
+    $enrollmentMessage = 'Ask municipal staff to confirm the barangay on this household record.';
+} elseif ($area !== $household['barangay']) {
+    $enrollmentMessage = 'Enrollment for this household requires an official assigned to ' . $household['barangay'] . '.';
+}
 $pageTitle = "Household details";
 require __DIR__ . "/../includes/header.php";
 ?>
@@ -101,7 +110,10 @@ require __DIR__ . "/../includes/saved-point.php";
     <dd class="col-sm-8"><?= (int)$household['member_count'] ?></dd>
 </dl>
 <h2>Household members</h2>
-<p>Add each person, including the representative if they live in this household. Member records do not create login accounts.</p>
+<p>Add each person, including the representative if they live in this household. After saving a member, use Create resident account beside their name to issue their first login.</p>
+<?php if ($enrollmentMessage !== ''): ?>
+    <p class="alert alert-info" id="enrollment-help"><?= e($enrollmentMessage) ?></p>
+<?php endif; ?>
 <div class="table-responsive" tabindex="0" role="region" aria-label="Scrollable records">
     <table class="table">
         <thead>
@@ -120,9 +132,11 @@ require __DIR__ . "/../includes/saved-point.php";
                     <td><?= e($member['notes']) ?></td>
                     <td><a href="<?= e(url('households/details.php?id=' . $id . '&member=' . $member['id'])) ?>">View / edit</a>
                         <?php if ($member['account_id']): ?>
-                            · Account created
-                        <?php elseif ($canEnroll): ?>
-                            <a class="btn btn-outline-secondary btn-sm" href="<?= e(url('households/account.php?member=' . $member['id'])) ?>">Create resident account</a>
+                            <span>Resident account already created</span>
+                        <?php elseif ($enrollmentMessage === ''): ?>
+                            <a class="btn btn-primary btn-sm" href="<?= e(url('households/account.php?member=' . $member['id'])) ?>">Create resident account</a>
+                        <?php else: ?>
+                            <button class="btn btn-outline-secondary btn-sm" disabled aria-describedby="enrollment-help">Create resident account</button>
                         <?php endif; ?>
                     </td>
                 </tr>
