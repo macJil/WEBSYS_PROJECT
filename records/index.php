@@ -63,7 +63,7 @@ function recordSpec(string $type): array
     return RECORD_TYPES[$type];
 }
 
-function recordListing(string $type, string $search, int $page): array
+function recordListing(string $type, string $search, int $page, bool $archived): array
 {
     $types = $type === 'all' ? RECORD_TYPES : [$type => recordSpec($type)];
     $queries = [];
@@ -71,7 +71,13 @@ function recordListing(string $type, string $search, int $page): array
     $term = '%' . strtr($search, ['!' => '!!', '%' => '!%', '_' => '!_']) . '%';
     foreach ($types as $key => $spec) {
         [$table, $label] = $spec;
-        $state = $key === 'teams' ? 'is_active=1' : 'archived_at IS NULL';
+        $state = $archived ? 'archived_at IS NOT NULL' : 'archived_at IS NULL';
+        if ($key === 'teams') {
+            $state = $archived ? 'is_active=0' : 'is_active=1';
+        }
+        if ($key === 'members' && !$archived) {
+            $state .= ' AND EXISTS (SELECT 1 FROM households h WHERE h.id=household_members.household_id AND h.archived_at IS NULL)';
+        }
         $queries[] = "SELECT id, $label AS label, '$key' AS record_type FROM $table WHERE $state AND ($label LIKE ? ESCAPE '!' OR CAST(id AS CHAR) LIKE ? ESCAPE '!')";
         $values[] = $term;
         $values[] = $term;
@@ -106,7 +112,7 @@ function recordLinked(string $table, string $column, int $id, string $extra = ''
     return (bool) recordQuery("SELECT id FROM $table WHERE $column=? $extra LIMIT 1 FOR UPDATE", [$id]);
 }
 
-function recordRemovalMode(string $type, array $row): string
+function checkOperationalUse(string $type, array $row): void
 {
     $id = (int) $row['id'];
     $guide = '';
@@ -174,9 +180,14 @@ function recordRemovalMode(string $type, array $row): string
             RECORD_TYPES[$type][2] . ' #' . $id . ': ' . $guide . ' No selected records were changed.',
         );
     }
+}
+
+function checkDeletionLinks(string $type, array $row): void
+{
+    $id = (int) $row['id'];
     $links = [
         'households' => [['household_members', 'household_id'], ['relief_distributions', 'household_id']],
-        'members' => [['evacuation_records', 'household_member_id']],
+        'members' => [['evacuation_records', 'household_member_id'], ['users', 'household_member_id']],
         'incidents' => [
             ['incident_images', 'incident_id'],
             ['incident_assignments', 'incident_id'],
@@ -188,9 +199,22 @@ function recordRemovalMode(string $type, array $row): string
         'goods' => [['relief_stock_movements', 'item_id'], ['relief_distribution_items', 'item_id']],
         'locations' => [['relief_distributions', 'relief_location_id']],
     ];
+    $descriptions = [
+        'household_members' => 'household member',
+        'relief_distributions' => 'relief distribution',
+        'evacuation_records' => 'evacuation stay',
+        'users' => 'resident account',
+        'incident_images' => 'incident image',
+        'incident_assignments' => 'team assignment',
+        'response_updates' => 'response update',
+        'relief_stock_movements' => 'stock movement',
+        'relief_distribution_items' => 'distribution line',
+    ];
+    $linked = [];
     foreach ($links[$type] ?? [] as [$table, $column]) {
-        if (recordLinked($table, $column, $id)) {
-            return 'hide';
+        $matches = recordQuery("SELECT id FROM $table WHERE $column=? ORDER BY id LIMIT 2 FOR UPDATE", [$id]);
+        if ($matches) {
+            $linked[] = $descriptions[$table] . ' #' . implode(', #', array_column($matches, 'id'));
         }
     }
     if (
@@ -199,45 +223,52 @@ function recordRemovalMode(string $type, array $row): string
             $row['is_published'] ||
             $row['publication_history_unknown'])
     ) {
-        return 'hide';
+        $linked[] = 'announcement publication history';
     }
-    return 'delete';
+    if ($linked) {
+        throw new DomainException(RECORD_TYPES[$type][2] . ' #' . $id . ' has linked records: ' .
+            implode('; ', $linked) . '. Permanent deletion is blocked. No selected records were changed.');
+    }
 }
 
-function recordDeleteSelected(array $selection): void
+function applyRecordAction(array $selection, string $action, bool $archived): void
 {
     db()->beginTransaction();
     try {
-        // Check the entire batch before deleting anything, including mixed types.
-        $modes = [];
         ksort($selection);
         foreach ($selection as $type => $ids) {
-            foreach (recordSelected($type, $ids, true) as $row) {
-                $modes[$type][(int) $row['id']] = recordRemovalMode($type, $row);
-            }
-        }
-        foreach ($selection as $type => $ids) {
             [$table] = recordSpec($type);
-            foreach ($ids as $id) {
+            foreach (recordSelected($type, $ids, true) as $row) {
+                $id = (int) $row['id'];
+                $currentlyArchived = $type === 'teams' ? !$row['is_active'] : $row['archived_at'] !== null;
+                if ($currentlyArchived !== $archived) {
+                    throw new DomainException("Record #$id changed. Refresh the list. No selected records were changed.");
+                }
+                if ($action === 'delete') {
+                    checkDeletionLinks($type, $row);
+                }
+                if ($action !== 'restore') {
+                    checkOperationalUse($type, $row);
+                }
+                if ($type === 'members' && $action === 'restore' &&
+                    recordLinked('households', 'id', (int) $row['household_id'], 'AND archived_at IS NOT NULL')) {
+                    throw new DomainException("Restore the household before restoring member #$id. No selected records were changed.");
+                }
                 $sql = "DELETE FROM $table WHERE id=?";
-                if ($modes[$type][$id] === 'hide') {
-                    $set = $type === 'teams' ? 'is_active=0' : 'archived_at=CURRENT_TIMESTAMP';
-                    if ($type === 'centers') {
-                        $set .= ",status='closed'";
+                if ($action !== 'delete') {
+                    $set = $action === 'archive' ? 'archived_at=CURRENT_TIMESTAMP' : 'archived_at=NULL';
+                    if ($type === 'teams') {
+                        $set = $action === 'archive' ? 'is_active=0' : 'is_active=1';
                     }
-                    if ($type === 'announcements') {
-                        $set .= ',is_published=0';
+                    if ($action === 'archive' && $type === 'centers') {
+                        $set .= ", status='closed'";
+                    }
+                    if ($action === 'archive' && $type === 'announcements') {
+                        $set .= ', is_published=0';
                     }
                     $sql = "UPDATE $table SET $set WHERE id=?";
-                    if ($type === 'households') {
-                        $stmt = db()->prepare(
-                            'UPDATE household_members SET archived_at=COALESCE(archived_at,CURRENT_TIMESTAMP) WHERE household_id=?',
-                        );
-                        $stmt->execute([$id]);
-                    }
                 }
-                $stmt = db()->prepare($sql);
-                $stmt->execute([$id]);
+                db()->prepare($sql)->execute([$id]);
             }
         }
         db()->commit();
@@ -247,11 +278,16 @@ function recordDeleteSelected(array $selection): void
     }
 }
 
-function batchDelete(array $rows): void
+function batchAction(array $rows, bool $archived): void
 {
     requireRole('admin');
     $ids = $_POST['ids'] ?? [];
-    if (input('action') !== 'delete' || !is_array($ids) || !$ids || count($ids) > 50) {
+    $action = input('action');
+    $allowed = $archived ? ['restore', 'delete'] : ['archive', 'delete'];
+    if (!in_array($action, $allowed, true)) {
+        throw new DomainException('Choose an action available for this list.');
+    }
+    if (!is_array($ids) || !$ids || count($ids) > 50) {
         throw new DomainException('Select 1–50 records on this page.');
     }
     $visible = [];
@@ -269,8 +305,8 @@ function batchDelete(array $rows): void
     foreach ($selection as $type => $records) {
         $selection[$type] = array_values($records);
     }
-    recordDeleteSelected($selection);
-    flash('Selected records removed. Linked history was preserved.');
+    applyRecordAction($selection, $action, $archived);
+    flash(['archive' => 'Selected records archived.', 'restore' => 'Selected records restored.', 'delete' => 'Selected records permanently deleted.'][$action]);
 }
 
 
@@ -288,16 +324,25 @@ if (!$page) {
     exit("Invalid page.");
 }
 $params = ["type" => $type, "q" => $q, "page" => $page];
-$rows = recordListing($type, $q, $page);
+$state = $_GET['state'] ?? 'active';
+if (!in_array($state, ['active', 'archived'], true)) {
+    http_response_code(400);
+    exit('Unsupported record state.');
+}
+$archived = $state === 'archived';
+if ($archived) {
+    $params['state'] = $state;
+}
+$rows = recordListing($type, $q, $page, $archived);
 $errors = [];
 if (isPost()) {
     try {
-        batchDelete($rows);
+        batchAction($rows, $archived);
         redirect("records/index.php?" . http_build_query($params));
     } catch (DomainException $error) {
         $errors[] = $error->getMessage();
     } catch (Throwable $error) {
-        $errors[] = "Deletion failed. No selected records were changed.";
+        $errors[] = "Record action failed. No selected records were changed.";
     }
 }
 $pageTitle = "Manage records";
@@ -306,7 +351,7 @@ require __DIR__ . "/../includes/errors.php";
 ?>
 <p><a class="btn btn-outline-secondary" href="<?= e(url(dashboardPath())) ?>">Back to dashboard</a></p>
 <h1>Manage records</h1>
-<p>Filter or search, then select records to delete. Unused records are permanently deleted. Linked records are removed from active lists while their history is kept. Records still in use show the steps needed first.</p>
+<p>Archive removes a record from active lists and keeps its history. Choose Archived to restore it. Restored centers stay closed and restored announcements stay unpublished until staff open or publish them. Permanent deletion is available only for unused records.</p>
 <form method="get" class="filter-form mb-3">
     <label>Record type<select name="type">
             <option value="all">All record types</option>
@@ -314,6 +359,10 @@ require __DIR__ . "/../includes/errors.php";
                 <option value="<?= e($key) ?>" <?= $type === $key ? 'selected' : '' ?>><?= e($spec[2]) ?></option>
             <?php endforeach; ?>
         </select></label>
+    <label>Records<select name="state">
+        <option value="active" <?= !$archived ? 'selected' : '' ?>>Active</option>
+        <option value="archived" <?= $archived ? 'selected' : '' ?>>Archived</option>
+    </select></label>
     <label>Search ID/name <input name="q" value="<?= e($q) ?>" /></label>
     <button class="btn btn-outline-secondary">Search</button>
 </form>
@@ -322,7 +371,13 @@ require __DIR__ . "/../includes/errors.php";
         <table class="table">
             <thead>
                 <tr>
-                    <th><button class="btn btn-danger" name="action" value="delete">Delete selected</button><br />
+                    <th>
+                        <?php if ($archived): ?>
+                            <button class="btn btn-outline-primary" name="action" value="restore">Restore</button>
+                        <?php else: ?>
+                            <button class="btn btn-outline-secondary" name="action" value="archive">Archive</button>
+                        <?php endif; ?>
+                        <button class="btn btn-danger" name="action" value="delete">Permanently delete</button><br />
                         <label><input type="checkbox" id="select-page" /> Select all on this page</label>
                         <span id="selected-count" role="status">0 selected</span>
                     </th>
@@ -357,7 +412,7 @@ require __DIR__ . "/../includes/errors.php";
         <a href="?<?= e(http_build_query(array_replace($params, ['page' => $page + 1]))) ?>">Next</a>
     <?php endif; ?>
 </p>
-<script src="<?= e(url('assets/js/record-selection.js?v=delete-confirm')) ?>"></script>
+<script src="<?= e(url('assets/js/record-selection.js?v=record-actions')) ?>"></script>
 <?php
 require __DIR__ . "/../includes/footer.php";
 ?>

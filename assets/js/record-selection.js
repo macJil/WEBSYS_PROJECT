@@ -19,15 +19,12 @@
         const selected = boxes.filter((box) => box.checked).length;
         if (!selected) {
             event.preventDefault();
-            alert("Select at least one record to delete.");
-        } else if (
-            !confirm(
-                "Remove " +
-                    selected +
-                    " selected record(s)? Unused records will be permanently deleted. Linked history will be kept.",
-            )
-        ) {
-            event.preventDefault();
+            alert("Select at least one record.");
+        } else {
+            const action = event.submitter?.textContent.trim();
+            if (!action || !confirm(action + " " + selected + " selected record(s)?")) {
+                event.preventDefault();
+            }
         }
     });
     update();

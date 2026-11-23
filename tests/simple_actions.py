@@ -53,7 +53,7 @@ def check_actions(admin, resident, query, prefix):
 
     page = 'records/index.php?type=teams'
     code, body = admin.request(prefix + page)
-    assert 'Delete selected' in body and 'teams:1' in body
+    assert 'Permanently delete' in body and 'teams:1' in body
     save(page, [('action','delete'),('ids[]','teams:1')], page + '&q=&page=1')
     assert query('SELECT COUNT(*) AS total FROM responders')[0]['total'] == 0
     print('PASS direct checkbox deletion and filtered redirect')

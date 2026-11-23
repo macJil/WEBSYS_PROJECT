@@ -130,3 +130,9 @@ For returning evacuees, open the center and search under **Check in walk-in** by
 For an existing assessment database, apply `database/migrations/assessment_05_center_barangay.sql` once. Identify each center’s barangay on its edit form. Older centers are included in **All barangays** and **Awaiting confirmation**.
 
 Staff can open **Disaster summaries**, apply inclusive dates and a barangay, then choose **Print / Save as PDF**. The first section shows current registry and center figures. The next shows activity during the selected period. Evacuation follows the center’s barangay (including walk-ins), incidents follow the recorded incident barangay, and relief follows the receiving household’s current barangay. Each incident also has a **Printable incident report** link. Staff get an operational copy, and residents can print their own submission. The A4 headings are provisional pending office confirmation.
+
+## Manage Records
+
+Staff select records from the current filtered page. **Archive** hides a record from active selections while keeping its ID and history. Use **Archived → Restore** to return it. Restored centers stay closed until staff reopen them, and restored notices require publication. Archiving a household hides its members from active selection while preserving each member’s individual archive status. Resident accounts are managed separately.
+
+**Permanently delete** removes eligible unused records. A blocked deletion identifies the selected record and examples of its linked records. Operational history is retained, including stays, distributions, stock movements, incident images, assignments, response updates, and publication history. A blocked batch changes nothing.

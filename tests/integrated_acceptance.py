@@ -74,9 +74,28 @@ def check_acceptance(admin, resident, Client, query, prefix):
     print('PASS insufficient-stock rollback, active-record rejection and preserved operational history')
     query("UPDATE relief_items SET quantity_on_hand=0 WHERE id=1")
     history = query('SELECT COUNT(*) AS n FROM relief_stock_movements')[0]['n']
-    code, body = admin.request(prefix + 'records/index.php?type=goods', [('action','delete'),('ids[]','goods:1')])
-    assert code == 200 and 'alert-danger' not in body
-    assert query('SELECT archived_at FROM relief_items WHERE id=1')[0]['archived_at'] is not None
+    page = prefix + 'records/index.php?type=goods'
+    archived = page + '&state=archived'
+    def act(url, action, *records):
+        return admin.request(url, [('action', action)] + [('ids[]', record) for record in records])[1]
+
+    query("INSERT INTO relief_items(item_name,unit) VALUES ('Fictional unused good','packs')")
+    unused = query("SELECT MAX(id) AS id FROM relief_items")[0]['id']
+    # Include an eligible row in a blocked batch; both rows must survive.
+    refused = act(page, 'delete', 'goods:' + str(unused), 'goods:1')
+    assert 'stock movement #' in refused and 'distribution line #' in refused
+    assert query('SELECT COUNT(*) AS n FROM relief_items WHERE archived_at IS NULL AND id IN (1,' + str(unused) + ')')[0]['n'] == 2
+    body = act(page, 'archive', 'goods:1')
+    assert 'alert-danger' not in body and 'value="goods:1"' not in body
+    assert 'value="goods:1"' in admin.request(archived)[1]
+    assert 'stock movement #' in act(archived, 'delete', 'goods:1')
+    assert 'alert-danger' not in act(archived, 'restore', 'goods:1')
+    assert 'value="goods:1"' in admin.request(page)[1]
+    assert query('SELECT archived_at FROM relief_items WHERE id=1')[0]['archived_at'] is None
     assert query('SELECT COUNT(*) AS n FROM relief_stock_movements')[0]['n'] == history
-    assert 'value="goods:1"' not in body
-    print('PASS zero-stock good removed from active selection with stock/distribution history preserved')
+    assert 'alert-danger' not in act(page, 'archive', 'goods:' + str(unused))
+    assert 'alert-danger' not in act(archived, 'delete', 'goods:' + str(unused))
+    # Keep later fictional stock checks on their original baseline.
+    assert 'alert-danger' not in act(page, 'archive', 'goods:1')
+    assert not query('SELECT id FROM relief_items WHERE id=' + str(unused))
+    print('PASS explicit archive/restore/delete, dependency explanations, batch rollback and retained history')
