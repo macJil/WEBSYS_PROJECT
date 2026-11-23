@@ -1,8 +1,10 @@
-# BayanReady — WEBSYS1
+# Atok MDRRM System — WEBSYS1
 
 Official project repository: https://github.com/macJil/WEBSYS_PROJECT
 
-BayanReady uses plain PHP pages grouped by module, shared session checks, and PDO/MySQL. Start at `index.php`.
+Atok MDRRM System uses plain PHP pages grouped by module, shared session checks, and PDO/MySQL. Start at `index.php`.
+
+[Setup guide](docs/PHASE_3_PHP_FOUNDATIONS.md) · [Classroom results, sample PDFs and pending pilot checks](docs/pilot/README.md)
 
 ## Presentation and verification
 
@@ -19,7 +21,7 @@ The current fictional HTTP acceptance runner is `tests/household_map_persistence
 - [One-time upgrade from the original v1.0 schema](database/migrations/001_phase_2.sql)
 - [Read-only disaster summary query examples](database/report_queries.sql)
 
-Read the Phase 2 installation instructions before importing SQL. Use fictional development data; do not commit real household records, contacts, uploaded images, or local credentials. The schema and application are separate deliverables: permissions, file handling, and transaction workflows still need PHP implementation.
+Read the Phase 2 installation instructions before importing SQL. Use fictional development data; do not commit real household records, contacts, uploaded images, or local credentials. Use the setup guide below for the running application.
 
 ## PHP foundation setup
 

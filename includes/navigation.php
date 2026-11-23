@@ -25,7 +25,7 @@ if ($signedIn && empty($_SESSION['CHANGE_PASSWORD'])) {
 <header class="site-header">
     <div class="container">
         <div class="brand-row">
-            <a class="brand" href="<?= e(url($signedIn?dashboardPath():'index.php')) ?>"><span class="brand-mark" aria-hidden="true">BR</span><?= e($settings['app_name']) ?></a>
+            <a class="brand" href="<?= e(url($signedIn?dashboardPath():'index.php')) ?>"><span class="brand-mark" aria-hidden="true">A</span><?= e($settings['app_name']) ?></a>
             <?php if ($signedIn): ?>
                 <div class="account-menu"><span class="account-name"><?= e($_SESSION['FULL_NAME']) ?> · <?= $_SESSION['ROLE'] === 'admin'?'Staff':'Resident' ?></span>
                     <form method="post" action="<?= e(url('logout.php')) ?>">
