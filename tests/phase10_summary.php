@@ -1,7 +1,7 @@
 <?php
 if (PHP_SAPI !== 'cli') { http_response_code(404); exit; }
 // Fictional in-memory fixture only; does not connect to or change MySQL.
-require __DIR__ . '/../app/models/DisasterSummary.php';
+require __DIR__ . '/legacy-models/DisasterSummary.php';
 $pdo=new PDO('sqlite::memory:',null,null,[PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION,PDO::ATTR_DEFAULT_FETCH_MODE=>PDO::FETCH_ASSOC]);
 
 $pdo->exec("CREATE TABLE households(id INTEGER,registry_reason TEXT,archived_at TEXT);

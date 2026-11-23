@@ -32,6 +32,16 @@ class Controls(HTMLParser):
 def check_actions(admin, resident, query, prefix):
     def save(path, values, destination):
         def page_url(page):
+            moved = {
+                'admin/relief/inventory.php': '/relief-inventory/index.php',
+                'admin/relief/movements.php': '/relief-inventory/movements.php',
+                'admin/relief/distributions.php': '/relief-distribution/index.php',
+                'admin/announcement/announcement.php': '/announcements/index.php',
+                'admin/announcement/announcement.update.php': '/announcements/edit.php',
+            }
+            name, separator, query_string = page.partition('?')
+            if name in moved:
+                return moved[name] + separator + query_string
             if page.startswith('admin/response/'):
                 return '/' + page.removeprefix('admin/')
             if page.startswith('incidents/'):

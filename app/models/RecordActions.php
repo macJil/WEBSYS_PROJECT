@@ -34,19 +34,19 @@ class RecordActionsModel
             'relief_items',
             'item_name',
             'Relief goods',
-            'resources/views/admin/relief/inventory.php?edit=',
+            'relief-inventory/index.php?edit=',
         ],
         'locations' => [
             'relief_locations',
             'name',
             'Relief locations',
-            'resources/views/admin/relief/location.php?id=',
+            'relief-inventory/location.php?id=',
         ],
         'announcements' => [
             'announcements',
             'title',
             'Announcements',
-            'resources/views/admin/announcement/announcement.update.php?id=',
+            'announcements/edit.php?id=',
         ],
     ];
     private PDO $pdo;

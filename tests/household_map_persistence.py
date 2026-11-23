@@ -183,6 +183,53 @@ with tempfile.TemporaryDirectory(prefix='bayanready-address-') as temporary:
         check_upload(resident, admin, Client, query, base, prefix)
         from response_history import check_response_history
         check_response_history(admin, resident, Client, query, prefix)
+        # Exercise atomic distribution with an insufficient second item.
+        ids = []
+        for name in ['Fictional Water', 'Fictional Rice']:
+            admin.request('/relief-inventory/index.php', dict(action='save_item', item_name=name, unit='packs'))
+            item = query('SELECT MAX(id) id FROM relief_items')[0]['id']
+            ids.append(item)
+            admin.request('/relief-inventory/movements.php', dict(action='stock', item_id=item,
+                          movement_type='stock_in', quantity='5', notes='Fictional delivery'))
+        def relief_state():
+            return [query(sql) for sql in (
+                'SELECT id,quantity_on_hand FROM relief_items ORDER BY id',
+                'SELECT * FROM relief_distributions ORDER BY id',
+                'SELECT * FROM relief_distribution_items ORDER BY id',
+                'SELECT * FROM relief_stock_movements ORDER BY id')]
+        goods = {f'goods[{i}]':'2' for i in ids}
+        data = dict(action='distribute', household_id='1', received_by='Demo Receiver', **goods)
+        before = relief_state()
+        failed = dict(data)
+        failed[f'goods[{ids[1]}]'] = '6'
+        assert 'alert-danger' in admin.request('/relief-distribution/index.php', failed)[1]
+        assert relief_state() == before
+        assert 'alert-danger' not in admin.request('/relief-distribution/index.php', data)[1]
+        after = relief_state()
+        assert [row['quantity_on_hand'] for row in after[0][-2:]] == [3, 3]
+        assert [len(a)-len(b) for a,b in zip(after[1:],before[1:])] == [1,2,2]
+        report = admin.request('/disaster-reports/index.php?from=2000-01-01&to=2099-12-31')[1]
+        assert '2 distribution events to 1 distinct households' in report
+        for name in ['Fictional Water', 'Fictional Rice']:
+            assert name in report
+        assert '0 distribution events to 0 distinct households' in admin.request('/disaster-reports/index.php?from=2000-01-01&to=2000-01-02')[1]
+        assert resident.request('/disaster-reports/index.php')[0] == 403
+        print('PASS multi-good distribution, four-table rollback and filtered disaster summary')
+
+        title = 'Fictional visibility exercise'
+        notice = dict(title=title, message='Fictional notice', action='save_draft')
+        admin.request('/announcements/index.php', notice)
+        notice_id = query('SELECT MAX(id) id FROM announcements')[0]['id']
+        edit = '/announcements/edit.php?id=' + str(notice_id)
+        def check_notice(visible):
+            for page in ['/announcements/published.php', '/dashboard/resident.php']:
+                assert (title in resident.request(page)[1]) == visible
+        check_notice(False)
+        admin.request(edit, dict(notice, action='publish'))
+        check_notice(True)
+        admin.request(edit, dict(notice, confirm_withdraw='1'))
+        check_notice(False)
+        print('PASS draft, publication and withdrawal on resident list and dashboard')
         center_url = '/evacuation/center.php?id=2'
         code, body = admin.request(center_url, dict(action='checkin', kind='new_walkin',
             full_name='Fictional Walk-in', age='25', address_details='Demo Road', contact_phone='09000000000'))

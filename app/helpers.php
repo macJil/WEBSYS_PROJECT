@@ -54,8 +54,8 @@ function flash(string $message): void
 function dashboardPath(): string
 {
     return ($_SESSION['ROLE'] ?? '') === 'admin'
-        ? 'resources/views/admin/admin.index.php'
-        : 'resources/views/user/user.index.php';
+        ? 'dashboard/staff.php'
+        : 'dashboard/resident.php';
 }
 function session_checker(): void
 {

@@ -16,7 +16,7 @@ foreach ($overview["incidents"] as $status => $count) {
         ];
     }
 }
-$centerPath = "resources/views/maps/centers.php";
+$centerPath = "evacuation/open-centers.php";
 $cards[] = ["Open centers", count($overview["centers"]), $centerPath];
 if ($admin) {
     $available = 0;
@@ -27,15 +27,15 @@ if ($admin) {
     $cards[] = [
         "Affected households",
         count($overview["affected"]),
-        "resources/views/admin/summaries/current.php?type=households",
+        "disaster-reports/current.php?type=households",
     ];
     $cards[] = [
         "Active evacuees",
         count($overview["stays"]),
-        "resources/views/admin/summaries/current.php?type=evacuees",
+        "disaster-reports/current.php?type=evacuees",
     ];
 } else {
-    $cards[] = ["Published notices", count($overview["notices"]), "resources/views/user/announcement.php"];
+    $cards[] = ["Published notices", count($overview["notices"]), "announcements/published.php"];
 }
 ?>
 <?php if ($admin): ?>
@@ -49,7 +49,7 @@ if ($admin) {
 <?php if (!$admin): ?>
     <h2>Latest published notices</h2>
     <?php foreach (array_slice($overview['notices'], 0, 3) as $notice): ?>
-        <p><a href="<?= e(url('resources/views/user/announcement.php?q=' . urlencode($notice['title']))) ?>"><?= e($notice['title']) ?></a> · <?= e($notice['created_at']) ?></p>
+        <p><a href="<?= e(url('announcements/published.php?q=' . urlencode($notice['title']))) ?>"><?= e($notice['title']) ?></a> · <?= e($notice['created_at']) ?></p>
     <?php endforeach; ?>
     <?php if (!$overview['notices']): ?>
         <p>No published notices.</p>

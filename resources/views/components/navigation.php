@@ -10,15 +10,15 @@ if ($signedIn) {
                 "Incidents" => "incidents/list.php",
                 "Response teams" => "response/teams.php",
                 "Evacuation centers" => "evacuation/centers.php",
-                "Relief goods" => "resources/views/admin/relief/inventory.php",
-                "Announcements" => "resources/views/admin/announcement/announcement.php",
-                "Disaster summaries" => "resources/views/admin/summaries/disaster.php",
+                "Relief goods" => "relief-inventory/index.php",
+                "Announcements" => "announcements/index.php",
+                "Disaster summaries" => "disaster-reports/index.php",
                 "Manage records" => "resources/views/admin/records.php",
             ]
             : [
                 "Report incident" => "incidents/create.php",
                 "My reports" => "incidents/list.php",
-                "Announcements" => "resources/views/user/announcement.php",
+                "Announcements" => "announcements/published.php",
             ];
 }
 ?>

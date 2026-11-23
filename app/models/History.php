@@ -9,8 +9,8 @@ class HistoryModel
         $types = [
             'response' => ['response_updates', 'incident_id', 'response/incident.php?id='],
             'evacuation' => ['evacuation_records', 'center_id', 'evacuation/center.php?id='],
-            'stock' => ['relief_stock_movements', null, 'resources/views/admin/relief/movements.php'],
-            'distribution' => ['relief_distributions', null, 'resources/views/admin/relief/distributions.php'],
+            'stock' => ['relief_stock_movements', null, 'relief-inventory/movements.php'],
+            'distribution' => ['relief_distributions', null, 'relief-distribution/index.php'],
         ];
         if (!isset($types[$type]) || $id < 1) {
             throw new DomainException('Choose a valid history entry.');

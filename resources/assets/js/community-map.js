@@ -72,7 +72,7 @@
             title = row.name;
             line(node, "Address: ", row.address_details);
             line(node, "Type: ", row.location_type);
-            path = "resources/views/admin/relief/location.php?id=";
+            path = "relief-inventory/location.php?id=";
         }
         const heading = document.createElement("strong");
         heading.textContent = title;

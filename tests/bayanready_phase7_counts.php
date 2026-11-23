@@ -1,6 +1,6 @@
 <?php
 if(PHP_SAPI!=='cli'){http_response_code(404);exit;}
-require __DIR__.'/../app/models/Dashboard.php';
+require __DIR__.'/legacy-models/Dashboard.php';
 require __DIR__.'/legacy-models/Report.php';
 $p=db();
 if($p->query('SELECT label FROM websys_integration_fixture')->fetchColumn()!=='fictional-only'||(int)$p->query('SELECT @@port')->fetchColumn()!==18960)throw new RuntimeException('Isolated fixture required.');
