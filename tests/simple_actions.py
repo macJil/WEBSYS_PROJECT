@@ -31,9 +31,15 @@ class Controls(HTMLParser):
 
 def check_actions(admin, resident, query, prefix):
     def save(path, values, destination):
-        code, body = admin.request(prefix + path, values)
+        def page_url(page):
+            if page.startswith('admin/response/'):
+                return '/' + page.removeprefix('admin/')
+            if page.startswith('incidents/'):
+                return '/' + page
+            return prefix + page
+        code, body = admin.request(page_url(path), values)
         assert code == 200 and 'alert-danger' not in body, body[-2000:]
-        assert urlparse(admin.last_url).path + ('?' + urlparse(admin.last_url).query if urlparse(admin.last_url).query else '') == prefix + destination, admin.last_url
+        assert urlparse(admin.last_url).path + ('?' + urlparse(admin.last_url).query if urlparse(admin.last_url).query else '') == page_url(destination), admin.last_url
         return body
 
     save('admin/response/teams.php', dict(action='save_team', team_name='Fictional Test Team', contact_phone='', is_active='1'), 'admin/response/teams.php')

@@ -1,7 +1,7 @@
 <?php
 if (PHP_SAPI !== 'cli') { http_response_code(404); exit; }
 // Actual ReportModel persistence against fictional in-memory records, no live MySQL writes.
-require __DIR__ . '/../app/models/Report.php';
+require __DIR__ . '/legacy-models/Report.php';
 $pdo=new PDO('sqlite::memory:',null,null,[PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION,PDO::ATTR_DEFAULT_FETCH_MODE=>PDO::FETCH_ASSOC]);
 
 $pdo->exec('CREATE TABLE incident_reports(id INTEGER PRIMARY KEY AUTOINCREMENT,reported_by INTEGER,report_source TEXT,reporter_name TEXT,incident_type TEXT,description TEXT,contact_phone TEXT,location_description TEXT,latitude NUMERIC,longitude NUMERIC)');

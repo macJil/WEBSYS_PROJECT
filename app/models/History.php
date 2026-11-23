@@ -9,8 +9,8 @@ class HistoryModel
         $types = [
             'response' => ['response_updates', 'incident_id', 'response/incident.php?id='],
             'evacuation' => ['evacuation_records', 'center_id', 'evacuation/center.php?id='],
-            'stock' => ['relief_stock_movements', null, 'relief/movements.php'],
-            'distribution' => ['relief_distributions', null, 'relief/distributions.php'],
+            'stock' => ['relief_stock_movements', null, 'resources/views/admin/relief/movements.php'],
+            'distribution' => ['relief_distributions', null, 'resources/views/admin/relief/distributions.php'],
         ];
         if (!isset($types[$type]) || $id < 1) {
             throw new DomainException('Choose a valid history entry.');
@@ -31,7 +31,7 @@ class HistoryModel
             $stmt = $pdo->prepare("UPDATE $table SET history_hidden_at=COALESCE(history_hidden_at, NOW()) WHERE id=?");
             $stmt->execute([$id]);
             $pdo->commit();
-            return 'resources/views/admin/' . $page . ($parent ? $row[$parent] : '');
+            return $page . ($parent ? $row[$parent] : '');
         } catch (Throwable $error) {
             $pdo->rollBack();
             throw $error;

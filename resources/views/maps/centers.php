@@ -22,7 +22,7 @@ require __DIR__ . "/../components/header.php";
             <tr>
                 <td>
                     <?php if ($admin): ?>
-                        <a href="<?= e(url('resources/views/admin/evacuation/center.php?id=' . $row['id'])) ?>"><?= e($row['name']) ?></a>
+                        <a href="<?= e(url('evacuation/center.php?id=' . $row['id'])) ?>"><?= e($row['name']) ?></a>
                     <?php else: ?>
                         <?= e($row['name']) ?>
                     <?php endif; ?>

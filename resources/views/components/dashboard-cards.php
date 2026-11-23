@@ -12,7 +12,7 @@ foreach ($overview["incidents"] as $status => $count) {
         $cards[] = [
             ucfirst($status) . " incidents",
             $count,
-            "resources/views/incidents/list.php?status=" . $status,
+            "incidents/list.php?status=" . $status,
         ];
     }
 }

@@ -13,15 +13,18 @@ def check_upload(resident, admin, Client, query, base, prefix):
             body += ('--' + boundary + '\r\nContent-Disposition: form-data; name="' + key + '"\r\n\r\n' + value + '\r\n').encode()
         body += ('--' + boundary + '\r\nContent-Disposition: form-data; name="image"; filename="' + filename + '"\r\nContent-Type: image/png\r\n\r\n').encode() + content
         body += ('\r\n--' + boundary + '--\r\n').encode()
-        return resident.client.open(urllib.request.Request(base + prefix + 'incidents/create.php', data=body, headers={'Content-Type':'multipart/form-data; boundary=' + boundary}))
+        return resident.client.open(urllib.request.Request(base + '/incidents/create.php', data=body, headers={'Content-Type':'multipart/form-data; boundary=' + boundary}))
     response = upload(image, 'fictional.png')
     html = response.read().decode()
     assert 'alert-danger' not in html and 'incidents/view.php?id=' in response.geturl()
     row = query('SELECT * FROM incident_images ORDER BY id DESC LIMIT 1')[0]
-    path = prefix + 'incidents/image.php?id=' + str(row['id'])
+    path = '/incidents/image.php?id=' + str(row['id'])
     for client in [resident, admin]:
         response = client.client.open(base + path)
         assert response.headers.get_content_type() == 'image/png' and response.read() == image
+    other = Client()
+    other.request('/index.php', dict(action='login', email='other@example.invalid', password='DemoPass123!'))
+    assert other.request(path)[0] == 404
     anonymous = Client()
     anonymous.request(path)
     assert anonymous.last_url.endswith('/index.php')

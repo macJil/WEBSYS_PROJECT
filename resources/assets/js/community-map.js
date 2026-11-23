@@ -59,7 +59,7 @@
             line(node, "Status: ", row.status);
             line(node, "Reported: ", row.report_date);
             line(node, "", "Saved report location.");
-            path = "resources/views/incidents/view.php?id=";
+            path = "incidents/view.php?id=";
         } else if (layer === "centers") {
             title = row.name;
             line(node, "Address: ", row.address_details);
@@ -67,7 +67,7 @@
             line(node, "Capacity: ", row.capacity);
             line(node, "Occupants: ", row.occupancy);
             line(node, "Available capacity (people): ", row.available);
-            path = "resources/views/admin/evacuation/center.php?id=";
+            path = "evacuation/center.php?id=";
         } else {
             title = row.name;
             line(node, "Address: ", row.address_details);

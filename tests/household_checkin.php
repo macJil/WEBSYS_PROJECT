@@ -3,11 +3,11 @@
 if (PHP_SAPI !== 'cli') {
     exit;
 }
-require __DIR__ . '/../app/models/Evacuation.php';
+require __DIR__ . '/legacy-models/Evacuation.php';
 require __DIR__ . '/../app/models/Dashboard.php';
 require __DIR__ . '/../app/models/DisasterSummary.php';
 require __DIR__ . '/../app/models/Map.php';
-require __DIR__ . '/../app/models/Report.php';
+require __DIR__ . '/legacy-models/Report.php';
 $pdo = new PDO('mysql:unix_socket=/Applications/MAMP/tmp/mysql/mysql.sock;charset=utf8mb4', 'root', 'root', [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC]);
 $name = 'bayanready_household_test_' . bin2hex(random_bytes(4));
 $pdo->exec("CREATE DATABASE `$name`");

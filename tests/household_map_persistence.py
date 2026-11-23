@@ -183,6 +183,16 @@ with tempfile.TemporaryDirectory(prefix='bayanready-address-') as temporary:
         check_upload(resident, admin, Client, query, base, prefix)
         from response_history import check_response_history
         check_response_history(admin, resident, Client, query, prefix)
+        center_url = '/evacuation/center.php?id=2'
+        code, body = admin.request(center_url, dict(action='checkin', kind='new_walkin',
+            full_name='Fictional Walk-in', age='25', address_details='Demo Road', contact_phone='09000000000'))
+        assert code == 200 and 'alert-danger' not in body
+        stay, = query('SELECT id, walkin_id FROM evacuation_records WHERE center_id=2 AND checked_out_at IS NULL')
+        admin.request(center_url, dict(action='checkout', record_id=stay['id']))
+        admin.request(center_url, dict(action='checkin', kind='walkin', walkin_id=stay['walkin_id']))
+        rows = query('SELECT checked_out_at FROM evacuation_records WHERE center_id=2 ORDER BY id')
+        assert len(rows) == 2 and rows[0]['checked_out_at'] and rows[1]['checked_out_at'] is None
+        print('PASS direct walk-in arrival, checkout, return and retained stay history')
         detail = '/households/details.php?id=1'
         assert resident.request(detail)[0] == 403
         assert 'Register as a resident' in Client().request('/households/add.php')[1]

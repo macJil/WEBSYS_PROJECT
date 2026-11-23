@@ -15,19 +15,19 @@ class RecordActionsModel
             'incident_reports',
             'location_description',
             'Incidents',
-            'resources/views/incidents/view.php?id=',
+            'incidents/view.php?id=',
         ],
         'teams' => [
             'responders',
             'team_name',
             'Response teams',
-            'resources/views/admin/response/teams.php?edit=',
+            'response/teams.php?edit=',
         ],
         'centers' => [
             'evacuation_centers',
             'name',
             'Evacuation centers',
-            'resources/views/admin/evacuation/center.php?id=',
+            'evacuation/center.php?id=',
         ],
         'walkins' => ['evacuation_walkins', 'full_name', 'Walk-ins', ''],
         'goods' => [

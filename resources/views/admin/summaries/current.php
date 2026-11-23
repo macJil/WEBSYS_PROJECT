@@ -23,7 +23,7 @@ require __DIR__ . "/../../components/header.php";
         <?php foreach ($rows as $row): ?>
             <tr>
                 <td><?= e($type === 'households'?$row['household_code']:$row['person_name']) ?></td>
-                <td><a href="<?= e(url($type === 'households'?'households/details.php?id=' . $row['id']:'resources/views/admin/evacuation/center.php?id=' . $row['center_id'])) ?>"><?= e($type === 'households'?$row['representative_name']:$row['center_name']) ?></a></td>
+                <td><a href="<?= e(url($type === 'households'?'households/details.php?id=' . $row['id']:'evacuation/center.php?id=' . $row['center_id'])) ?>"><?= e($type === 'households'?$row['representative_name']:$row['center_name']) ?></a></td>
             </tr>
         <?php endforeach; ?>
     </table>
