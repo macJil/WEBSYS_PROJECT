@@ -54,14 +54,24 @@ function flash(string $message): void
 }
 function dashboardPath(): string
 {
+    if (!empty($_SESSION['CHANGE_PASSWORD'])) {
+        return 'change-password.php';
+    }
     return ($_SESSION['ROLE'] ?? '') === 'admin'
         ? 'dashboard/staff.php'
         : 'dashboard/resident.php';
 }
-function session_checker(): void
+function requireLogin(): void
 {
     if (empty($_SESSION['ID']) || !in_array($_SESSION['ROLE'] ?? '', ['admin', 'resident'], true)) {
         redirect('index.php');
+    }
+}
+function session_checker(): void
+{
+    requireLogin();
+    if (!empty($_SESSION['CHANGE_PASSWORD'])) {
+        redirect('change-password.php');
     }
 }
 function requireRole(string $role): void

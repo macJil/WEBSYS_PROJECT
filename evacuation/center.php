@@ -4,12 +4,12 @@ requireRole('admin');
 
 function evacuationDbHouseholds(): array
 {
-    return evacuationDbRows("SELECT h.id, h.household_code, h.representative_name,
+    return evacuationDbRows("SELECT h.id, h.household_code, h.barangay, h.purok, h.representative_name,
         COUNT(m.id) AS member_count
         FROM households h
         LEFT JOIN household_members m ON m.household_id = h.id AND m.archived_at IS NULL
         WHERE h.archived_at IS NULL
-        GROUP BY h.id, h.household_code, h.representative_name
+        GROUP BY h.id, h.household_code, h.barangay, h.purok, h.representative_name
         ORDER BY h.household_code");
 }
 
@@ -323,7 +323,7 @@ require __DIR__ . "/../includes/saved-point.php";
         <select id="household_id" name="household_id" class="form-select mb-2" required>
             <option value="">Choose a household</option>
             <?php foreach ($households as $household): ?>
-                <option value="<?= (int)$household['id'] ?>" <?= $householdId === (int)$household['id'] ? 'selected' : '' ?>> <?= e($household['household_code'] . ' — ' . $household['representative_name']) ?> (<?= (int)$household['member_count'] ?> members) </option>
+                <option value="<?= (int)$household['id'] ?>" <?= $householdId === (int)$household['id'] ? 'selected' : '' ?>> <?= e($household['representative_name'] . ' — ' . ($household['barangay'] ?? 'Unconfirmed barangay') . ' — ' . $household['purok']) ?> (<?= (int)$household['member_count'] ?> members) </option>
             <?php endforeach; ?>
         </select>
         <button class="btn btn-outline-secondary">Show members</button>

@@ -54,6 +54,11 @@ if (empty($_SESSION['ID']) || !in_array($_SESSION['ROLE'] ?? '', ['admin', 'resi
     echo json_encode(['error' => 'Sign in to view map data.']);
     exit();
 }
+if (!empty($_SESSION['CHANGE_PASSWORD'])) {
+    http_response_code(403);
+    exit(json_encode(['error' => 'Choose your password before using the map.']));
+}
+
 if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'GET') {
     http_response_code(405);
     header('Allow: GET');

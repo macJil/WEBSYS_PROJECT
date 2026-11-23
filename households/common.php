@@ -8,6 +8,15 @@ const HOUSEHOLD_VULNERABILITY = [
     'no_additional_need_identified' => 'No additional assistance need identified',
     'assistance_needed' => 'Additional assistance needed',
 ];
+const ATOK_BARANGAYS = ['Abiang', 'Caliking', 'Cattubo', 'Naguey', 'Paoay', 'Pasdong', 'Poblacion', 'Topdac'];
+
+function assignedBarangay()
+{
+    $stmt = db()->prepare("SELECT assigned_barangay FROM users WHERE id=? AND role='admin' AND is_active=1");
+    $stmt->execute([$_SESSION['ID']]);
+    return $stmt->fetchColumn();
+}
+
 const HOUSEHOLD_HAZARDS = [
     'unassessed' => 'Not assessed',
     'landslide' => 'Landslide',

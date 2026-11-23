@@ -71,10 +71,12 @@ if (isPost()) {
 }
 $errors = saveMember($id, $memberId, $form);
 $stmt = db()->prepare(
-    'SELECT * FROM household_members WHERE household_id=? AND archived_at IS NULL ORDER BY full_name,id',
+    'SELECT m.*, u.id AS account_id FROM household_members m LEFT JOIN users u ON u.household_member_id=m.id WHERE m.household_id=? AND m.archived_at IS NULL ORDER BY m.full_name,m.id',
 );
 $stmt->execute([$id]);
 $members = $stmt->fetchAll();
+$area = assignedBarangay();
+$canEnroll = in_array($area, ATOK_BARANGAYS, true) && $area === $household['barangay'] && !$household['archived_at'];
 $pageTitle = "Household details";
 require __DIR__ . "/../includes/header.php";
 ?>
@@ -87,7 +89,7 @@ require __DIR__ . "/../includes/saved-point.php";
 <p><a class="btn btn-outline-secondary" href="<?= e(url('records/index.php?type=members')) ?>">Manage records</a></p>
 <a class="d-inline-block mb-3" href="<?= e(url('households/edit.php?id=' . $id)) ?>">Edit household</a>
 <dl class="row">
-    <?php foreach (['contact_phone' => 'Emergency contact number','purok' => 'Purok / sitio','address_details' => 'Address and location description','hazard_notes' => 'Hazard notes','vulnerability_notes' => 'Assessment notes / source','vulnerability_assessed_at' => 'Assessment date'] as $field => $label): ?>
+    <?php foreach (['barangay' => 'Barangay','contact_phone' => 'Emergency contact number','purok' => 'Purok / sitio','address_details' => 'Address and location description','hazard_notes' => 'Hazard notes','vulnerability_notes' => 'Assessment notes / source','vulnerability_assessed_at' => 'Assessment date'] as $field => $label): ?>
         <dt class="col-sm-4"><?= e($label) ?></dt>
         <dd class="col-sm-8"><?= e($household[$field] ?: 'Not recorded') ?></dd>
     <?php endforeach; ?>
@@ -116,7 +118,13 @@ require __DIR__ . "/../includes/saved-point.php";
                     <td><?= e($member['full_name']) ?></td>
                     <td><?= e($member['age'] ?? 'Not recorded') ?></td>
                     <td><?= e($member['notes']) ?></td>
-                    <td><a href="<?= e(url('households/details.php?id=' . $id . '&member=' . $member['id'])) ?>">View / edit</a></td>
+                    <td><a href="<?= e(url('households/details.php?id=' . $id . '&member=' . $member['id'])) ?>">View / edit</a>
+                        <?php if ($member['account_id']): ?>
+                            · Account created
+                        <?php elseif ($canEnroll): ?>
+                            <a class="btn btn-outline-secondary btn-sm" href="<?= e(url('households/account.php?member=' . $member['id'])) ?>">Create resident account</a>
+                        <?php endif; ?>
+                    </td>
                 </tr>
             <?php endforeach; ?>
             <?php if (!$members): ?>

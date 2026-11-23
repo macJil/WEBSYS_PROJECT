@@ -8,7 +8,7 @@
 CREATE DATABASE IF NOT EXISTS barangay_drrm CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE barangay_drrm;
 
--- 1. Users: public registration must always force the resident role in PHP.
+-- 1. Users: staff enroll residents through household member records.
 CREATE TABLE users (
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   full_name VARCHAR(100) NOT NULL,
@@ -59,6 +59,13 @@ CREATE TABLE household_members (
   FOREIGN KEY (household_id) REFERENCES households(id) ON DELETE RESTRICT,
   INDEX idx_members_household (household_id)
 ) ENGINE=InnoDB;
+
+ALTER TABLE households ADD COLUMN barangay VARCHAR(40) NULL;
+ALTER TABLE users
+    ADD COLUMN assigned_barangay VARCHAR(40) NULL,
+    ADD COLUMN household_member_id INT UNSIGNED NULL UNIQUE,
+    ADD COLUMN must_change_password BOOLEAN NOT NULL DEFAULT FALSE,
+    ADD FOREIGN KEY (household_member_id) REFERENCES household_members(id) ON DELETE RESTRICT;
 
 -- 4. Incidents: private to staff and the submitting account; verification does not publish.
 -- reported_by is always the logged-in creator, including admin-entered walk-in reports.

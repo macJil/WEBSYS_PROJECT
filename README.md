@@ -25,6 +25,14 @@ Read the Phase 2 installation instructions before importing SQL. Use fictional d
 
 See [Phase 3 setup and reusable page pattern](docs/PHASE_3_PHP_FOUNDATIONS.md). Copy `setup/config.example.php` to the ignored `config/config.php`, configure your local connection/base URL, and open root `index.php`. The account screens use ordinary forms and PHP sessions.
 
+## Resident enrollment
+
+For an existing database on this branch, apply `database/migrations/assessment_01_resident_accounts.sql` once before updating the PHP pages. Fresh installations use the full schema. Existing accounts retain their passwords.
+
+The database administrator assigns an authorized official one Atok barangay in `users.assigned_barangay`. For example, use a prepared update equivalent to `UPDATE users SET assigned_barangay='Paoay' WHERE id=? AND role='admin'` with the verified staff ID. An empty assignment grants no enrollment access. Confirm the barangay of older households in the registry before enrollment.
+
+Open **Households → View / members → Create resident account**, confirm residency and enter the resident’s email. Give the displayed temporary password privately to the resident. On first login the resident must replace it to access protected pages.
+
 ## Household registry
 
 [Phase 4 guide](docs/PHASE_4_HOUSEHOLD_REGISTRY.md): sign in as an admin and select **Households** to manage household details, emergency contacts, vulnerability assessments, and individual members. Member totals are calculated automatically.

@@ -5,7 +5,7 @@ requireRole('admin');
 function reliefDbHouseholds(): array
 {
     return reliefDbRows(
-        'SELECT id,household_code,representative_name FROM households WHERE archived_at IS NULL ORDER BY household_code',
+        'SELECT id,barangay,purok,representative_name FROM households WHERE archived_at IS NULL ORDER BY household_code',
     );
 }
 
@@ -211,7 +211,7 @@ require __DIR__ . "/../includes/errors.php";
         <label class="d-block mb-3">Registered household<select class="form-select" name="household_id" required>
                 <option value="">Choose a household</option>
                 <?php foreach ($households as $household): ?>
-                    <option value="<?= (int)$household['id'] ?>" <?= input('household_id') === (string)$household['id']?'selected':'' ?>><?= e($household['household_code'] . ' — ' . $household['representative_name']) ?></option>
+                    <option value="<?= (int)$household['id'] ?>" <?= input('household_id') === (string)$household['id']?'selected':'' ?>><?= e($household['representative_name'] . ' — ' . ($household['barangay'] ?? 'Unconfirmed barangay') . ' — ' . $household['purok']) ?></option>
                 <?php endforeach; ?>
             </select></label>
         <label class="d-block mb-3">Receiving representative<input class="form-control" name="received_by" maxlength="100" value="<?= e(input('received_by')) ?>" required /></label>

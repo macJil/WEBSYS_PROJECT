@@ -6,6 +6,11 @@ if (empty($_SESSION['ID'])) {
     http_response_code(401);
     exit(json_encode(['error' => 'Sign in first.']));
 }
+if (!empty($_SESSION['CHANGE_PASSWORD'])) {
+    http_response_code(403);
+    exit(json_encode(['error' => 'Choose your password before using the map.']));
+}
+
 $lat = filter_var($_GET['lat'] ?? '', FILTER_VALIDATE_FLOAT);
 $lng = filter_var($_GET['lon'] ?? '', FILTER_VALIDATE_FLOAT);
 if ($lat === false || $lng === false || abs($lat) > 90 || abs($lng) > 180) {

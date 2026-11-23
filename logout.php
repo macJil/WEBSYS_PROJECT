@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/includes/helpers.php';
-session_checker();
+requireLogin();
 if (!isPost()) {
     header('Allow: POST');
     http_response_code(405);

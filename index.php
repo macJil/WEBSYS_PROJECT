@@ -10,7 +10,7 @@ function handlePost()
         return [];
     }
     $action = input('action');
-    if (!in_array($action, ['login', 'register'], true)) {
+    if ($action !== 'login') {
         return ['Invalid form action.'];
     }
     $email = input('email');
@@ -25,56 +25,10 @@ function handlePost()
     if (strlen($password) > 72) {
         $errors[] = 'Use a password of at most 72 bytes.';
     }
-    if ($action === 'register') {
-        $data = [
-            'full_name' => input('full_name'),
-            'username' => input('username'),
-            'email' => $email,
-            'phone' => input('phone'),
-        ];
-        if ($data['full_name'] === '' || strlen($data['full_name']) > 100) {
-            $errors[] = 'Enter a name of up to 100 bytes.';
-        }
-        $usernameLength = strlen($data['username']);
-        if (
-            $usernameLength < 3 ||
-            $usernameLength > 50 ||
-            strspn(
-                $data['username'],
-                'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_',
-            ) !== $usernameLength
-        ) {
-            $errors[] = 'Use 3–50 letters, numbers or underscores for your username.';
-        }
-        if (!validPhone($data['phone'], 7)) {
-            $errors[] = 'Enter a contact number of 7–20 characters.';
-        }
-        if (strlen($password) < 8) {
-            $errors[] = 'Use a password of at least 8 characters.';
-        }
-        if ($password !== input('password_confirmation', false)) {
-            $errors[] = 'The passwords do not match.';
-        }
-    }
     if ($errors) {
         return $errors;
     }
     try {
-        if ($action === 'register') {
-            $data['password'] = password_hash($password, PASSWORD_DEFAULT);
-            $stmt = db()->prepare(
-                "INSERT INTO users (full_name, username, email, phone, password, role) VALUES (?, ?, ?, ?, ?, 'resident')",
-            );
-            $stmt->execute([
-                $data['full_name'],
-                $data['username'],
-                $data['email'],
-                $data['phone'],
-                $data['password'],
-            ]);
-            flash('Registration successful. You can now log in.');
-            redirect('index.php');
-        }
         $stmt = db()->prepare('SELECT * FROM users WHERE email = ?');
         $stmt->execute([$email]);
         $user = $stmt->fetch();
@@ -94,19 +48,17 @@ function handlePost()
             'PHONE' => $user['phone'] ?? '',
             'EMAIL' => $user['email'],
             'ROLE' => $user['role'],
+            'CHANGE_PASSWORD' => (bool) $user['must_change_password'],
         ];
         flash('You are now signed in.');
         redirect(dashboardPath());
     } catch (PDOException $error) {
-        if ($action === 'register' && $error->getCode() === '23000') {
-            return ['That email address or username is already registered.'];
-        }
         return ['The database is unavailable. Please try again later.'];
     }
 }
 
 $errors = handlePost();
-$pageTitle = "Login and registration";
+$pageTitle = "Login";
 require __DIR__ . "/includes/header.php";
 ?>
 <div class="page-intro">
@@ -121,6 +73,7 @@ require __DIR__ . "/includes/errors.php";
     <section class="col-lg-5">
         <div class="panel h-100">
             <h2>Login</h2>
+            <p>For a resident account, contact your barangay official.</p>
             <form method="post" action="<?= e(url('index.php')) ?>">
                 <input type="hidden" name="action" value="login" />
                 <label for="login-email" class="form-label">Email</label>
@@ -128,23 +81,6 @@ require __DIR__ . "/includes/errors.php";
                 <label for="login-password" class="form-label">Password</label>
                 <input id="login-password" class="form-control mb-3" type="password" name="password" required autocomplete="current-password" />
                 <button class="btn btn-primary">Login</button>
-            </form>
-        </div>
-    </section>
-    <section class="col-lg-7">
-        <div class="panel h-100">
-            <h2>Register as a resident</h2>
-            <form method="post" action="<?= e(url('index.php')) ?>">
-                <input type="hidden" name="action" value="register" />
-                <?php foreach (['full_name' => ['Full name', 'text', 100], 'username' => ['Username', 'text', 50], 'email' => ['Email', 'email', 254], 'phone' => ['Contact number', 'tel', 20]] as $key => $field): ?>
-                    <label for="register-<?= e($key) ?>" class="form-label"><?= e($field[0]) ?></label>
-                    <input id="register-<?= e($key) ?>" class="form-control mb-3" name="<?= e($key) ?>" type="<?= e($field[1]) ?>" maxlength="<?= $field[2] ?>" required value="<?= input('action') === 'register' ? e(input($key)) : '' ?>" />
-                <?php endforeach; ?>
-                <label for="register-password" class="form-label">Password (at least 8 characters)</label>
-                <input id="register-password" class="form-control mb-3" type="password" name="password" minlength="8" required autocomplete="new-password" />
-                <label for="confirm-password" class="form-label">Confirm password</label>
-                <input id="confirm-password" class="form-control mb-3" type="password" name="password_confirmation" required autocomplete="new-password" />
-                <button class="btn btn-primary">Register</button>
             </form>
         </div>
     </section>

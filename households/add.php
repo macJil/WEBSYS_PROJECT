@@ -7,6 +7,7 @@ $form = [
     'representative_name' => '',
     'contact_phone' => '',
     'purok' => '',
+    'barangay' => assignedBarangay(),
     'address_details' => '',
     'registry_reason' => 'monitored',
     'hazard_type' => 'unassessed',
@@ -24,13 +25,13 @@ if (isPost()) {
         try {
             $stmt = db()->prepare('INSERT INTO households (
                 household_code, representative_name, contact_phone,
-                purok, address_details, registry_reason,
+                barangay, purok, address_details, registry_reason,
                 hazard_type, hazard_notes, vulnerability_category,
                 vulnerability_notes, vulnerability_assessed_by, vulnerability_assessed_at,
                 evacuation_status, latitude, longitude
             ) VALUES (
                 :household_code, :representative_name, :contact_phone,
-                :purok, :address_details, :registry_reason,
+                :barangay, :purok, :address_details, :registry_reason,
                 :hazard_type, :hazard_notes, :vulnerability_category,
                 :vulnerability_notes, :vulnerability_assessed_by, :vulnerability_assessed_at,
                 :evacuation_status, :latitude, :longitude

@@ -28,6 +28,7 @@ require __DIR__ . '/../includes/header.php';
             <tr>
                 <th>Code</th>
                 <th>Representative</th>
+                <th>Barangay</th>
                 <th>Purok</th>
                 <th>Members</th>
                 <th>Actions</th>
@@ -38,6 +39,7 @@ require __DIR__ . '/../includes/header.php';
                 <tr>
                     <td><?= e($row['household_code']) ?></td>
                     <td><?= e($row['representative_name']) ?></td>
+                    <td><?= e($row['barangay'] ?? 'Unconfirmed') ?></td>
                     <td><?= e($row['purok']) ?>
                         <?php if (!hasMapPoint($row)): ?>
                             <br /><small>No map point</small>
@@ -49,7 +51,7 @@ require __DIR__ . '/../includes/header.php';
             <?php endforeach; ?>
             <?php if (!$rows): ?>
                 <tr>
-                    <td colspan="5">No matching households.</td>
+                    <td colspan="6">No matching households.</td>
                 </tr>
             <?php endif; ?>
         </tbody>

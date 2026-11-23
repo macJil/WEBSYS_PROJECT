@@ -32,6 +32,15 @@ require __DIR__ . "/../includes/errors.php";
 <form method="post" action="<?= e(url($id === null ? 'households/add.php' : 'households/edit.php?id=' . $id)) ?>">
     <input type="hidden" name="action" value="<?= $id === null ? 'create_household' : 'update_household' ?>" />
     <div class="row">
+        <div class="col-md-6 mb-3">
+            <label for="barangay" class="form-label">Barangay *</label>
+            <select id="barangay" name="barangay" class="form-select" required>
+                <option value="">Choose barangay</option>
+                <?php foreach (ATOK_BARANGAYS as $barangay): ?>
+                    <option <?= ($form['barangay'] ?? '') === $barangay ? 'selected' : '' ?>><?= e($barangay) ?></option>
+                <?php endforeach; ?>
+            </select>
+        </div>
         <?php foreach ($householdFields as $key => $field): ?>
             <div class="col-md-6 mb-3">
                 <label for="<?= e($key) ?>" class="form-label"><?= e($field[0]) ?><?= $field[2] ? ' *' : '' ?></label>

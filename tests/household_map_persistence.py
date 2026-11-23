@@ -4,6 +4,7 @@ Requires local MAMP MySQL and PHP; never reads the application's private config.
 from pathlib import Path
 import http.cookiejar
 import json
+import re
 import os
 import shutil
 import socket
@@ -92,7 +93,7 @@ with tempfile.TemporaryDirectory(prefix='bayanready-address-') as temporary:
             assert code == 200 and 'Log out' in body, body[:300]
         cases = [
             (resident, 'incidents/create.php', 'incident_reports', 'location_description', 'incidents/view.php', dict(action='create_incident', incident_type='other', description='Fictional exercise', reporter_name='Fictional person', contact_phone='0000000000')),
-            (admin, 'households/index.php', 'households', 'address_details', 'households/details.php', dict(action='create_household', household_code='DEMO-ADDR', representative_name='Fictional person', contact_phone='', purok='Demo', registry_reason='monitored', hazard_type='unassessed', hazard_notes='', vulnerability_category='unassessed', vulnerability_notes='', evacuation_status='at_home')),
+            (admin, 'households/index.php', 'households', 'address_details', 'households/details.php', dict(action='create_household', barangay='Paoay', household_code='DEMO-ADDR', representative_name='Fictional person', contact_phone='', purok='Demo', registry_reason='monitored', hazard_type='unassessed', hazard_notes='', vulnerability_category='unassessed', vulnerability_notes='', evacuation_status='at_home')),
             (admin, 'evacuation/centers.php', 'evacuation_centers', 'address_details', 'evacuation/center.php', dict(action='save_center', name='Fictional center', capacity='5', status='open')),
             (admin, 'relief-inventory/locations.php', 'relief_locations', 'address_details', 'relief-inventory/location.php', dict(action='save_location', name='Fictional relief point', location_type='distribution')),
         ]
@@ -242,7 +243,7 @@ with tempfile.TemporaryDirectory(prefix='bayanready-address-') as temporary:
         print('PASS direct walk-in arrival, checkout, return and retained stay history')
         detail = '/households/details.php?id=1'
         assert resident.request(detail)[0] == 403
-        assert 'Register as a resident' in Client().request('/households/add.php')[1]
+        assert '<h2>Login</h2>' in Client().request('/households/add.php')[1]
         assert 'DEMO-ADDR' in admin.request('/households/index.php?q=DEMO-ADDR')[1]
         assert 'DEMO-ADDR' not in admin.request('/households/index.php?q=absent')[1]
         data = dict(action='create_member', full_name='Fictional Arrival', age='24', notes='')
@@ -250,8 +251,38 @@ with tempfile.TemporaryDirectory(prefix='bayanready-address-') as temporary:
         member = query("SELECT id FROM household_members WHERE full_name='Fictional Arrival'")[0]['id']
         data.update(action='update_member', full_name='Fictional Updated')
         assert 'Fictional Updated' in admin.request(detail + '&member=' + str(member), data)[1]
-        assert 'Register as a resident' in admin.request('/logout.php', {'action':'logout'})[1]
-        assert 'Register as a resident' in admin.request(detail)[1]
+        endpoint = '/households/account.php?member=' + str(member)
+        credentials = dict(confirmed='yes', email='new@example.invalid')
+        assert admin.request(endpoint, credentials)[0] == 403
+        query("UPDATE users SET assigned_barangay='Topdac' WHERE role='admin'")
+        assert admin.request(endpoint, credentials)[0] == 403
+        query("UPDATE users SET assigned_barangay='Paoay' WHERE role='admin'")
+        assert resident.request(endpoint, credentials)[0] == 403
+        assert 'Confirm residency' in admin.request(endpoint, dict(credentials, confirmed=''))[1]
+        guest = Client()
+        assert 'Invalid form action' in guest.request('/index.php', dict(action='register', **credentials))[1]
+        temporary = re.search(r'<strong>([a-f0-9]{20})</strong>', admin.request(endpoint, credentials)[1]).group(1)
+        assert 'already has an account' in admin.request(endpoint, credentials)[1]
+        login = dict(action='login', email=credentials['email'], password=temporary)
+        assert 'Choose your password' in guest.request('/index.php', login)[1]
+        assert 'Choose your password' in guest.request('/incidents/create.php', dict(action='create_incident'))[1]
+        for path in ['/map/data.php', '/map/address.php']:
+            assert guest.request(path)[0] == 403
+        new = 'FictionalNewPass!'
+        assert guest.request('/change-password.php', dict(temporary=temporary, password=new, confirmation=new))[0] == 200
+        assert guest.last_url.endswith('/dashboard/resident.php')
+        assert 'Invalid email or password' in Client().request('/index.php', login)[1]
+        assert 'Log out' in Client().request('/index.php', dict(login, password=new))[1]
+        history = "SELECT e.id FROM evacuation_records e JOIN household_members m ON m.id=e.household_member_id WHERE m.household_id=1 ORDER BY e.id"
+        distributions = "SELECT id FROM relief_distributions WHERE household_id=1 ORDER BY id"
+        before = query(history), query(distributions)
+        assert all(before)
+        edit_values = dict(cases[1][-1], action='update_household', representative_name='Fictional New Representative')
+        assert 'Fictional New Representative' in admin.request('/households/edit.php?id=1', edit_values)[1]
+        assert before == (query(history), query(distributions))
+        print('PASS scoped enrollment, first-login guards, password replacement and representative history')
+        assert '<h2>Login</h2>' in admin.request('/logout.php', {'action':'logout'})[1]
+        assert '<h2>Login</h2>' in admin.request(detail)[1]
         print('PASS direct household search, member create/edit, role guards and logout')
         if os.environ.get('TEST_BROWSER_PAUSE') == '1':
             Path('/tmp/bayanready-actions-preview.txt').write_text(base)

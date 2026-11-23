@@ -13,7 +13,7 @@ if (isPost()) {
             $values['id'] = $id;
             $stmt = db()->prepare('UPDATE households SET
                 household_code = :household_code, representative_name = :representative_name, contact_phone = :contact_phone,
-                purok = :purok, address_details = :address_details, registry_reason = :registry_reason,
+                barangay = :barangay, purok = :purok, address_details = :address_details, registry_reason = :registry_reason,
                 hazard_type = :hazard_type, hazard_notes = :hazard_notes, vulnerability_category = :vulnerability_category,
                 vulnerability_notes = :vulnerability_notes, vulnerability_assessed_by = :vulnerability_assessed_by, vulnerability_assessed_at = :vulnerability_assessed_at,
                 evacuation_status = :evacuation_status, latitude = :latitude, longitude = :longitude

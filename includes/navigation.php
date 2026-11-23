@@ -1,7 +1,7 @@
 <?php
 $signedIn = !empty($_SESSION["ID"]);
 $links = [];
-if ($signedIn) {
+if ($signedIn && empty($_SESSION['CHANGE_PASSWORD'])) {
     $links = ["Home" => dashboardPath(), "Map" => "map/map.php"];
     $links +=
         $_SESSION["ROLE"] === "admin"
@@ -36,7 +36,7 @@ if ($signedIn) {
                 <span class="small">Community preparedness &amp; response</span>
             <?php endif; ?>
         </div>
-        <?php if ($signedIn): ?>
+        <?php if ($links): ?>
             <button class="btn btn-outline-secondary navigation-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#main-navigation" aria-controls="main-navigation" aria-expanded="false">Menu</button>
             <div class="collapse navigation-collapse" id="main-navigation">
                 <nav class="nav-links" aria-label="Main navigation">
