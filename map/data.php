@@ -66,7 +66,14 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'GET') {
     exit();
 }
 try {
-    echo json_encode(mapPublicMap(), JSON_THROW_ON_ERROR);
+    $data = mapPublicMap();
+    if ($_SESSION['ROLE'] === 'admin') {
+        $data['households'] = mapRows(
+            'SELECT id, latitude, longitude, registry_reason, hazard_type, evacuation_status
+             FROM households WHERE archived_at IS NULL AND ' . mapPoint('latitude', 'longitude')
+        );
+    }
+    echo json_encode($data, JSON_THROW_ON_ERROR);
 } catch (Throwable $error) {
     http_response_code(500);
     echo json_encode(['error' => 'Map data is unavailable.']);

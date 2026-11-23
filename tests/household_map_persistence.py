@@ -168,9 +168,9 @@ with tempfile.TemporaryDirectory(prefix='bayanready-address-') as temporary:
             cards = Cards()
             cards.feed(body)
             assert code == 200 and cards.cards['Available capacity (people)'][0] == available
-            assert cards.cards['Active evacuees'][0] == occupants
+            assert cards.cards['People currently evacuated'][0] == occupants
             assert cards.cards['Open centers'][0] == 2
-            for label in ['Available capacity (people)', 'Active evacuees', 'Open centers']:
+            for label in ['Available capacity (people)', 'People currently evacuated', 'Open centers']:
                 assert admin.request(cards.cards[label][1])[0] == 200
             code, body = admin.request(prefix + 'evacuation/center.php?id=1')
             assert 'Available capacity (people): <strong>' + str(5 - occupants) + '</strong>' in body
@@ -243,11 +243,15 @@ with tempfile.TemporaryDirectory(prefix='bayanready-address-') as temporary:
         check_notice(False)
         print('PASS draft, publication and withdrawal on resident list and dashboard')
         center_url = '/evacuation/center.php?id=2'
+        assert 'name="walkin_id"' not in admin.request(center_url)[1]
+        center_url += '&walkin_search=Fictional+Walk-in'
+        assert 'No matching walk-ins' in admin.request(center_url)[1]
         code, body = admin.request(center_url, dict(action='checkin', kind='new_walkin',
             full_name='Fictional Walk-in', age='25', address_details='Demo Road', contact_phone='09000000000'))
         assert code == 200 and 'alert-danger' not in body
         stay, = query('SELECT id, walkin_id FROM evacuation_records WHERE center_id=2 AND checked_out_at IS NULL')
         admin.request(center_url, dict(action='checkout', record_id=stay['id']))
+        assert 'Choose returning person' in admin.request(center_url)[1]
         admin.request(center_url, dict(action='checkin', kind='walkin', walkin_id=stay['walkin_id']))
         rows = query('SELECT checked_out_at FROM evacuation_records WHERE center_id=2 ORDER BY id')
         assert len(rows) == 2 and rows[0]['checked_out_at'] and rows[1]['checked_out_at'] is None
@@ -299,6 +303,20 @@ with tempfile.TemporaryDirectory(prefix='bayanready-address-') as temporary:
             assert 'alert-danger' not in admin.request(url, dict(action=action, notes='Fictional review'))[1]
             assert query('SELECT status FROM incident_reports WHERE id=' + str(incident))[0]['status'] == expected
             assert not query('SELECT id FROM incident_assignments WHERE incident_id=' + str(incident))
+        query("UPDATE incident_reports SET barangay='Topdac', incident_type='flood' WHERE id=1")
+        for area, period, expected in [('Topdac', 'today', 1), ('Paoay', 'today', 0), ('Topdac', 'month', 1)]:
+            cards = Cards()
+            cards.feed(admin.request('/dashboard/staff.php?barangay=' + area + '&period=' + period)[1])
+            count, path = cards.cards['Flooding reports']
+            assert count == expected
+            assert admin.request(path)[1].count('href="/incidents/view.php?id=') == expected
+        query("UPDATE incident_reports SET created_at=CURRENT_DATE - INTERVAL 8 DAY WHERE id=1")
+        for period, expected in [('week', 0), ('month', 1)]:
+            cards = Cards()
+            cards.feed(admin.request('/dashboard/staff.php?barangay=Topdac&period=' + period)[1])
+            count, path = cards.cards['Flooding reports']
+            assert count == expected and admin.request(path)[1].count('href="/incidents/view.php?id=') == expected
+        print('PASS incident type, barangay and period counts match linked lists')
         print('PASS editable contact defaults, atomic dispatch, verification only and rejection')
         assert '<h2>Login</h2>' in admin.request('/logout.php', {'action':'logout'})[1]
         assert '<h2>Login</h2>' in admin.request(detail)[1]

@@ -73,6 +73,7 @@ CREATE TABLE incident_reports (
   archived_at DATETIME NULL,
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   reported_by INT UNSIGNED NOT NULL,
+  barangay VARCHAR(40) NULL,
   report_source ENUM('resident','walk_in','phone','admin') NOT NULL DEFAULT 'resident',
   reporter_name VARCHAR(100) NULL,
   occurred_at DATETIME NULL,

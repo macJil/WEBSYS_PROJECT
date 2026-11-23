@@ -6,6 +6,7 @@ function reportDbListing(array $filters, ?int $owner): array
 {
     $where = ['archived_at IS NULL'];
     $values = [];
+    incidentScopeConditions($filters, $where, $values);
     if ($owner !== null) {
         $where[] = 'reported_by = ?';
         $values[] = $owner;
@@ -37,7 +38,7 @@ function reportDbListing(array $filters, ?int $owner): array
 
 function reportFilters(): array
 {
-    $filters = [];
+    $filters = incidentScope();
     foreach (['incident_type', 'status', 'date', 'location', 'search'] as $key) {
         $filters[$key] = is_string($_GET[$key] ?? null) ? trim($_GET[$key]) : '';
     }
@@ -74,6 +75,7 @@ require __DIR__ . "/../includes/header.php";
 <?php endif; ?>
 <a class="btn btn-primary mb-3" href="<?= e(url('incidents/create.php')) ?>">Enter incident report</a>
 <form method="get" class="filter-form row g-2 mb-4">
+    <?php $scope = $filters; require __DIR__ . '/scope-fields.php'; ?>
     <label class="col-md-3">Type<select class="form-select" name="incident_type">
             <option value="">All types</option>
             <?php foreach (REPORT_TYPES as $value => $label): ?>
@@ -111,7 +113,7 @@ require __DIR__ . "/../includes/header.php";
                 <tr>
                     <td><?= (int)$report['id'] ?></td>
                     <td><?= e(REPORT_TYPES[$report['incident_type']] ?? $report['incident_type']) ?></td>
-                    <td><?= e($report['location_description']) ?>
+                    <td><?= e($report['barangay'] ?? 'Awaiting confirmation') ?> · <?= e($report['location_description']) ?>
                         <?php if (!hasMapPoint($report)): ?>
                             <br /><small>No map point</small>
                         <?php endif; ?>

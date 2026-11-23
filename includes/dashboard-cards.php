@@ -30,7 +30,7 @@ if ($admin) {
         "disaster-reports/current.php?type=households",
     ];
     $cards[] = [
-        "Active evacuees",
+        "People currently evacuated",
         count($overview["stays"]),
         "disaster-reports/current.php?type=evacuees",
     ];

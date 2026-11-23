@@ -206,10 +206,17 @@ function evacuationDbHouseholdMembers(int $householdId): array
     );
 }
 
-function evacuationDbWalkins(): array
+function evacuationDbWalkins(string $search): array
 {
+    if ($search === '') {
+        return [];
+    }
+    $term = '%' . strtr($search, ['!' => '!!', '%' => '!%', '_' => '!_']) . '%';
     return evacuationDbRows(
-        'SELECT * FROM evacuation_walkins WHERE archived_at IS NULL ORDER BY full_name,id',
+        "SELECT id, full_name, address_details, contact_phone FROM evacuation_walkins
+         WHERE archived_at IS NULL AND (full_name LIKE ? ESCAPE '!' OR contact_phone LIKE ? ESCAPE '!')
+         ORDER BY full_name,id LIMIT 50",
+        [$term, $term],
     );
 }
 
@@ -301,7 +308,8 @@ foreach ($members as $member) {
     }
 }
 $center = evacuationCenter($id);
-$walkins = evacuationDbWalkins();
+$search = is_string($_GET['walkin_search'] ?? null) ? trim($_GET['walkin_search']) : '';
+$walkins = evacuationDbWalkins($search);
 $pageTitle = $center["name"];
 require __DIR__ . "/../includes/header.php";
 require __DIR__ . "/../includes/errors.php";
@@ -348,30 +356,47 @@ require __DIR__ . "/../includes/saved-point.php";
             <a href="<?= e(url('evacuation/center.php?id=' . $id)) ?>">Cancel household selection</a>
         </form>
     <?php endif; ?>
-    <h2 class="mt-4">Check in a walk-in</h2>
-    <p>Search the household registry and existing walk-ins before creating a new walk-in. Confirm identity with the person or guardian. To transfer centers, check out the previous stay first.</p>
-    <form method="post">
-        <label class="d-block mb-3">Record type<select class="form-select" name="kind">
-                <?php foreach (['walkin' => 'Existing walk-in','new_walkin' => 'New walk-in'] as $key => $label): ?>
-                    <option value="<?= e($key) ?>" <?= input('kind') === $key?'selected':'' ?>><?= e($label) ?></option>
-                <?php endforeach; ?>
-            </select></label>
-        <label class="d-block mb-3">Existing walk-in<select class="form-select" name="walkin_id">
-                <option value="">Select for returning walk-in</option>
-                <?php foreach ($walkins as $person): ?>
-                    <option value="<?= (int)$person['id'] ?>" <?= input('walkin_id') === (string)$person['id']?'selected':'' ?>><?= e('#' . $person['id'] . ' — ' . $person['full_name'] . ' — ' . $person['address_details'] . ' — ' . $person['contact_phone']) ?></option>
-                <?php endforeach; ?>
-            </select></label>
-        <fieldset class="border p-3 mb-3">
-            <legend>New walk-in details only</legend>
-            <?php foreach (['full_name' => ['Full name',100],'address_details' => ['Home address / purok',255],'contact_phone' => ['Contact number (personal or guardian)',20]] as $key => $field): ?>
-                <label class="d-block mb-2"><?= e($field[0]) ?><input class="form-control" name="<?= e($key) ?>" maxlength="<?= $field[1] ?>" value="<?= e(input($key)) ?>" /></label>
-            <?php endforeach; ?>
-            <label>Age in years<input class="form-control" name="age" type="number" min="0" max="130" value="<?= e(input('age')) ?>" /></label>
-        </fieldset>
-        <button class="btn btn-primary" name="action" value="checkin">Check in walk-in</button>
-        <a href="<?= e(url('evacuation/centers.php')) ?>">Cancel and return to evacuation centers</a>
+    <h2 id="walkin">Check in walk-in</h2>
+    <form method="get" action="#walkin" class="mb-3">
+        <input type="hidden" name="id" value="<?= $id ?>">
+        <label class="form-label">Search returning walk-ins by name or phone
+            <input class="form-control" name="walkin_search" maxlength="100" required value="<?= e($search) ?>">
+        </label>
+        <button class="btn btn-outline-secondary">Search walk-ins</button>
     </form>
+    <?php if ($search !== ''): ?>
+        <?php if ($walkins): ?>
+            <form method="post" class="mb-3">
+                <input type="hidden" name="kind" value="walkin">
+                <label class="d-block">Matching walk-ins (up to 50). Confirm the person and home address.
+                    <select class="form-select" name="walkin_id" required>
+                        <option value="">Choose returning person</option>
+                        <?php foreach ($walkins as $person): ?>
+                            <option value="<?= (int)$person['id'] ?>"><?= e($person['full_name'] . ' · ' . $person['address_details'] . ' · ' . $person['contact_phone']) ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </label>
+                <button class="btn btn-primary" name="action" value="checkin">Check in returning walk-in</button>
+            </form>
+        <?php else: ?>
+            <p>No matching walk-ins found. Try another spelling or register a new person below.</p>
+        <?php endif; ?>
+        <details <?= input('kind') === 'new_walkin' ? 'open' : '' ?>>
+            <summary>No matching person? Register a new walk-in</summary>
+            <form method="post">
+                <input type="hidden" name="kind" value="new_walkin">
+                <fieldset class="border p-3 mb-3">
+                    <legend>New walk-in details only</legend>
+                    <?php foreach (['full_name' => ['Full name',100],'address_details' => ['Home address / purok',255],'contact_phone' => ['Contact number (personal or guardian)',20]] as $key => $field): ?>
+                        <label class="d-block mb-2"><?= e($field[0]) ?><input class="form-control" name="<?= e($key) ?>" maxlength="<?= $field[1] ?>" value="<?= e(input($key)) ?>" /></label>
+                    <?php endforeach; ?>
+                    <label>Age in years<input class="form-control" name="age" type="number" min="0" max="130" value="<?= e(input('age')) ?>" /></label>
+                </fieldset>
+                <button class="btn btn-primary" name="action" value="checkin">Check in walk-in</button>
+                <a href="<?= e(url('evacuation/centers.php')) ?>">Cancel and return to evacuation centers</a>
+            </form>
+        </details>
+    <?php endif; ?>
 <?php else: ?>
     <p class="alert alert-info mt-3">Check-in unavailable: this center is closed or full.</p>
 <?php endif; ?>

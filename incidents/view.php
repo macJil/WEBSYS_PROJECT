@@ -30,6 +30,7 @@ function reportDbHistory(int $id): array
 
 function reportDbUpdateLocation(
     int $id,
+    ?string $barangay,
     string $description,
     ?string $lat,
     ?string $lng,
@@ -39,7 +40,7 @@ function reportDbUpdateLocation(
     db()->beginTransaction();
     try {
         $stmt = db()->prepare(
-            'SELECT location_description,latitude,longitude,status,archived_at FROM incident_reports WHERE id=? FOR UPDATE',
+            'SELECT barangay,location_description,latitude,longitude,status,archived_at FROM incident_reports WHERE id=? FOR UPDATE',
         );
         $stmt->execute([$id]);
         $old = $stmt->fetch();
@@ -47,12 +48,13 @@ function reportDbUpdateLocation(
             throw new DomainException('Archived or missing incidents cannot be edited.');
         }
         $stmt = db()->prepare(
-            'UPDATE incident_reports SET location_description=?,latitude=?,longitude=? WHERE id=?',
+            'UPDATE incident_reports SET barangay=?,location_description=?,latitude=?,longitude=? WHERE id=?',
         );
-        $stmt->execute([$description, $lat, $lng, $id]);
+        $stmt->execute([$barangay, $description, $lat, $lng, $id]);
         $previousPoint = '[' . ($old['latitude'] ?? 'none') . ', ' . ($old['longitude'] ?? 'none') . ']';
         $updatedPoint = '[' . ($lat ?? 'none') . ', ' . ($lng ?? 'none') . ']';
         $action = 'Location correction: ' . $notes;
+        $action .= ' | Barangay: ' . ($old['barangay'] ?? 'Unconfirmed') . ' → ' . ($barangay ?? 'Unconfirmed');
         $action .= ' | Previous: ' . $old['location_description'] . ' ' . $previousPoint;
         $action .= ' | Updated: ' . $description . ' ' . $updatedPoint;
         $stmt = db()->prepare(
@@ -152,6 +154,10 @@ function reportUpdateLocation(int $id): array
     if ($description === '' || strlen($description) > 255) {
         $errors[] = 'Enter a written location of up to 255 bytes.';
     }
+    $barangay = isset($_POST['barangay']) ? input('barangay') : (reportGetIncident($id)['barangay'] ?? '');
+    if ($barangay !== '' && !in_array($barangay, ATOK_BARANGAYS, true)) {
+        $errors[] = 'Choose an Atok barangay or leave it awaiting confirmation.';
+    }
     $notes = input('location_notes');
     if ($notes === '' || strlen($notes) > 255) {
         $errors[] = 'Enter a correction reason of up to 255 bytes.';
@@ -162,6 +168,7 @@ function reportUpdateLocation(int $id): array
     try {
         reportDbUpdateLocation(
             $id,
+            $barangay === '' ? null : $barangay,
             $description,
             $lat === '' ? null : $lat,
             $lng === '' ? null : $lng,
@@ -228,7 +235,7 @@ require __DIR__ . "/../includes/errors.php";
 ?>
 <h1><?= e($pageTitle) ?></h1>
 <dl>
-    <?php foreach (['incident_type' => 'Type','status' => 'Status','description' => 'Description','reporter_name' => 'Reporter/contact name','contact_phone' => 'Contact number','location_description' => 'Location','latitude' => 'Latitude','longitude' => 'Longitude','report_source' => 'Received through','created_at' => 'Submitted'] as $key => $label): ?>
+    <?php foreach (['incident_type' => 'Type','status' => 'Status','description' => 'Description','reporter_name' => 'Reporter/contact name','contact_phone' => 'Contact number','barangay' => 'Incident barangay','location_description' => 'Location','latitude' => 'Latitude','longitude' => 'Longitude','report_source' => 'Received through','created_at' => 'Submitted'] as $key => $label): ?>
         <dt><?= e($label) ?></dt>
         <dd class="preserve-text"><?= e($report[$key] ?? 'Not recorded') ?></dd>
     <?php endforeach; ?>
@@ -258,6 +265,10 @@ require __DIR__ . "/../includes/errors.php";
         <h2>Correct incident location</h2>
         <p>Confirm the written location and pin. A correction is recorded in staff history. The shared map uses this saved point when the incident is eligible.</p>
         <form method="post">
+            <?php
+            $selectedBarangay = input('action') === 'update_location' ? input('barangay') : ($report['barangay'] ?? '');
+            require __DIR__ . '/barangay-field.php';
+            ?>
             <label class="d-block mb-3">Written location<input class="form-control" name="location_description" maxlength="255" required value="<?= e(isPost() && input('action') === 'update_location'?input('location_description'):$report['location_description']) ?>" /></label>
             <?php
             $point = $report;

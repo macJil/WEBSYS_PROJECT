@@ -30,7 +30,9 @@
         road_obstruction: "Road obstruction",
         other: "Other emergency",
     };
+    const incidentIcons = { flood: "≈", fire: "🔥", landslide: "◩", road_obstruction: "⛔", other: "⚠" };
     const symbols = {
+        households: ["household", "🏠"],
         incidents: ["incident", "⚠"],
         centers: ["center-open", "⌂"],
         relief_locations: ["relief", "▣"],
@@ -61,6 +63,12 @@
             line(node, "Reported: ", row.report_date);
             line(node, "", "Saved report location.");
             path = "incidents/view.php?id=";
+        } else if (layer === "households") {
+            title = "Household registry";
+            line(node, "Registry reason: ", row.registry_reason === "both" ? "Monitored and affected" : row.registry_reason);
+            line(node, "Hazard concern: ", row.hazard_type);
+            line(node, "Advisory status: ", row.evacuation_status.replaceAll("_", " "));
+            path = "households/details.php?id=";
         } else if (layer === "centers") {
             title = row.name;
             line(node, "Address: ", row.address_details);
@@ -140,6 +148,7 @@
                     )
                         return;
                     let [color, symbol] = symbols[layer];
+                    if (layer === "incidents") symbol = incidentIcons[row.incident_type] || "⚠";
                     // Only fixed icon constants enter HTML; database strings use textContent in popup().
                     const icon = L.divIcon({
                         className: "map-marker-icon",
@@ -150,7 +159,7 @@
                     });
                     L.marker([lat, lng], {
                         icon,
-                        title: layer === "centers" ? "Evacuation center: " + row.status : layer,
+                        title: layer === "centers" ? "Evacuation center: " + row.status : (types[row.incident_type] || layer),
                         keyboard: true,
                     })
                         .bindPopup(popup(layer, row))

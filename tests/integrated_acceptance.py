@@ -28,7 +28,11 @@ def check_acceptance(admin, resident, Client, query, prefix):
             data = json.loads(body)
             rows = [row for row in data['incidents'] if int(row['id']) == 1]
             assert bool(rows) == (status in ['verified', 'responding', 'resolved'])
-            assert 'households' not in data
+            if client is resident:
+                assert 'households' not in data
+            else:
+                assert data['households'][0]['registry_reason'] == 'monitored'
+                assert {'hazard_type', 'evacuation_status'} <= set(data['households'][0])
             for row in data['incidents']:
                 assert set(row) == {'id','incident_type','latitude','longitude','status','report_date'}
     query("UPDATE incident_reports SET status='responding' WHERE id=1")

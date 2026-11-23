@@ -118,3 +118,9 @@ Current household/map revision: [Phase 6 buttons, confirmations and return links
 The map opens near Sayangan in Paoay. **Show all Atok** fits the municipal outline, including areas without saved markers. The picker and PHP save checks read one Polygon with a single exterior ring in `assets/data/atok.geojson`. No database migration is needed.
 
 The approximate outline is the Atok feature extracted from the [Benguet municipal boundaries dataset](https://github.com/faeldon/philippines-json-maps/blob/680e32e62baeccbcd8845d3b1387bc67c1baf78a/latest/geojson/provdists/medres/municities-provdist-1401100000.0.01.json). The opening view uses the [DepEd Sayangan locality reference](https://www.deped.gov.ph/wp-content/uploads/2019/10/Annex-A-Recipient-List.pdf). Confirm the outline and treatment of border locations with the municipality before operational use. A resident can submit a written landmark without coordinates when the demo outline or address suggestion is inaccurate.
+
+## Incident counts and walk-in search
+
+On an existing assessment-branch database apply `database/migrations/assessment_04_incident_barangay.sql` once. Earlier incidents appear under **Awaiting confirmation** until staff identify the incident barangay through **Correct incident location**. Dashboard type counts include all statuses of non-archived reports and use their submission date. The date and barangay selectors apply to the **Reports by incident type** section.
+
+For returning evacuees, open the center and search under **Check in walk-in** by name or phone. Confirm the matching person and address before recording the new stay. If no person matches, expand the new walk-in form. Each check-in adds a separate stay to the same returning person's history.

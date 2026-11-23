@@ -42,6 +42,7 @@ function reportValues(): array
     $data = [];
     foreach (
         [
+            'barangay',
             'incident_type',
             'description',
             'reporter_name',
@@ -112,6 +113,12 @@ function reportCreate(array $data): array
         return ['The form was incomplete or exceeded the server upload limit. Please try again.'];
     }
     $errors = [];
+    if ($data['barangay'] !== '' && !in_array($data['barangay'], ATOK_BARANGAYS, true)) {
+        $errors[] = 'Choose an Atok barangay or leave it awaiting confirmation.';
+    }
+    if ($data['barangay'] === '') {
+        $data['barangay'] = null;
+    }
     foreach (
         [
             'description' => 10000,
@@ -184,6 +191,7 @@ require __DIR__ . "/../includes/errors.php";
                 <?php endforeach; ?>
             </select></label>
     <?php endif; ?>
+    <?php $selectedBarangay = $data['barangay']; require __DIR__ . '/barangay-field.php'; ?>
     <label class="d-block mb-3">Incident type <select name="incident_type" class="form-select" required>
             <option value="">Choose type</option>
             <?php foreach (REPORT_TYPES as $value => $label): ?>

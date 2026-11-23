@@ -8,7 +8,7 @@ const HOUSEHOLD_VULNERABILITY = [
     'no_additional_need_identified' => 'No additional assistance need identified',
     'assistance_needed' => 'Additional assistance needed',
 ];
-const ATOK_BARANGAYS = ['Abiang', 'Caliking', 'Cattubo', 'Naguey', 'Paoay', 'Pasdong', 'Poblacion', 'Topdac'];
+require_once __DIR__ . '/../includes/barangays.php';
 
 function assignedBarangay()
 {

@@ -12,7 +12,7 @@ require __DIR__ . "/../includes/header.php";
 <p class="return-link no-print"><a class="btn btn-outline-secondary" href="<?= e(url(dashboardPath())) ?>">Back to dashboard</a></p>
 <h1><?= $admin?'Staff map':'Community map' ?></h1>
 <p><?= e($settings['demo_barangay_name']) ?>. Markers show saved locations; they do not predict danger or guarantee safety. The map opens around Sayangan, Paoay. The outline is an approximate demo boundary pending municipal confirmation.</p>
-<p>Verified incidents, open centers, and distribution points with saved coordinates appear automatically. Pending reports and household records stay off this map.</p>
+<p>Verified incidents, open centers, and distribution points with saved coordinates appear automatically. Household locations are visible only to staff.</p>
 <div class="map-layout">
     <aside class="map-key border rounded p-3" aria-label="Map layers and legend">
         <h2 class="h5">Layers and legend</h2>
@@ -20,6 +20,12 @@ require __DIR__ . "/../includes/header.php";
         <label class="map-layer">
             <input type="checkbox" data-layer="incidents" checked />
             <span class="map-symbol incident" aria-hidden="true">⚠</span> Incidents <span id="count-incidents"></span></label>
+        <p class="small">≈ Flooding · 🔥 Fire · ◩ Landslide · ⛔ Road obstruction · ⚠ Other emergency</p>
+        <?php if ($admin): ?>
+            <label class="map-layer"><input type="checkbox" data-layer="households" checked>
+                <span aria-hidden="true">🏠</span> Household registry (staff only) <span id="count-households"></span>
+            </label>
+        <?php endif; ?>
         <label class="map-layer">
             <input type="checkbox" data-layer="centers" checked />
             <span class="map-symbol center-open" aria-hidden="true">⌂</span> Evacuation centers <span id="count-centers"></span></label>
@@ -43,7 +49,7 @@ require __DIR__ . "/../includes/header.php";
 </div>
 <script src="<?= e(url('assets/vendor/leaflet/leaflet.js')) ?>"></script>
 <script src="<?= e(url('assets/js/atok-boundary.js')) ?>"></script>
-<script src="<?= e(url('assets/js/community-map.js?v=atok-boundary')) ?>"></script>
+<script src="<?= e(url('assets/js/community-map.js?v=atok-layers')) ?>"></script>
 <?php
 require __DIR__ . "/../includes/footer.php";
 ?>

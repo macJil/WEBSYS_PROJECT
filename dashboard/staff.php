@@ -4,6 +4,13 @@ requireRole('admin');
 
 
 
+require_once __DIR__ . '/../incidents/common.php';
+$scope = incidentScope();
+$where = ['archived_at IS NULL'];
+$values = [];
+incidentScopeConditions($scope, $where, $values);
+$sql = 'SELECT incident_type, COUNT(*) AS total FROM incident_reports WHERE ' . implode(' AND ', $where) . ' GROUP BY incident_type';
+$typeCounts = array_column(dashboardDbRows($sql, $values), 'total', 'incident_type');
 $overview = dashboardDashboardData();
 $pageTitle = "Staff dashboard";
 require __DIR__ . "/../includes/header.php";
@@ -16,6 +23,21 @@ require __DIR__ . "/../includes/header.php";
 <?php
 require __DIR__ . "/../includes/dashboard-cards.php";
 ?>
+<h2>Reports by incident type</h2>
+<form class="row g-2 mb-3" method="get">
+    <?php require __DIR__ . '/../incidents/scope-fields.php'; ?>
+    <div><button class="btn btn-primary">Filter incident counts</button></div>
+</form>
+<div class="row g-3 mb-4">
+    <?php foreach (REPORT_TYPES as $type => $label): ?>
+        <div class="col-sm-6 col-lg-4">
+            <a class="stat-card" href="<?= e(url('incidents/list.php?' . http_build_query($scope + ['incident_type' => $type]))) ?>">
+                <strong class="stat-value"><?= (int) ($typeCounts[$type] ?? 0) ?></strong>
+                <span class="stat-label"><?= e($label) ?> reports</span>
+            </a>
+        </div>
+    <?php endforeach; ?>
+</div>
 <p><a class="btn btn-primary" href="<?= e(url('map/map.php')) ?>">Explore saved locations on the map</a></p>
 <p>Use the shared records to manage incidents, response teams, evacuation, and relief.</p>
 <div class="row g-3">
