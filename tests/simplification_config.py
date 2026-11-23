@@ -1,14 +1,14 @@
 """Fresh-teammate configuration smoke check; uses no live database or credentials."""
 from pathlib import Path
-import shutil, subprocess, tempfile
+import os, shutil, subprocess, tempfile
 root=Path(__file__).resolve().parents[1]
 def run(folder,code):
-    return subprocess.run(['php','-d','display_errors=1','-r',code],cwd=folder,text=True,capture_output=True)
+    return subprocess.run([os.environ.get('TEST_PHP', 'php'),'-d','display_errors=1','-d','session.save_path='+str(folder),'-r',code],cwd=folder,text=True,capture_output=True)
 with tempfile.TemporaryDirectory(prefix='bayanready-config-') as tmp:
     copy=Path(tmp)/'site'
     subprocess.run(['git','checkout-index','--all','--prefix='+str(copy)+'/'],cwd=root,check=True)
     # Overlay the working files relevant to this phase before it is committed.
-    for name in ['app/helpers.php','config/db.php','config/config.example.php']:
+    for name in ['app/helpers.php','config/db.php','config/bootstrap.php','config/config.example.php']:
         shutil.copyfile(root/name,copy/name)
     for name in ['config/config.php','config/local.php','config/settings.php','config/local.example.php']:
         (copy/name).unlink(missing_ok=True)
