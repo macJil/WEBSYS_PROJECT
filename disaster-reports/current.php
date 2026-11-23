@@ -12,7 +12,7 @@ if (!in_array($type, ["households", "evacuees"], true)) {
 $d = dashboardDashboardData();
 $rows = $type === "households" ? $d["affected"] : $d["stays"];
 $pageTitle = $type === "households" ? "Currently affected households" : "Active evacuees";
-require __DIR__ . "/../resources/views/components/header.php";
+require __DIR__ . "/../includes/header.php";
 ?>
 <p class="return-link no-print"><a class="btn btn-outline-secondary" href="<?= e(url(dashboardPath())) ?>">Back to dashboard</a></p>
 <h1><?= e($pageTitle) ?></h1>
@@ -32,5 +32,5 @@ require __DIR__ . "/../resources/views/components/header.php";
     </table>
 </div>
 <?php
-require __DIR__ . "/../resources/views/components/footer.php";
+require __DIR__ . "/../includes/footer.php";
 ?>

@@ -65,12 +65,12 @@ function reportListIncidents(array $filters): array
 $filters = reportFilters();
 $reports = reportListIncidents($filters);
 $pageTitle = $_SESSION["ROLE"] === "admin" ? "Incident reports" : "My incident reports";
-require __DIR__ . "/../resources/views/components/header.php";
+require __DIR__ . "/../includes/header.php";
 ?>
 <p class="return-link no-print"><a class="btn btn-outline-secondary" href="<?= e(url(dashboardPath())) ?>">Back to dashboard</a></p>
 <h1><?= e($pageTitle) ?></h1>
 <?php if ($_SESSION['ROLE'] === 'admin'): ?>
-    <p><a class="btn btn-outline-secondary" href="<?= e(url('resources/views/admin/records.php?type=incidents')) ?>">Manage records</a></p>
+    <p><a class="btn btn-outline-secondary" href="<?= e(url('records/index.php?type=incidents')) ?>">Manage records</a></p>
 <?php endif; ?>
 <a class="btn btn-primary mb-3" href="<?= e(url('incidents/create.php')) ?>">Enter incident report</a>
 <form method="get" class="filter-form row g-2 mb-4">
@@ -130,5 +130,5 @@ require __DIR__ . "/../resources/views/components/header.php";
     </table>
 </div>
 <?php
-require __DIR__ . "/../resources/views/components/footer.php";
+require __DIR__ . "/../includes/footer.php";
 ?>

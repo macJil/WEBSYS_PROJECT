@@ -80,12 +80,12 @@ if (isPost()) {
 }
 $teams = responseDbTeams();
 $pageTitle = "Response teams";
-require __DIR__ . "/../resources/views/components/header.php";
-require __DIR__ . "/../resources/views/components/errors.php";
+require __DIR__ . "/../includes/header.php";
+require __DIR__ . "/../includes/errors.php";
 ?>
 <p class="return-link no-print"><a class="btn btn-outline-secondary" href="<?= e(url(dashboardPath())) ?>">Back to dashboard</a></p>
 <h1>Response teams</h1>
-<p><a class="btn btn-outline-secondary" href="<?= e(url('resources/views/admin/records.php?type=teams')) ?>">Manage records</a></p>
+<p><a class="btn btn-outline-secondary" href="<?= e(url('records/index.php?type=teams')) ?>">Manage records</a></p>
 <p>Inactive teams cannot receive new assignments. Existing assignments remain available for follow-up and completion.</p>
 <div class="table-responsive" tabindex="0" role="region" aria-label="Scrollable records">
     <table class="table">
@@ -126,5 +126,5 @@ require __DIR__ . "/../resources/views/components/errors.php";
     <a href="<?= e(url('response/teams.php')) ?>">Cancel and return to response teams</a>
 </form>
 <?php
-require __DIR__ . "/../resources/views/components/footer.php";
+require __DIR__ . "/../includes/footer.php";
 ?>

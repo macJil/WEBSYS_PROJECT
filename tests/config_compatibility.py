@@ -29,7 +29,7 @@ set_error_handler(function ($severity, $message, $file, $line) {
 with tempfile.TemporaryDirectory(prefix='bayanready-config-regression-') as temp:
     site = Path(temp) / 'site'
     site.mkdir()
-    for folder in ['app', 'resources']:
+    for folder in ['app', 'resources', 'includes']:
         shutil.copytree(ROOT / folder, site / folder)
     (site / 'config').mkdir()
     for name in ['bootstrap.php', 'db.php']:
@@ -71,7 +71,7 @@ if (db() !== $databaseConnection || db()->query('SELECT 1')->fetchColumn() != 1)
 }}
 $_SERVER['REQUEST_METHOD'] = 'GET'; require 'index.php';
 $_SESSION['ID'] = 1; $_SESSION['ROLE'] = 'resident';
-require 'resources/views/components/location-picker.php';
+require 'includes/location-picker.php';
 if ($GLOBALS['config_loads'] !== 1) throw new Exception('Page reloaded config');
 ''')
             assert 'Register as a resident' in output and 'data-zoom="14"' in output

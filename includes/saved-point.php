@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . "/../../../app/helpers.php";
+require_once __DIR__ . "/../app/helpers.php";
 requireRole("admin");
 ?>
 <?php if (isset($savedPoint) && hasMapPoint($savedPoint)): ?>

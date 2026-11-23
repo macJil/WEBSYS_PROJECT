@@ -93,12 +93,12 @@ if (isPost()) {
     };
 }
 $pageTitle = "Relief locations";
-require __DIR__ . "/../resources/views/components/header.php";
-require __DIR__ . "/../resources/views/components/errors.php";
+require __DIR__ . "/../includes/header.php";
+require __DIR__ . "/../includes/errors.php";
 ?>
 <p class="return-link no-print"><a class="btn btn-outline-secondary" href="<?= e(url('relief-inventory/index.php')) ?>">Back to relief inventory</a></p>
 <h1>Relief locations</h1>
-<p><a class="btn btn-outline-secondary" href="<?= e(url('resources/views/admin/records.php?type=locations')) ?>">Manage records</a></p>
+<p><a class="btn btn-outline-secondary" href="<?= e(url('records/index.php?type=locations')) ?>">Manage records</a></p>
 <ul>
     <?php foreach (reliefLocationAll() as $row): ?>
         <li><?= e($row['name']) ?>
@@ -120,11 +120,11 @@ require __DIR__ . "/../resources/views/components/errors.php";
         </select></label>
     <?php
     $point = $d;
-    require __DIR__ . "/../resources/views/components/location-picker.php";
+    require __DIR__ . "/../includes/location-picker.php";
     ?>
     <button class="btn btn-primary" name="action" value="save_location">Save location</button>
     <a href="<?= e(url('relief-inventory/locations.php')) ?>">Cancel and return to relief locations</a>
 </form>
 <?php
-require __DIR__ . "/../resources/views/components/footer.php";
+require __DIR__ . "/../includes/footer.php";
 ?>

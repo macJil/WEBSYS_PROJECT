@@ -107,7 +107,7 @@ function handlePost()
 
 $errors = handlePost();
 $pageTitle = "Login and registration";
-require __DIR__ . "/resources/views/components/header.php";
+require __DIR__ . "/includes/header.php";
 ?>
 <div class="page-intro">
     <p class="eyebrow">Community preparedness &amp; response</p>
@@ -115,7 +115,7 @@ require __DIR__ . "/resources/views/components/header.php";
     <p>Report incidents, follow community notices, and coordinate help.</p>
 </div>
 <?php
-require __DIR__ . "/resources/views/components/errors.php";
+require __DIR__ . "/includes/errors.php";
 ?>
 <div class="row g-4">
     <section class="col-lg-5">
@@ -150,5 +150,5 @@ require __DIR__ . "/resources/views/components/errors.php";
     </section>
 </div>
 <?php
-require __DIR__ . "/resources/views/components/footer.php";
+require __DIR__ . "/includes/footer.php";
 ?>

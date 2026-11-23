@@ -2,7 +2,7 @@
 $signedIn = !empty($_SESSION["ID"]);
 $links = [];
 if ($signedIn) {
-    $links = ["Home" => dashboardPath(), "Map" => "resources/views/maps/map.php"];
+    $links = ["Home" => dashboardPath(), "Map" => "map/map.php"];
     $links +=
         $_SESSION["ROLE"] === "admin"
             ? [
@@ -13,7 +13,7 @@ if ($signedIn) {
                 "Relief goods" => "relief-inventory/index.php",
                 "Announcements" => "announcements/index.php",
                 "Disaster summaries" => "disaster-reports/index.php",
-                "Manage records" => "resources/views/admin/records.php",
+                "Manage records" => "records/index.php",
             ]
             : [
                 "Report incident" => "incidents/create.php",

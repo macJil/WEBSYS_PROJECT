@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . "/../../../app/helpers.php";
+require_once __DIR__ . "/../app/helpers.php";
 session_checker();
 if (!isset($overview)) {
     http_response_code(404);

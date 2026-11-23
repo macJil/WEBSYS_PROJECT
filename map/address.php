@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../../../app/helpers.php';
+require_once __DIR__ . '/../app/helpers.php';
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store');
 if (empty($_SESSION['ID'])) {

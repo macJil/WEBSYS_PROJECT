@@ -31,69 +31,53 @@ class Controls(HTMLParser):
 
 def check_actions(admin, resident, query, prefix):
     def save(path, values, destination):
-        def page_url(page):
-            moved = {
-                'admin/relief/inventory.php': '/relief-inventory/index.php',
-                'admin/relief/movements.php': '/relief-inventory/movements.php',
-                'admin/relief/distributions.php': '/relief-distribution/index.php',
-                'admin/announcement/announcement.php': '/announcements/index.php',
-                'admin/announcement/announcement.update.php': '/announcements/edit.php',
-            }
-            name, separator, query_string = page.partition('?')
-            if name in moved:
-                return moved[name] + separator + query_string
-            if page.startswith('admin/response/'):
-                return '/' + page.removeprefix('admin/')
-            if page.startswith('incidents/'):
-                return '/' + page
-            return prefix + page
-        code, body = admin.request(page_url(path), values)
+        code, body = admin.request(prefix + path, values)
         assert code == 200 and 'alert-danger' not in body, body[-2000:]
-        assert urlparse(admin.last_url).path + ('?' + urlparse(admin.last_url).query if urlparse(admin.last_url).query else '') == page_url(destination), admin.last_url
+        assert urlparse(admin.last_url).path + ('?' + urlparse(admin.last_url).query if urlparse(admin.last_url).query else '') == prefix + destination, admin.last_url
         return body
 
-    save('admin/response/teams.php', dict(action='save_team', team_name='Fictional Test Team', contact_phone='', is_active='1'), 'admin/response/teams.php')
-    save('admin/response/teams.php?edit=1', dict(action='save_team', team_name='Fictional Edited Team', contact_phone='', is_active='1'), 'admin/response/teams.php')
-    save('admin/relief/inventory.php', dict(action='save_item', item_name='Fictional Packs', unit='packs'), 'admin/relief/inventory.php')
-    save('admin/relief/inventory.php?edit=1', dict(action='save_item', item_name='Fictional Food Packs', unit='packs'), 'admin/relief/inventory.php')
-    save('admin/relief/movements.php', dict(action='stock', item_id='1', movement_type='stock_in', quantity='10', notes='Fictional stock'), 'admin/relief/movements.php')
-    save('admin/relief/distributions.php', {'action':'distribute','household_id':'1','received_by':'Fictional Receiver','notes':'Demo','goods[1]':'2'}, 'admin/relief/distributions.php?id=1')
-    save('admin/announcement/announcement.php', dict(action='save_draft', title='Fictional Notice', message='Fictional reminder'), 'admin/announcement/announcement.php')
-    save('admin/announcement/announcement.update.php?id=1', dict(action='publish', title='Fictional Notice', message='Fictional reminder'), 'admin/announcement/announcement.php')
+    save('response/teams.php', dict(action='save_team', team_name='Fictional Test Team', contact_phone='', is_active='1'), 'response/teams.php')
+    save('response/teams.php?edit=1', dict(action='save_team', team_name='Fictional Edited Team', contact_phone='', is_active='1'), 'response/teams.php')
+    save('relief-inventory/index.php', dict(action='save_item', item_name='Fictional Packs', unit='packs'), 'relief-inventory/index.php')
+    save('relief-inventory/index.php?edit=1', dict(action='save_item', item_name='Fictional Food Packs', unit='packs'), 'relief-inventory/index.php')
+    save('relief-inventory/movements.php', dict(action='stock', item_id='1', movement_type='stock_in', quantity='10', notes='Fictional stock'), 'relief-inventory/movements.php')
+    save('relief-distribution/index.php', {'action':'distribute','household_id':'1','received_by':'Fictional Receiver','notes':'Demo','goods[1]':'2'}, 'relief-distribution/index.php?id=1')
+    save('announcements/index.php', dict(action='save_draft', title='Fictional Notice', message='Fictional reminder'), 'announcements/index.php')
+    save('announcements/edit.php?id=1', dict(action='publish', title='Fictional Notice', message='Fictional reminder'), 'announcements/index.php')
     values = dict(action='save_draft', title='Fictional Notice', message='Fictional reminder')
-    code, body = admin.request(prefix + 'admin/announcement/announcement.update.php?id=1', values)
+    code, body = admin.request(prefix + 'announcements/edit.php?id=1', values)
     assert 'Confirm withdrawal' in body and query('SELECT is_published FROM announcements WHERE id=1')[0]['is_published'] == 1
     values['confirm_withdraw'] = '1'
-    save('admin/announcement/announcement.update.php?id=1', values, 'admin/announcement/announcement.php')
+    save('announcements/edit.php?id=1', values, 'announcements/index.php')
     print('PASS team, goods, stock, distribution and announcement save redirects; withdrawal confirmation')
 
-    page = 'admin/records.php?type=teams'
+    page = 'records/index.php?type=teams'
     code, body = admin.request(prefix + page)
     assert 'Delete selected' in body and 'teams:1' in body
     save(page, [('action','delete'),('ids[]','teams:1')], page + '&q=&page=1')
     assert query('SELECT COUNT(*) AS total FROM responders')[0]['total'] == 0
     print('PASS direct checkbox deletion and filtered redirect')
     # Recreate the team for the navigation crawl and browser check.
-    save('admin/response/teams.php', dict(action='save_team', team_name='Fictional UI Team', contact_phone='', is_active='1'), 'admin/response/teams.php')
+    save('response/teams.php', dict(action='save_team', team_name='Fictional UI Team', contact_phone='', is_active='1'), 'response/teams.php')
 
     save('incidents/view.php?id=1', dict(action='review_incident', status='verified', notes='Fictional verification'), 'incidents/view.php?id=1')
-    save('admin/response/incident.php?id=1', dict(action='assign_team', team_id='2', notes='Fictional dispatch'), 'admin/response/incident.php?id=1')
-    save('admin/response/incident.php?id=1', dict(action='update_assignment', assignment_id='1', assignment_status='on_scene', notes='Fictional arrival'), 'admin/response/incident.php?id=1')
+    save('response/incident.php?id=1', dict(action='assign_team', team_id='2', notes='Fictional dispatch'), 'response/incident.php?id=1')
+    save('response/incident.php?id=1', dict(action='update_assignment', assignment_id='1', assignment_status='on_scene', notes='Fictional arrival'), 'response/incident.php?id=1')
     print('PASS incident review, assignment and response update redirects')
 
     pages = [
-        'admin/admin.index.php','incidents/list.php','incidents/create.php','incidents/view.php?id=1',
-        'admin/households.php','admin/households.php?edit=1','admin/household.php?id=1&member=1',
-        'admin/response/teams.php','admin/response/teams.php?edit=2','admin/response/incident.php?id=1',
-        'admin/evacuation/centers.php','admin/evacuation/centers.php?edit=1','admin/evacuation/center.php?id=1',
-        'admin/relief/inventory.php','admin/relief/inventory.php?edit=1','admin/relief/movements.php',
-        'admin/relief/distributions.php','admin/relief/distributions.php?id=1','admin/relief/locations.php',
-        'admin/relief/locations.php?edit=1','admin/relief/location.php?id=1',
-        'admin/announcement/announcement.php','admin/announcement/announcement.update.php?id=1',
-        'admin/summaries/disaster.php','admin/summaries/current.php?type=evacuees','maps/map.php','maps/centers.php','admin/records.php',
+        'dashboard/staff.php','incidents/list.php','incidents/create.php','incidents/view.php?id=1',
+        'households/index.php','households/edit.php?id=1','households/details.php?id=1&member=1',
+        'response/teams.php','response/teams.php?edit=2','response/incident.php?id=1',
+        'evacuation/centers.php','evacuation/centers.php?edit=1','evacuation/center.php?id=1',
+        'relief-inventory/index.php','relief-inventory/index.php?edit=1','relief-inventory/movements.php',
+        'relief-distribution/index.php','relief-distribution/index.php?id=1','relief-inventory/locations.php',
+        'relief-inventory/locations.php?edit=1','relief-inventory/location.php?id=1',
+        'announcements/index.php','announcements/edit.php?id=1',
+        'disaster-reports/index.php','disaster-reports/current.php?type=evacuees','map/map.php','evacuation/open-centers.php','records/index.php',
     ]
     visited = set()
-    for client, paths in [(admin,pages),(resident,['user/user.index.php','user/announcement.php','incidents/list.php','incidents/create.php','incidents/view.php?id=1','maps/map.php','maps/centers.php'])]:
+    for client, paths in [(admin,pages),(resident,['dashboard/resident.php','announcements/published.php','incidents/list.php','incidents/create.php','incidents/view.php?id=1','map/map.php','evacuation/open-centers.php'])]:
         for page in paths:
             code, body = client.request(prefix + page)
             assert code == 200, (page,code)

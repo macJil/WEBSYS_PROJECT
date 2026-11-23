@@ -21,8 +21,8 @@ function announcementGetAnnouncement(): array
 $announcement = announcementGetAnnouncement();
 $errors = announcementSave((int) $announcement["id"]);
 $pageTitle = "Edit announcement";
-require __DIR__ . "/../resources/views/components/header.php";
-require __DIR__ . "/../resources/views/components/errors.php";
+require __DIR__ . "/../includes/header.php";
+require __DIR__ . "/../includes/errors.php";
 ?>
 <h1>Edit announcement</h1>
 <p>Current status: <strong><?= $announcement['is_published']?'Published':'Draft / withdrawn' ?></strong> · Created <?= e($announcement['created_at']) ?></p>
@@ -32,5 +32,5 @@ require __DIR__ . "/editor.php";
 ?>
 <a class="d-block mt-3" href="<?= e(url('announcements/index.php')) ?>">Back to announcements</a>
 <?php
-require __DIR__ . "/../resources/views/components/footer.php";
+require __DIR__ . "/../includes/footer.php";
 ?>

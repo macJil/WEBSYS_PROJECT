@@ -1,5 +1,15 @@
-# Member code responsibilities
+# Nine presenter workflows
 
-The maintained study guide is [docs/team/MEMBER_CODE_EXPLANATIONS.md](../docs/team/MEMBER_CODE_EXPLANATIONS.md). It includes every member’s code segment, source files and full execution traces.
+| Member | Start here | What to show |
+|---|---|---|
+| 1 | `barangay_drrm.sql` and interview record | Introduce the Atok office and distinguish staff requests from current features. Trace the household ID into members and distributions. |
+| 2 | `index.php`, `households/add.php`, `households/details.php` | Sign in, save Demo Household A, and add three members. Point out the prepared insert and redirect. |
+| 3 | `incidents/create.php`, `incidents/image.php` | Submit a fictional report. Explain how the signed-in account owns the report and image. |
+| 4 | `incidents/view.php`, `response/incident.php` | Verify the report, assign teams, complete their actions and read the resulting status. |
+| 5 | `evacuation/center.php` | Select the same household, check in two arrivals, and locate their active stays. |
+| 6 | `relief-inventory/movements.php`, `relief-distribution/index.php` | Receive stock and distribute two goods to the household. Follow the transaction through quantities, distribution lines and movements. |
+| 7 | `announcements/index.php`, `announcements/published.php` | Draft, publish and withdraw a notice while checking resident visibility. |
+| 8 | `dashboard/staff.php`, `disaster-reports/current.php`, `disaster-reports/index.php` | Follow the occupants card to the two arrivals, check one out, refresh and print the summary. |
+| 9 | `map/map.php`, `map/data.php`, `resources/assets/js/community-map.js` | Locate the same incident, explain marker eligibility and show which fields residents receive. |
 
-Use [the full speaking script](LIVE_DEMO_PRESENTATION_SCRIPT.md) for the 28-slide live presentation. Required code demonstrations: Member 1 slide 8; Member 2 slide 12; Member 3 slide 15; Member 4 slide 19; Member 5 slide 23. Each member has seven minutes including their website and code explanation, followed by three minutes of team questions.
+Use the [timed script](LIVE_DEMO_PRESENTATION_SCRIPT.md) for handoffs.

@@ -23,11 +23,11 @@ $householdNotes = [
 ];
 
 $pageTitle = 'Household registry';
-require __DIR__ . '/../resources/views/components/header.php';
+require __DIR__ . '/../includes/header.php';
 ?>
 <h2><?= $id === null ? 'Add household' : 'Edit household' ?></h2>
 <?php
-require __DIR__ . "/../resources/views/components/errors.php";
+require __DIR__ . "/../includes/errors.php";
 ?>
 <form method="post" action="<?= e(url($id === null ? 'households/add.php' : 'households/edit.php?id=' . $id)) ?>">
     <input type="hidden" name="action" value="<?= $id === null ? 'create_household' : 'update_household' ?>" />
@@ -62,11 +62,11 @@ require __DIR__ . "/../resources/views/components/errors.php";
     <p>Not yet assessed: no assessment recorded. No additional assistance need identified: reviewed without an identified need; this does not mean disaster-safe. Additional assistance needed: record the practical help required. Choosing “Not yet assessed” clears prior assessment notes and metadata.</p>
     <?php
     $point = $form;
-    require __DIR__ . "/../resources/views/components/location-picker.php";
+    require __DIR__ . "/../includes/location-picker.php";
     ?>
     <button class="btn btn-primary">Save household</button>
     <a href="<?= e(url('households/index.php')) ?>">Cancel and return to households</a>
 </form>
 <?php
-require __DIR__ . "/../resources/views/components/footer.php";
+require __DIR__ . "/../includes/footer.php";
 ?>

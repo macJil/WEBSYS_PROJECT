@@ -2,13 +2,13 @@
 
 Official project repository: https://github.com/macJil/WEBSYS_PROJECT
 
-A one-barangay classroom project using simple PHP MVC, PDO/MySQL, sessions, and direct PHP pages. Development is in progress.
+BayanReady uses plain PHP pages grouped by module, shared session checks, and PDO/MySQL. Start at `index.php`.
 
-## Current team documentation
+## Presentation and verification
 
-Start with the [team handbook](docs/team/README.md), [five-member assignments](docs/team/TEAM_ASSIGNMENTS.md), [code walkthrough](docs/team/CODE_WALKTHROUGH.md), [complete maintained source](docs/team/SOURCE_COMPANION.md), [self-test guide](docs/team/TESTING_GUIDE.md), and [latest test results](docs/team/FINAL_VERIFICATION.md).
+Use the [nine-presenter walkthrough](presentation/LIVE_DEMO_PRESENTATION_SCRIPT.md) for this branch. The eight module folders are `households/`, `incidents/`, `response/`, `evacuation/`, `relief-inventory/`, `relief-distribution/`, `announcements/`, and `disaster-reports/`. Shared markup lives in `includes/`. Staff and residents open their own pages in `dashboard/`.
 
-The phase documents below are historical. Where they differ, use the current handbook and source: automatic map visibility, household-based check-in, and history-preserving removal are implemented.
+The current fictional HTTP acceptance runner is `tests/household_map_persistence.py`. It creates a disposable database and removes it after the checks. Set `TEST_PHP` and `TEST_MYSQL_SOCKET` for your local test installation. Earlier phase documents and historical tests describe their respective branch versions.
 
 ## Project documents
 

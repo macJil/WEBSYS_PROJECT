@@ -6,7 +6,7 @@ requireRole('resident');
 
 $overview = dashboardDashboardData();
 $pageTitle = "Resident dashboard";
-require __DIR__ . "/../resources/views/components/header.php";
+require __DIR__ . "/../includes/header.php";
 ?>
 <div class="page-intro">
     <p class="eyebrow">Your community overview</p>
@@ -14,9 +14,9 @@ require __DIR__ . "/../resources/views/components/header.php";
     <p>Follow your reports and stay informed about community notices.</p>
 </div>
 <?php
-require __DIR__ . "/../resources/views/components/dashboard-cards.php";
+require __DIR__ . "/../includes/dashboard-cards.php";
 ?>
-<p><a class="btn btn-primary" href="<?= e(url('resources/views/maps/map.php')) ?>">Explore saved locations on the map</a></p>
+<p><a class="btn btn-primary" href="<?= e(url('map/map.php')) ?>">Explore saved locations on the map</a></p>
 <p>Submit incident details for staff review, follow your own reports, and read published barangay notices.</p>
 <ul>
     <li><a href="<?= e(url('incidents/create.php')) ?>">Report an incident and select its location</a></li>
@@ -25,5 +25,5 @@ require __DIR__ . "/../resources/views/components/dashboard-cards.php";
 </ul>
 <p>Submitting a report does not guarantee an immediate emergency response.</p>
 <?php
-require __DIR__ . "/../resources/views/components/footer.php";
+require __DIR__ . "/../includes/footer.php";
 ?>

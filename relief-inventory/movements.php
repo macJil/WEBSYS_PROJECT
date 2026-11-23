@@ -99,8 +99,8 @@ $errors = reliefStock();
 $items = reliefItems();
 $movements = reliefMovements();
 $pageTitle = "Stock movements";
-require __DIR__ . "/../resources/views/components/header.php";
-require __DIR__ . "/../resources/views/components/errors.php";
+require __DIR__ . "/../includes/header.php";
+require __DIR__ . "/../includes/errors.php";
 ?>
 <p class="return-link no-print"><a class="btn btn-outline-secondary" href="<?= e(url('relief-inventory/index.php')) ?>">Back to relief inventory</a></p>
 <h1>Stock movements</h1>
@@ -163,7 +163,7 @@ require __DIR__ . "/../resources/views/components/errors.php";
                         <?php
                         $historyType = 'stock';
                         $historyId = $row['id'];
-                        require __DIR__ . '/../resources/views/components/history-action.php';
+                        require __DIR__ . '/../includes/history-action.php';
                         ?>
                     </td>
                 </tr>
@@ -177,5 +177,5 @@ require __DIR__ . "/../resources/views/components/errors.php";
     </table>
 </div>
 <?php
-require __DIR__ . "/../resources/views/components/footer.php";
+require __DIR__ . "/../includes/footer.php";
 ?>

@@ -79,12 +79,12 @@ if (isPost()) {
 $q = reliefQueryValue("q");
 $items = reliefItems($q);
 $pageTitle = "Relief inventory";
-require __DIR__ . "/../resources/views/components/header.php";
-require __DIR__ . "/../resources/views/components/errors.php";
+require __DIR__ . "/../includes/header.php";
+require __DIR__ . "/../includes/errors.php";
 ?>
 <p class="return-link no-print"><a class="btn btn-outline-secondary" href="<?= e(url(dashboardPath())) ?>">Back to dashboard</a></p>
 <h1>Relief inventory</h1>
-<p><a class="btn btn-outline-secondary" href="<?= e(url('resources/views/admin/records.php?type=goods')) ?>">Manage records</a></p>
+<p><a class="btn btn-outline-secondary" href="<?= e(url('records/index.php?type=goods')) ?>">Manage records</a></p>
 <p><?= count($items) ?> active goods.</p>
 <p><a href="<?= e(url('relief-inventory/locations.php')) ?>">Manage relief locations</a></p>
 <p><a href="<?= e(url('relief-inventory/index.php')) ?>">Inventory</a> · <a href="<?= e(url('relief-inventory/movements.php')) ?>">Stock movements</a> · <a href="<?= e(url('relief-distribution/index.php')) ?>">Household distributions</a></p>
@@ -128,5 +128,5 @@ require __DIR__ . "/../resources/views/components/errors.php";
     <a href="<?= e(url('relief-inventory/index.php')) ?>">Cancel and return to relief inventory</a>
 </form>
 <?php
-require __DIR__ . "/../resources/views/components/footer.php";
+require __DIR__ . "/../includes/footer.php";
 ?>

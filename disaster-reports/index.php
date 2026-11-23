@@ -110,7 +110,7 @@ foreach ($summary["centers"] as $center) {
     $available += (int) $center["available"];
 }
 $pageTitle = "Disaster reports and summaries";
-require __DIR__ . "/../resources/views/components/header.php";
+require __DIR__ . "/../includes/header.php";
 ?>
 <link rel="stylesheet" href="<?= e(url('resources/assets/css/disaster-summary.css')) ?>" />
 <p class="return-link no-print"><a class="btn btn-outline-secondary" href="<?= e(url(dashboardPath())) ?>">Back to dashboard</a></p>
@@ -232,5 +232,5 @@ require __DIR__ . "/../resources/views/components/header.php";
 <p class="no-print">This staff-only page contains totals and center/item names, without household codes, personal names, contact details, incident descriptions, or resident locations.</p>
 <script src="<?= e(url('resources/assets/js/print-summary.js')) ?>"></script>
 <?php
-require __DIR__ . "/../resources/views/components/footer.php";
+require __DIR__ . "/../includes/footer.php";
 ?>

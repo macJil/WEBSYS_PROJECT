@@ -10,7 +10,7 @@ def check_response_history(admin, resident, Client, query, prefix):
         query('ALTER TABLE ' + table + ' DROP COLUMN history_hidden_at')
     query((Path(__file__).resolve().parents[1] / 'database/migrations/008_history_visibility.sql').read_text())
     assert before == {t: query('SELECT COUNT(*) n FROM ' + t)[0]['n'] for t in tables}
-    page = prefix + 'admin/response/incident.php?id=1'
+    page = prefix + 'response/incident.php?id=1'
     def update(assignment, status):
         code, body = admin.request(page, dict(action='update_assignment', assignment_id=str(assignment), assignment_status=status, notes='Fictional synchronization check'))
         assert code == 200 and 'alert-danger' not in body, body[-2000:]
@@ -20,7 +20,7 @@ def check_response_history(admin, resident, Client, query, prefix):
     assert state() == 'resolved'
     update(1, 'assigned')
     assert state() == 'responding'
-    admin.request(prefix + 'admin/response/teams.php', dict(action='save_team', team_name='Fictional second response', contact_phone='', is_active='1'))
+    admin.request(prefix + 'response/teams.php', dict(action='save_team', team_name='Fictional second response', contact_phone='', is_active='1'))
     team = query('SELECT MAX(id) id FROM responders')[0]['id']
     assert admin.request(page, dict(action='assign_team', team_id=str(team), notes='Fictional second dispatch'))[0] == 200
     second = query('SELECT MAX(id) id FROM incident_assignments WHERE incident_id=1')[0]['id']
@@ -33,7 +33,7 @@ def check_response_history(admin, resident, Client, query, prefix):
     assert state() == 'resolved'
     admin.request(prefix + 'incidents/view.php?id=1', dict(action='review_incident', status='verified', notes='Conflicting manual change'))
     assert state() == 'resolved'
-    endpoint = prefix + 'admin/history.php'
+    endpoint = prefix + 'records/history.php'
     values = dict(history_type='response', history_id='1')
     assert resident.request(endpoint, values)[0] == 403
     anonymous = Client()
@@ -55,7 +55,7 @@ def check_response_history(admin, resident, Client, query, prefix):
     assert details == query('SELECT * FROM relief_distribution_items ORDER BY id')
     assert stays == query('SELECT COUNT(*) n FROM evacuation_records WHERE checked_out_at IS NULL')
     assert state() == 'resolved'
-    for path in ['admin/response/incident.php?id=1', 'incidents/view.php?id=1', 'admin/evacuation/center.php?id=1', 'admin/relief/movements.php', 'admin/relief/distributions.php']:
+    for path in ['response/incident.php?id=1', 'incidents/view.php?id=1', 'evacuation/center.php?id=1', 'relief-inventory/movements.php', 'relief-distribution/index.php']:
         code, body = admin.request(prefix + path)
         assert code == 200
         assert 'name="history_id" value="1"' not in body, path

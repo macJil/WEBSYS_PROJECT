@@ -76,15 +76,15 @@ $stmt = db()->prepare(
 $stmt->execute([$id]);
 $members = $stmt->fetchAll();
 $pageTitle = "Household details";
-require __DIR__ . "/../resources/views/components/header.php";
+require __DIR__ . "/../includes/header.php";
 ?>
 <?php
 $savedPoint = $household;
-require __DIR__ . "/../resources/views/components/saved-point.php";
+require __DIR__ . "/../includes/saved-point.php";
 ?>
 <a class="btn btn-outline-secondary" href="<?= e(url('households/index.php')) ?>">Back to households</a>
 <h1><?= e($household['household_code']) ?> — <?= e($household['representative_name']) ?></h1>
-<p><a class="btn btn-outline-secondary" href="<?= e(url('resources/views/admin/records.php?type=members')) ?>">Manage records</a></p>
+<p><a class="btn btn-outline-secondary" href="<?= e(url('records/index.php?type=members')) ?>">Manage records</a></p>
 <a class="d-inline-block mb-3" href="<?= e(url('households/edit.php?id=' . $id)) ?>">Edit household</a>
 <dl class="row">
     <?php foreach (['contact_phone' => 'Emergency contact number','purok' => 'Purok / sitio','address_details' => 'Address and location description','hazard_notes' => 'Hazard notes','vulnerability_notes' => 'Assessment notes / source','vulnerability_assessed_at' => 'Assessment date'] as $field => $label): ?>
@@ -129,7 +129,7 @@ require __DIR__ . "/../resources/views/components/saved-point.php";
 </div>
 <h2><?= $memberId === null ? 'Add member' : 'Edit member' ?></h2>
 <?php
-require __DIR__ . "/../resources/views/components/errors.php";
+require __DIR__ . "/../includes/errors.php";
 ?>
 <form method="post" action="<?= e(url('households/details.php?id=' . $id . ($memberId === null ? '' : '&member=' . $memberId))) ?>">
     <input type="hidden" name="action" value="<?= $memberId === null ? 'create_member' : 'update_member' ?>" />
@@ -143,5 +143,5 @@ require __DIR__ . "/../resources/views/components/errors.php";
     <a href="<?= e(url('households/details.php?id=' . $id)) ?>">Cancel and return to household</a>
 </form>
 <?php
-require __DIR__ . "/../resources/views/components/footer.php";
+require __DIR__ . "/../includes/footer.php";
 ?>

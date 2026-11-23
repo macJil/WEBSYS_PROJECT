@@ -11,7 +11,7 @@ if (isPost()) {
 header("Cache-Control: private, no-store");
 $announcements = announcementListAnnouncements();
 $pageTitle = "Emergency announcements";
-require __DIR__ . "/../resources/views/components/header.php";
+require __DIR__ . "/../includes/header.php";
 ?>
 <p class="return-link no-print"><a class="btn btn-outline-secondary" href="<?= e(url(dashboardPath())) ?>">Back to dashboard</a></p>
 <h1>Emergency announcements</h1>
@@ -31,5 +31,5 @@ require __DIR__ . "/../resources/views/components/header.php";
     </article>
 <?php endforeach; ?>
 <?php
-require __DIR__ . "/../resources/views/components/footer.php";
+require __DIR__ . "/../includes/footer.php";
 ?>

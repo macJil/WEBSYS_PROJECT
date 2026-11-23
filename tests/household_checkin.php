@@ -6,7 +6,6 @@ if (PHP_SAPI !== 'cli') {
 require __DIR__ . '/legacy-models/Evacuation.php';
 require __DIR__ . '/legacy-models/Dashboard.php';
 require __DIR__ . '/legacy-models/DisasterSummary.php';
-require __DIR__ . '/../app/models/Map.php';
 require __DIR__ . '/legacy-models/Report.php';
 $pdo = new PDO('mysql:unix_socket=/Applications/MAMP/tmp/mysql/mysql.sock;charset=utf8mb4', 'root', 'root', [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC]);
 $name = 'bayanready_household_test_' . bin2hex(random_bytes(4));
@@ -29,7 +28,6 @@ try {
     $model = new EvacuationModel($pdo);
     $dashboard = new DashboardModel($pdo);
     $summary = new DisasterSummaryModel($pdo);
-    $map = new MapModel($pdo);
     function check($condition, $label) {
         if (!$condition) {
             throw new RuntimeException($label);
@@ -45,7 +43,7 @@ try {
             check($before == $pdo->query('SELECT COUNT(*) FROM evacuation_records')->fetchColumn(), $label);
         }
     }
-    function checkCounts($dashboard, $summary, $model, $map, $available, $occupants, $label) {
+    function checkCounts($dashboard, $summary, $model, $available, $occupants, $label) {
         $centers = $dashboard->centers();
         $report = $summary->summarize('2000-01-01', '2100-01-01');
         check(count($centers) === 2, $label . ': open center count includes no-point center');
@@ -59,14 +57,12 @@ try {
         foreach ($model->centers('') as $center) {
             check($center['available'] === $model->center((int)$center['id'])['available'], $label . ': admin list matches detail');
         }
-        $mapped = $map->publicMap()['centers'];
-        check(count($mapped) === 1 && (int)$mapped[0]['id'] === 2 && $mapped[0]['available'] === $model->center(2)['available'], $label . ': mapped center matches; no-point center remains in totals');
         check($model->center(4)['available'] === 0 && count($report['centers']) === 4, $label . ': archived detail/history retained without available capacity');
     }
-    checkCounts($dashboard, $summary, $model, $map, 12, 0, 'before check-in');
+    checkCounts($dashboard, $summary, $model, 12, 0, 'before check-in');
     $model->checkinHousehold(1, 1, [1,2,3,4,5], 1);
     check((int)$model->center(1)['occupancy'] === 5, 'five members add five occupants');
-    checkCounts($dashboard, $summary, $model, $map, 7, 5, 'after household check-in');
+    checkCounts($dashboard, $summary, $model, 7, 5, 'after household check-in');
     blocked($model, $pdo, 1, [6,1], 'duplicate batch adds nobody');
     blocked($model, $pdo, 2, [5], 'duplicate at another center adds nobody');
     blocked($model, $pdo, 2, [6,7,8], 'insufficient capacity adds nobody');
@@ -75,17 +71,17 @@ try {
     blocked($model, $pdo, 1, [6,6], 'duplicate selection adds nobody');
     $pdo->exec('UPDATE household_members SET archived_at=NOW() WHERE id=7');
     blocked($model, $pdo, 1, [6,7], 'archived member adds nobody');
-    checkCounts($dashboard, $summary, $model, $map, 7, 5, 'after rejected batches');
+    checkCounts($dashboard, $summary, $model, 7, 5, 'after rejected batches');
     $pdo->exec("INSERT INTO household_members(household_id,full_name) VALUES(1,'Later Fictional Member')");
     check((int)$model->center(1)['occupancy'] === 5, 'registry changes do not change stays');
     $model->checkout(1, 1, 1);
     check((int)$model->center(1)['occupancy'] === 4 && count($model->records(1)) === 5, 'individual checkout retains history');
-    checkCounts($dashboard, $summary, $model, $map, 8, 4, 'after individual checkout');
+    checkCounts($dashboard, $summary, $model, 8, 4, 'after individual checkout');
     $model->checkinHousehold(2, 1, [1,6], 1);
     check((int)$model->center(2)['occupancy'] === 2, 'partial household exactly fills center');
     $model->checkin(1, 'new_walkin', 0, ['full_name'=>'Fictional Walkin','age'=>30,'address_details'=>'Demo','contact_phone'=>'0000000000'], 1);
     check((int)$model->center(1)['occupancy'] === 5, 'walk-in flow remains usable');
-    checkCounts($dashboard, $summary, $model, $map, 5, 7, 'after transfer and walk-in');
+    checkCounts($dashboard, $summary, $model, 5, 7, 'after transfer and walk-in');
     $pdo->exec("INSERT INTO users(full_name,username,email,password,role) VALUES
         ('Fictional Resident A','resident_a','a@example.invalid','unused','resident'),
         ('Fictional Resident B','resident_b','b@example.invalid','unused','resident')");

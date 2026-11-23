@@ -181,8 +181,8 @@ if (!isPost()) {
 }
 $errors = reportCreate($data);
 $pageTitle = "Report incident";
-require __DIR__ . "/../resources/views/components/header.php";
-require __DIR__ . "/../resources/views/components/errors.php";
+require __DIR__ . "/../includes/header.php";
+require __DIR__ . "/../includes/errors.php";
 ?>
 <p class="return-link no-print"><a class="btn btn-outline-secondary" href="<?= e(url('incidents/list.php')) ?>">Back to reports</a></p>
 <h1>Report an incident</h1>
@@ -208,7 +208,7 @@ require __DIR__ . "/../resources/views/components/errors.php";
 <?= e($data['description']) ?></textarea> </label>
     <?php
     $point = $data;
-    require __DIR__ . "/../resources/views/components/location-picker.php";
+    require __DIR__ . "/../includes/location-picker.php";
     ?>
     <label class="d-block mb-3">Incident image (optional; JPEG, PNG, WebP; maximum 5 MiB) <input class="form-control" type="file" name="image" accept="image/jpeg,image/png,image/webp" /></label>
     <p>If a form error occurs, choose the image again before submitting.</p>
@@ -216,5 +216,5 @@ require __DIR__ . "/../resources/views/components/errors.php";
     <a href="<?= e(url('incidents/list.php')) ?>">Cancel and return to reports</a>
 </form>
 <?php
-require __DIR__ . "/../resources/views/components/footer.php";
+require __DIR__ . "/../includes/footer.php";
 ?>

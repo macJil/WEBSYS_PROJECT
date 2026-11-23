@@ -12,11 +12,11 @@ $stmt = db()->prepare($sql);
 $stmt->execute(array_fill(0, 5, $term));
 $rows = $stmt->fetchAll();
 $pageTitle = 'Household registry';
-require __DIR__ . '/../resources/views/components/header.php';
+require __DIR__ . '/../includes/header.php';
 ?>
 <p class="return-link no-print"><a class="btn btn-outline-secondary" href="<?= e(url(dashboardPath())) ?>">Back to dashboard</a></p>
 <h1>Household registry</h1>
-<p><a class="btn btn-outline-secondary" href="<?= e(url('resources/views/admin/records.php?type=households')) ?>">Manage records</a></p>
+<p><a class="btn btn-outline-secondary" href="<?= e(url('records/index.php?type=households')) ?>">Manage records</a></p>
 <form method="get" class="filter-form d-flex gap-2 mb-3">
     <label for="search" class="visually-hidden">Search households</label>
     <input id="search" class="form-control" name="q" maxlength="255" value="<?= e($search) ?>" placeholder="Code, representative, purok, address or contact" />
@@ -56,4 +56,4 @@ require __DIR__ . '/../resources/views/components/header.php';
     </table>
 </div>
 <a class="btn btn-primary" href="<?= e(url('households/add.php')) ?>">Add household</a>
-<?php require __DIR__ . '/../resources/views/components/footer.php'; ?>
+<?php require __DIR__ . '/../includes/footer.php'; ?>

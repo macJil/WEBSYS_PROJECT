@@ -1,9 +1,9 @@
 <?php
-require_once __DIR__ . "/../../../app/helpers.php";
+require_once __DIR__ . "/../app/helpers.php";
 session_checker();
 $point = $point ?? [];
 ?>
-<fieldset class="location-picker mb-3" data-address-url="<?= e(($settings['address_lookup_url'] ?? 'enabled') === '' ? '' : url('resources/views/maps/address.php')) ?>">
+<fieldset class="location-picker mb-3" data-address-url="<?= e(($settings['address_lookup_url'] ?? 'enabled') === '' ? '' : url('map/address.php')) ?>">
     <legend>Location point (optional)</legend>
     <p>Confirm the written address or landmark above. A point does not assess hazard risk.</p>
     <?php if (($settings['address_lookup_url'] ?? 'https://photon.komoot.io/reverse') !== ''): ?>

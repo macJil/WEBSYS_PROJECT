@@ -92,11 +92,11 @@ with tempfile.TemporaryDirectory(prefix='bayanready-address-') as temporary:
             assert code == 200 and 'Log out' in body, body[:300]
         cases = [
             (resident, 'incidents/create.php', 'incident_reports', 'location_description', 'incidents/view.php', dict(action='create_incident', incident_type='other', description='Fictional exercise', reporter_name='Fictional person', contact_phone='0000000000')),
-            (admin, 'admin/households.php', 'households', 'address_details', 'admin/household.php', dict(action='create_household', household_code='DEMO-ADDR', representative_name='Fictional person', contact_phone='', purok='Demo', registry_reason='monitored', hazard_type='unassessed', hazard_notes='', vulnerability_category='unassessed', vulnerability_notes='', evacuation_status='at_home')),
-            (admin, 'admin/evacuation/centers.php', 'evacuation_centers', 'address_details', 'admin/evacuation/center.php', dict(action='save_center', name='Fictional center', capacity='5', status='open')),
-            (admin, 'admin/relief/locations.php', 'relief_locations', 'address_details', 'admin/relief/location.php', dict(action='save_location', name='Fictional relief point', location_type='distribution')),
+            (admin, 'households/index.php', 'households', 'address_details', 'households/details.php', dict(action='create_household', household_code='DEMO-ADDR', representative_name='Fictional person', contact_phone='', purok='Demo', registry_reason='monitored', hazard_type='unassessed', hazard_notes='', vulnerability_category='unassessed', vulnerability_notes='', evacuation_status='at_home')),
+            (admin, 'evacuation/centers.php', 'evacuation_centers', 'address_details', 'evacuation/center.php', dict(action='save_center', name='Fictional center', capacity='5', status='open')),
+            (admin, 'relief-inventory/locations.php', 'relief_locations', 'address_details', 'relief-inventory/location.php', dict(action='save_location', name='Fictional relief point', location_type='distribution')),
         ]
-        prefix = '/resources/views/'
+        prefix = '/'
         for client, page, table, field, detail, values in cases:
             page_url = '/households/add.php' if table == 'households' else prefix + page
             code, body = client.request(page_url)
@@ -152,7 +152,7 @@ with tempfile.TemporaryDirectory(prefix='bayanready-address-') as temporary:
                     self.parts = None
 
         def verify_dashboard(available, occupants):
-            code, body = admin.request(prefix + 'admin/admin.index.php')
+            code, body = admin.request(prefix + 'dashboard/staff.php')
             cards = Cards()
             cards.feed(body)
             assert code == 200 and cards.cards['Available capacity (people)'][0] == available
@@ -160,20 +160,20 @@ with tempfile.TemporaryDirectory(prefix='bayanready-address-') as temporary:
             assert cards.cards['Open centers'][0] == 2
             for label in ['Available capacity (people)', 'Active evacuees', 'Open centers']:
                 assert admin.request(cards.cards[label][1])[0] == 200
-            code, body = admin.request(prefix + 'admin/evacuation/center.php?id=1')
+            code, body = admin.request(prefix + 'evacuation/center.php?id=1')
             assert 'Available capacity (people): <strong>' + str(5 - occupants) + '</strong>' in body
             print('PASS HTTP dashboard/detail totals and card links:', available, occupants)
 
         verify_dashboard(12, 0)
         checkin = [('action', 'checkin_household'), ('household_id', '1')]
         checkin += [('member_ids[]', str(member)) for member in range(1, 6)]
-        code, body = admin.request(prefix + 'admin/evacuation/center.php?id=1', checkin)
+        code, body = admin.request(prefix + 'evacuation/center.php?id=1', checkin)
         assert code == 200 and 'alert-danger' not in body
         verify_dashboard(7, 5)
-        code, body = admin.request(prefix + 'admin/evacuation/center.php?id=1', {'action': 'checkout', 'record_id': '1'})
+        code, body = admin.request(prefix + 'evacuation/center.php?id=1', {'action': 'checkout', 'record_id': '1'})
         assert code == 200 and 'alert-danger' not in body
         verify_dashboard(8, 4)
-        assert resident.request(prefix + 'admin/households.php')[0] == 403
+        assert resident.request(prefix + 'households/index.php')[0] == 403
         print('PASS resident blocked from staff forms')
         from simple_actions import check_actions
         check_actions(admin, resident, query, prefix)

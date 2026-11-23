@@ -172,8 +172,8 @@ $teams = array_filter(
 );
 $open = in_array($incident["status"], ["verified", "responding", "resolved"], true);
 $pageTitle = "Response for incident #" . $id;
-require __DIR__ . "/../resources/views/components/header.php";
-require __DIR__ . "/../resources/views/components/errors.php";
+require __DIR__ . "/../includes/header.php";
+require __DIR__ . "/../includes/errors.php";
 ?>
 <h1><?= e($pageTitle) ?></h1>
 <p><?= e($incident['incident_type']) ?> · <?= e($incident['location_description']) ?> · Status: <strong><?= e($incident['status']) ?></strong></p>
@@ -235,10 +235,10 @@ require __DIR__ . "/../resources/views/components/errors.php";
         <?php
         $historyType = 'response';
         $historyId = $entry['id'];
-        require __DIR__ . '/../resources/views/components/history-action.php';
+        require __DIR__ . '/../includes/history-action.php';
         ?>
     </article>
 <?php endforeach; ?>
 <?php
-require __DIR__ . "/../resources/views/components/footer.php";
+require __DIR__ . "/../includes/footer.php";
 ?>

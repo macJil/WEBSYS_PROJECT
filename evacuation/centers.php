@@ -123,12 +123,12 @@ if (isPost()) {
 $q = is_string($_GET["q"] ?? null) ? trim($_GET["q"]) : "";
 $centers = evacuationDbCenters($q);
 $pageTitle = "Evacuation centers";
-require __DIR__ . "/../resources/views/components/header.php";
-require __DIR__ . "/../resources/views/components/errors.php";
+require __DIR__ . "/../includes/header.php";
+require __DIR__ . "/../includes/errors.php";
 ?>
 <p class="return-link no-print"><a class="btn btn-outline-secondary" href="<?= e(url(dashboardPath())) ?>">Back to dashboard</a></p>
 <h1>Evacuation centers</h1>
-<p><a class="btn btn-outline-secondary" href="<?= e(url('resources/views/admin/records.php?type=centers')) ?>">Manage records</a></p>
+<p><a class="btn btn-outline-secondary" href="<?= e(url('records/index.php?type=centers')) ?>">Manage records</a></p>
 <form method="get" class="filter-form mb-3">
     <label>Search name or address <input name="q" value="<?= e($q) ?>" /></label>
     <button class="btn btn-outline-secondary">Search</button> <a href="<?= e(url('evacuation/centers.php')) ?>">Clear</a>
@@ -182,11 +182,11 @@ require __DIR__ . "/../resources/views/components/errors.php";
     <p>Check out all occupants before closing a center. Capacity cannot be reduced below current occupancy.</p>
     <?php
     $point = $data;
-    require __DIR__ . "/../resources/views/components/location-picker.php";
+    require __DIR__ . "/../includes/location-picker.php";
     ?>
     <button class="btn btn-primary" name="action" value="save_center">Save center</button>
     <a href="<?= e(url('evacuation/centers.php')) ?>">Cancel and return to evacuation centers</a>
 </form>
 <?php
-require __DIR__ . "/../resources/views/components/footer.php";
+require __DIR__ . "/../includes/footer.php";
 ?>

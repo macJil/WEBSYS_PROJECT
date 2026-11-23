@@ -303,15 +303,15 @@ foreach ($members as $member) {
 $center = evacuationCenter($id);
 $walkins = evacuationDbWalkins();
 $pageTitle = $center["name"];
-require __DIR__ . "/../resources/views/components/header.php";
-require __DIR__ . "/../resources/views/components/errors.php";
+require __DIR__ . "/../includes/header.php";
+require __DIR__ . "/../includes/errors.php";
 ?>
 <?php
 $savedPoint = $center;
-require __DIR__ . "/../resources/views/components/saved-point.php";
+require __DIR__ . "/../includes/saved-point.php";
 ?>
 <h1><?= e($center['name']) ?></h1>
-<p><a class="btn btn-outline-secondary" href="<?= e(url('resources/views/admin/records.php?type=walkins')) ?>">Manage records</a></p>
+<p><a class="btn btn-outline-secondary" href="<?= e(url('records/index.php?type=walkins')) ?>">Manage records</a></p>
 <p><?= e($center['address_details']) ?> · <?= e($center['status']) ?> · Occupancy: <?= (int)$center['occupancy'] ?> / <?= (int)$center['capacity'] ?> people</p>
 <p>Available capacity (people): <strong><?= (int)$center['available'] ?></strong></p>
 <a class="btn btn-outline-secondary" href="<?= e(url('evacuation/centers.php')) ?>">Back to evacuation centers</a> · <a href="<?= e(url('evacuation/centers.php?edit=' . $id)) ?>">Edit / close center</a>
@@ -412,7 +412,7 @@ require __DIR__ . "/../resources/views/components/saved-point.php";
                             <?php
                             $historyType = 'evacuation';
                             $historyId = $record['id'];
-                            require __DIR__ . '/../resources/views/components/history-action.php';
+                            require __DIR__ . '/../includes/history-action.php';
                             ?>
                         <?php endif; ?>
                     </td>
@@ -428,5 +428,5 @@ require __DIR__ . "/../resources/views/components/saved-point.php";
 </div>
 <script src="<?= e(url('resources/assets/js/household-checkin.js')) ?>" defer></script>
 <?php
-require __DIR__ . "/../resources/views/components/footer.php";
+require __DIR__ . "/../includes/footer.php";
 ?>

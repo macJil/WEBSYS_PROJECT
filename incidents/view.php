@@ -199,8 +199,8 @@ if ($admin && isPost() && input("action") === "update_location") {
 $images = reportImages($id);
 $history = $admin ? reportHistory($id) : [];
 $pageTitle = "Incident #" . $id;
-require __DIR__ . "/../resources/views/components/header.php";
-require __DIR__ . "/../resources/views/components/errors.php";
+require __DIR__ . "/../includes/header.php";
+require __DIR__ . "/../includes/errors.php";
 ?>
 <h1><?= e($pageTitle) ?></h1>
 <dl>
@@ -241,7 +241,7 @@ require __DIR__ . "/../resources/views/components/errors.php";
                 $point["latitude"] = input("latitude");
                 $point["longitude"] = input("longitude");
             }
-            require __DIR__ . "/../resources/views/components/location-picker.php";
+            require __DIR__ . "/../includes/location-picker.php";
             ?>
             <label class="d-block mb-3">Reason for correction<input class="form-control" name="location_notes" maxlength="255" required value="<?= e(input('location_notes')) ?>" /></label>
             <button class="btn btn-primary" name="action" value="update_location">Save location correction</button>
@@ -265,11 +265,11 @@ require __DIR__ . "/../resources/views/components/errors.php";
         <?php
         $historyType = 'response';
         $historyId = $entry['id'];
-        require __DIR__ . '/../resources/views/components/history-action.php';
+        require __DIR__ . '/../includes/history-action.php';
         ?>
     <?php endforeach; ?>
 <?php endif; ?>
 <a class="d-block mt-3" href="<?= e(url('incidents/list.php')) ?>">Back to reports</a>
 <?php
-require __DIR__ . "/../resources/views/components/footer.php";
+require __DIR__ . "/../includes/footer.php";
 ?>
