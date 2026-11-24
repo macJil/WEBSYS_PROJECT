@@ -23,7 +23,7 @@ require __DIR__ . "/../includes/header.php";
         <p class="small">≈ Flooding · 🔥 Fire · ◩ Landslide · ⛔ Road obstruction · ⚠ Other emergency</p>
         <?php if ($admin): ?>
             <label class="map-layer"><input type="checkbox" data-layer="households" checked>
-                <span aria-hidden="true">🏠</span> Household registry (staff only) <span id="count-households"></span>
+                <span class="map-symbol household" aria-hidden="true">🏠</span> Household registry (staff only) <span id="count-households"></span>
             </label>
         <?php endif; ?>
         <label class="map-layer">
@@ -49,7 +49,7 @@ require __DIR__ . "/../includes/header.php";
 </div>
 <script src="<?= e(url('assets/vendor/leaflet/leaflet.js')) ?>"></script>
 <script src="<?= e(url('assets/js/atok-boundary.js')) ?>"></script>
-<script src="<?= e(url('assets/js/community-map.js?v=atok-layers')) ?>"></script>
+<script src="<?= e(url('assets/js/community-map.js?v=pin-tip')) ?>"></script>
 <?php
 require __DIR__ . "/../includes/footer.php";
 ?>

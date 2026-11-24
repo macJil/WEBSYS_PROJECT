@@ -160,11 +160,12 @@
                             html:
                                 '<span class="map-symbol ' + color + '" aria-hidden="true">' + symbol + "</span>",
                             iconSize: [28, 28],
-                            iconAnchor: [14, 14],
+                            iconAnchor: [14, 34],
+                            popupAnchor: [0, -32],
                         });
                         L.marker([lat, lng], {
                             icon,
-                            title: layer === "centers" ? "Evacuation center: " + row.status : (types[row.incident_type] || layer),
+                            title: row.name || types[row.incident_type] || "Household registry",
                             keyboard: true,
                         })
                             .bindPopup(popup(layer, row))

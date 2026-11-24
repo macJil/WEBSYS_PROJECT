@@ -314,7 +314,7 @@ START TRANSACTION;
 
 INSERT INTO households
 (id,household_code,representative_name,barangay,purok,address_details,registry_reason,hazard_type,latitude,longitude) VALUES
-(1,'DEMO-ATOK-01','Demo Resident One','Paoay','Demo Block A','Fictional training lane','both','flood',16.6236,120.7642),
+(1,'DEMO-ATOK-01','Demo Resident One','Paoay','Demo Block A','Fictional training lane','both','flood',16.62366,120.7575),
 (2,'DEMO-ATOK-02','Demo Resident Three','Topdac','Demo Block B','Fictional upper lane','monitored','landslide',NULL,NULL);
 INSERT INTO household_members (id,household_id,full_name,age) VALUES
 (1,1,'Demo Resident One',32),(2,1,'Demo Resident Two',24),(3,2,'Demo Resident Three',48);
@@ -326,8 +326,8 @@ INSERT INTO users (id,full_name,username,email,password,phone,role,household_mem
 INSERT INTO incident_reports
 (id,reported_by,barangay,report_source,reporter_name,incident_type,description,location_description,latitude,longitude,status,reviewed_by,reviewed_at,created_at) VALUES
 (1,2,'Topdac','phone','Demo Caller','landslide','Drill: debris cleared from the training road.','Fictional upper lane',NULL,NULL,'resolved',2,NOW()-INTERVAL 1 DAY,NOW()-INTERVAL 2 DAY),
-(2,2,'Paoay','walk_in','Demo Visitor','road_obstruction','Drill: a branch blocks the practice crossing.','Demo crossing',16.6239,120.7643,'responding',2,NOW(),NOW()-INTERVAL 2 HOUR),
-(3,3,'Paoay','resident','Demo Resident One','flood','Drill: water across the training lane.','Demo training lane',16.62366,120.76422,'pending',NULL,NULL,NOW());
+(2,2,'Paoay','walk_in','Demo Visitor','road_obstruction','Drill: a branch blocks the practice crossing.','Demo crossing',16.62366,120.76422,'responding',2,NOW(),NOW()-INTERVAL 2 HOUR),
+(3,3,'Paoay','resident','Demo Resident One','flood','Drill: water across the training lane.','Demo training lane',16.617,120.76422,'pending',NULL,NULL,NOW());
 UPDATE incident_reports SET contact_phone='09000000000' WHERE id=3;
 INSERT INTO responders (id,team_name) VALUES (1,'Demo Response Alpha'),(2,'Demo Response Bravo');
 INSERT INTO incident_assignments (id,incident_id,responder_id,assigned_by,status,assigned_at) VALUES
@@ -338,7 +338,7 @@ INSERT INTO response_updates (incident_id,updated_by,action_taken,from_status,to
 (2,2,'Demo team dispatched to crossing.','pending','responding',2,'assigned',NOW());
 
 INSERT INTO evacuation_centers (id,name,barangay,address_details,capacity,status,latitude,longitude) VALUES
-(1,'Demo Training Shelter','Paoay','Fictional assembly hall',5,'open',16.6238,120.7643),
+(1,'Demo Training Shelter','Paoay','Fictional assembly hall',5,'open',16.63,120.76422),
 (2,'Demo Reserve Shelter','Topdac','Fictional reserve hall',4,'closed',NULL,NULL);
 INSERT INTO evacuation_walkins (id,full_name,age,address_details,contact_phone,identity_key) VALUES
 (1,'Demo Returning Visitor',42,'Demo Lane B','09000000001',SHA2('["demo returning visitor","42","demo lane b","09000000001"]',256));
@@ -347,7 +347,7 @@ INSERT INTO evacuation_records (center_id,walkin_id,walkin_name,walkin_contact,r
 (1,1,'Demo Returning Visitor','09000000001',2,NOW()-INTERVAL 1 DAY,NOW(),2);
 
 INSERT INTO relief_locations (id,name,location_type,address_details,latitude,longitude) VALUES
-(1,'Demo Relief Desk','distribution','Fictional assembly hall',16.6239,120.7644);
+(1,'Demo Relief Desk','distribution','Fictional east supply desk',16.62366,120.7714);
 INSERT INTO relief_items (id,item_name,unit,quantity_on_hand) VALUES
 (1,'Demo food pack','packs',18),(2,'Demo drinking water','bottles',18),(3,'Demo blanket','pieces',0);
 INSERT INTO relief_distributions (id,household_id,relief_location_id,received_by,distributed_by,notes) VALUES

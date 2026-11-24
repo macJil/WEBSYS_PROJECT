@@ -428,6 +428,16 @@ legend {
     margin: 0.35rem 0;
     overflow-wrap: anywhere;
 }
+.map-marker-icon::after {
+    content: "";
+    position: absolute;
+    left: 8px;
+    top: 27px;
+    border: 6px solid transparent;
+    border-top: 7px solid #263545;
+    border-bottom: 0;
+    pointer-events: none;
+}
 #community-map,
 [data-picker-map],
 #saved-incident-map {
