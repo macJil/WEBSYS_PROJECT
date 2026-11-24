@@ -291,8 +291,8 @@ require __DIR__ . "/../includes/errors.php";
             <button class="btn btn-primary" name="action" value="update_location">Save location correction</button>
         </form>
     <?php endif; ?>
-    <h2 class="mt-4">Staff review</h2>
     <?php if ($report['archived_at'] === null && $report['status'] === 'pending'): ?>
+        <h2 class="mt-4">Staff review</h2>
         <form method="post">
             <label class="d-block">Response team for dispatch
                 <select class="form-select" name="team_id">
@@ -309,9 +309,8 @@ require __DIR__ . "/../includes/errors.php";
             <button name="action" value="verify_only" class="btn btn-outline-secondary">Verify only</button>
             <button name="action" value="reject" class="btn btn-outline-danger">Reject</button>
         </form>
-    <?php elseif ($report['archived_at'] === null && responseDbAssignmentStatus($id) !== null): ?>
-        <p>Team updates determine the incident status.</p>
-    <?php elseif ($report['archived_at'] === null && in_array($report['status'], ['verified', 'resolved', 'rejected'], true)): ?>
+    <?php elseif ($report['archived_at'] === null && responseDbAssignmentStatus($id) === null && in_array($report['status'], ['verified', 'resolved', 'rejected'], true)): ?>
+        <h2 class="mt-4">Staff review</h2>
         <form method="post">
             <label class="d-block my-3">Reason
                 <textarea class="form-control" name="notes" maxlength="255" required><?= e(input('notes')) ?></textarea>
