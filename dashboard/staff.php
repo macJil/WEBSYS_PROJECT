@@ -16,9 +16,7 @@ $pageTitle = "Staff dashboard";
 require __DIR__ . "/../includes/header.php";
 ?>
 <div class="page-intro">
-    <p class="eyebrow">Your community overview</p>
     <h1><?= e($settings['app_name']) ?> — staff dashboard</h1>
-    <p>A current overview of incidents, evacuation, and relief.</p>
 </div>
 <h2>Current municipal overview</h2>
 <?php require __DIR__ . '/../includes/dashboard-cards.php'; ?>
@@ -80,8 +78,7 @@ require __DIR__ . "/../includes/header.php";
     <?php endforeach; ?>
 </div>
 <?php require __DIR__ . '/../includes/weather.php'; ?>
-<p><a class="btn btn-primary" href="<?= e(url('map/map.php')) ?>">Explore saved locations on the map</a></p>
-<p>Use the shared records to manage incidents, response teams, evacuation, and relief.</p>
+<p><a class="btn btn-primary" href="<?= e(url('map/map.php')) ?>">Open map</a></p>
 <div class="row g-3">
     <?php foreach ([
         ['Household registry','Register households and members before evacuation and household relief distribution.','households/index.php'],
