@@ -12,18 +12,18 @@ try {
     $sql = "SELECT m.full_name, m.household_id, h.barangay
             FROM household_members m
             JOIN households h ON h.id=m.household_id
-            JOIN users staff ON staff.assigned_barangay=h.barangay
-            WHERE m.id=? AND staff.id=? AND staff.role='admin' AND staff.is_active=1
+            JOIN users staff ON staff.id=?
+            WHERE m.id=? AND staff.role='admin' AND staff.is_active=1
               AND m.archived_at IS NULL AND h.archived_at IS NULL";
     $stmt = $pdo->prepare($sql . (isPost() ? ' FOR UPDATE' : ''));
-    $stmt->execute([$id, $_SESSION['ID']]);
+    $stmt->execute([$_SESSION['ID'], $id]);
     $member = $stmt->fetch();
     if (!$member || !in_array($member['barangay'], ATOK_BARANGAYS, true)) {
         if ($pdo->inTransaction()) {
             $pdo->rollBack();
         }
         http_response_code(403);
-        exit('Enrollment requires an active member in your assigned barangay.');
+        exit('Enrollment requires active staff and an active member of a household with a confirmed Atok barangay.');
     }
     if (isPost()) {
         $email = input('email');

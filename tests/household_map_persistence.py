@@ -307,13 +307,11 @@ with tempfile.TemporaryDirectory(prefix='bayanready-address-') as temporary:
         data.update(action='update_member', full_name='Fictional Updated')
         assert 'Fictional Updated' in admin.request(detail + '&member=' + str(member), data)[1]
         endpoint = '/households/account.php?member=' + str(member)
-        assert 'id="enrollment-help"' in admin.request(detail)[1]
-        assert 'disabled aria-describedby="enrollment-help">Create resident account' in admin.request(detail)[1]
         credentials = dict(confirmed='yes', email='new@example.invalid')
-        assert admin.request(endpoint, credentials)[0] == 403
+        assert 'href="' + endpoint + '"' in admin.request(detail)[1]
         query("UPDATE users SET assigned_barangay='Topdac' WHERE role='admin'")
-        assert admin.request(endpoint, credentials)[0] == 403
-        query("UPDATE users SET assigned_barangay='Paoay' WHERE role='admin'")
+        assert admin.request(endpoint)[0] == 200
+        query("UPDATE users SET assigned_barangay=NULL WHERE role='admin'")
         assert 'href="' + endpoint + '"' in admin.request(detail)[1]
         assert 'Resident email for login' in admin.request(endpoint)[1]
         assert resident.request(endpoint, credentials)[0] == 403

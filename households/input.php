@@ -37,12 +37,8 @@ function prepareHousehold(array &$data, ?array $old)
         return ['Archived households cannot be edited.'];
     }
     $errors = locationErrors($data['address_details'], $data['latitude'], $data['longitude']);
-    $area = assignedBarangay();
     if (!in_array($data['barangay'], ATOK_BARANGAYS, true)) {
         $errors[] = 'Choose an Atok barangay.';
-    }
-    if ($area && ($data['barangay'] !== $area || ($old && $old['barangay'] !== $area))) {
-        $errors[] = 'You can only save households in your assigned barangay.';
     }
     foreach (['household_code' => 30, 'representative_name' => 100, 'purok' => 100] as $field => $max) {
         if ($data[$field] === '' || strlen($data[$field]) > $max) {

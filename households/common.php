@@ -10,13 +10,6 @@ const HOUSEHOLD_VULNERABILITY = [
 ];
 require_once __DIR__ . '/../includes/barangays.php';
 
-function assignedBarangay()
-{
-    $stmt = db()->prepare("SELECT assigned_barangay FROM users WHERE id=? AND role='admin' AND is_active=1");
-    $stmt->execute([$_SESSION['ID']]);
-    return $stmt->fetchColumn();
-}
-
 const HOUSEHOLD_HAZARDS = [
     'unassessed' => 'Not assessed',
     'landslide' => 'Landslide',

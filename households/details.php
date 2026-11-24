@@ -75,16 +75,11 @@ $stmt = db()->prepare(
 );
 $stmt->execute([$id]);
 $members = $stmt->fetchAll();
-$area = assignedBarangay();
 $enrollmentMessage = '';
 if ($household['archived_at']) {
     $enrollmentMessage = 'Restore this household before enrolling a resident.';
-} elseif (!in_array($area, ATOK_BARANGAYS, true)) {
-    $enrollmentMessage = 'Ask your database administrator to assign your staff account its authorized barangay.';
-} elseif (!$household['barangay']) {
-    $enrollmentMessage = 'Ask municipal staff to confirm the barangay on this household record.';
-} elseif ($area !== $household['barangay']) {
-    $enrollmentMessage = 'Enrollment for this household requires an official assigned to ' . $household['barangay'] . '.';
+} elseif (!in_array($household['barangay'], ATOK_BARANGAYS, true)) {
+    $enrollmentMessage = 'Confirm the household’s Atok barangay in Edit household before enrollment.';
 }
 $pageTitle = "Household details";
 require __DIR__ . "/../includes/header.php";
