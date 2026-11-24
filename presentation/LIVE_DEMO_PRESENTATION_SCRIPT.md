@@ -18,7 +18,7 @@ This slide identifies the interview visit. Use the approved photograph if availa
 
 ATOK MDRRM SYSTEM  /  MEMBER 1 · 01:10–02:00
 
-The office requested weather information for CAR and the ability to print reports. On this plain PHP branch we can demonstrate the staff and resident dashboards and print the disaster summary. Weather remains a stakeholder request for this version.
+The office requested weather information for CAR and the ability to print reports. On this plain PHP branch we can demonstrate the staff and resident dashboards and print the disaster summary. Both dashboards show a daily forecast for Sayangan and link to the official PAGASA Northern Luzon advisories.
 
 ## Read the fictional database records
 

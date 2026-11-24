@@ -22,6 +22,7 @@ require __DIR__ . "/../includes/header.php";
 </div>
 <?php
 require __DIR__ . "/../includes/dashboard-cards.php";
+require __DIR__ . "/../includes/weather.php";
 ?>
 <h2>Reports by incident type</h2>
 <form class="row g-2 mb-3" method="get">

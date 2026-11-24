@@ -15,6 +15,7 @@ require __DIR__ . "/../includes/header.php";
 </div>
 <?php
 require __DIR__ . "/../includes/dashboard-cards.php";
+require __DIR__ . "/../includes/weather.php";
 ?>
 <p><a class="btn btn-primary" href="<?= e(url('map/map.php')) ?>">Explore saved locations on the map</a></p>
 <p>Submit incident details for staff review, follow your own reports, and read published barangay notices.</p>
