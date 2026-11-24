@@ -360,4 +360,45 @@ INSERT INTO relief_stock_movements (item_id,movement_type,quantity,distribution_
 INSERT INTO announcements (title,message,is_published,first_published_at,created_by) VALUES
 ('Demo exercise notice','Classroom exercise only. View the Demo Training Shelter on the map.',1,NOW(),2),
 ('Demo staff draft','Draft of the fictional preparedness reminder.',0,NULL,2);
+
+-- Additional fictional incidents for type filters, the map and status histories.
+SET @demo_day = (SELECT created_at FROM incident_reports WHERE id=3);
+INSERT INTO incident_reports
+(reported_by,report_source,reporter_name,barangay,incident_type,description,location_description,latitude,longitude,status,reviewed_by,reviewed_at,created_at)
+VALUES (2,'phone','Demo Caller','Caliking','fire','Drill: smoke reported at the practice shed.','Demo workshop',16.525,120.694,'verified',2,@demo_day - INTERVAL 5 HOUR + INTERVAL 1 HOUR,@demo_day - INTERVAL 5 HOUR);
+SET @demo_report = LAST_INSERT_ID();
+INSERT INTO response_updates (incident_id,updated_by,action_taken,from_status,to_status,created_at)
+VALUES (@demo_report,2,'Staff confirmed the fictional smoke report.','pending','verified',@demo_day - INTERVAL 5 HOUR + INTERVAL 1 HOUR);
+INSERT INTO incident_reports
+(reported_by,report_source,reporter_name,barangay,incident_type,description,location_description,latitude,longitude,status,reviewed_by,reviewed_at,created_at)
+VALUES (3,'resident','Demo Resident One','Abiang','flood','Drill: water covers the exercise footbridge.','Demo footbridge',16.592,120.729,'verified',2,@demo_day - INTERVAL 10 HOUR + INTERVAL 1 HOUR,@demo_day - INTERVAL 10 HOUR);
+SET @demo_report = LAST_INSERT_ID();
+INSERT INTO response_updates (incident_id,updated_by,action_taken,from_status,to_status,created_at)
+VALUES (@demo_report,2,'Staff confirmed water on the exercise route.','pending','verified',@demo_day - INTERVAL 10 HOUR + INTERVAL 1 HOUR);
+INSERT INTO incident_reports
+(reported_by,report_source,reporter_name,barangay,incident_type,description,location_description,latitude,longitude,status,reviewed_by,reviewed_at,created_at)
+VALUES (2,'phone','Demo Caller','Cattubo','landslide','Drill: loose soil covers the practice trail.','Demo hillside trail',16.652,120.759,'verified',2,@demo_day - INTERVAL 15 HOUR + INTERVAL 1 HOUR,@demo_day - INTERVAL 15 HOUR);
+SET @demo_report = LAST_INSERT_ID();
+INSERT INTO response_updates (incident_id,updated_by,action_taken,from_status,to_status,created_at)
+VALUES (@demo_report,2,'Staff confirmed the simulated slide.','pending','verified',@demo_day - INTERVAL 15 HOUR + INTERVAL 1 HOUR);
+INSERT INTO incident_reports
+(reported_by,report_source,reporter_name,barangay,incident_type,description,location_description,latitude,longitude,status,reviewed_by,reviewed_at,created_at)
+VALUES (2,'phone','Demo Caller','Pasdong','other','Drill: a training shelter lost its lighting.','Demo equipment tent',16.631,120.713,'resolved',2,@demo_day - INTERVAL 20 HOUR + INTERVAL 1 HOUR,@demo_day - INTERVAL 20 HOUR);
+SET @demo_report = LAST_INSERT_ID();
+INSERT INTO response_updates (incident_id,updated_by,action_taken,from_status,to_status,created_at)
+VALUES (@demo_report,2,'Staff verified the lighting outage.','pending','verified',@demo_day - INTERVAL 20 HOUR + INTERVAL 1 HOUR);
+INSERT INTO response_updates (incident_id,updated_by,action_taken,from_status,to_status,created_at)
+VALUES (@demo_report,2,'Lighting restored during the drill.','verified','resolved',@demo_day - INTERVAL 20 HOUR + INTERVAL 2 HOUR);
+INSERT INTO incident_reports
+(reported_by,report_source,reporter_name,barangay,incident_type,description,location_description,latitude,longitude,status,reviewed_by,reviewed_at,created_at)
+VALUES (2,'phone','Demo Caller','Naguey','road_obstruction','Drill: a fallen tree blocks the exercise route.','Demo orchard lane',16.607,120.686,'pending',NULL,NULL,@demo_day - INTERVAL 25 HOUR);
+INSERT INTO incident_reports
+(reported_by,report_source,reporter_name,barangay,incident_type,description,location_description,latitude,longitude,status,reviewed_by,reviewed_at,created_at)
+VALUES (2,'phone','Demo Caller','Poblacion','fire','Drill: a second caller reported the same exercise alarm.','Demo alarm station',16.571,120.675,'rejected',2,@demo_day - INTERVAL 30 HOUR + INTERVAL 1 HOUR,@demo_day - INTERVAL 30 HOUR);
+SET @demo_report = LAST_INSERT_ID();
+INSERT INTO response_updates (incident_id,updated_by,action_taken,from_status,to_status,created_at)
+VALUES (@demo_report,2,'Duplicate exercise alarm.','pending','rejected',@demo_day - INTERVAL 30 HOUR + INTERVAL 1 HOUR);
+INSERT INTO incident_reports
+(reported_by,report_source,reporter_name,barangay,incident_type,description,location_description,latitude,longitude,status,reviewed_by,reviewed_at,created_at)
+VALUES (2,'phone','Demo Caller','Topdac','other','Drill: a power interruption was reported at a drill station.','Demo radio post',16.558,120.714,'pending',NULL,NULL,@demo_day - INTERVAL 35 HOUR);
 COMMIT;

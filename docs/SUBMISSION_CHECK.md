@@ -14,6 +14,10 @@ Import the full `barangay_drrm.sql` into an empty classroom database. It include
 
 These published credentials are for fictional classroom data only. The email addresses are website login names. Create private credentials before any operational deployment. Newly enrolled residents still change their temporary passwords. The ready-made presentation accounts open their dashboards directly.
 
+## Incident examples
+
+The fresh demo has ten reports across all eight Atok barangays: two each for flooding, fire, landslide, road obstruction and other emergencies. With all barangays and dates selected, each staff type filter returns two reports. On the community map choose **Show all locations** to see all five symbols. The demo resident owns two flood reports; the pending Paoay report is the latest.
+
 ## Connected rehearsal
 
 | Screen | Action | What staff or residents should see |
