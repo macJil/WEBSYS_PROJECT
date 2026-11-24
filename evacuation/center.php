@@ -2,15 +2,16 @@
 require_once __DIR__ . '/common.php';
 requireRole('admin');
 
-function evacuationDbHouseholds(): array
+function evacuationDbHouseholds(string $search): array
 {
+    $term = '%' . strtr($search, ['!' => '!!', '%' => '!%', '_' => '!_']) . '%';
     return evacuationDbRows("SELECT h.id, h.household_code, h.barangay, h.purok, h.representative_name,
         COUNT(m.id) AS member_count
         FROM households h
         LEFT JOIN household_members m ON m.household_id = h.id AND m.archived_at IS NULL
-        WHERE h.archived_at IS NULL
+        WHERE h.archived_at IS NULL AND (h.household_code LIKE ? ESCAPE '!' OR h.representative_name LIKE ? ESCAPE '!' OR h.barangay LIKE ? ESCAPE '!')
         GROUP BY h.id, h.household_code, h.barangay, h.purok, h.representative_name
-        ORDER BY h.household_code");
+        ORDER BY h.representative_name, h.id LIMIT 50", [$term, $term, $term]);
 }
 
 
@@ -287,7 +288,8 @@ $id = evacuationRecordId($_GET["id"] ?? null);
 $center = evacuationCenter($id);
 $errors = evacuationHandleStay($id);
 $records = evacuationDbRecords($id);
-$households = evacuationDbHouseholds();
+$householdSearch = is_string($_GET['household_q'] ?? null) ? trim($_GET['household_q']) : '';
+$households = evacuationDbHouseholds($householdSearch);
 $householdId = 0;
 if (isset($_GET["household_id"]) && $_GET["household_id"] !== "") {
     $householdId = evacuationRecordId($_GET["household_id"]);
@@ -317,6 +319,7 @@ require __DIR__ . "/../includes/errors.php";
 <h1><?= e($center['name']) ?></h1>
 <p><a class="btn btn-outline-secondary" href="<?= e(url('records/index.php?type=walkins')) ?>">Manage walk-in records</a></p>
 <p><?= e($center['address_details']) ?> · <?= e($center['status']) ?> · Occupancy: <?= (int)$center['occupancy'] ?> / <?= (int)$center['capacity'] ?> people</p>
+<?= capacityBar((int)$center['occupancy'], (int)$center['capacity']) ?>
 <p>Available capacity (people): <strong><?= (int)$center['available'] ?></strong></p>
 <a class="btn btn-outline-secondary" href="<?= e(url('evacuation/centers.php')) ?>">Back to evacuation centers</a> · <a href="<?= e(url('evacuation/centers.php?edit=' . $id)) ?>">Edit / close center</a>
 <?php if ($center['status'] === 'open' && $center['archived_at'] === null && $center['occupancy'] < $center['capacity']): ?>
@@ -326,9 +329,16 @@ require __DIR__ . "/../includes/errors.php";
         <a class="btn btn-outline-secondary" href="#stays">Find a stay or check out</a>
     </nav>
     <h2 id="household">Check in a household</h2>
+    <form method="get" action="#household" class="filter-form">
+        <input type="hidden" name="id" value="<?= $id ?>">
+        <label>Find household<input class="form-control" name="household_q" maxlength="150" placeholder="Representative, code or barangay" value="<?= e($householdSearch) ?>"></label>
+        <button class="btn btn-outline-secondary">Find</button>
+        <?php if ($householdSearch !== ''): ?><a href="?id=<?= $id ?>#household">Clear search</a><?php endif; ?>
+    </form>
     <form method="get" action="#household" class="mb-3">
         <input type="hidden" name="id" value="<?= $id ?>">
-        <label for="household_id" class="form-label">Registered household</label>
+        <input type="hidden" name="household_q" value="<?= e($householdSearch) ?>">
+        <label for="household_id" class="form-label">Registered household (first 50 matches)</label>
         <select id="household_id" name="household_id" class="form-select mb-2" required>
             <option value="">Choose a household</option>
             <?php foreach ($households as $household): ?>
@@ -382,28 +392,42 @@ require __DIR__ . "/../includes/errors.php";
         <?php else: ?>
             <p>No matching walk-ins found. Try another spelling or register a new person below.</p>
         <?php endif; ?>
-        <details <?= input('kind') === 'new_walkin' ? 'open' : '' ?>>
-            <summary>No matching person? Register a new walk-in</summary>
-            <form method="post">
-                <input type="hidden" name="kind" value="new_walkin">
-                <fieldset class="border p-3 mb-3">
-                    <legend>New walk-in details only</legend>
-                    <?php foreach (['full_name' => ['Full name',100],'address_details' => ['Home address / purok',255],'contact_phone' => ['Contact number (personal or guardian)',20]] as $key => $field): ?>
-                        <label class="d-block mb-2"><?= e($field[0]) ?><input class="form-control" name="<?= e($key) ?>" maxlength="<?= $field[1] ?>" value="<?= e(input($key)) ?>" /></label>
-                    <?php endforeach; ?>
-                    <label>Age in years<input class="form-control" name="age" type="number" min="0" max="130" value="<?= e(input('age')) ?>" /></label>
-                </fieldset>
-                <button class="btn btn-primary" name="action" value="checkin">Check in walk-in</button>
-                <a href="<?= e(url('evacuation/centers.php')) ?>">Cancel and return to evacuation centers</a>
-            </form>
-        </details>
     <?php endif; ?>
+    <details <?= input('kind') === 'new_walkin' ? 'open' : '' ?>>
+        <summary>Register a new walk-in</summary>
+        <form method="post">
+            <input type="hidden" name="kind" value="new_walkin">
+            <fieldset class="border p-3 mb-3">
+                <legend>New walk-in details only</legend>
+                <?php foreach (['full_name' => ['Full name',100],'address_details' => ['Home address / purok',255],'contact_phone' => ['Contact number (personal or guardian)',20]] as $key => $field): ?>
+                    <label class="d-block mb-2"><?= e($field[0]) ?><input class="form-control" name="<?= e($key) ?>" maxlength="<?= $field[1] ?>" value="<?= e(input($key)) ?>" /></label>
+                <?php endforeach; ?>
+                <label>Age in years<input class="form-control" name="age" type="number" min="0" max="130" value="<?= e(input('age')) ?>" /></label>
+            </fieldset>
+            <button class="btn btn-primary" name="action" value="checkin">Check in walk-in</button>
+            <a href="<?= e(url('evacuation/centers.php')) ?>">Cancel and return to evacuation centers</a>
+        </form>
+    </details>
 <?php else: ?>
     <p class="alert alert-info mt-3">Check-in unavailable: this center is closed or full.</p>
+    <?php
+    $others = evacuationDbRows("SELECT c.id, c.name, c.capacity - COUNT(r.id) AS remaining
+        FROM evacuation_centers c LEFT JOIN evacuation_records r ON r.center_id=c.id AND r.checked_out_at IS NULL
+        WHERE c.status='open' AND c.archived_at IS NULL AND c.id<>?
+        GROUP BY c.id, c.name, c.capacity HAVING remaining > 0 ORDER BY c.name", [$id]);
+    ?>
+    <?php if ($others): ?>
+        <h3>Other open centers with space</h3>
+        <ul>
+            <?php foreach ($others as $other): ?>
+                <li><a href="<?= e(url('evacuation/center.php?id=' . $other['id'])) ?>"><?= e($other['name']) ?></a> · <?= (int)$other['remaining'] ?> places left</li>
+            <?php endforeach; ?>
+        </ul>
+    <?php endif; ?>
 <?php endif; ?>
 <div id="stays"></div>
 <?php foreach ([true, false] as $current): ?>
-<h2 class="mt-4"><?= $current ? 'Currently staying' : 'Completed stays' ?></h2>
+<h2 class="mt-4"><?= $current ? 'Currently staying' : 'Completed stays' ?> (<?= $current ? (int)$center['occupancy'] : count(array_filter($records, fn($stay) => $stay['checked_out_at'] !== null)) ?>)</h2>
 <?php $hasRows = false; ?>
 <div class="table-responsive" tabindex="0" role="region" aria-label="Scrollable records">
     <table class="table">

@@ -89,8 +89,8 @@ require __DIR__ . "/../includes/errors.php";
 <p><a href="<?= e(url('relief-inventory/locations.php')) ?>">Manage relief locations</a></p>
 <p><a href="<?= e(url('relief-inventory/index.php')) ?>">Inventory</a> · <a href="<?= e(url('relief-inventory/movements.php')) ?>">Stock movements</a> · <a href="<?= e(url('relief-distribution/index.php')) ?>">Household distributions</a></p>
 <form method="get" class="filter-form mb-3">
-    <label>Search name or unit <input name="q" value="<?= e($q) ?>" /></label>
-    <button class="btn btn-outline-secondary">Search</button> <a href="<?= e(url('relief-inventory/index.php')) ?>">Clear</a>
+    <label>Search name or unit <input class="form-control" placeholder="Item name or unit" maxlength="120" name="q" value="<?= e($q) ?>" /></label>
+    <button class="btn btn-outline-secondary">Search</button> <a class="btn btn-outline-secondary" href="<?= e(url('relief-inventory/index.php')) ?>">Clear</a>
 </form>
 <div class="table-responsive" tabindex="0" role="region" aria-label="Scrollable records">
     <table class="table">
@@ -107,7 +107,13 @@ require __DIR__ . "/../includes/errors.php";
                 <tr>
                     <td><?= e($row['item_name']) ?></td>
                     <td><?= e($row['unit']) ?></td>
-                    <td><?= (int)$row['quantity_on_hand'] ?></td>
+                    <td><?= (int)$row['quantity_on_hand'] ?>
+                        <?php if ((int)$row['quantity_on_hand'] === 0): ?>
+                            <span class="badge text-bg-danger">Out of stock</span>
+                        <?php elseif ((int)$row['quantity_on_hand'] <= (int)($row['minimum_stock'] ?? 0)): ?>
+                            <span class="badge text-bg-warning">Low stock</span>
+                        <?php endif; ?>
+                    </td>
                     <td><a href="<?= e(url('relief-inventory/index.php?edit=' . $row['id'])) ?>">Edit</a></td>
                 </tr>
             <?php endforeach; ?>

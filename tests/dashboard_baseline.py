@@ -90,12 +90,23 @@ def check_baseline(query, staff, first, Client):
     review = '/incidents/view.php?id=' + str(incident)
     assert queue_ids(staff.request(page)[1]) == [str(incident)]
     staff.request(review, dict(action='verify_assign', team_id=1, notes='Fictional dispatch'))
-    assert 'Status: <strong>Responding</strong>' in second.request(home)[1]
+    assert 'data-status="responding">Responding</span>' in second.request(home)[1]
     assert first.request(review)[0] == 404
     assignment = query('SELECT id FROM incident_assignments WHERE incident_id=' + str(incident))[0]['id']
     staff.request('/response/incident.php?id=' + str(incident), dict(action='update_assignment', assignment_id=assignment,
         assignment_status='completed', notes='Fictional completion'))
     final = second.request(home)[1]
-    assert 'Status: <strong>Resolved</strong>' in final and 'View report #' + str(incident) + '<' in final
+    assert 'data-status="resolved">Resolved</span>' in final and 'View report #' + str(incident) + '<' in final
     assert 'PAGASA Northern Luzon advisories' in final and 'Sayangan daily forecast' in final and 'https://open-meteo.com/' in final
     print('PASS resident submission to staff dispatch to resident-visible resolution')
+
+    households = ["('HH-%03d','Fixture %03d','Demo')" % (n, n) for n in range(51)]
+    query("INSERT INTO households(household_code,representative_name,purok) VALUES " + ",".join(households))
+    listing = '/households/index.php?q=Fixture'
+    assert 'Fixture 049' in staff.request(listing)[1] and 'Fixture 050' not in staff.request(listing)[1]
+    assert 'Fixture 050' in staff.request(listing + '&page=2')[1]
+    assert staff.request(listing + '&page=0')[0] == 400
+    filtered = staff.request(center + '&household_q=HH-050')[1]
+    assert 'Fixture 050' in filtered and 'Fixture 049' not in filtered and 'Register a new walk-in' in filtered
+    assert 'Other open centers with space' in staff.request('/evacuation/center.php?id=2')[1]
+    print('PASS filtered pagination, household lookup, direct walk-in form and alternative center')

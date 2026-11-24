@@ -238,7 +238,15 @@ require __DIR__ . "/../includes/errors.php";
 <dl>
     <?php foreach (['incident_type' => 'Type','status' => 'Status','description' => 'Description','reporter_name' => 'Reporter/contact name','contact_phone' => 'Contact number','barangay' => 'Incident barangay','location_description' => 'Location','latitude' => 'Latitude','longitude' => 'Longitude','report_source' => 'Received through','created_at' => 'Submitted'] as $key => $label): ?>
         <dt><?= e($label) ?></dt>
-        <dd class="preserve-text"><?= e($report[$key] ?? 'Not recorded') ?></dd>
+        <dd>
+            <?php if ($key === 'status'): ?>
+                <?= statusBadge($report[$key]) ?>
+            <?php elseif ($key === 'created_at'): ?>
+                <?= relativeTime($report[$key]) ?>
+            <?php else: ?>
+                <span class="preserve-text"><?= e($report[$key] ?? 'Not recorded') ?></span>
+            <?php endif; ?>
+        </dd>
     <?php endforeach; ?>
 </dl>
 <?php if (!hasMapPoint($report)): ?>
@@ -319,7 +327,7 @@ require __DIR__ . "/../includes/errors.php";
     <?php if (!$history): ?><p>No staff updates yet.</p><?php endif; ?>
     <?php foreach ($history as $entry): ?>
         <article class="border-bottom py-2">
-            <strong><?= e(ucfirst($entry['to_status'] ?? 'Update')) ?></strong> · <?= e($entry['created_at']) ?>
+            <strong><?= e(ucfirst($entry['to_status'] ?? 'Update')) ?></strong> · <?= relativeTime($entry['created_at']) ?>
             <?php if ($entry['from_status'] && $entry['from_status'] !== $entry['to_status']): ?>
                 <small>(previously <?= e($entry['from_status']) ?>)</small>
             <?php endif; ?>

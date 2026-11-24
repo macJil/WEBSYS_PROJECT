@@ -21,8 +21,8 @@ require __DIR__ . "/../includes/header.php";
 <section class="panel mb-4">
     <h2>My latest report</h2>
     <?php if ($latest): ?>
-        <p><?= e(REPORT_TYPES[$latest['incident_type']]) ?> · Submitted <?= e($latest['created_at']) ?></p>
-        <p>Status: <strong><?= e(ucfirst($latest['status'])) ?></strong></p>
+        <p><?= e(REPORT_TYPES[$latest['incident_type']]) ?> · Submitted <?= relativeTime($latest['created_at']) ?></p>
+        <p>Status: <?= statusBadge($latest['status']) ?></p>
         <a class="btn btn-outline-secondary" href="<?= e(url('incidents/view.php?id=' . $latest['id'])) ?>">View report #<?= (int)$latest['id'] ?></a>
     <?php else: ?>
         <p>You haven’t submitted a report yet.</p>

@@ -354,18 +354,18 @@ require __DIR__ . "/../includes/errors.php";
 <p>Archive to remove a record from active lists and keep its history. Only unused records can be permanently deleted.</p>
 <details class="mb-3"><summary>How to restore a record</summary><p>Choose Archived, select the record, then Restore. Reopen a restored center or publish a restored notice when it is ready.</p></details>
 <form method="get" class="filter-form mb-3">
-    <label>Record type<select name="type">
+    <label>Record type<select class="form-select" name="type">
             <option value="all">All record types</option>
             <?php foreach (RECORD_TYPES as $key => $spec): ?>
                 <option value="<?= e($key) ?>" <?= $type === $key ? 'selected' : '' ?>><?= e($spec[2]) ?></option>
             <?php endforeach; ?>
         </select></label>
-    <label>Records<select name="state">
+    <label>Records<select class="form-select" name="state">
         <option value="active" <?= !$archived ? 'selected' : '' ?>>Active</option>
         <option value="archived" <?= $archived ? 'selected' : '' ?>>Archived</option>
     </select></label>
-    <label>Search ID/name <input name="q" value="<?= e($q) ?>" /></label>
-    <button class="btn btn-outline-secondary">Search</button>
+    <label>Search ID/name <input class="form-control" placeholder="ID or name" maxlength="255" name="q" value="<?= e($q) ?>" /></label>
+    <button class="btn btn-outline-secondary">Search</button> <a class="btn btn-outline-secondary" href="<?= e(url('records/index.php')) ?>">Clear</a>
 </form>
 <form method="post" id="record-selection">
     <div class="table-responsive" tabindex="0" aria-label="Records">

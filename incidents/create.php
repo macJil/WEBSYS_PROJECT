@@ -183,7 +183,7 @@ require __DIR__ . "/../includes/errors.php";
 <p class="return-link no-print"><a class="btn btn-outline-secondary" href="<?= e(url('incidents/list.php')) ?>">Back to reports</a></p>
 <h1>Report an incident</h1>
 <p>Reports are reviewed by barangay staff. This website does not guarantee an immediate emergency response.</p>
-<form method="post" enctype="multipart/form-data">
+<form id="incident-form" method="post" enctype="multipart/form-data">
     <?php if ($_SESSION['ROLE'] === 'admin'): ?>
         <label class="d-block mb-3">Report received through <select name="report_source" class="form-select" required>
                 <?php foreach (['walk_in' => 'In person','phone' => 'Phone','admin' => 'Staff observation'] as $value => $label): ?>
@@ -212,6 +212,19 @@ require __DIR__ . "/../includes/errors.php";
     <button class="btn btn-primary" name="action" value="create_incident">Submit report</button>
     <a href="<?= e(url('incidents/list.php')) ?>">Cancel and return to reports</a>
 </form>
+<script>
+    document.getElementById('incident-form').addEventListener('submit', function (event) {
+        for (const field of this.querySelectorAll('[required]')) {
+            if (!field.value.trim()) {
+                event.preventDefault();
+                field.setCustomValidity('Please complete this field.');
+                field.reportValidity();
+                field.setCustomValidity('');
+                break;
+            }
+        }
+    });
+</script>
 <?php
 require __DIR__ . "/../includes/footer.php";
 ?>

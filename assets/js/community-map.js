@@ -115,68 +115,77 @@
             status.textContent = "No saved locations have map points yet. The demo view is unchanged.";
         }
     });
-    fetch(element.dataset.url, { credentials: "same-origin", cache: "no-store" })
-        .then((response) => {
-            if (!response.ok)
-                throw new Error(
-                    response.status === 401
-                        ? "Please sign in again to view saved locations."
-                        : "Saved locations could not be loaded. Please refresh.",
-                );
-            return response.json();
-        })
-        .then((data) => {
-            let total = 0;
-            boxes.forEach((box) => {
-                const layer = box.dataset.layer,
-                    group = groups[layer];
-                let count = 0;
-                (data[layer] || []).forEach((row) => {
-                    const latValue = row.latitude;
-                    const lngValue = row.longitude;
-                    const lat = Number(latValue),
-                        lng = Number(lngValue);
-                    if (
-                        latValue === null ||
-                        lngValue === null ||
-                        latValue === "" ||
-                        lngValue === "" ||
-                        !Number.isFinite(lat) ||
-                        !Number.isFinite(lng) ||
-                        Math.abs(lat) > 90 ||
-                        Math.abs(lng) > 180
-                    )
-                        return;
-                    let [color, symbol] = symbols[layer];
-                    if (layer === "incidents") symbol = incidentIcons[row.incident_type] || "⚠";
-                    // Only fixed icon constants enter HTML; database strings use textContent in popup().
-                    const icon = L.divIcon({
-                        className: "map-marker-icon",
-                        html:
-                            '<span class="map-symbol ' + color + '" aria-hidden="true">' + symbol + "</span>",
-                        iconSize: [28, 28],
-                        iconAnchor: [14, 14],
+    let requestNumber = 0;
+    function loadMarkers() {
+        const request = ++requestNumber;
+        fetch(element.dataset.url, { credentials: "same-origin", cache: "no-store" })
+            .then((response) => {
+                if (!response.ok)
+                    throw new Error(
+                        response.status === 401
+                            ? "Please sign in again to view saved locations."
+                            : "Saved locations could not be loaded. Please refresh.",
+                    );
+                return response.json();
+            })
+            .then((data) => {
+                if (request !== requestNumber) return;
+                let total = 0;
+                boxes.forEach((box) => {
+                    const layer = box.dataset.layer,
+                        group = groups[layer];
+                    group.clearLayers();
+                    let count = 0;
+                    (data[layer] || []).forEach((row) => {
+                        const latValue = row.latitude;
+                        const lngValue = row.longitude;
+                        const lat = Number(latValue),
+                            lng = Number(lngValue);
+                        if (
+                            latValue === null ||
+                            lngValue === null ||
+                            latValue === "" ||
+                            lngValue === "" ||
+                            !Number.isFinite(lat) ||
+                            !Number.isFinite(lng) ||
+                            Math.abs(lat) > 90 ||
+                            Math.abs(lng) > 180
+                        )
+                            return;
+                        let [color, symbol] = symbols[layer];
+                        if (layer === "incidents") symbol = incidentIcons[row.incident_type] || "⚠";
+                        // Only fixed icon constants enter HTML; database strings use textContent in popup().
+                        const icon = L.divIcon({
+                            className: "map-marker-icon",
+                            html:
+                                '<span class="map-symbol ' + color + '" aria-hidden="true">' + symbol + "</span>",
+                            iconSize: [28, 28],
+                            iconAnchor: [14, 14],
+                        });
+                        L.marker([lat, lng], {
+                            icon,
+                            title: layer === "centers" ? "Evacuation center: " + row.status : (types[row.incident_type] || layer),
+                            keyboard: true,
+                        })
+                            .bindPopup(popup(layer, row))
+                            .addTo(group);
+                        count++;
                     });
-                    L.marker([lat, lng], {
-                        icon,
-                        title: layer === "centers" ? "Evacuation center: " + row.status : (types[row.incident_type] || layer),
-                        keyboard: true,
-                    })
-                        .bindPopup(popup(layer, row))
-                        .addTo(group);
-                    count++;
+                    document.getElementById("count-" + layer).textContent = "(" + count + ")";
+                    total += count;
                 });
-                document.getElementById("count-" + layer).textContent = "(" + count + ")";
-                total += count;
+                status.textContent = total
+                    ? total + " saved locations loaded. Select a marker for details."
+                    : admin
+                      ? "No active saved locations have map points yet. Add a point using a record form."
+                      : "No verified incidents, open centers, or distribution points have map coordinates yet. Your submissions remain in My reports.";
+                document.getElementById("map-fit").disabled = false;
+            })
+            .catch((error) => {
+                if (request !== requestNumber) return;
+                status.textContent = error.message || "Saved locations could not be loaded. Please refresh.";
             });
-            status.textContent = total
-                ? total + " saved locations loaded. Select a marker for details."
-                : admin
-                  ? "No active saved locations have map points yet. Add a point using a record form."
-                  : "No verified incidents, open centers, or distribution points have map coordinates yet. Your submissions remain in My reports.";
-            document.getElementById("map-fit").disabled = false;
-        })
-        .catch((error) => {
-            status.textContent = error.message || "Saved locations could not be loaded. Please refresh.";
-        });
+    }
+    window.addEventListener("focus", loadMarkers);
+    loadMarkers();
 })();

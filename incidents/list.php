@@ -118,8 +118,8 @@ require __DIR__ . "/../includes/header.php";
                             <br /><small>No map point</small>
                         <?php endif; ?>
                     </td>
-                    <td><span class="status-badge" data-status="<?= e($report['status']) ?>"><?= e($report['status']) ?></span></td>
-                    <td><?= e($report['created_at']) ?></td>
+                    <td><?= statusBadge($report['status']) ?></td>
+                    <td><?= relativeTime($report['created_at']) ?></td>
                     <td><a href="<?= e(url('incidents/view.php?id=' . $report['id'])) ?>">View</a></td>
                 </tr>
             <?php endforeach; ?>

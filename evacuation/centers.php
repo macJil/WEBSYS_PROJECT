@@ -137,8 +137,8 @@ require __DIR__ . "/../includes/errors.php";
 <h1>Evacuation centers</h1>
 <p><a class="btn btn-outline-secondary" href="<?= e(url('records/index.php?type=centers')) ?>">Manage records</a></p>
 <form method="get" class="filter-form mb-3">
-    <label>Search name or address <input name="q" value="<?= e($q) ?>" /></label>
-    <button class="btn btn-outline-secondary">Search</button> <a href="<?= e(url('evacuation/centers.php')) ?>">Clear</a>
+    <label>Search name or address <input class="form-control" placeholder="Center name or address" maxlength="150" name="q" value="<?= e($q) ?>" /></label>
+    <button class="btn btn-outline-secondary">Search</button> <a class="btn btn-outline-secondary" href="<?= e(url('evacuation/centers.php')) ?>">Clear</a>
 </form>
 <div class="table-responsive" tabindex="0" role="region" aria-label="Scrollable records">
     <table class="table">
@@ -148,7 +148,6 @@ require __DIR__ . "/../includes/errors.php";
                 <th>Address</th>
                 <th>Status</th>
                 <th>People / capacity</th>
-                <th>Available capacity (people)</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -162,14 +161,13 @@ require __DIR__ . "/../includes/errors.php";
                         <?php endif; ?>
                     </td>
                     <td><span class="status-badge" data-status="<?= e($center['status']) ?>"><?= e($center['status']) ?></span></td>
-                    <td><?= (int)$center['occupancy'] ?> / <?= (int)$center['capacity'] ?></td>
-                    <td><?= (int)$center['available'] ?></td>
-                    <td><a href="<?= e(url('evacuation/center.php?id=' . $center['id'])) ?>">Arrivals, checkout and stays</a> · <a href="<?= e(url('evacuation/centers.php?edit=' . $center['id'])) ?>">Edit / close</a></td>
+                    <td><?= (int)$center['occupancy'] ?> / <?= (int)$center['capacity'] ?><?= capacityBar((int)$center['occupancy'], (int)$center['capacity']) ?></td>
+                    <td><a href="<?= e(url('evacuation/center.php?id=' . $center['id'])) ?>">Manage check-ins</a> · <a href="<?= e(url('evacuation/centers.php?edit=' . $center['id'])) ?>">Edit</a></td>
                 </tr>
             <?php endforeach; ?>
             <?php if (!$centers): ?>
                 <tr>
-                    <td colspan="6">No matching centers.</td>
+                    <td colspan="5">No matching centers.</td>
                 </tr>
             <?php endif; ?>
         </tbody>
@@ -178,7 +176,7 @@ require __DIR__ . "/../includes/errors.php";
 <h2><?= $id?'Edit center':'Add center' ?></h2>
 <form method="post">
     <label class="d-block mb-3">Center barangay
-        <select name="barangay" class="form-select">
+        <select class="form-select" name="barangay" class="form-select">
             <option value="">Awaiting confirmation</option>
             <?php foreach (ATOK_BARANGAYS as $area): ?>
                 <option <?= ($data['barangay'] ?? '') === $area ? 'selected' : '' ?>><?= e($area) ?></option>
@@ -198,7 +196,7 @@ require __DIR__ . "/../includes/errors.php";
                 <option value="<?= e($status) ?>" <?= $data['status'] === $status?'selected':'' ?>><?= e(ucfirst($status)) ?></option>
             <?php endforeach; ?>
         </select></label>
-    <p>Check out all occupants before closing a center. Capacity cannot be reduced below current occupancy.</p>
+    <?php if ($id): ?><p>Check out all occupants before closing a center. Capacity cannot be reduced below current occupancy.</p><?php endif; ?>
 
     <button class="btn btn-primary" name="action" value="save_center">Save center</button>
     <a href="<?= e(url('evacuation/centers.php')) ?>">Cancel and return to evacuation centers</a>

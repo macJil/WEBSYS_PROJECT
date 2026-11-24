@@ -304,8 +304,12 @@ legend {
     font-weight: 700;
     white-space: nowrap;
 }
-.status-badge[data-status="pending"],
 .status-badge[data-status="responding"] {
+    background: #e3edf9;
+    border-color: #92b4d7;
+    color: #194976;
+}
+.status-badge[data-status="pending"] {
     background: #fff4d9;
     border-color: #d5a239;
     color: #704900;
@@ -694,5 +698,15 @@ legend {
         display: inline-block;
         min-height: 44px;
         padding-block: 0.6rem;
+    }
+}
+
+.nav-links a[aria-current="page"] {
+    font-weight: 700;
+    border-bottom: 2px solid currentColor;
+}
+@media print {
+    main:has(.printing-notice) > :not(.printing-notice) {
+        display: none !important;
     }
 }

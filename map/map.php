@@ -37,7 +37,7 @@ require __DIR__ . "/../includes/header.php";
         <button type="button" id="show-atok" class="btn btn-outline-secondary" disabled>Show all Atok</button>
         <button type="button" id="map-fit" class="btn btn-outline-secondary my-2" disabled>Show all locations</button>
         <a class="d-block" href="<?= e(url('map/map.php')) ?>">Refresh saved locations</a>
-        <p class="small mt-3">Refresh to see recent changes. Counts include only records with a pin.</p>
+        <p class="small mt-3">Locations update when you return to this tab. Counts include only records with a pin.</p>
     </aside>
     <div>
         <p class="map-status" id="community-map-status" role="status" aria-live="polite">Loading saved locations…</p>

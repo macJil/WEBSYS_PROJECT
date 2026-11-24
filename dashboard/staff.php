@@ -20,7 +20,7 @@ require __DIR__ . "/../includes/header.php";
 </div>
 <h2>Current municipal overview</h2>
 <?php require __DIR__ . '/../includes/dashboard-cards.php'; ?>
-<h2>Awaiting review</h2>
+<h2>Awaiting review (<?= (int)$overview['incidents']['pending'] ?>)</h2>
 <p>Five oldest pending reports across Atok.</p>
 <?php if ($pending): ?>
     <div class="table-responsive mb-3">
@@ -31,7 +31,7 @@ require __DIR__ . "/../includes/header.php";
                     <tr>
                         <td>#<?= (int)$report['id'] ?> · <?= e(REPORT_TYPES[$report['incident_type']]) ?></td>
                         <td><?= e($report['barangay'] ?? 'Awaiting confirmation') ?></td>
-                        <td><?= e($report['created_at']) ?></td>
+                        <td><?= relativeTime($report['created_at']) ?></td>
                         <td><a class="btn btn-primary btn-sm" href="<?= e(url('incidents/view.php?id=' . $report['id'])) ?>" aria-label="Review incident #<?= (int)$report['id'] ?>">Review</a></td>
                     </tr>
                 <?php endforeach; ?>
