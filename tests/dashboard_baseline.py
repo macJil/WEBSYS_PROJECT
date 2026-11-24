@@ -20,6 +20,7 @@ def check_baseline(query, staff, first, Client):
         totals = cards(client, '/dashboard/resident.php')
         return [totals[name + ' incidents'] for name in statuses]
 
+    assert 'You haven’t submitted a report yet.' in second.request('/dashboard/resident.php')[1]
     assert resident_counts(second) == [0, 0, 0, 0, 0]
     query("""INSERT INTO incident_reports(reported_by, barangay, incident_type, description, status, archived_at)
              VALUES (2,'Paoay','flood','Demo A1','pending',NULL),
@@ -45,6 +46,8 @@ def check_baseline(query, staff, first, Client):
     assert second.request('/incidents/view.php?id=2')[0] == 404
     print('PASS dashboard baseline: two residents, ownership, archive exclusion, barangays, occupancy and capacity')
 
+    assert 'View report #2<' in first.request('/dashboard/resident.php')[1]
+    assert 'View report #4<' in second.request('/dashboard/resident.php')[1]
     for _ in range(4):
         query("""INSERT INTO incident_reports(reported_by, incident_type, description, status)
                  VALUES (2,'other','Demo queue','pending')""")
@@ -78,3 +81,21 @@ def check_baseline(query, staff, first, Client):
     staff.request(center, dict(action='checkout', record_id=2))
     check_capacity(1, 4)
     print('PASS oldest five, verification refresh, eight module shortcuts and center occupancy parity')
+
+    home = '/dashboard/resident.php'
+    staff.request('/response/teams.php', dict(action='save_team', team_name='Demo response', contact_phone='', is_active='1'))
+    second.request('/incidents/create.php', dict(action='create_incident', incident_type='flood', barangay='Paoay',
+        reporter_name='Demo B', contact_phone='00000000000', location_description='Demo landmark', description='Fictional rehearsal'))
+    incident = query('SELECT MAX(id) id FROM incident_reports')[0]['id']
+    review = '/incidents/view.php?id=' + str(incident)
+    assert queue_ids(staff.request(page)[1]) == [str(incident)]
+    staff.request(review, dict(action='verify_assign', team_id=1, notes='Fictional dispatch'))
+    assert 'Status: <strong>Responding</strong>' in second.request(home)[1]
+    assert first.request(review)[0] == 404
+    assignment = query('SELECT id FROM incident_assignments WHERE incident_id=' + str(incident))[0]['id']
+    staff.request('/response/incident.php?id=' + str(incident), dict(action='update_assignment', assignment_id=assignment,
+        assignment_status='completed', notes='Fictional completion'))
+    final = second.request(home)[1]
+    assert 'Status: <strong>Resolved</strong>' in final and 'View report #' + str(incident) + '<' in final
+    assert 'PAGASA Northern Luzon advisories' in final and 'Sayangan daily forecast — Open-Meteo' in final
+    print('PASS resident submission to staff dispatch to resident-visible resolution')

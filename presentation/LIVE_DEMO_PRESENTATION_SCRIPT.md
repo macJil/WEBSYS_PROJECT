@@ -18,7 +18,7 @@ This slide identifies the interview visit. Use the approved photograph if availa
 
 ATOK MDRRM SYSTEM  /  MEMBER 1 · 01:10–02:00
 
-The office requested weather information for CAR and the ability to print reports. On this plain PHP branch we can demonstrate the staff and resident dashboards and print the disaster summary. Both dashboards show a daily forecast for Sayangan and link to the official PAGASA Northern Luzon advisories.
+The office requested weather information for CAR and the ability to print reports. On this plain PHP branch we can demonstrate the staff and resident dashboards and print the disaster summary. Both dashboards label the Sayangan forecast as Open-Meteo and show the forecast date and retrieval time. The separate PAGASA Northern Luzon link opens official regional advisories, even if forecast retrieval fails provided the advisory site is reachable. Direct PAGASA forecast integration awaits API access and confirmed Atok coverage.
 
 ## Read the fictional database records
 
@@ -36,13 +36,13 @@ I will sign in as staff and open households/add.php. Each module has its own fol
 
 ATOK MDRRM SYSTEM  /  MEMBER 3 · 07:15–10:45
 
-I will sign in with the temporary password and choose my own before opening incidents/create.php. My contact name and number are prefilled. I can change them for this report. I will submit a fictional flood report in Paoay with a written landmark and a fictional pin inside the demo outline. Clicking outside keeps the previous pin. The saved report opens in incidents/view.php. My account owns it. I open Printable incident report and show the resident copy. The image page checks ownership before serving the private file. I will hand the incident number to our response presenter.
+I show the public resident guide, then sign in with the temporary password and choose my own before opening incidents/create.php. My contact name and number are prefilled. I can change them for this report. I click Report an incident at the top of my dashboard and submit a fictional flood report in Paoay with a written landmark and a fictional pin inside the demo outline. Clicking outside keeps the previous pin. The saved report opens in incidents/view.php. My account owns it. I open Printable incident report and show the resident copy. The image page checks ownership before serving the private file. I will hand the incident number to our response presenter.
 
 ## Keep response and incident status in step
 
 ATOK MDRRM SYSTEM  /  MEMBER 4 · 10:45–14:00
 
-I choose the first team and click Verify and assign. One submission moves the report to Responding. I open response/incident.php, assign the second team and record an action. Completing only the first assignment still leaves work outstanding. When I complete both, we can reopen the incident to see resolved status and its recorded actions.
+I open Awaiting review on the staff dashboard and click Review beside the report we just submitted. I choose the first team and click Verify and assign. One submission moves the report to Responding. Member 3 refreshes the resident dashboard and shows Responding under My latest report. I open response/incident.php, assign the second team and record an action. Completing only the first assignment still leaves work outstanding. When I complete both assignments, Member 3 refreshes again. My latest report now says Resolved. View report opens that resident’s private copy.
 
 ## Count the people who actually arrive
 

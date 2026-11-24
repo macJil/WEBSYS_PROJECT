@@ -31,7 +31,7 @@
         const time = new Date(entry.fetched).toLocaleTimeString("en-PH", {
             timeZone: "Asia/Manila", hour: "numeric", minute: "2-digit"
         });
-        panel.textContent = weatherStatus(day.weather_code?.[0]) + " · " + today + " · " + low + "–" + high + " °C · Peak rain probability " + rain +
+        panel.textContent = weatherStatus(day.weather_code?.[0]) + " · Forecast date " + today + " · " + low + "–" + high + " °C · Peak rain probability " + rain +
             "%. Retrieved " + time + " Philippine time.";
         return true;
     }
