@@ -89,9 +89,18 @@ with tempfile.TemporaryDirectory(prefix='bayanready-address-') as temporary:
                 break
             except urllib.error.URLError:
                 time.sleep(0.1)
+        anonymous = Client()
+        code, login_page = anonymous.request('/index.php')
+        assert code == 200 and login_page.index('id="login-email"') < login_page.index('id="resident-guide"')
+        assert 'How to get an account' in login_page and 'Before you report an incident' in login_page
+        assert 'Invalid email or password' in anonymous.request('/index.php', dict(action='login', email='resident@example.invalid', password='wrong'))[1]
         for client, role in [(admin, 'admin'), (resident, 'resident')]:
             code, body = client.request('/index.php', {'action': 'login', 'email': role + '@example.invalid', 'password': 'DemoPass123!'})
             assert code == 200 and 'Log out' in body, body[:300]
+        if os.environ.get('TEST_DASHBOARD_BASELINE') == '1':
+            from dashboard_baseline import check_baseline
+            check_baseline(query, admin, resident, Client)
+            raise SystemExit(0)
         cases = [
             (resident, 'incidents/create.php', 'incident_reports', 'location_description', 'incidents/view.php', dict(action='create_incident', incident_type='other', description='Fictional exercise', reporter_name='Fictional person', contact_phone='0000000000')),
             (admin, 'households/index.php', 'households', 'address_details', 'households/details.php', dict(action='create_household', barangay='Paoay', household_code='DEMO-ADDR', representative_name='Fictional person', contact_phone='', purok='Demo', registry_reason='monitored', hazard_type='unassessed', hazard_notes='', vulnerability_category='unassessed', vulnerability_notes='', evacuation_status='at_home')),

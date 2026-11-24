@@ -64,7 +64,7 @@ require __DIR__ . "/includes/header.php";
 <div class="page-intro">
     <p class="eyebrow">Community preparedness &amp; response</p>
     <h1><?= e($settings['app_name']) ?></h1>
-    <p>Report incidents, follow community notices, and coordinate help.</p>
+    <p>Classroom pilot using fictional records.</p>
 </div>
 <?php
 require __DIR__ . "/includes/errors.php";
@@ -73,7 +73,6 @@ require __DIR__ . "/includes/errors.php";
     <section class="col-lg-5">
         <div class="panel h-100">
             <h2>Login</h2>
-            <p>For a resident account, contact your barangay official.</p>
             <form method="post" action="<?= e(url('index.php')) ?>">
                 <input type="hidden" name="action" value="login" />
                 <label for="login-email" class="form-label">Email</label>
@@ -82,6 +81,16 @@ require __DIR__ . "/includes/errors.php";
                 <input id="login-password" class="form-control mb-3" type="password" name="password" required autocomplete="current-password" />
                 <button class="btn btn-primary">Login</button>
             </form>
+        </div>
+    </section>
+    <section class="col-lg-7" aria-labelledby="resident-guide">
+        <div class="panel h-100">
+            <h2 id="resident-guide">Resident guide</h2>
+            <p>Use the Atok MDRRM System to report incidents, track your reports, read community announcements, and find open evacuation centers.</p>
+            <h3 class="h5">How to get an account</h3>
+            <p>Ask MDRRM staff to check your household member record. After confirming your residency, staff can create your account. Sign in with your registered email and temporary password, then choose your own password.</p>
+            <h3 class="h5">Before you report an incident</h3>
+            <p>Prepare a short description, a contact number, and a written location such as your barangay and a nearby landmark. You can submit the report without a photo or map pin.</p>
         </div>
     </section>
 </div>
