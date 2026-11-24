@@ -4,7 +4,7 @@ Use the **atok-workflow-usability** branch. On the presentation Mac, open MAMP a
 
 ## Accounts and records
 
-The presentation Mac already has the seed data. The account emails below are login identifiers. The example.invalid addresses do not receive mail. Each login has its own random temporary password and must choose a different password before opening a dashboard. Give each person only their own credentials privately.
+The presentation Mac already has the seed data. The account emails below are login identifiers. The example.invalid addresses do not receive mail. Each login has its own random password. Demo accounts choose a password on first sign-in. The barangay handoff account opens the staff dashboard immediately. Give each person only their own credentials privately.
 
 | Login | Purpose |
 | --- | --- |
@@ -12,7 +12,7 @@ The presentation Mac already has the seed data. The account emails below are log
 | resident@demo.example.invalid | Show the seeded household member's report and its status |
 | barangay.admin@atok.example.invalid | Initial local barangay administrator, reserved for handoff |
 
-On a **fresh classroom installation**, import the schema, configure the database and private upload directory, then run these from the repository root with the PHP CLI. Run only the command you need. Output contains one-time passwords. Use a private terminal before sharing your screen.
+On a **fresh classroom installation**, import the schema, configure the database and private upload directory, then run these from the repository root with the PHP CLI. Run only the command you need. Output contains private login passwords. Use a private terminal before sharing your screen.
 
 - `php database/prepare-demo.php demo` inserts linked fictional records and the two demo logins.
 - `php database/prepare-demo.php admin YOUR_LOGIN_EMAIL` creates the separate administrator. Substitute the intended account identifier.
@@ -38,6 +38,6 @@ These are **starting values for the named records**. Municipal totals can includ
 - Three browser-generated PDFs passed A4 size, page break, totals and staff/resident content checks. The first browser export timed out; the recheck used a fresh, short profile path and the browser print interface.
 - The household arrival form previously selected members who already had active stays. It now labels and disables those rows. The regression check verified four existing stays and one eligible arrival. Server-side duplicate protection remains in place.
 - Local MAMP had no upload directory configured. A private directory outside its web root was configured. Keep the file path and database credentials local.
-- The demonstration script now uses the seed's actual occupancy and relief balances. All three local logins reached the first-password-change screen.
+- The demonstration script now uses the seed's actual occupancy and relief balances. The demo logins reached the first-password-change screen. The barangay handoff login was checked separately for direct staff dashboard access.
 
 This review supports the **local classroom demonstration**. Office usability sign-off, an authorized online pilot, a physical phone check, the municipal boundary and final printed format remain pending. Use fictional records for classroom access. For an audience-accessible trial use a separate demo database and resident accounts; staff accounts can see municipal records.

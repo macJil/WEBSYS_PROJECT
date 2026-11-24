@@ -13,13 +13,14 @@ function insertRecord(PDO $pdo, string $sql, array $values = []): int
     return (int)$pdo->lastInsertId();
 }
 
-function createLogin(PDO $pdo, string $name, string $username, string $email, string $role, ?int $member = null): array
+function createLogin(PDO $pdo, string $name, string $username, string $email, string $role, ?int $member = null, bool $changePassword = true): array
 {
     $password = bin2hex(random_bytes(12));
     $id = insertRecord($pdo, 'INSERT INTO users
         (full_name,username,email,password,role,household_member_id,must_change_password)
-        VALUES (?,?,?,?,?,?,1)', [$name, $username, $email, password_hash($password, PASSWORD_DEFAULT), $role, $member]);
-    return [$id, "$role login: $email\nTemporary password: $password\n"];
+        VALUES (?,?,?,?,?,?,?)', [$name, $username, $email, password_hash($password, PASSWORD_DEFAULT), $role, $member, (int)$changePassword]);
+    $label = $changePassword ? "Temporary password" : "Website password";
+    return [$id, "$role login: $email\n$label: $password\n"];
 }
 
 $mode = $argv[1] ?? '';
@@ -31,7 +32,7 @@ try {
     $pdo = db();
     $pdo->beginTransaction();
     if ($mode === 'admin') {
-        [, $receipt] = createLogin($pdo, 'Barangay Administrator', 'barangay_handoff_admin', $argv[2], 'admin');
+        [, $receipt] = createLogin($pdo, 'Barangay Administrator', 'barangay_handoff_admin', $argv[2], 'admin', null, false);
     } else {
         [$staff, $receipt] = createLogin($pdo, 'Demo Duty Officer', 'atok_demo_staff', 'staff@demo.example.invalid', 'admin');
         $house = insertRecord($pdo, "INSERT INTO households (household_code,representative_name,barangay,purok,address_details,registry_reason,hazard_type)
