@@ -164,7 +164,7 @@ require __DIR__ . "/../includes/errors.php";
                     <td><span class="status-badge" data-status="<?= e($center['status']) ?>"><?= e($center['status']) ?></span></td>
                     <td><?= (int)$center['occupancy'] ?> / <?= (int)$center['capacity'] ?></td>
                     <td><?= (int)$center['available'] ?></td>
-                    <td><a href="<?= e(url('evacuation/center.php?id=' . $center['id'])) ?>">People / history</a> · <a href="<?= e(url('evacuation/centers.php?edit=' . $center['id'])) ?>">Edit / close</a></td>
+                    <td><a href="<?= e(url('evacuation/center.php?id=' . $center['id'])) ?>">Arrivals, checkout and stays</a> · <a href="<?= e(url('evacuation/centers.php?edit=' . $center['id'])) ?>">Edit / close</a></td>
                 </tr>
             <?php endforeach; ?>
             <?php if (!$centers): ?>

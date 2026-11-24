@@ -21,7 +21,7 @@ function responseDbAssignments(int $id): array
 function responseDbHistory(int $id): array
 {
     $stmt = db()->prepare(
-        'SELECT h.*, u.full_name AS staff_name FROM response_updates h JOIN users u ON u.id=h.updated_by WHERE h.incident_id=? ORDER BY h.id',
+        'SELECT h.*, u.full_name AS staff_name FROM response_updates h JOIN users u ON u.id=h.updated_by WHERE h.incident_id=? ORDER BY h.id DESC',
     );
     $stmt->execute([$id]);
     return $stmt->fetchAll();

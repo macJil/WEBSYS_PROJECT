@@ -314,18 +314,19 @@ $pageTitle = $center["name"];
 require __DIR__ . "/../includes/header.php";
 require __DIR__ . "/../includes/errors.php";
 ?>
-<?php
-$savedPoint = $center;
-require __DIR__ . "/../includes/saved-point.php";
-?>
 <h1><?= e($center['name']) ?></h1>
-<p><a class="btn btn-outline-secondary" href="<?= e(url('records/index.php?type=walkins')) ?>">Manage records</a></p>
+<p><a class="btn btn-outline-secondary" href="<?= e(url('records/index.php?type=walkins')) ?>">Manage walk-in records</a></p>
 <p><?= e($center['address_details']) ?> · <?= e($center['status']) ?> · Occupancy: <?= (int)$center['occupancy'] ?> / <?= (int)$center['capacity'] ?> people</p>
 <p>Available capacity (people): <strong><?= (int)$center['available'] ?></strong></p>
 <a class="btn btn-outline-secondary" href="<?= e(url('evacuation/centers.php')) ?>">Back to evacuation centers</a> · <a href="<?= e(url('evacuation/centers.php?edit=' . $id)) ?>">Edit / close center</a>
 <?php if ($center['status'] === 'open' && $center['archived_at'] === null && $center['occupancy'] < $center['capacity']): ?>
-    <h2 class="mt-4">Check in a household</h2>
-    <form method="get" class="mb-3">
+    <nav class="my-3 d-flex flex-wrap gap-2" aria-label="Evacuation tasks">
+        <a class="btn btn-outline-secondary" href="#household">Registered household</a>
+        <a class="btn btn-outline-secondary" href="#walkin">Walk-in arrival</a>
+        <a class="btn btn-outline-secondary" href="#stays">Find a stay or check out</a>
+    </nav>
+    <h2 id="household">Check in a household</h2>
+    <form method="get" action="#household" class="mb-3">
         <input type="hidden" name="id" value="<?= $id ?>">
         <label for="household_id" class="form-label">Registered household</label>
         <select id="household_id" name="household_id" class="form-select mb-2" required>
@@ -400,7 +401,10 @@ require __DIR__ . "/../includes/saved-point.php";
 <?php else: ?>
     <p class="alert alert-info mt-3">Check-in unavailable: this center is closed or full.</p>
 <?php endif; ?>
-<h2 class="mt-4">Current evacuees and evacuation log</h2>
+<div id="stays"></div>
+<?php foreach ([true, false] as $current): ?>
+<h2 class="mt-4"><?= $current ? 'Currently staying' : 'Completed stays' ?></h2>
+<?php $hasRows = false; ?>
 <div class="table-responsive" tabindex="0" role="region" aria-label="Scrollable records">
     <table class="table">
         <thead>
@@ -413,7 +417,12 @@ require __DIR__ . "/../includes/saved-point.php";
             </tr>
         </thead>
         <tbody>
-            <?php foreach ($records as $record): ?>
+            <?php foreach ($records as $record):
+                if (($record['checked_out_at'] === null) !== $current) {
+                    continue;
+                }
+                $hasRows = true;
+            ?>
                 <tr>
                     <td><?= e($record['person_name']) ?>
                         <?php if ($record['walkin_age'] !== null): ?>
@@ -437,14 +446,21 @@ require __DIR__ . "/../includes/saved-point.php";
                     </td>
                 </tr>
             <?php endforeach; ?>
-            <?php if (!$records): ?>
+            <?php if (!$hasRows): ?>
                 <tr>
-                    <td colspan="5">No evacuation records.</td>
+                    <td colspan="5"><?= $current ? 'Nobody is currently staying here.' : 'No completed stays yet.' ?></td>
                 </tr>
             <?php endif; ?>
         </tbody>
     </table>
 </div>
+<?php endforeach; ?>
+<h2>Center location</h2>
+<?php
+$savedPoint = $center;
+require __DIR__ . "/../includes/saved-point.php";
+?>
+
 <script src="<?= e(url('assets/js/household-checkin.js')) ?>" defer></script>
 <?php
 require __DIR__ . "/../includes/footer.php";

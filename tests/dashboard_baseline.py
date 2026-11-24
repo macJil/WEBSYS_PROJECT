@@ -97,5 +97,5 @@ def check_baseline(query, staff, first, Client):
         assignment_status='completed', notes='Fictional completion'))
     final = second.request(home)[1]
     assert 'Status: <strong>Resolved</strong>' in final and 'View report #' + str(incident) + '<' in final
-    assert 'PAGASA Northern Luzon advisories' in final and 'Sayangan daily forecast — Open-Meteo' in final
+    assert 'PAGASA Northern Luzon advisories' in final and 'Sayangan daily forecast' in final and 'https://open-meteo.com/' in final
     print('PASS resident submission to staff dispatch to resident-visible resolution')

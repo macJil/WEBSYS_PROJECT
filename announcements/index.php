@@ -13,7 +13,7 @@ require __DIR__ . "/../includes/errors.php";
 <p class="return-link no-print"><a class="btn btn-outline-secondary" href="<?= e(url(dashboardPath())) ?>">Back to dashboard</a></p>
 <h1>Emergency announcements</h1>
 <p><a class="btn btn-outline-secondary" href="<?= e(url('records/index.php?type=announcements')) ?>">Manage records</a></p>
-<p>Use drafts while preparing a notice. Publishing makes the saved text visible to residents. During classroom development, use clearly labeled fictional contacts only.</p>
+<p>Save a draft to finish later. Publish when residents should see the notice.</p>
 <h2>Create announcement</h2>
 <?php
 $announcement = ["title" => "", "message" => "", "is_published" => 0];

@@ -98,6 +98,7 @@ function reliefStock(): array
 $errors = reliefStock();
 $items = reliefItems();
 $movements = reliefMovements();
+$movementLabels = ['stock_in' => 'Received', 'stock_out' => 'Removed', 'distribution' => 'Distributed'];
 $pageTitle = "Stock movements";
 require __DIR__ . "/../includes/header.php";
 require __DIR__ . "/../includes/errors.php";
@@ -141,7 +142,7 @@ require __DIR__ . "/../includes/errors.php";
         <thead>
             <tr>
                 <th>Date</th>
-                <th>Good / unit</th>
+                <th>Good</th>
                 <th>Type</th>
                 <th>Quantity</th>
                 <th>Staff</th>
@@ -152,9 +153,9 @@ require __DIR__ . "/../includes/errors.php";
             <?php foreach ($movements as $row): ?>
                 <tr>
                     <td><?= e($row['created_at']) ?></td>
-                    <td><?= e($row['item_name'] . ' / ' . $row['unit']) ?></td>
-                    <td><?= e($row['movement_type']) ?></td>
-                    <td><?= (int)$row['quantity'] ?></td>
+                    <td><?= e($row['item_name']) ?></td>
+                    <td><?= e($movementLabels[$row['movement_type']]) ?></td>
+                    <td><?= (int)$row['quantity'] ?> <?= e($row['unit']) ?></td>
                     <td><?= e($row['full_name']) ?></td>
                     <td><?= e($row['notes']) ?>
                         <?php if ($row['distribution_id']): ?>

@@ -351,7 +351,8 @@ require __DIR__ . "/../includes/errors.php";
 ?>
 <p><a class="btn btn-outline-secondary" href="<?= e(url(dashboardPath())) ?>">Back to dashboard</a></p>
 <h1>Manage records</h1>
-<p>Archive removes a record from active lists and keeps its history. Choose Archived to restore it. Restored centers stay closed and restored announcements stay unpublished until staff open or publish them. Permanent deletion is available only for unused records.</p>
+<p>Archive to remove a record from active lists and keep its history. Only unused records can be permanently deleted.</p>
+<details class="mb-3"><summary>How to restore a record</summary><p>Choose Archived, select the record, then Restore. Reopen a restored center or publish a restored notice when it is ready.</p></details>
 <form method="get" class="filter-form mb-3">
     <label>Record type<select name="type">
             <option value="all">All record types</option>

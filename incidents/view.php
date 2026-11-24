@@ -22,7 +22,7 @@ function reportDbImages(int $id): array
 function reportDbHistory(int $id): array
 {
     $stmt = db()->prepare(
-        'SELECT id, action_taken, from_status, to_status, created_at FROM response_updates WHERE incident_id = ? ORDER BY id',
+        'SELECT id, action_taken, from_status, to_status, created_at FROM response_updates WHERE incident_id = ? ORDER BY id DESC',
     );
     $stmt->execute([$id]);
     return $stmt->fetchAll();
@@ -252,7 +252,7 @@ require __DIR__ . "/../includes/errors.php";
     <script src="<?= e(url('assets/vendor/leaflet/leaflet.js')) ?>"></script>
     <script src="<?= e(url('assets/js/incident-location.js')) ?>"></script>
 <?php endif; ?>
-<p>Locations are reported points, not verified hazard assessments. New pins are checked against the approximate Atok demo outline. DEMO ONLY locations are fictional examples.</p>
+
 <h2>Incident images</h2>
 <?php if (!$images): ?>
     <p>No image attached.</p>
@@ -261,7 +261,7 @@ require __DIR__ . "/../includes/errors.php";
     <a href="<?= e(url('incidents/image.php?id=' . $image['id'])) ?>"><img class="incident-image" src="<?= e(url('incidents/image.php?id=' . $image['id'])) ?>" alt="Image attached to this incident" /></a>
 <?php endforeach; ?>
 <?php if ($admin): ?>
-    <p class="mt-3"><a class="btn btn-outline-secondary" href="<?= e(url('response/incident.php?id=' . $id)) ?>">Manage response teams and actions</a></p>
+    <p class="mt-3"><a class="btn btn-outline-secondary" href="<?= e(url('response/incident.php?id=' . $id)) ?>">Manage team assignments</a></p>
     <?php if ($report['archived_at'] === null): ?>
         <h2>Correct incident location</h2>
         <p>Confirm the written location and pin. A correction is recorded in staff history. The shared map uses this saved point when the incident is eligible.</p>
@@ -303,7 +303,6 @@ require __DIR__ . "/../includes/errors.php";
         </form>
     <?php elseif ($report['archived_at'] === null && responseDbAssignmentStatus($id) !== null): ?>
         <p>Team updates determine the incident status.</p>
-        <a class="btn btn-outline-secondary" href="<?= e(url('response/incident.php?id=' . $id)) ?>">Review team assignments</a>
     <?php elseif ($report['archived_at'] === null && in_array($report['status'], ['verified', 'resolved', 'rejected'], true)): ?>
         <form method="post">
             <label class="d-block my-3">Reason
@@ -317,8 +316,15 @@ require __DIR__ . "/../includes/errors.php";
         </form>
     <?php endif; ?>
     <h2 class="mt-4">Staff review log</h2>
+    <?php if (!$history): ?><p>No staff updates yet.</p><?php endif; ?>
     <?php foreach ($history as $entry): ?>
-        <p><?= e($entry['created_at']) ?> · <?= e($entry['from_status']) ?> → <?= e($entry['to_status']) ?><br /><?= e($entry['action_taken']) ?></p>
+        <article class="border-bottom py-2">
+            <strong><?= e(ucfirst($entry['to_status'] ?? 'Update')) ?></strong> · <?= e($entry['created_at']) ?>
+            <?php if ($entry['from_status'] && $entry['from_status'] !== $entry['to_status']): ?>
+                <small>(previously <?= e($entry['from_status']) ?>)</small>
+            <?php endif; ?>
+            <p class="preserve-text"><?= e($entry['action_taken']) ?></p>
+        </article>
     <?php endforeach; ?>
 <?php endif; ?>
 <a class="d-block mt-3" href="<?= e(url('incidents/list.php')) ?>">Back to reports</a>

@@ -31,7 +31,7 @@
         const time = new Date(entry.fetched).toLocaleTimeString("en-PH", {
             timeZone: "Asia/Manila", hour: "numeric", minute: "2-digit"
         });
-        panel.textContent = weatherStatus(day.weather_code?.[0]) + " · Forecast date " + today + " · " + low + "–" + high + " °C · Peak rain probability " + rain +
+        panel.textContent = weatherStatus(day.weather_code?.[0]) + " — forecast for " + today + ". Temperatures range from " + low + " to " + high + " °C. The highest hourly chance of rain is " + rain +
             "%. Retrieved " + time + " Philippine time.";
         return true;
     }
@@ -61,7 +61,8 @@
             // An uncached forecast is still displayed.
         }
     } catch {
-        panel.textContent = "Forecast unavailable. Check the PAGASA links below for advisories.";
+        panel.textContent = "Forecast unavailable. Check the official advisories below.";
+        document.getElementById("weather-links").open = true;
     } finally {
         clearTimeout(timer);
     }

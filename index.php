@@ -62,9 +62,9 @@ $pageTitle = "Login";
 require __DIR__ . "/includes/header.php";
 ?>
 <div class="page-intro">
-    <p class="eyebrow">Community preparedness &amp; response</p>
+    <p class="eyebrow">Municipality of Atok · Benguet</p>
     <h1><?= e($settings['app_name']) ?></h1>
-    <p>Classroom pilot using fictional records.</p>
+    <p>Incident reporting and evacuation information for Atok residents and staff. Classroom pilot.</p>
 </div>
 <?php
 require __DIR__ . "/includes/errors.php";
@@ -79,18 +79,18 @@ require __DIR__ . "/includes/errors.php";
                 <input id="login-email" class="form-control mb-3" type="email" name="email" required maxlength="254" autocomplete="email" value="<?= input('action') === 'login' ? e(input('email')) : '' ?>" />
                 <label for="login-password" class="form-label">Password</label>
                 <input id="login-password" class="form-control mb-3" type="password" name="password" required autocomplete="current-password" />
-                <button class="btn btn-primary">Login</button>
+                <button class="btn btn-primary">Sign in</button>
             </form>
         </div>
     </section>
     <section class="col-lg-7" aria-labelledby="resident-guide">
         <div class="panel h-100">
             <h2 id="resident-guide">Resident guide</h2>
-            <p>Use the Atok MDRRM System to report incidents, track your reports, read community announcements, and find open evacuation centers.</p>
-            <h3 class="h5">How to get an account</h3>
-            <p>Ask MDRRM staff to check your household member record. After confirming your residency, staff can create your account. Sign in with your registered email and temporary password, then choose your own password.</p>
-            <h3 class="h5">Before you report an incident</h3>
-            <p>Prepare a short description, a contact number, and a written location such as your barangay and a nearby landmark. You can submit the report without a photo or map pin.</p>
+            <p>Sign in to report an incident, follow its status, read notices, or find an open evacuation center.</p>
+            <h3 class="h5 border-top pt-3">How to get an account</h3>
+            <p>Ask MDRRM staff to verify your household record and issue a temporary password. Choose your own password the first time you sign in.</p>
+            <h3 class="h5 border-top pt-3">Before you report an incident</h3>
+            <p>Have your barangay, nearest landmark, contact number, and a short description ready. A photo and map pin are optional.</p>
         </div>
     </section>
 </div>

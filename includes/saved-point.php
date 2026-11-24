@@ -5,10 +5,10 @@ requireRole("admin");
 <?php if (isset($savedPoint) && hasMapPoint($savedPoint)): ?>
     <p>Saved location: <?= e($savedPoint['address_details']) ?> — <?= e($savedPoint['latitude']) ?>, <?= e($savedPoint['longitude']) ?></p>
     <div id="saved-incident-map" data-lat="<?= e($savedPoint['latitude']) ?>" data-lng="<?= e($savedPoint['longitude']) ?>"> </div>
-    <p id="saved-map-status">Reported location only; no automatic hazard assessment.</p>
+    <p id="saved-map-status">Saved map point.</p>
     <link rel="stylesheet" href="<?= e(url('assets/vendor/leaflet/leaflet.css')) ?>" />
     <script src="<?= e(url('assets/vendor/leaflet/leaflet.js')) ?>"></script>
     <script src="<?= e(url('assets/js/incident-location.js')) ?>"></script>
 <?php else: ?>
-    <p>No map point. This record remains available in lists and totals.</p>
+    <p>No map point saved.</p>
 <?php endif; ?>
