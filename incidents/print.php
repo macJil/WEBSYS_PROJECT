@@ -43,7 +43,7 @@ require __DIR__ . '/../includes/header.php';
 <p class="preserve-text"><?= e($report['description']) ?></p>
 <?php if ($owner === null): ?>
     <?php
-    $stmt = db()->prepare('SELECT created_at, action_taken, to_status FROM response_updates WHERE incident_id=? AND history_hidden_at IS NULL ORDER BY id');
+    $stmt = db()->prepare('SELECT created_at, action_taken, to_status FROM response_updates WHERE incident_id=? ORDER BY id');
     $stmt->execute([$id]);
     $updates = $stmt->fetchAll();
     ?>

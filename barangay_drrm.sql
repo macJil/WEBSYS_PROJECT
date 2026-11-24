@@ -126,7 +126,7 @@ CREATE TABLE incident_assignments (
   responder_id INT UNSIGNED NOT NULL,
   assigned_by INT UNSIGNED NOT NULL,
   assigned_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  status ENUM('assigned','on_scene','completed','cancelled') NOT NULL DEFAULT 'assigned',
+  status ENUM('assigned','completed','cancelled') NOT NULL DEFAULT 'assigned',
   UNIQUE KEY uq_incident_team (incident_id, responder_id),
   FOREIGN KEY (incident_id) REFERENCES incident_reports(id) ON DELETE RESTRICT,
   FOREIGN KEY (responder_id) REFERENCES responders(id) ON DELETE RESTRICT,

@@ -38,7 +38,7 @@ function reliefDbStock(int $id, string $type, int $quantity, int $staff, string 
 function reliefDbMovements(string $q, string $type, string $date): array
 {
     $sql =
-        "SELECT m.*,i.item_name,i.unit,u.full_name FROM relief_stock_movements m JOIN relief_items i ON i.id=m.item_id JOIN users u ON u.id=m.recorded_by WHERE m.history_hidden_at IS NULL AND (i.item_name LIKE ? ESCAPE '!' OR m.notes LIKE ? ESCAPE '!' OR u.full_name LIKE ? ESCAPE '!')";
+        "SELECT m.*,i.item_name,i.unit,u.full_name FROM relief_stock_movements m JOIN relief_items i ON i.id=m.item_id JOIN users u ON u.id=m.recorded_by WHERE (i.item_name LIKE ? ESCAPE '!' OR m.notes LIKE ? ESCAPE '!' OR u.full_name LIKE ? ESCAPE '!')";
     $args = array_fill(0, 3, reliefDbTerm($q));
     if ($type !== '') {
         $sql .= ' AND m.movement_type=?';
@@ -125,7 +125,7 @@ require __DIR__ . "/../includes/errors.php";
     <button class="btn btn-primary" name="action" value="stock">Record movement</button>
     <a href="<?= e(url('relief-inventory/index.php')) ?>">Cancel and return to relief inventory</a>
 </form>
-<h2>Movement history</h2>
+<h2>Stock movement log</h2>
 <form method="get" class="filter-form mb-3">
     <label>Search good, notes, staff<input class="form-control" name="q" value="<?= e(reliefQueryValue('q')) ?>" /></label>
     <label>Type<select class="form-select" name="type">
@@ -160,11 +160,6 @@ require __DIR__ . "/../includes/errors.php";
                         <?php if ($row['distribution_id']): ?>
                             <br /><a href="<?= e(url('relief-distribution/index.php?id=' . $row['distribution_id'])) ?>">Distribution #<?= (int)$row['distribution_id'] ?></a>
                         <?php endif; ?>
-                        <?php
-                        $historyType = 'stock';
-                        $historyId = $row['id'];
-                        require __DIR__ . '/../includes/history-action.php';
-                        ?>
                     </td>
                 </tr>
             <?php endforeach; ?>

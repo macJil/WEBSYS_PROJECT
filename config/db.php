@@ -11,6 +11,11 @@ if (!is_array($settings) || !isset($settings['base_url'], $settings['database'],
     exit('Setup required: use the settings array in setup/config.example.php.');
 }
 
+// Older local installations still have the previous working title in their settings.
+if ($settings['app_name'] === 'BayanReady') {
+    $settings['app_name'] = 'Atok MDRRM System';
+}
+
 $databaseConnection = null;
 
 function db(): PDO

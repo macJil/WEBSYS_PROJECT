@@ -68,7 +68,7 @@ function reliefDbDistribute(int $household, string $receiver, string $notes, arr
 function reliefDbDistributions(string $q): array
 {
     return reliefDbRows(
-        "SELECT d.*,h.household_code,u.full_name FROM relief_distributions d JOIN households h ON h.id=d.household_id JOIN users u ON u.id=d.distributed_by WHERE d.history_hidden_at IS NULL AND (h.household_code LIKE ? ESCAPE '!' OR d.received_by LIKE ? ESCAPE '!') ORDER BY d.id DESC",
+        "SELECT d.*,h.household_code,u.full_name FROM relief_distributions d JOIN households h ON h.id=d.household_id JOIN users u ON u.id=d.distributed_by WHERE (h.household_code LIKE ? ESCAPE '!' OR d.received_by LIKE ? ESCAPE '!') ORDER BY d.id DESC",
         [reliefDbTerm($q), reliefDbTerm($q)],
     );
 }
@@ -246,7 +246,7 @@ require __DIR__ . "/../includes/errors.php";
     <button class="btn btn-primary" name="action" value="distribute">Save distribution and deduct stock</button>
     <a href="<?= e(url('relief-inventory/index.php')) ?>">Cancel and return to relief inventory</a>
 </form>
-<h2 class="mt-4">Distribution history</h2>
+<h2 class="mt-4">Distribution log</h2>
 <form method="get" class="filter-form mb-3">
     <label>Search household code or receiver <input name="q" value="<?= e($q) ?>" /></label>
     <button class="btn btn-outline-secondary">Search</button> <a href="<?= e(url('relief-distribution/index.php')) ?>">Clear</a>
@@ -270,11 +270,6 @@ require __DIR__ . "/../includes/errors.php";
                     <td><?= e($row['received_by']) ?></td>
                     <td><?= e($row['full_name']) ?></td>
                     <td><a href="<?= e(url('relief-distribution/index.php?id=' . $row['id'])) ?>">View #<?= (int)$row['id'] ?></a>
-                        <?php
-                        $historyType = 'distribution';
-                        $historyId = $row['id'];
-                        require __DIR__ . '/../includes/history-action.php';
-                        ?>
                     </td>
                 </tr>
             <?php endforeach; ?>

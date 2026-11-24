@@ -22,7 +22,7 @@ function reportDbImages(int $id): array
 function reportDbHistory(int $id): array
 {
     $stmt = db()->prepare(
-        'SELECT id, action_taken, from_status, to_status, created_at FROM response_updates WHERE incident_id = ? AND history_hidden_at IS NULL ORDER BY id',
+        'SELECT id, action_taken, from_status, to_status, created_at FROM response_updates WHERE incident_id = ? ORDER BY id',
     );
     $stmt->execute([$id]);
     return $stmt->fetchAll();
@@ -316,14 +316,9 @@ require __DIR__ . "/../includes/errors.php";
             <?php endif; ?>
         </form>
     <?php endif; ?>
-    <h2 class="mt-4">Staff review history</h2>
+    <h2 class="mt-4">Staff review log</h2>
     <?php foreach ($history as $entry): ?>
         <p><?= e($entry['created_at']) ?> · <?= e($entry['from_status']) ?> → <?= e($entry['to_status']) ?><br /><?= e($entry['action_taken']) ?></p>
-        <?php
-        $historyType = 'response';
-        $historyId = $entry['id'];
-        require __DIR__ . '/../includes/history-action.php';
-        ?>
     <?php endforeach; ?>
 <?php endif; ?>
 <a class="d-block mt-3" href="<?= e(url('incidents/list.php')) ?>">Back to reports</a>

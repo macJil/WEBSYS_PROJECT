@@ -87,7 +87,7 @@ function evacuationDbCheckinHousehold(int $centerId, int $householdId, array $me
 function evacuationDbRecords(int $id): array
 {
     return evacuationDbRows(
-        'SELECT e.*, COALESCE(m.full_name,e.walkin_name) AS person_name, h.household_code, w.age AS walkin_age,w.address_details AS walkin_address,u.full_name AS encoder, o.full_name AS checkout_staff FROM evacuation_records e LEFT JOIN household_members m ON m.id=e.household_member_id LEFT JOIN households h ON h.id=m.household_id LEFT JOIN evacuation_walkins w ON w.id=e.walkin_id JOIN users u ON u.id=e.recorded_by LEFT JOIN users o ON o.id=e.checked_out_by WHERE e.center_id=? AND (e.history_hidden_at IS NULL OR e.checked_out_at IS NULL) ORDER BY (e.checked_out_at IS NULL) DESC,e.id DESC',
+        'SELECT e.*, COALESCE(m.full_name,e.walkin_name) AS person_name, h.household_code, w.age AS walkin_age,w.address_details AS walkin_address,u.full_name AS encoder, o.full_name AS checkout_staff FROM evacuation_records e LEFT JOIN household_members m ON m.id=e.household_member_id LEFT JOIN households h ON h.id=m.household_id LEFT JOIN evacuation_walkins w ON w.id=e.walkin_id JOIN users u ON u.id=e.recorded_by LEFT JOIN users o ON o.id=e.checked_out_by WHERE e.center_id=? ORDER BY (e.checked_out_at IS NULL) DESC,e.id DESC',
         [$id],
     );
 }
@@ -400,7 +400,7 @@ require __DIR__ . "/../includes/saved-point.php";
 <?php else: ?>
     <p class="alert alert-info mt-3">Check-in unavailable: this center is closed or full.</p>
 <?php endif; ?>
-<h2 class="mt-4">Current evacuees and evacuation history</h2>
+<h2 class="mt-4">Current evacuees and evacuation log</h2>
 <div class="table-responsive" tabindex="0" role="region" aria-label="Scrollable records">
     <table class="table">
         <thead>
@@ -433,12 +433,6 @@ require __DIR__ . "/../includes/saved-point.php";
                                 <input type="hidden" name="record_id" value="<?= (int)$record['id'] ?>" />
                                 <button class="btn btn-outline-secondary" name="action" value="checkout">Check out</button>
                             </form>
-                        <?php else: ?>
-                            <?php
-                            $historyType = 'evacuation';
-                            $historyId = $record['id'];
-                            require __DIR__ . '/../includes/history-action.php';
-                            ?>
                         <?php endif; ?>
                     </td>
                 </tr>

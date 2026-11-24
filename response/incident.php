@@ -21,7 +21,7 @@ function responseDbAssignments(int $id): array
 function responseDbHistory(int $id): array
 {
     $stmt = db()->prepare(
-        'SELECT h.*, u.full_name AS staff_name FROM response_updates h JOIN users u ON u.id=h.updated_by WHERE h.incident_id=? AND h.history_hidden_at IS NULL ORDER BY h.id',
+        'SELECT h.*, u.full_name AS staff_name FROM response_updates h JOIN users u ON u.id=h.updated_by WHERE h.incident_id=? ORDER BY h.id',
     );
     $stmt->execute([$id]);
     return $stmt->fetchAll();
@@ -59,8 +59,8 @@ function responseDbRecord(
                 throw new DomainException('Assignment does not belong to this incident.');
             }
             $allowed = [
-                'assigned' => ['assigned', 'on_scene', 'completed', 'cancelled'],
-                'on_scene' => ['on_scene', 'completed', 'cancelled'],
+                'assigned' => ['assigned', 'completed', 'cancelled'],
+                'on_scene' => ['assigned', 'completed', 'cancelled'],
                 'completed' => ['completed', 'assigned'],
                 'cancelled' => ['cancelled', 'assigned'],
             ];
@@ -188,15 +188,16 @@ require __DIR__ . "/../includes/errors.php";
     <p>No teams assigned.</p>
 <?php endif; ?>
 <?php foreach ($assignments as $assignment): ?>
+    <?php $currentStatus = $assignment['status'] === 'on_scene' ? 'assigned' : $assignment['status']; ?>
     <section class="border rounded p-3 mb-3">
         <h3><?= e($assignment['team_name']) ?></h3>
-        <p><?= e($assignment['contact_phone']) ?> · <?= $assignment['is_active'] ? 'Active team' : 'Inactive team' ?> · Assignment: <?= e($assignment['status']) ?><br />Originally assigned by <?= e($assignment['assigned_by_name']) ?> at <?= e($assignment['assigned_at']) ?></p>
+        <p><?= e($assignment['contact_phone']) ?> · <?= $assignment['is_active'] ? 'Active team' : 'Inactive team' ?> · Assignment: <?= e($currentStatus) ?><br />Originally assigned by <?= e($assignment['assigned_by_name']) ?> at <?= e($assignment['assigned_at']) ?></p>
         <?php if ($open): $retry = input('action') === 'update_assignment' && input('assignment_id') === (string)$assignment['id']; ?>
         <form method="post">
             <input type="hidden" name="assignment_id" value="<?= (int)$assignment['id'] ?>" />
             <label>Status<select class="form-select" name="assignment_status">
                     <?php foreach (RESPONSE_STATUSES as $status): ?>
-                        <option value="<?= e($status) ?>" <?= ($retry ? input('assignment_status') : $assignment['status']) === $status ? 'selected' : '' ?>><?= e(str_replace('_', ' ', ucfirst($status))) ?></option>
+                        <option value="<?= e($status) ?>" <?= ($retry ? input('assignment_status') : $currentStatus) === $status ? 'selected' : '' ?>><?= e(str_replace('_', ' ', ucfirst($status))) ?></option>
                     <?php endforeach; ?>
                 </select></label>
             <label class="d-block my-2">Action taken<textarea class="form-control" name="notes" maxlength="2000" required>
@@ -206,7 +207,7 @@ require __DIR__ . "/../includes/errors.php";
     <?php endif; ?>
 </section>
 <?php endforeach; ?>
-<h2>Response and review history</h2>
+<h2>Response log</h2>
 <?php if (!$history): ?>
     <p>No updates yet.</p>
 <?php endif; ?>
@@ -216,11 +217,6 @@ require __DIR__ . "/../includes/errors.php";
             · Assignment #<?= (int)$entry['assignment_id'] ?>: <?= e($entry['assignment_status']) ?>
         <?php endif; ?>
         <p class="preserve-text"><?= e($entry['action_taken']) ?></p>
-        <?php
-        $historyType = 'response';
-        $historyId = $entry['id'];
-        require __DIR__ . '/../includes/history-action.php';
-        ?>
     </article>
 <?php endforeach; ?>
 <?php

@@ -35,28 +35,13 @@ def check_response_history(admin, resident, Client, query, prefix):
     assert state() == 'resolved'
     endpoint = prefix + 'records/history.php'
     values = dict(history_type='response', history_id='1')
-    assert resident.request(endpoint, values)[0] == 403
-    anonymous = Client()
-    anonymous.request(endpoint, values)
-    assert anonymous.last_url.endswith('/index.php')
-    assert admin.request(endpoint)[0] == 405
-    assert admin.request(endpoint, dict(history_type='users', history_id='1'))[0] == 400
-    active = query('SELECT id FROM evacuation_records WHERE checked_out_at IS NULL LIMIT 1')[0]['id']
-    assert admin.request(endpoint, dict(history_type='evacuation', history_id=str(active)))[0] == 400
-    details = query('SELECT * FROM relief_distribution_items ORDER BY id')
-    snapshot = query('SELECT id,quantity_on_hand FROM relief_items ORDER BY id')
-    stays = query('SELECT COUNT(*) n FROM evacuation_records WHERE checked_out_at IS NULL')
-    rows = [('response', 'response_updates', '1'), ('evacuation', 'evacuation_records', '1'), ('stock', 'relief_stock_movements', '1'), ('distribution', 'relief_distributions', '1')]
-    for kind, table, record in rows:
-        assert admin.request(endpoint, dict(history_type=kind, history_id=record))[0] == 200
-        assert query('SELECT history_hidden_at FROM ' + table + ' WHERE id=' + record)[0]['history_hidden_at']
-        assert query('SELECT COUNT(*) n FROM ' + table)[0]['n'] >= before[table]
-    assert snapshot == query('SELECT id,quantity_on_hand FROM relief_items ORDER BY id')
-    assert details == query('SELECT * FROM relief_distribution_items ORDER BY id')
-    assert stays == query('SELECT COUNT(*) n FROM evacuation_records WHERE checked_out_at IS NULL')
-    assert state() == 'resolved'
+    assert admin.request(endpoint, values)[0] == 404
+    assert resident.request(endpoint, values)[0] == 404
+    code, body = admin.request(page, dict(action='update_assignment', assignment_id='1', assignment_status='on_scene', notes='Invalid selection'))
+    assert 'Choose a valid assignment status' in body and state() == 'resolved'
     for path in ['response/incident.php?id=1', 'incidents/view.php?id=1', 'evacuation/center.php?id=1', 'relief-inventory/movements.php', 'relief-distribution/index.php']:
         code, body = admin.request(prefix + path)
         assert code == 200
         assert 'name="history_id" value="1"' not in body, path
-    print('PASS migration preserves records; single/multiple team synchronization; cancelled/reactivated work; manual conflict blocked; history roles, active-stay protection and unchanged stock/occupancy')
+        assert 'Hide history entry' not in body
+    print('PASS read-only logs, removed hide endpoint and assignment status synchronization')

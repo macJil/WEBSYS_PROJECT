@@ -2,7 +2,7 @@
 require_once __DIR__ . '/../includes/helpers.php';
 require_once __DIR__ . '/../config/db.php';
 
-const RESPONSE_STATUSES = ['assigned', 'on_scene', 'completed', 'cancelled'];
+const RESPONSE_STATUSES = ['assigned', 'completed', 'cancelled'];
 
 function responseDbTeams(): array
 {

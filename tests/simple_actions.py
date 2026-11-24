@@ -70,7 +70,7 @@ def check_actions(admin, resident, query, prefix):
     assert query('SELECT status FROM incident_reports WHERE id=1')[0]['status'] == 'responding'
     assert 'already changed' in admin.request(prefix + review, dispatch)[1]
     assert len(query('SELECT id FROM incident_assignments WHERE incident_id=1')) == 1
-    save('response/incident.php?id=1', dict(action='update_assignment', assignment_id='1', assignment_status='on_scene', notes='Fictional arrival'), 'response/incident.php?id=1')
+    save('response/incident.php?id=1', dict(action='update_assignment', assignment_id='1', assignment_status='assigned', notes='Fictional arrival'), 'response/incident.php?id=1')
     print('PASS incident review, assignment and response update redirects')
 
     pages = [
