@@ -35,7 +35,7 @@ with tempfile.TemporaryDirectory(prefix='bayanready-config-regression-') as temp
     for name in ['db.php']:
         shutil.copyfile(ROOT / 'config' / name, site / 'config' / name)
     shutil.copyfile(ROOT / 'index.php', site / 'index.php')
-    example = (ROOT / 'setup/config.example.php').read_text()
+    example = subprocess.check_output(['git', 'show', ':config/config.php'], cwd=ROOT, text=True)
     for label, config, base in [('array', example.replace('/WEBSYS_PROJECT', '/fictional-demo/'), '/fictional-demo')]:
         # A counter also verifies that db() does not execute config.php again.
         config = config.replace('<?php', "<?php\n$GLOBALS['config_loads'] = ($GLOBALS['config_loads'] ?? 0) + 1;", 1)
@@ -46,7 +46,7 @@ with tempfile.TemporaryDirectory(prefix='bayanready-config-regression-') as temp
 require_once 'config/db.php';
 if ($GLOBALS['config_loads'] !== 1) throw new Exception('Config loaded more than once');
 if (url('index.php') !== '{base}/index.php') throw new Exception('Incorrect URL');
-if ($settings['app_name'] !== 'BayanReady') throw new Exception('Missing app name');
+if ($settings['app_name'] !== 'Atok MDRRM System') throw new Exception('Missing app name');
 // A local SQLite connection checks connection reuse without opening MySQL.
 $databaseConnection = new PDO('sqlite::memory:');
 if (db() !== $databaseConnection || db()->query('SELECT 1')->fetchColumn() != 1) {{
@@ -57,7 +57,7 @@ $_SESSION['ID'] = 1; $_SESSION['ROLE'] = 'resident';
 require 'includes/location-picker.php';
 if ($GLOBALS['config_loads'] !== 1) throw new Exception('Page reloaded config');
 ''')
-            assert 'Register as a resident' in output and 'data-zoom="14"' in output
+            assert '<h2>Login</h2>' in output and 'data-zoom="14"' in output
             assert f'action="{base}/index.php"' in output
         print('PASS', label, 'configuration: both include orders, login, URLs, picker, connection reuse')
 

@@ -25,9 +25,7 @@ Read the Phase 2 installation instructions before importing SQL. Use fictional d
 
 ## PHP foundation setup
 
-**Existing installations:** Before pulling the revision that first tracks `config/config.php`, copy your previous private `config/config.php` to `config/installation.php` and verify the copy. Git can replace an ignored file during checkout.
-
-See [Phase 3 setup and reusable page pattern](docs/PHASE_3_PHP_FOUNDATIONS.md). Copy `setup/config.example.php` to the ignored `config/installation.php`, configure your local connection/base URL, and open root `index.php`. The account screens use ordinary forms and PHP sessions.
+Edit the settings array in `config/config.php` and open the root login page. Keep local password changes out of commits. See the [setup guide](docs/PHASE_3_PHP_FOUNDATIONS.md).
 
 ## Resident enrollment
 
@@ -105,7 +103,7 @@ BayanReady Phase 5: [shared visual system and map verification](docs/BAYANREADY_
 
 - [Phase 7 acceptance and issue log](docs/BAYANREADY_PHASE_7_ACCEPTANCE.md)
 
-Configuration uses one ignored `config/config.php`. Use the returned array in `setup/config.example.php`. When upgrading a constants-based installation, transfer its values into the corresponding array entries before loading the site. `config/db.php` loads it once and supplies the settings used by existing pages; keep your local database credentials, base URL, and private upload path. Existing teammates should transfer their previous local values using [the configuration migration guide](docs/simplification/PHASE_3_CONFIGURATION.md). Check a clean setup with `python3 tests/simplification_config.py`.
+The tracked settings array is in `config/config.php`. Run `python3 tests/simplification_config.py` to check a fresh setup.
 
 Database simplification: fresh installs use 17 tables; existing databases can retain the unused settings table. See the [database review and optional upgrade steps](docs/simplification/PHASE_6_DATABASE_REVIEW.md) before removing any existing table.
 

@@ -60,7 +60,7 @@ with tempfile.TemporaryDirectory(prefix='bayanready-address-') as temporary:
         query("INSERT INTO users(full_name,username,email,password,role) VALUES " +
               ','.join("('Fictional " + role + "','" + role + "','" + role + "@example.invalid','" + password_hash + "','" + role + "')" for role in ['admin', 'resident']))
         query("UPDATE users SET phone='00000000001' WHERE role='resident'")
-        config = (ROOT / 'setup/config.example.php').read_text().replace("'base_url' => '/WEBSYS_PROJECT'", "'base_url' => ''")
+        config = subprocess.check_output(['git', 'show', ':config/config.php'], cwd=ROOT, text=True).replace("'base_url' => '/WEBSYS_PROJECT'", "'base_url' => ''")
         config = config.replace("'host' => '127.0.0.1'", "'host' => 'localhost'").replace("'database' => 'barangay_drrm'", "'database' => '" + DB_NAME + "'").replace("'password' => ''", "'password' => 'root'")
         config = config.replace("'incident_upload_dir' => ''", "'incident_upload_dir' => '" + str(folder / 'images') + "'")
         (site / 'config/config.php').write_text(config)
