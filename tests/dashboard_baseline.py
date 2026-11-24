@@ -44,3 +44,37 @@ def check_baseline(query, staff, first, Client):
     assert first.request('/incidents/view.php?id=4')[0] == 404
     assert second.request('/incidents/view.php?id=2')[0] == 404
     print('PASS dashboard baseline: two residents, ownership, archive exclusion, barangays, occupancy and capacity')
+
+    for _ in range(4):
+        query("""INSERT INTO incident_reports(reported_by, incident_type, description, status)
+                 VALUES (2,'other','Demo queue','pending')""")
+    queue_ids = lambda body: re.findall(r'aria-label="Review incident #(\d+)"', body)
+    body = staff.request(page + '?barangay=Topdac')[1]
+    assert queue_ids(body) == ['1', '4', '6', '7', '8']
+    assert 'Demo closed shelter' not in body
+    for path in ['households/index.php', 'incidents/list.php', 'response/teams.php', 'evacuation/centers.php',
+                 'relief-inventory/index.php', 'relief-distribution/index.php', 'announcements/index.php', 'disaster-reports/index.php']:
+        assert 'href="/' + path + '"' in body and staff.request('/' + path)[0] == 200
+    for record in [1, 4, 6, 7, 8, 9]:
+        staff.request('/incidents/view.php?id=' + str(record), dict(action='verify_only', notes='Fictional verification'))
+        if record == 1:
+            assert queue_ids(staff.request(page)[1]) == ['4', '6', '7', '8', '9']
+    assert 'No reports awaiting review' in staff.request(page)[1]
+
+    center = '/evacuation/center.php?id=1'
+    staff.request(center, dict(action='checkout', record_id=1))
+    for name in ['Demo first arrival', 'Demo second arrival']:
+        status, body = staff.request(center, dict(action='checkin', kind='new_walkin', full_name=name,
+            age='20', address_details='Fictional landmark', contact_phone='00000000000'))
+        assert status == 200 and 'alert-danger' not in body
+    def check_capacity(staying, remaining):
+        body = staff.request(page)[1]
+        row = re.search(r'Demo open shelter</a></td>(.*?)</tr>', body, re.S).group(1)
+        assert re.findall(r'<td>(\d+)</td>', row) == [str(staying), '5', str(remaining)]
+        detail = staff.request(center)[1]
+        assert f'Occupancy: {staying} / 5 people' in detail
+        assert f'Available capacity (people): <strong>{remaining}</strong>' in detail
+    check_capacity(2, 3)
+    staff.request(center, dict(action='checkout', record_id=2))
+    check_capacity(1, 4)
+    print('PASS oldest five, verification refresh, eight module shortcuts and center occupancy parity')
