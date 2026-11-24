@@ -2,5 +2,5 @@ config/local.php
 .DS_Store
 uploads/
 *.log
-config/config.php
 .presentation-build/
+config/installation.php

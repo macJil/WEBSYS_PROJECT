@@ -1,5 +1,5 @@
 <?php
-// Copy to config.php and change values for your computer. Never commit config.php.
+// Copy to config/installation.php for machine-specific settings. Keep installation.php private.
 return [
     'app_name' => 'Atok MDRRM System',
     'base_url' => '/WEBSYS_PROJECT', // Use '' when served at localhost root.

@@ -8,7 +8,7 @@ Atok MDRRM System uses plain PHP pages grouped by module, shared session checks,
 
 ## Presentation and verification
 
-Use the [nine-presenter walkthrough](presentation/LIVE_DEMO_PRESENTATION_SCRIPT.md) for this branch. The eight module folders are `households/`, `incidents/`, `response/`, `evacuation/`, `relief-inventory/`, `relief-distribution/`, `announcements/`, and `disaster-reports/`. Shared markup, session helpers, and the capacity calculation live in `includes/`. Stylesheets, JavaScript, and Leaflet files live in `assets/`. The running site uses two configuration files: `config/config.php` for local settings and `config/db.php` for the shared PDO connection. Staff and residents open their own pages in `dashboard/`.
+Use the [nine-presenter walkthrough](presentation/LIVE_DEMO_PRESENTATION_SCRIPT.md) for this branch. The eight module folders are `households/`, `incidents/`, `response/`, `evacuation/`, `relief-inventory/`, `relief-distribution/`, `announcements/`, and `disaster-reports/`. Shared markup, session helpers, and the capacity calculation live in `includes/`. Stylesheets, JavaScript, and Leaflet files live in `assets/`. The running site loads settings through `config/config.php` and connects through `config/db.php`. Staff and residents open their own pages in `dashboard/`.
 
 The current fictional HTTP acceptance runner is `tests/household_map_persistence.py`. It creates a disposable database and removes it after the checks. Set `TEST_PHP` and `TEST_MYSQL_SOCKET` for your local test installation. Earlier phase documents and historical tests describe their respective branch versions.
 
@@ -25,7 +25,9 @@ Read the Phase 2 installation instructions before importing SQL. Use fictional d
 
 ## PHP foundation setup
 
-See [Phase 3 setup and reusable page pattern](docs/PHASE_3_PHP_FOUNDATIONS.md). Copy `setup/config.example.php` to the ignored `config/config.php`, configure your local connection/base URL, and open root `index.php`. The account screens use ordinary forms and PHP sessions.
+**Existing installations:** Before pulling the revision that first tracks `config/config.php`, copy your previous private `config/config.php` to `config/installation.php` and verify the copy. Git can replace an ignored file during checkout.
+
+See [Phase 3 setup and reusable page pattern](docs/PHASE_3_PHP_FOUNDATIONS.md). Copy `setup/config.example.php` to the ignored `config/installation.php`, configure your local connection/base URL, and open root `index.php`. The account screens use ordinary forms and PHP sessions.
 
 ## Resident enrollment
 

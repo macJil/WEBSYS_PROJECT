@@ -2,7 +2,7 @@
 // Load local settings once, whether pages or models are loaded first.
 if (!is_file(__DIR__ . '/config.php')) {
     http_response_code(503);
-    exit('Setup required: copy setup/config.example.php to config/config.php and enter your local settings.');
+    exit('Setup required: copy setup/config.example.php to config/installation.php and enter your local settings.');
 }
 
 $settings = require __DIR__ . '/config.php';
