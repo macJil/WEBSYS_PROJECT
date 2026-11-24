@@ -6,7 +6,7 @@ Atok MDRRM System uses plain PHP pages grouped by module, shared session checks,
 
 [Setup guide](docs/PHASE_3_PHP_FOUNDATIONS.md) · [Classroom results, sample PDFs and pending pilot checks](docs/pilot/README.md)
 
-[Submission review, demo accounts and rehearsal](docs/SUBMISSION_CHECK.md)
+Import [barangay_drrm.sql](barangay_drrm.sql) into an empty classroom database for the complete schema, presentation records and demo logins. See the [demo passwords and walkthrough](docs/SUBMISSION_CHECK.md).
 
 ## Presentation and verification
 

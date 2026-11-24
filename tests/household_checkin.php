@@ -13,6 +13,7 @@ $pdo->exec("CREATE DATABASE `$name`");
 try {
     $pdo->exec("USE `$name`");
     $schema = file_get_contents(__DIR__ . '/../barangay_drrm.sql');
+    $schema = explode('-- CLASSROOM DEMO DATA', $schema, 2)[0];
     $schema = str_replace(['CREATE DATABASE IF NOT EXISTS barangay_drrm CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;', 'USE barangay_drrm;'], '', $schema);
     $pdo->exec($schema);
     $pdo->exec("INSERT INTO users(full_name, username, email, password, role) VALUES ('Fictional Staff','fixture','fixture@example.invalid','unused','admin')");

@@ -1,6 +1,6 @@
 -- BARANGAY DRRM: SIMPLE DEVELOPMENT DATABASE (v1.4)
 -- MySQL 8.0.16+; new development database ONLY.
--- No sample accounts/data. Never import over SmartSlope's existing database.
+-- Includes fictional presentation records and classroom-only logins. Import into an empty database.
 -- One barangay, admin and resident roles; incident images stored separately from MySQL.
 -- Fresh installation only. Existing databases: apply missing migrations in order: 001, 002, 003, 004.
 -- Existing v1.2 databases: run database/migrations/003_phase_7.sql.
@@ -303,3 +303,61 @@ CREATE TABLE relief_stock_movements (
 -- Prevent duplicate active evacuation records; enforce center capacity in a transaction.
 -- Record inventory distribution using transactions and SELECT ... FOR UPDATE.
 -- Use password_hash/password_verify; prepared statements; session/role and ownership checks.
+
+-- CLASSROOM DEMO DATA
+-- These public passwords are only for a fictional local demonstration.
+-- Barangay admin: barangay.admin@atok.example.invalid / AtokDemoAdmin26!
+-- Demo staff: staff@demo.example.invalid / AtokDemoStaff26!
+-- Demo resident: resident@demo.example.invalid / AtokDemoResident26!
+-- All three demo accounts open their own dashboards directly.
+START TRANSACTION;
+
+INSERT INTO households
+(id,household_code,representative_name,barangay,purok,address_details,registry_reason,hazard_type,latitude,longitude) VALUES
+(1,'DEMO-ATOK-01','Demo Resident One','Paoay','Demo Block A','Fictional training lane','both','flood',16.6236,120.7642),
+(2,'DEMO-ATOK-02','Demo Resident Three','Topdac','Demo Block B','Fictional upper lane','monitored','landslide',NULL,NULL);
+INSERT INTO household_members (id,household_id,full_name,age) VALUES
+(1,1,'Demo Resident One',32),(2,1,'Demo Resident Two',24),(3,2,'Demo Resident Three',48);
+INSERT INTO users (id,full_name,username,email,password,phone,role,household_member_id) VALUES
+(1,'Barangay Demo Administrator','barangay_admin','barangay.admin@atok.example.invalid','$2y$10$bkxLSgOLfwXgV7J6AImvTuGXgQEu53UR2K8BY0toNIYrVhBl2aM2e',NULL,'admin',NULL),
+(2,'Demo Duty Officer','demo_staff','staff@demo.example.invalid','$2y$10$RY0w1QyXoqXSSEI1xnOfNewoWtKW.4.OeFSYlcRc/0Um2mN1bgDaW',NULL,'admin',NULL),
+(3,'Demo Resident One','demo_resident','resident@demo.example.invalid','$2y$10$iY/.6zxDi7PO0H1SzxkuCexnkfsIQzMqrMEisVTyRIexDXaCEpTN.','09000000000','resident',1);
+
+INSERT INTO incident_reports
+(id,reported_by,barangay,report_source,reporter_name,incident_type,description,location_description,latitude,longitude,status,reviewed_by,reviewed_at,created_at) VALUES
+(1,2,'Topdac','phone','Demo Caller','landslide','Drill: debris cleared from the training road.','Fictional upper lane',NULL,NULL,'resolved',2,NOW()-INTERVAL 1 DAY,NOW()-INTERVAL 2 DAY),
+(2,2,'Paoay','walk_in','Demo Visitor','road_obstruction','Drill: a branch blocks the practice crossing.','Demo crossing',16.6239,120.7643,'responding',2,NOW(),NOW()-INTERVAL 2 HOUR),
+(3,3,'Paoay','resident','Demo Resident One','flood','Drill: water across the training lane.','Demo training lane',16.62366,120.76422,'pending',NULL,NULL,NOW());
+UPDATE incident_reports SET contact_phone='09000000000' WHERE id=3;
+INSERT INTO responders (id,team_name) VALUES (1,'Demo Response Alpha'),(2,'Demo Response Bravo');
+INSERT INTO incident_assignments (id,incident_id,responder_id,assigned_by,status,assigned_at) VALUES
+(1,1,1,2,'completed',NOW()-INTERVAL 1 DAY),(2,2,2,2,'assigned',NOW());
+INSERT INTO response_updates (incident_id,updated_by,action_taken,from_status,to_status,assignment_id,assignment_status,created_at) VALUES
+(1,2,'Demo dispatch to training road.','pending','responding',1,'assigned',NOW()-INTERVAL 1 DAY),
+(1,2,'Demo team cleared debris.','responding','resolved',1,'completed',NOW()-INTERVAL 23 HOUR),
+(2,2,'Demo team dispatched to crossing.','pending','responding',2,'assigned',NOW());
+
+INSERT INTO evacuation_centers (id,name,barangay,address_details,capacity,status,latitude,longitude) VALUES
+(1,'Demo Training Shelter','Paoay','Fictional assembly hall',5,'open',16.6238,120.7643),
+(2,'Demo Reserve Shelter','Topdac','Fictional reserve hall',4,'closed',NULL,NULL);
+INSERT INTO evacuation_walkins (id,full_name,age,address_details,contact_phone,identity_key) VALUES
+(1,'Demo Returning Visitor',42,'Demo Lane B','09000000001',SHA2('["demo returning visitor","42","demo lane b","09000000001"]',256));
+INSERT INTO evacuation_records (center_id,household_member_id,recorded_by) VALUES (1,1,2);
+INSERT INTO evacuation_records (center_id,walkin_id,walkin_name,walkin_contact,recorded_by,checked_in_at,checked_out_at,checked_out_by) VALUES
+(1,1,'Demo Returning Visitor','09000000001',2,NOW()-INTERVAL 1 DAY,NOW(),2);
+
+INSERT INTO relief_locations (id,name,location_type,address_details,latitude,longitude) VALUES
+(1,'Demo Relief Desk','distribution','Fictional assembly hall',16.6239,120.7644);
+INSERT INTO relief_items (id,item_name,unit,quantity_on_hand) VALUES
+(1,'Demo food pack','packs',18),(2,'Demo drinking water','bottles',18),(3,'Demo blanket','pieces',0);
+INSERT INTO relief_distributions (id,household_id,relief_location_id,received_by,distributed_by,notes) VALUES
+(1,1,1,'Demo Resident One',2,'Fictional training distribution');
+INSERT INTO relief_distribution_items (distribution_id,item_id,quantity) VALUES (1,1,2),(1,2,2);
+INSERT INTO relief_stock_movements (item_id,movement_type,quantity,distribution_id,recorded_by,notes) VALUES
+(1,'stock_in',20,NULL,2,'Demo delivery'),(2,'stock_in',20,NULL,2,'Demo delivery'),
+(1,'distribution',2,1,2,'Demo household issue'),(2,'distribution',2,1,2,'Demo household issue'),
+(3,'stock_in',3,NULL,2,'Demo donation'),(3,'stock_out',3,NULL,2,'Demo damaged supplies');
+INSERT INTO announcements (title,message,is_published,first_published_at,created_by) VALUES
+('Demo exercise notice','Classroom exercise only. View the Demo Training Shelter on the map.',1,NOW(),2),
+('Demo staff draft','Draft of the fictional preparedness reminder.',0,NULL,2);
+COMMIT;

@@ -4,6 +4,7 @@ require_once __DIR__ . '/atok-boundary.php';
 
 if (session_status() !== PHP_SESSION_ACTIVE) {
     ini_set('session.use_strict_mode', '1');
+    session_name('ATOKMDRRMDEMO');
     session_start();
 }
 

@@ -52,7 +52,7 @@ with tempfile.TemporaryDirectory(prefix='bayanready-address-') as temporary:
     sql('CREATE DATABASE `' + DB_NAME + '` CHARACTER SET utf8mb4')
     server = None
     try:
-        schema = (ROOT / 'barangay_drrm.sql').read_text()
+        schema = (ROOT / 'barangay_drrm.sql').read_text().split('-- CLASSROOM DEMO DATA', 1)[0]
         schema = schema.replace('CREATE DATABASE IF NOT EXISTS barangay_drrm CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;', '')
         schema = schema.replace('USE barangay_drrm;', 'USE `' + DB_NAME + '`;')
         sql(schema)

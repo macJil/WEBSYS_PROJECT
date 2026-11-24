@@ -4,7 +4,7 @@
 2. For a fresh local installation import `barangay_drrm.sql` into a dedicated fictional database. For an existing plain-PHP assessment installation, back up the database and apply only missing assessment migrations in order (01, 04, 05). Do not import the fresh schema over a populated database.
 3. In `config/config.php`, set the local database credentials, port, base URL path and a writable absolute upload directory outside the document root. For existing configurations set `app_name` to `Atok MDRRM System`. Use an empty base URL at the domain root or the actual subdirectory path.
 4. Prepare the accounts and fictional records using the [submission handoff](SUBMISSION_CHECK.md). Keep each temporary password private.
-5. Use separate browser sessions for staff and resident. Change the temporary password on first login.
+5. Use separate browser sessions for staff and resident. Use the classroom credentials from the submission guide. Newly enrolled residents change their temporary password at first login.
 6. Start the [nine-member script](../presentation/LIVE_DEMO_PRESENTATION_SCRIPT.md) with a fresh fictional household. The seeded five-place shelter already has one active stay. Each seeded relief good starts with 18 units available.
 
 ## Online classroom pilot
