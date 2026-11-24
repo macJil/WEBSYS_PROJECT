@@ -7,7 +7,7 @@ return [
     'port' => '8889',
     'database' => 'barangay_drrm',
     'username' => 'root',
-    'password' => '',
+    'password' => getenv('ATOK_DB_PASSWORD') ?: '',
     // Absolute private folder OUTSIDE your web server document root; PHP must be able to write here.
     'incident_upload_dir' => '',
     // Municipal demo label. The approximate outline needs office confirmation.

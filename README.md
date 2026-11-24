@@ -25,7 +25,7 @@ Read the Phase 2 installation instructions before importing SQL. Use fictional d
 
 ## PHP foundation setup
 
-Edit the settings array in `config/config.php` and open the root login page. Keep local password changes out of commits. See the [setup guide](docs/PHASE_3_PHP_FOUNDATIONS.md).
+Edit the settings array in `config/config.php` and open the root login page. For a private database password, set the ATOK_DB_PASSWORD environment variable on the host. See the [setup guide](docs/PHASE_3_PHP_FOUNDATIONS.md).
 
 ## Resident enrollment
 

@@ -65,7 +65,7 @@ if ($GLOBALS['config_loads'] !== 1) throw new Exception('Page reloaded config');
         # Read-only connection check; no application records or private config are used.
         config = example.replace("'host' => '127.0.0.1'", "'host' => 'localhost'")
         config = config.replace("'database' => 'barangay_drrm'", "'database' => 'information_schema'")
-        config = config.replace("'password' => ''", "'password' => 'root'")
+        config = config.replace("'password' => getenv('ATOK_DB_PASSWORD') ?: ''", "'password' => 'root'")
         for label, config in [('array', config)]:
             (site / 'config/config.php').write_text(config)
             for first, second in [('includes/helpers.php', 'config/db.php'), ('config/db.php', 'includes/helpers.php')]:
