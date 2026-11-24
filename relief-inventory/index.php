@@ -107,11 +107,14 @@ require __DIR__ . "/../includes/errors.php";
                 <tr>
                     <td><?= e($row['item_name']) ?></td>
                     <td><?= e($row['unit']) ?></td>
-                    <td><?= (int)$row['quantity_on_hand'] ?>
+                    <td>
                         <?php if ((int)$row['quantity_on_hand'] === 0): ?>
                             <span class="badge text-bg-danger">Out of stock</span>
-                        <?php elseif ((int)$row['quantity_on_hand'] <= (int)($row['minimum_stock'] ?? 0)): ?>
-                            <span class="badge text-bg-warning">Low stock</span>
+                        <?php else: ?>
+                            <?= (int)$row['quantity_on_hand'] ?>
+                            <?php if ((int)$row['quantity_on_hand'] <= (int)($row['minimum_stock'] ?? 0)): ?>
+                                <span class="badge text-bg-warning">Low stock</span>
+                            <?php endif; ?>
                         <?php endif; ?>
                     </td>
                     <td><a href="<?= e(url('relief-inventory/index.php?edit=' . $row['id'])) ?>">Edit</a></td>
