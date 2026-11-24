@@ -199,7 +199,8 @@ function evacuationDbCheckout(int $centerId, int $recordId, int $staff): void
 function evacuationDbHouseholdMembers(int $householdId): array
 {
     return evacuationDbRows(
-        'SELECT m.id, m.full_name FROM household_members m
+        'SELECT m.id, m.full_name, stay.id AS active_stay FROM household_members m
+        LEFT JOIN evacuation_records stay ON stay.active_member_id=m.id
         JOIN households h ON h.id = m.household_id
         WHERE h.id = ? AND h.archived_at IS NULL AND m.archived_at IS NULL
         ORDER BY m.id',
@@ -304,7 +305,12 @@ if (!is_array($selectedMembers)) {
     $selectedMembers = [];
 }
 $arrivingCount = 0;
+$eligibleCount = 0;
 foreach ($members as $member) {
+    if ($member["active_stay"] !== null) {
+        continue;
+    }
+    $eligibleCount++;
     if (in_array($member["id"], $selectedMembers)) {
         $arrivingCount++;
     }
@@ -355,7 +361,10 @@ require __DIR__ . "/../includes/errors.php";
                 <p>Uncheck anyone who is not arriving. Each selected person uses one place.</p>
                 <?php foreach ($members as $member): ?>
                     <label class="d-block mb-2">
-                        <input class="form-check-input" type="checkbox" name="member_ids[]" value="<?= (int)$member['id'] ?>" <?= in_array($member['id'], $selectedMembers) ? 'checked' : '' ?>> <?= e($member['full_name']) ?> </label>
+                        <input class="form-check-input" type="checkbox" name="member_ids[]" value="<?= (int)$member['id'] ?>" <?= $member['active_stay'] !== null ? 'disabled' : (in_array($member['id'], $selectedMembers) ? 'checked' : '') ?>>
+                        <?= e($member['full_name']) ?>
+                        <?php if ($member['active_stay'] !== null): ?>(already checked in)<?php endif; ?>
+                    </label>
                 <?php endforeach; ?>
             </fieldset>
             <?php if (!$members): ?>
@@ -363,7 +372,7 @@ require __DIR__ . "/../includes/errors.php";
             <?php endif; ?>
             <p>Current occupancy: <?= (int)$center['occupancy'] ?> / <?= (int)$center['capacity'] ?> people.</p>
             <p data-arrival-summary aria-live="polite">Arriving: <?= $arrivingCount ?> people. Remaining capacity after check-in: <?= (int)$center['capacity'] - (int)$center['occupancy'] - $arrivingCount ?> people.</p>
-            <button class="btn btn-primary" name="action" value="checkin_household" <?= !$members ? 'disabled' : '' ?>>Check in household</button>
+            <button class="btn btn-primary" name="action" value="checkin_household" <?= !$eligibleCount ? 'disabled' : '' ?>>Check in household</button>
             <a href="<?= e(url('evacuation/center.php?id=' . $id)) ?>">Cancel household selection</a>
         </form>
     <?php endif; ?>

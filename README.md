@@ -6,6 +6,8 @@ Atok MDRRM System uses plain PHP pages grouped by module, shared session checks,
 
 [Setup guide](docs/PHASE_3_PHP_FOUNDATIONS.md) · [Classroom results, sample PDFs and pending pilot checks](docs/pilot/README.md)
 
+[Submission review, demo accounts and rehearsal](docs/SUBMISSION_CHECK.md)
+
 ## Presentation and verification
 
 Use the [nine-presenter walkthrough](presentation/LIVE_DEMO_PRESENTATION_SCRIPT.md) for this branch. The eight module folders are `households/`, `incidents/`, `response/`, `evacuation/`, `relief-inventory/`, `relief-distribution/`, `announcements/`, and `disaster-reports/`. Shared markup, session helpers, and the capacity calculation live in `includes/`. Stylesheets, JavaScript, and Leaflet files live in `assets/`. The running site loads settings through `config/config.php` and connects through `config/db.php`. Staff and residents open their own pages in `dashboard/`.
@@ -65,7 +67,7 @@ Open **Households → View / members → Create resident account**, confirm resi
 
 ## Map search and locations
 
-[Phase 11 guide](docs/PHASE_11_MAP_LOCATIONS.md): incident forms support fictional purok/landmark search, map point selection, manual coordinates, and staff review of saved locations. No boundary or automatic hazard prediction is applied. No new migration required.
+[Phase 11 guide](docs/PHASE_11_MAP_LOCATIONS.md): incident forms support fictional purok/landmark search, map point selection, manual coordinates, and staff review of saved locations. The current picker checks points against the approximate Atok outline. No new migration required.
 
 ## Integration review
 
@@ -83,7 +85,7 @@ Open **Households → View / members → Create resident account**, confirm resi
 
 [Revision 4 location picker](docs/REVISION_4_LOCATION_PICKER.md): shared manual/map/device-location selection across incidents and staff location forms, plus relief-location management and saved-point views.
 
-[Revision 5 dashboards](docs/REVISION_5_DASHBOARDS.md): current role-specific counts, matching list links, latest resident notices, public open-center list, and editable per-good minimum-stock thresholds.
+[Revision 5 dashboards](docs/REVISION_5_DASHBOARDS.md): current role-specific counts, matching list links, latest resident notices, and the public open-center list.
 
 [Revision 6 record actions](docs/REVISION_6_RECORD_ACTIONS.md): admin management lists with checkboxes, review/confirmation, transactional delete/archive rules, and protected history. Relevant module lists link to the shared management page.
 

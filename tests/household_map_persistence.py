@@ -194,6 +194,11 @@ with tempfile.TemporaryDirectory(prefix='bayanready-address-') as temporary:
         code, body = admin.request(prefix + 'evacuation/center.php?id=1', {'action': 'checkout', 'record_id': '1'})
         assert code == 200 and 'alert-danger' not in body
         verify_dashboard(8, 4)
+        picker = admin.request(prefix + 'evacuation/center.php?id=1&household_id=1')[1]
+        assert picker.count('(already checked in)') == 4
+        assert re.search(r'name="member_ids\[\]" value="1" checked', picker)
+        assert re.search(r'name="member_ids\[\]" value="2" disabled', picker)
+        print('PASS household arrival form selects only eligible people')
         assert resident.request(prefix + 'households/index.php')[0] == 403
         print('PASS resident blocked from staff forms')
         from simple_actions import check_actions

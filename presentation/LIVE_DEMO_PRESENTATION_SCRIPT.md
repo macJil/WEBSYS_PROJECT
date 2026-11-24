@@ -1,6 +1,6 @@
 # Atok MDRRM System plain PHP live demonstration
 
-Thirty minutes including live form entry, code walkthroughs and presenter handoffs. Q&A follows. Use fictional accounts and records. Start with a five-place empty center. The clock times are rehearsal targets.
+Thirty minutes including live form entry, code walkthroughs and presenter handoffs. Q&A follows. Use fictional accounts and records. Use the seeded Demo Training Shelter (one of five places occupied) and Demo food pack and Demo drinking water (18 units each before rehearsal). The clock times are rehearsal targets.
 
 ## Atok MDRRM System for Atok
 
@@ -42,19 +42,19 @@ I show the public resident guide, then sign in with the temporary password and c
 
 ATOK MDRRM SYSTEM  /  MEMBER 4 · 10:45–14:00
 
-I open Awaiting review on the staff dashboard and click Review beside the report we just submitted. I choose the first team and click Verify and assign. One submission moves the report to Responding. Member 3 refreshes the resident dashboard and shows Responding under My latest report. I open response/incident.php, assign the second team and record an action. Completing only the first assignment still leaves work outstanding. When I complete both assignments, Member 3 refreshes again. My latest report now says Resolved. View report opens that resident’s private copy.
+I open Awaiting review on the staff dashboard and click Review beside the report we just submitted. If older reports fill the queue, I open View all pending reports and find our incident number. I choose the first team and click Verify and assign. One submission moves the report to Responding. Member 3 refreshes the resident dashboard and shows Responding under My latest report. I open response/incident.php, assign the second team and record an action. Completing only the first assignment still leaves work outstanding. When I complete both assignments, Member 3 refreshes again. My latest report now says Resolved. View report opens that resident’s private copy.
 
 ## Count the people who actually arrive
 
 ATOK MDRRM SYSTEM  /  MEMBER 5 · 14:00–17:15
 
-I will open evacuation/center.php and select Demo Household A. Three members are registered, but only two arrived. I will uncheck the absent member and check in the other two together. A center with five available places now has three. I open Check in walk-in and search for a returning evacuee to show how staff reuse a person’s history. I leave that person unchecked. I will show both active stays and leave them open so our dashboard presenter can verify the count.
+I will open evacuation/center.php and select Demo Household A. Three members are registered, but only two arrived. I will uncheck the absent member and check in the other two together. The shelter started with one person staying. Two arrivals bring occupancy to three of five, leaving two places. I open Check in walk-in and search for a returning evacuee to show how staff reuse a person’s history. I leave that completed stay in history. I will show both active stays and leave them open so our dashboard presenter can verify the count.
 
 ## Distribute several goods in one transaction
 
 ATOK MDRRM SYSTEM  /  MEMBER 6 · 17:15–20:30
 
-I will open relief-inventory/movements.php and record five units each of two fictional goods. In relief-distribution/index.php I will choose Demo Household A and enter the actual receiver. I will first request more of the second item than is available. Both balances stay at five. Issuing two of each succeeds, leaves three of each, and creates one distribution with two lines.
+I will open relief-inventory/movements.php and record five units each of two fictional goods. In relief-distribution/index.php I will choose Demo Household A and enter the actual receiver. I will first request more of the second item than is available. Both balances stay at 23. Issuing two of each succeeds, leaves 21 of each, and creates one distribution with two lines.
 
 ## Publish and withdraw a preparedness notice
 
