@@ -494,6 +494,7 @@ require __DIR__ . "/../includes/errors.php";
 <h2>Center location</h2>
 <?php
 $savedPoint = $center;
+$savedKind = 'centers';
 require __DIR__ . "/../includes/saved-point.php";
 ?>
 

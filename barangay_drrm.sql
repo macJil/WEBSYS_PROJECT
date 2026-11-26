@@ -1,10 +1,4 @@
--- BARANGAY DRRM: SIMPLE DEVELOPMENT DATABASE (v1.4)
--- MySQL 8.0.16+; new development database ONLY.
--- Includes fictional presentation records and classroom-only logins. Import into an empty database.
--- One barangay, admin and resident roles; incident images stored separately from MySQL.
--- Fresh installation only. Existing databases: apply missing migrations in order: 001, 002, 003, 004.
--- Existing v1.2 databases: run database/migrations/003_phase_7.sql.
-
+-- Atok MDRRM System. Fresh installations only. See README for account activation.
 CREATE DATABASE IF NOT EXISTS barangay_drrm CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE barangay_drrm;
 
@@ -294,7 +288,6 @@ CREATE TABLE relief_stock_movements (
   INDEX idx_stock_item_date (item_id, created_at)
 ) ENGINE=InnoDB;
 
--- Demo labels are configured in ignored config/config.php.
 
 -- NO extra reports table: reports are SELECT queries on the tables above.
 -- All FK relationships intentionally use RESTRICT for historical integrity.
@@ -304,101 +297,7 @@ CREATE TABLE relief_stock_movements (
 -- Record inventory distribution using transactions and SELECT ... FOR UPDATE.
 -- Use password_hash/password_verify; prepared statements; session/role and ownership checks.
 
--- CLASSROOM DEMO DATA
--- These public passwords are only for a fictional local demonstration.
--- Barangay admin: barangay.admin@atok.example.invalid / AtokDemoAdmin26!
--- Demo staff: staff@demo.example.invalid / AtokDemoStaff26!
--- Demo resident: resident@demo.example.invalid / AtokDemoResident26!
--- All three demo accounts open their own dashboards directly.
-START TRANSACTION;
-
-INSERT INTO households
-(id,household_code,representative_name,barangay,purok,address_details,registry_reason,hazard_type,latitude,longitude) VALUES
-(1,'DEMO-ATOK-01','Demo Resident One','Paoay','Demo Block A','Fictional training lane','both','flood',16.62366,120.7575),
-(2,'DEMO-ATOK-02','Demo Resident Three','Topdac','Demo Block B','Fictional upper lane','monitored','landslide',NULL,NULL);
-INSERT INTO household_members (id,household_id,full_name,age) VALUES
-(1,1,'Demo Resident One',32),(2,1,'Demo Resident Two',24),(3,2,'Demo Resident Three',48);
-INSERT INTO users (id,full_name,username,email,password,phone,role,household_member_id) VALUES
-(1,'Barangay Demo Administrator','barangay_admin','barangay.admin@atok.example.invalid','$2y$10$bkxLSgOLfwXgV7J6AImvTuGXgQEu53UR2K8BY0toNIYrVhBl2aM2e',NULL,'admin',NULL),
-(2,'Demo Duty Officer','demo_staff','staff@demo.example.invalid','$2y$10$RY0w1QyXoqXSSEI1xnOfNewoWtKW.4.OeFSYlcRc/0Um2mN1bgDaW',NULL,'admin',NULL),
-(3,'Demo Resident One','demo_resident','resident@demo.example.invalid','$2y$10$iY/.6zxDi7PO0H1SzxkuCexnkfsIQzMqrMEisVTyRIexDXaCEpTN.','09000000000','resident',1);
-
-INSERT INTO incident_reports
-(id,reported_by,barangay,report_source,reporter_name,incident_type,description,location_description,latitude,longitude,status,reviewed_by,reviewed_at,created_at) VALUES
-(1,2,'Topdac','phone','Demo Caller','landslide','Drill: debris cleared from the training road.','Fictional upper lane',NULL,NULL,'resolved',2,NOW()-INTERVAL 1 DAY,NOW()-INTERVAL 2 DAY),
-(2,2,'Paoay','walk_in','Demo Visitor','road_obstruction','Drill: a branch blocks the practice crossing.','Demo crossing',16.62366,120.76422,'responding',2,NOW(),NOW()-INTERVAL 2 HOUR),
-(3,3,'Paoay','resident','Demo Resident One','flood','Drill: water across the training lane.','Demo training lane',16.617,120.76422,'pending',NULL,NULL,NOW());
-UPDATE incident_reports SET contact_phone='09000000000' WHERE id=3;
-INSERT INTO responders (id,team_name) VALUES (1,'Demo Response Alpha'),(2,'Demo Response Bravo');
-INSERT INTO incident_assignments (id,incident_id,responder_id,assigned_by,status,assigned_at) VALUES
-(1,1,1,2,'completed',NOW()-INTERVAL 1 DAY),(2,2,2,2,'assigned',NOW());
-INSERT INTO response_updates (incident_id,updated_by,action_taken,from_status,to_status,assignment_id,assignment_status,created_at) VALUES
-(1,2,'Demo dispatch to training road.','pending','responding',1,'assigned',NOW()-INTERVAL 1 DAY),
-(1,2,'Demo team cleared debris.','responding','resolved',1,'completed',NOW()-INTERVAL 23 HOUR),
-(2,2,'Demo team dispatched to crossing.','pending','responding',2,'assigned',NOW());
-
-INSERT INTO evacuation_centers (id,name,barangay,address_details,capacity,status,latitude,longitude) VALUES
-(1,'Demo Training Shelter','Paoay','Fictional assembly hall',5,'open',16.63,120.76422),
-(2,'Demo Reserve Shelter','Topdac','Fictional reserve hall',4,'closed',NULL,NULL);
-INSERT INTO evacuation_walkins (id,full_name,age,address_details,contact_phone,identity_key) VALUES
-(1,'Demo Returning Visitor',42,'Demo Lane B','09000000001',SHA2('["demo returning visitor","42","demo lane b","09000000001"]',256));
-INSERT INTO evacuation_records (center_id,household_member_id,recorded_by) VALUES (1,1,2);
-INSERT INTO evacuation_records (center_id,walkin_id,walkin_name,walkin_contact,recorded_by,checked_in_at,checked_out_at,checked_out_by) VALUES
-(1,1,'Demo Returning Visitor','09000000001',2,NOW()-INTERVAL 1 DAY,NOW(),2);
-
-INSERT INTO relief_locations (id,name,location_type,address_details,latitude,longitude) VALUES
-(1,'Demo Relief Desk','distribution','Fictional east supply desk',16.62366,120.7714);
-INSERT INTO relief_items (id,item_name,unit,quantity_on_hand) VALUES
-(1,'Demo food pack','packs',18),(2,'Demo drinking water','bottles',18),(3,'Demo blanket','pieces',0);
-INSERT INTO relief_distributions (id,household_id,relief_location_id,received_by,distributed_by,notes) VALUES
-(1,1,1,'Demo Resident One',2,'Fictional training distribution');
-INSERT INTO relief_distribution_items (distribution_id,item_id,quantity) VALUES (1,1,2),(1,2,2);
-INSERT INTO relief_stock_movements (item_id,movement_type,quantity,distribution_id,recorded_by,notes) VALUES
-(1,'stock_in',20,NULL,2,'Demo delivery'),(2,'stock_in',20,NULL,2,'Demo delivery'),
-(1,'distribution',2,1,2,'Demo household issue'),(2,'distribution',2,1,2,'Demo household issue'),
-(3,'stock_in',3,NULL,2,'Demo donation'),(3,'stock_out',3,NULL,2,'Demo damaged supplies');
-INSERT INTO announcements (title,message,is_published,first_published_at,created_by) VALUES
-('Demo exercise notice','Classroom exercise only. View the Demo Training Shelter on the map.',1,NOW(),2),
-('Demo staff draft','Draft of the fictional preparedness reminder.',0,NULL,2);
-
--- Additional fictional incidents for type filters, the map and status histories.
-SET @demo_day = (SELECT created_at FROM incident_reports WHERE id=3);
-INSERT INTO incident_reports
-(reported_by,report_source,reporter_name,barangay,incident_type,description,location_description,latitude,longitude,status,reviewed_by,reviewed_at,created_at)
-VALUES (2,'phone','Demo Caller','Caliking','fire','Drill: smoke reported at the practice shed.','Demo workshop',16.525,120.694,'verified',2,@demo_day - INTERVAL 5 HOUR + INTERVAL 1 HOUR,@demo_day - INTERVAL 5 HOUR);
-SET @demo_report = LAST_INSERT_ID();
-INSERT INTO response_updates (incident_id,updated_by,action_taken,from_status,to_status,created_at)
-VALUES (@demo_report,2,'Staff confirmed the fictional smoke report.','pending','verified',@demo_day - INTERVAL 5 HOUR + INTERVAL 1 HOUR);
-INSERT INTO incident_reports
-(reported_by,report_source,reporter_name,barangay,incident_type,description,location_description,latitude,longitude,status,reviewed_by,reviewed_at,created_at)
-VALUES (3,'resident','Demo Resident One','Abiang','flood','Drill: water covers the exercise footbridge.','Demo footbridge',16.592,120.729,'verified',2,@demo_day - INTERVAL 10 HOUR + INTERVAL 1 HOUR,@demo_day - INTERVAL 10 HOUR);
-SET @demo_report = LAST_INSERT_ID();
-INSERT INTO response_updates (incident_id,updated_by,action_taken,from_status,to_status,created_at)
-VALUES (@demo_report,2,'Staff confirmed water on the exercise route.','pending','verified',@demo_day - INTERVAL 10 HOUR + INTERVAL 1 HOUR);
-INSERT INTO incident_reports
-(reported_by,report_source,reporter_name,barangay,incident_type,description,location_description,latitude,longitude,status,reviewed_by,reviewed_at,created_at)
-VALUES (2,'phone','Demo Caller','Cattubo','landslide','Drill: loose soil covers the practice trail.','Demo hillside trail',16.652,120.759,'verified',2,@demo_day - INTERVAL 15 HOUR + INTERVAL 1 HOUR,@demo_day - INTERVAL 15 HOUR);
-SET @demo_report = LAST_INSERT_ID();
-INSERT INTO response_updates (incident_id,updated_by,action_taken,from_status,to_status,created_at)
-VALUES (@demo_report,2,'Staff confirmed the simulated slide.','pending','verified',@demo_day - INTERVAL 15 HOUR + INTERVAL 1 HOUR);
-INSERT INTO incident_reports
-(reported_by,report_source,reporter_name,barangay,incident_type,description,location_description,latitude,longitude,status,reviewed_by,reviewed_at,created_at)
-VALUES (2,'phone','Demo Caller','Pasdong','other','Drill: a training shelter lost its lighting.','Demo equipment tent',16.631,120.713,'resolved',2,@demo_day - INTERVAL 20 HOUR + INTERVAL 1 HOUR,@demo_day - INTERVAL 20 HOUR);
-SET @demo_report = LAST_INSERT_ID();
-INSERT INTO response_updates (incident_id,updated_by,action_taken,from_status,to_status,created_at)
-VALUES (@demo_report,2,'Staff verified the lighting outage.','pending','verified',@demo_day - INTERVAL 20 HOUR + INTERVAL 1 HOUR);
-INSERT INTO response_updates (incident_id,updated_by,action_taken,from_status,to_status,created_at)
-VALUES (@demo_report,2,'Lighting restored during the drill.','verified','resolved',@demo_day - INTERVAL 20 HOUR + INTERVAL 2 HOUR);
-INSERT INTO incident_reports
-(reported_by,report_source,reporter_name,barangay,incident_type,description,location_description,latitude,longitude,status,reviewed_by,reviewed_at,created_at)
-VALUES (2,'phone','Demo Caller','Naguey','road_obstruction','Drill: a fallen tree blocks the exercise route.','Demo orchard lane',16.607,120.686,'pending',NULL,NULL,@demo_day - INTERVAL 25 HOUR);
-INSERT INTO incident_reports
-(reported_by,report_source,reporter_name,barangay,incident_type,description,location_description,latitude,longitude,status,reviewed_by,reviewed_at,created_at)
-VALUES (2,'phone','Demo Caller','Poblacion','fire','Drill: a second caller reported the same exercise alarm.','Demo alarm station',16.571,120.675,'rejected',2,@demo_day - INTERVAL 30 HOUR + INTERVAL 1 HOUR,@demo_day - INTERVAL 30 HOUR);
-SET @demo_report = LAST_INSERT_ID();
-INSERT INTO response_updates (incident_id,updated_by,action_taken,from_status,to_status,created_at)
-VALUES (@demo_report,2,'Duplicate exercise alarm.','pending','rejected',@demo_day - INTERVAL 30 HOUR + INTERVAL 1 HOUR);
-INSERT INTO incident_reports
-(reported_by,report_source,reporter_name,barangay,incident_type,description,location_description,latitude,longitude,status,reviewed_by,reviewed_at,created_at)
-VALUES (2,'phone','Demo Caller','Topdac','other','Drill: a power interruption was reported at a drill station.','Demo radio post',16.558,120.714,'pending',NULL,NULL,@demo_day - INTERVAL 35 HOUR);
-COMMIT;
+-- INITIAL OFFICE ACCOUNT
+-- Activate with a privately generated PHP password hash before first use.
+INSERT INTO users (id, full_name, username, email, password, role, is_active)
+VALUES (2, 'MDRRMO', 'mdrrmo', 'mdrrmo.atok@example.org', '', 'admin', FALSE);

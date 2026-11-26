@@ -20,5 +20,5 @@
                 "Map tiles unavailable. Use the saved coordinates and location description above.";
         })
         .addTo(map);
-    L.circleMarker([lat, lng], { radius: 8 }).addTo(map);
+    L.marker([lat, lng], { icon: recordPin(element.dataset.kind, element.dataset.type), title: "Saved location" }).addTo(map);
 })();

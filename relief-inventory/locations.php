@@ -98,6 +98,8 @@ require __DIR__ . "/../includes/errors.php";
 ?>
 <p class="return-link no-print"><a class="btn btn-outline-secondary" href="<?= e(url('relief-inventory/index.php')) ?>">Back to relief inventory</a></p>
 <h1>Relief locations</h1>
+<?php if (!$id): ?>
+<p><a class="btn btn-primary" href="#record-form">Add location</a></p>
 <p><a class="btn btn-outline-secondary" href="<?= e(url('records/index.php?type=locations')) ?>">Manage records</a></p>
 <ul>
     <?php foreach (reliefLocationAll() as $row): ?>
@@ -108,20 +110,21 @@ require __DIR__ . "/../includes/errors.php";
             — <a href="<?= e(url('relief-inventory/location.php?id=' . $row['id'])) ?>">View</a> · <a href="?edit=<?= (int)$row['id'] ?>">Edit</a></li>
     <?php endforeach; ?>
 </ul>
-<h2><?= $id?'Edit':'Add' ?> location</h2>
+<?php endif; ?>
+<h2 id="record-form"><?= $id?'Edit':'Add' ?> location</h2>
 <form method="post">
-    <?php foreach (['name' => 'Name','address_details' => 'Address / landmark'] as $k => $label): ?>
-        <label class="d-block mb-3"><?= e($label) ?><input class="form-control" name="<?= e($k) ?>" value="<?= e($d[$k]) ?>" required /></label>
-    <?php endforeach; ?>
-    <?php
-    $point = $d;
-    require __DIR__ . "/../includes/location-picker.php";
-    ?>
-    <label>Type<select name="location_type">
+    <label class="d-block mb-3">Location name<input class="form-control" name="name" maxlength="150" value="<?= e($d['name']) ?>" required /></label>
+    <label class="d-block mb-3">Type<select class="form-select" name="location_type">
             <?php foreach (['storage','distribution','both'] as $type): ?>
                 <option <?= $d['location_type'] === $type?'selected':'' ?>><?= e($type) ?></option>
             <?php endforeach; ?>
         </select></label>
+    <?php
+    $pickerKind = 'relief_locations';
+    $point = $d;
+    require __DIR__ . "/../includes/location-picker.php";
+    ?>
+
 
     <button class="btn btn-primary" name="action" value="save_location">Save location</button>
     <a href="<?= e(url('relief-inventory/locations.php')) ?>">Cancel and return to relief locations</a>

@@ -13,7 +13,7 @@ if (!isset($announcement)) {
     <label class="d-block mb-3">Title<input class="form-control" name="title" maxlength="150" value="<?= e(isPost()?input('title'):$announcement['title']) ?>" required /></label>
     <label class="d-block mb-3">Notice text<textarea class="form-control" name="message" rows="9" maxlength="10000" required >
 <?= e(isPost()?input('message'):$announcement['message']) ?></textarea> </label>
-    <p>Include the affected area, what residents should do, and the relevant date/time. Classroom example contact: “DEMO ONLY — Sample DRRM Desk, demo@example.invalid.”</p>
+    <p>Include the affected area, what residents should do, and the relevant date/time.</p>
     <?php if ($announcement['is_published']): ?>
         <label class="d-block mb-3">
             <input type="checkbox" name="confirm_withdraw" value="1" <?= input('confirm_withdraw') === '1' ? 'checked' : '' ?> /> I confirm that saving as a draft will withdraw this notice from residents. </label>

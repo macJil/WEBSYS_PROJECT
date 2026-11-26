@@ -9,7 +9,6 @@ $householdFields = [
     'representative_name' => ['Representative / emergency contact name', 100, true],
     'contact_phone' => ['Emergency contact number', 13, false],
     'purok' => ['Purok / sitio', 100, true],
-    'address_details' => ['Address and location description / landmark', 255, false],
 ];
 $householdCategories = [
     'registry_reason' => ['Registry reason', HOUSEHOLD_REASONS],
@@ -48,10 +47,6 @@ require __DIR__ . "/../includes/errors.php";
                 <input class="form-control<?= $missing ? ' is-invalid' : '' ?>" <?= $missing ? 'aria-invalid="true"' : '' ?> id="<?= e($key) ?>" name="<?= e($key) ?>" maxlength="<?= $field[1] ?>" <?= $field[2] ? 'required' : '' ?> value="<?= e($form[$key]) ?>" />
             </div>
         <?php endforeach; ?>
-    <?php
-    $point = $form;
-    require __DIR__ . "/../includes/location-picker.php";
-    ?>
         <?php foreach ($householdCategories as $key => $field): ?>
             <div class="col-md-6 mb-3">
                 <label for="<?= e($key) ?>" class="form-label"><?= e($field[0]) ?></label>
@@ -62,6 +57,11 @@ require __DIR__ . "/../includes/errors.php";
                 </select>
             </div>
         <?php endforeach; ?>
+    <?php
+    $pickerKind = 'households';
+    $point = $form;
+    require __DIR__ . "/../includes/location-picker.php";
+    ?>
         <?php foreach ($householdNotes as $key => $label): ?>
             <div class="col-md-6 mb-3">
                 <label for="<?= e($key) ?>" class="form-label"><?= e($label) ?></label>

@@ -84,6 +84,8 @@ require __DIR__ . "/../includes/errors.php";
 ?>
 <p class="return-link no-print"><a class="btn btn-outline-secondary" href="<?= e(url(dashboardPath())) ?>">Back to dashboard</a></p>
 <h1>Relief inventory</h1>
+<?php if (!$id): ?>
+<p><a class="btn btn-primary" href="#record-form">Add good</a></p>
 <p><a class="btn btn-outline-secondary" href="<?= e(url('records/index.php?type=goods')) ?>">Manage records</a></p>
 <p><?= count($items) ?> active goods.</p>
 <p><a href="<?= e(url('relief-inventory/locations.php')) ?>">Manage relief locations</a></p>
@@ -128,7 +130,8 @@ require __DIR__ . "/../includes/errors.php";
         </tbody>
     </table>
 </div>
-<h2><?= $id?'Edit good':'Add good' ?></h2>
+<?php endif; ?>
+<h2 id="record-form"><?= $id?'Edit good':'Add good' ?></h2>
 <form method="post">
     <label class="d-block mb-3">Item name<input class="form-control" name="item_name" maxlength="120" value="<?= e($item['item_name']) ?>" required /></label>
     <label class="d-block mb-3">Unit (for example packs, bottles, boxes)<input class="form-control" name="unit" maxlength="30" value="<?= e($item['unit']) ?>" required /></label>

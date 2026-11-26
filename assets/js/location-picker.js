@@ -135,6 +135,16 @@ document.querySelectorAll(".location-picker").forEach((root) => {
             setPoint(e.latlng.lat, e.latlng.lng);
         });
     }
+    const typeFields = { incidents: 'incident_type', households: 'hazard_type', centers: 'status', relief_locations: 'location_type' };
+    const typeField = form.querySelector('select[name="' + typeFields[root.dataset.kind] + '"]');
+    function currentIcon() {
+        return recordPin(root.dataset.kind, typeField ? typeField.value : root.dataset.type);
+    }
+    if (typeField) {
+        typeField.addEventListener('change', () => {
+            if (marker) marker.setIcon(currentIcon());
+        });
+    }
     function show() {
         if (marker) {
             map.removeLayer(marker);
@@ -162,7 +172,7 @@ document.querySelectorAll(".location-picker").forEach((root) => {
             return;
         }
         if (map) {
-            marker = L.marker([a, b], { draggable: true }).addTo(map);
+            marker = L.marker([a, b], { draggable: true, icon: currentIcon(), title: "Selected location" }).addTo(map);
             map.setView([a, b], 16);
             marker.on("dragend", () => {
                 request++;

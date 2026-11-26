@@ -4,7 +4,7 @@ require_once __DIR__ . '/atok-boundary.php';
 
 if (session_status() !== PHP_SESSION_ACTIVE) {
     ini_set('session.use_strict_mode', '1');
-    session_name('ATOKMDRRMDEMO');
+    session_name('ATOKMDRRM');
     session_start();
 }
 
@@ -114,7 +114,7 @@ function locationErrors(string $description, string $lat, string $lng): array
         return ['Enter valid coordinates and a written location.'];
     }
     if ($lat !== '' && !insideAtok(round((float) $lat, 7), round((float) $lng, 7))) {
-        return ['Choose a point inside the approximate Atok demo boundary, or enter the address without a pin.'];
+        return ['Choose a point inside the approximate Atok boundary, or enter the address without a pin.'];
     }
     return [];
 }

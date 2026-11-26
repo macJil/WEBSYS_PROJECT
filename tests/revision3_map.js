@@ -22,7 +22,7 @@ async function run(admin){
  marker:(point,options)=>{const m={point,options,bindPopup(p){this.popup=p;return this;},addTo(g){g.markers.push(this);markers.push(this);return this;},getLatLng(){return point;}};return m;},
  latLngBounds:()=>({points:[],extend(p){this.points.push(p);},isValid(){return this.points.length>0;}})
  }};
- vm.createContext(context);vm.runInContext(fs.readFileSync(__dirname+'/../assets/js/community-map.js','utf8'),context);
+ vm.createContext(context);vm.runInContext(fs.readFileSync(__dirname+'/../assets/js/map-icons.js','utf8'),context);vm.runInContext(fs.readFileSync(__dirname+'/../assets/js/community-map.js','utf8'),context);
  await new Promise(resolve=>setImmediate(resolve));
  assert.equal(markers.length,3);assert.equal(fits,0);assert.equal(views[0][0][0],16.6272);assert.equal(views[0][1],14);
  assert.equal(markers[0].point[0],17);

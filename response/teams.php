@@ -85,6 +85,8 @@ require __DIR__ . "/../includes/errors.php";
 ?>
 <p class="return-link no-print"><a class="btn btn-outline-secondary" href="<?= e(url(dashboardPath())) ?>">Back to dashboard</a></p>
 <h1>Response teams</h1>
+<?php if (!$id): ?>
+<p><a class="btn btn-primary" href="#record-form">Add team</a></p>
 <p><a class="btn btn-outline-secondary" href="<?= e(url('records/index.php?type=teams')) ?>">Manage records</a></p>
 <p>Inactive teams cannot receive new assignments. Existing assignments remain available for follow-up and completion.</p>
 <div class="table-responsive" tabindex="0" role="region" aria-label="Scrollable records">
@@ -114,7 +116,8 @@ require __DIR__ . "/../includes/errors.php";
         </tbody>
     </table>
 </div>
-<h2><?= $id ? 'Edit team' : 'Add team' ?></h2>
+<?php endif; ?>
+<h2 id="record-form"><?= $id ? 'Edit team' : 'Add team' ?></h2>
 <form method="post">
     <label class="d-block mb-3">Team name<input class="form-control" name="team_name" maxlength="120" value="<?= e($team['team_name']) ?>" required /></label>
     <label class="d-block mb-3">Contact number<input class="form-control" name="contact_phone" maxlength="13" value="<?= e($team['contact_phone']) ?>" /></label>

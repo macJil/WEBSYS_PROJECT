@@ -1,6 +1,6 @@
 # Atok MDRRM System plain PHP live demonstration
 
-Thirty minutes including live form entry, code walkthroughs and presenter handoffs. Q&A follows. Use fictional accounts and records. Use the seeded Demo Training Shelter (one of five places occupied) and Demo food pack and Demo drinking water (18 units each before rehearsal). The clock times are rehearsal targets.
+Thirty minutes including live form entry, code walkthroughs and presenter handoffs. Q&A follows. Use fictional accounts and records. Use the seeded Paoay Assembly Hall (one of five places occupied) and Food pack and Drinking water (18 units each before rehearsal). The clock times are rehearsal targets.
 
 ## Atok MDRRM System for Atok
 

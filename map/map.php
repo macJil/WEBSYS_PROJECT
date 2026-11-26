@@ -11,7 +11,7 @@ require __DIR__ . "/../includes/header.php";
 <link rel="stylesheet" href="<?= e(url('assets/vendor/leaflet/leaflet.css')) ?>" />
 <p class="return-link no-print"><a class="btn btn-outline-secondary" href="<?= e(url(dashboardPath())) ?>">Back to dashboard</a></p>
 <h1><?= $admin?'Staff map':'Community map' ?></h1>
-<p><?= e($settings['demo_barangay_name']) ?>. The outline is approximate. Pins mark recorded locations.</p>
+<p>Atok, Benguet. The outline is approximate. Pins mark recorded locations.</p>
 <p>Verified incidents, open centers, and distribution points with saved coordinates appear automatically. Household locations are visible only to staff.</p>
 <div class="map-layout">
     <aside class="map-key border rounded p-3" aria-label="Map layers and legend">
@@ -25,14 +25,16 @@ require __DIR__ . "/../includes/header.php";
             <label class="map-layer"><input type="checkbox" data-layer="households" checked>
                 <span class="map-symbol household" aria-hidden="true">🏠</span> Household registry (staff only) <span id="count-households"></span>
             </label>
+            <p class="small">Purple pins show the recorded concern. A house means it has not been assessed.</p>
         <?php endif; ?>
         <label class="map-layer">
             <input type="checkbox" data-layer="centers" checked />
             <span class="map-symbol center-open" aria-hidden="true">⌂</span> Evacuation centers <span id="count-centers"></span></label>
-        <div class="small mb-2">Blue shelter: open</div>
+        <div class="small mb-2">⌂ Open · ⊠ Closed</div>
         <label class="map-layer">
             <input type="checkbox" data-layer="relief_locations" checked />
             <span class="map-symbol relief" aria-hidden="true">▣</span> Relief locations <span id="count-relief_locations"></span></label>
+        <p class="small">▣ Distribution · ▤ Storage · ⊞ Both</p>
         <button type="button" id="map-home" class="btn btn-outline-secondary my-2">Return to Sayangan</button>
         <button type="button" id="show-atok" class="btn btn-outline-secondary" disabled>Show all Atok</button>
         <button type="button" id="map-fit" class="btn btn-outline-secondary my-2" disabled>Show all locations</button>
@@ -49,7 +51,7 @@ require __DIR__ . "/../includes/header.php";
 </div>
 <script src="<?= e(url('assets/vendor/leaflet/leaflet.js')) ?>"></script>
 <script src="<?= e(url('assets/js/atok-boundary.js')) ?>"></script>
-<script src="<?= e(url('assets/js/community-map.js?v=pin-tip')) ?>"></script>
+<script src="<?= e(url('assets/js/community-map.js?v=record-icons')) ?>"></script>
 <?php
 require __DIR__ . "/../includes/footer.php";
 ?>

@@ -84,10 +84,7 @@ if ($household['archived_at']) {
 $pageTitle = "Household details";
 require __DIR__ . "/../includes/header.php";
 ?>
-<?php
-$savedPoint = $household;
-require __DIR__ . "/../includes/saved-point.php";
-?>
+
 <a class="btn btn-outline-secondary" href="<?= e(url('households/index.php')) ?>">Back to households</a>
 <h1><?= e($household['household_code']) ?> — <?= e($household['representative_name']) ?></h1>
 <p><a class="btn btn-outline-secondary" href="<?= e(url('records/index.php?type=members')) ?>">Manage records</a></p>
@@ -104,6 +101,11 @@ require __DIR__ . "/../includes/saved-point.php";
     <dt class="col-sm-4">Members recorded</dt>
     <dd class="col-sm-8"><?= (int)$household['member_count'] ?></dd>
 </dl>
+<?php
+$savedPoint = $household;
+$savedKind = 'households';
+require __DIR__ . "/../includes/saved-point.php";
+?>
 <h2>Household members</h2>
 <p>Add each person, including the representative if they live in this household. After saving a member, use Create resident account beside their name to issue their first login.</p>
 <?php if ($enrollmentMessage !== ''): ?>
@@ -125,7 +127,7 @@ require __DIR__ . "/../includes/saved-point.php";
                     <td><?= e($member['full_name']) ?></td>
                     <td><?= e($member['age'] ?? 'Not recorded') ?></td>
                     <td><?= e($member['notes']) ?></td>
-                    <td><a href="<?= e(url('households/details.php?id=' . $id . '&member=' . $member['id'])) ?>">View / edit</a>
+                    <td><a href="<?= e(url('households/details.php?id=' . $id . '&member=' . $member['id'] . '#member-form')) ?>">View / edit</a>
                         <?php if ($member['account_id']): ?>
                             <span>Resident account already created</span>
                         <?php elseif ($enrollmentMessage === ''): ?>
@@ -144,7 +146,7 @@ require __DIR__ . "/../includes/saved-point.php";
         </tbody>
     </table>
 </div>
-<h2><?= $memberId === null ? 'Add member' : 'Edit member' ?></h2>
+<h2 id="member-form"><?= $memberId === null ? 'Add member' : 'Edit member' ?></h2>
 <?php
 require __DIR__ . "/../includes/errors.php";
 ?>

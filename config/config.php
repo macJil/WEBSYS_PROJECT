@@ -1,7 +1,6 @@
 <?php
 // Change connection settings locally for your installation. Keep passwords out of Git.
 return [
-    'demo_logins' => true, // Classroom database only. Disable for an operational site.
     'emergency_hotline' => '', // Enter the number confirmed by the office.
     'app_name' => 'Atok MDRRM System',
     'base_url' => '/WEBSYS_PROJECT', // Use '' when served at localhost root.
@@ -12,8 +11,6 @@ return [
     'password' => getenv('ATOK_DB_PASSWORD') ?: '',
     // Absolute private folder OUTSIDE your web server document root; PHP must be able to write here.
     'incident_upload_dir' => '',
-    // Municipal demo label. The approximate outline needs office confirmation.
-    'demo_barangay_name' => 'Atok, Benguet (DEMO)',
     'map_latitude' => 16.6272,
     'map_longitude' => 120.7672,
     // Photon-compatible endpoint; empty string disables address suggestions.

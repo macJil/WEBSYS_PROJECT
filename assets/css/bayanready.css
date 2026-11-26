@@ -459,10 +459,12 @@ legend {
     border: 1px solid var(--br-line);
     border-radius: 0.6rem;
 }
-.location-picker > label {
-    display: inline-block;
-    width: calc(50% - 0.4rem);
-    margin-bottom: 0.75rem;
+.location-picker [data-picker-map] {
+    height: clamp(240px, 36vh, 320px);
+    min-height: 0;
+}
+.location-picker [role="status"]:empty {
+    display: none;
 }
 .location-picker input[data-coordinate] {
     display: block;

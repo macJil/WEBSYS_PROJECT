@@ -6,7 +6,30 @@ Atok MDRRM System uses plain PHP pages grouped by module, shared session checks,
 
 [Setup guide](docs/PHASE_3_PHP_FOUNDATIONS.md) · [Classroom results, sample PDFs and pending pilot checks](docs/pilot/README.md)
 
-Import [barangay_drrm.sql](barangay_drrm.sql) into an empty classroom database for the complete schema, presentation records and demo logins. See the [demo passwords and walkthrough](docs/SUBMISSION_CHECK.md).
+## Fresh installation and sign-in
+
+Import [barangay_drrm.sql](barangay_drrm.sql) into an empty database. It creates one inactive office account, **MDRRMO**. Before activating it, set a private password and confirm the office login address. The example.org addresses are website usernames.
+
+For a classroom copy only, separately import [presentation-records.sql](database/presentation-records.sql) into the same fresh database. It adds records for the eight modules and one inactive sample resident, **Maria Santos**. Existing databases should use their migration history instead of reimporting either file.
+
+Generate a unique password and PHP hash for each initial account on a trusted local terminal. Store the displayed password privately.
+
+```sh
+php -r '$p = bin2hex(random_bytes(16)); echo $p, PHP_EOL, password_hash($p, PASSWORD_DEFAULT), PHP_EOL;'
+```
+
+In your local database administrator, replace the placeholder below with that account’s generated hash. Repeat with its own hash and email for `maria.santos@example.org` only on a presentation installation.
+
+```sql
+UPDATE users SET password = 'PASTE_GENERATED_HASH', is_active = 1
+WHERE email = 'mdrrmo.atok@example.org' AND is_active = 0;
+```
+
+For everyday enrollment, staff issue resident accounts from verified household records. The running login page never displays credentials. See the [presentation walkthrough](docs/SUBMISSION_CHECK.md).
+
+For Apache hosting, enable mod_rewrite and allow the project’s .htaccess rules. They restrict browser access to database scripts, internal PHP includes, tests and presentation materials. On other hosts, publish only the application pages and assets and configure equivalent access rules. Keep uploaded images outside the web root.
+
+For an existing classroom installation, importing a fresh schema does not rotate old logins. Retire unused classroom accounts, rotate the retained accounts’ passwords and keep their IDs so their history remains linked. Use a fresh database for real office records.
 
 ## Presentation and verification
 

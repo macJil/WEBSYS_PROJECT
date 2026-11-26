@@ -135,6 +135,8 @@ require __DIR__ . "/../includes/errors.php";
 ?>
 <p class="return-link no-print"><a class="btn btn-outline-secondary" href="<?= e(url(dashboardPath())) ?>">Back to dashboard</a></p>
 <h1>Evacuation centers</h1>
+<?php if (!$id): ?>
+<p><a class="btn btn-primary" href="#record-form">Add center</a></p>
 <p><a class="btn btn-outline-secondary" href="<?= e(url('records/index.php?type=centers')) ?>">Manage records</a></p>
 <form method="get" class="filter-form mb-3">
     <label>Search name or address <input class="form-control" placeholder="Center name or address" maxlength="150" name="q" value="<?= e($q) ?>" /></label>
@@ -173,30 +175,30 @@ require __DIR__ . "/../includes/errors.php";
         </tbody>
     </table>
 </div>
-<h2><?= $id?'Edit center':'Add center' ?></h2>
+<?php endif; ?>
+<h2 id="record-form"><?= $id?'Edit center':'Add center' ?></h2>
 <form method="post">
     <label class="d-block mb-3">Center barangay
-        <select class="form-select" name="barangay" class="form-select">
+        <select class="form-select" name="barangay">
             <option value="">Awaiting confirmation</option>
             <?php foreach (ATOK_BARANGAYS as $area): ?>
                 <option <?= ($data['barangay'] ?? '') === $area ? 'selected' : '' ?>><?= e($area) ?></option>
             <?php endforeach; ?>
         </select>
     </label>
-    <?php foreach (['name' => ['Center name',150],'address_details' => ['Address / location',255]] as $key => $field): ?>
-        <label class="d-block mb-3"><?= e($field[0]) ?><input class="form-control" name="<?= e($key) ?>" maxlength="<?= $field[1] ?>" value="<?= e($data[$key]) ?>" required /></label>
-    <?php endforeach; ?>
-    <?php
-    $point = $data;
-    require __DIR__ . "/../includes/location-picker.php";
-    ?>
+    <label class="d-block mb-3">Center name<input class="form-control" name="name" maxlength="150" value="<?= e($data['name']) ?>" required /></label>
     <label class="d-block mb-3">Capacity (people)<input class="form-control" type="number" min="0" max="1000000" name="capacity" value="<?= e($data['capacity']) ?>" required /></label>
     <label class="d-block mb-3">Status<select class="form-select" name="status">
             <?php foreach (['open','closed'] as $status): ?>
                 <option value="<?= e($status) ?>" <?= $data['status'] === $status?'selected':'' ?>><?= e(ucfirst($status)) ?></option>
             <?php endforeach; ?>
         </select></label>
-    <?php if ($id): ?><p>Check out all occupants before closing a center. Capacity cannot be reduced below current occupancy.</p><?php endif; ?>
+        <?php
+    $pickerKind = 'centers';
+    $point = $data;
+    require __DIR__ . "/../includes/location-picker.php";
+    ?>
+<?php if ($id): ?><p>Check out all occupants before closing a center. Capacity cannot be reduced below current occupancy.</p><?php endif; ?>
 
     <button class="btn btn-primary" name="action" value="save_center">Save center</button>
     <a href="<?= e(url('evacuation/centers.php')) ?>">Cancel and return to evacuation centers</a>

@@ -235,6 +235,9 @@ require __DIR__ . "/../includes/errors.php";
 ?>
 <h1><?= e($pageTitle) ?></h1>
 <a class="btn btn-outline-secondary no-print" href="<?= e(url('incidents/print.php?id=' . $id)) ?>">Printable incident report</a>
+<?php if ($admin && $report['archived_at'] === null): ?>
+    <a class="btn btn-outline-secondary no-print" href="#correct-location">Edit location</a>
+<?php endif; ?>
 <dl>
     <?php foreach (['incident_type' => 'Type','status' => 'Status','description' => 'Description','reporter_name' => 'Reporter/contact name','contact_phone' => 'Contact number','barangay' => 'Incident barangay','location_description' => 'Location','latitude' => 'Latitude','longitude' => 'Longitude','report_source' => 'Received through','created_at' => 'Submitted'] as $key => $label): ?>
         <dt><?= e($label) ?></dt>
@@ -253,7 +256,7 @@ require __DIR__ . "/../includes/errors.php";
     <p>No map point. This report remains available in lists and totals.</p>
 <?php endif; ?>
 <?php if ((!$admin || $report['archived_at'] !== null) && hasMapPoint($report)): ?>
-    <div id="saved-incident-map" data-lat="<?= e($report['latitude']) ?>" data-lng="<?= e($report['longitude']) ?>">
+    <div id="saved-incident-map" data-kind="incidents" data-type="<?= e($report['incident_type']) ?>" data-lat="<?= e($report['latitude']) ?>" data-lng="<?= e($report['longitude']) ?>">
     </div>
     <p id="saved-map-status">Saved coordinates are listed above. Map tiles need internet.</p>
     <link rel="stylesheet" href="<?= e(url('assets/vendor/leaflet/leaflet.css')) ?>" />
@@ -302,17 +305,18 @@ require __DIR__ . "/../includes/errors.php";
         </form>
     <?php endif; ?>
     <?php if ($report['archived_at'] === null): ?>
-        <h2>Correct incident location</h2>
+        <h2 id="correct-location">Correct incident location</h2>
         <p>Confirm the written location and pin. A correction is recorded in staff history. The shared map uses this saved point when the incident is eligible.</p>
         <form method="post">
             <?php
             $selectedBarangay = input('action') === 'update_location' ? input('barangay') : ($report['barangay'] ?? '');
             require __DIR__ . '/barangay-field.php';
             ?>
-            <label class="d-block mb-3">Written location<input class="form-control" name="location_description" maxlength="255" required value="<?= e(isPost() && input('action') === 'update_location'?input('location_description'):$report['location_description']) ?>" /></label>
             <?php
+            $pickerKind = 'incidents';
             $point = $report;
             if (isPost() && input("action") === "update_location") {
+                $point['location_description'] = input('location_description');
                 $point["latitude"] = input("latitude");
                 $point["longitude"] = input("longitude");
             }

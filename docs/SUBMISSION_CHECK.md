@@ -1,20 +1,10 @@
 # Classroom submission and demonstration
 
-Use the **atok-staff-workflow-review** branch for the revised screens. On the presentation Mac, open MAMP and visit http://localhost:8888/WEBSYS_PROJECT/. Use separate browser sessions for staff and resident. Keep the barangay administrator's handoff account separate from the classroom demonstration.
+Use the **atok-staff-workflow-review** branch for the revised screens. On the presentation Mac, open MAMP and visit http://localhost:8888/WEBSYS_PROJECT/. Use separate browser sessions for staff and resident. Use the private handoff file on the presentation Mac for the two passwords.
 
 ## Accounts and records
 
-Import the full `barangay_drrm.sql` into an empty classroom database. It includes the schema, demonstration records and accounts. Open the root login page in separate staff and resident sessions.
-
-| Classroom login | Password | Dashboard |
-| --- | --- | --- |
-| barangay.admin@atok.example.invalid | AtokDemoAdmin26! | Administrator |
-| staff@demo.example.invalid | AtokDemoStaff26! | Staff |
-| resident@demo.example.invalid | AtokDemoResident26! | Resident |
-
-The login page shows classroom logins when `demo_logins` is enabled in config/config.php. Disable that setting outside the classroom. Set `emergency_hotline` after the office confirms its number.
-
-These published credentials are for fictional classroom data only. The email addresses are website login names. Create private credentials before any operational deployment. Newly enrolled residents still change their temporary passwords. The ready-made presentation accounts open their dashboards directly.
+Use the [fresh-install and account activation instructions](../README.md). In a separate classroom database import the optional presentation records for all eight modules. The staff login is `mdrrmo.atok@example.org`. The sample resident is Maria Santos, `maria.santos@example.org`. Each installation sets its own passwords. Set the municipal hotline only after the office confirms its number.
 
 ## Incident examples
 
@@ -24,11 +14,11 @@ The fresh demo has ten reports across all eight Atok barangays: two each for flo
 
 | Screen | Action | What staff or residents should see |
 | --- | --- | --- |
-| Households | Find DEMO-ATOK-01 | Demo Resident One represents a Paoay household with two members. |
-| Incidents and response | Open the seeded resident's pending flood report. Verify and assign Demo Response Alpha. Complete the assignment. | In the resident session, refresh My latest report after each action. It changes to Responding and then Resolved. |
-| Evacuation | Open Demo Training Shelter and show the members of DEMO-ATOK-01. Check in only Demo Resident Two. | Initially one of five places is occupied. The existing occupant is labeled. After the arrival two are staying and three places remain. Individual checkout restores one place. Search for Demo Returning Visitor to demonstrate reuse of a past stay. |
-| Inventory and distribution | Inspect Demo food pack and Demo drinking water. Distribute two of each to the demo household at Demo Relief Desk. | For each good: 20 received, two previously issued, 18 available before the exercise, 16 afterward. The actual receiver and both distribution lines remain in history. |
-| Announcements | Show Demo exercise notice, then save a separate draft and publish it. | The resident sees the published notices. Staff can also see the draft before publication. |
+| Households | Find ATK-01 | Maria Santos represents a Paoay household with two members. |
+| Incidents and response | Open the seeded resident's pending flood report. Verify and assign Response Alpha. Complete the assignment. | In the resident session, refresh My latest report after each action. It changes to Responding and then Resolved. |
+| Evacuation | Open Paoay Assembly Hall and show the members of ATK-01. Check in only Ana Santos. | Initially one of five places is occupied. The existing occupant is labeled. After the arrival two are staying and three places remain. Individual checkout restores one place. Search for Rosa Medina to demonstrate reuse of a past stay. |
+| Inventory and distribution | Inspect Food pack and Drinking water. Distribute two of each to the demo household at East Relief Desk. | For each good: 20 received, two previously issued, 18 available before the exercise, 16 afterward. The actual receiver and both distribution lines remain in history. |
+| Announcements | Show Preparedness reminder, then save a separate draft and publish it. | The resident sees the published notices. Staff can also see the draft before publication. |
 | Dashboard, map and summaries | Filter by Paoay, review the center and incident, then print the summary and the resident's incident. | Active stays agree with the center. The resident map omits households and pending incidents. The resident incident copy omits internal history. |
 
 These are **starting values for the named records**. Municipal totals can include earlier records on the same installation. The longer nine-member script uses a fresh household and an additional stock delivery; rehearse either scenario from its stated starting balances.

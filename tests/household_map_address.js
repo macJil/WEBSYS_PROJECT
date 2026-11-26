@@ -9,8 +9,8 @@ function fixture(initial='',withMap=true){
  let time=10000,sequence=0,geoOk,geoFail;const timers=new Map(),calls=[];
  const map={fitBounds(bounds){this.fitted=bounds;},setView(){return this;},on(type,fn){this[type]=fn;},removeLayer(){}};
  const context={window:{location:{href:'http://localhost/index.php',origin:'http://localhost'}},document:{querySelectorAll:()=>[root]},Event:class{constructor(type){this.type=type;}},URL,AbortController,TextEncoder,Map,Date:{now:()=>time},setTimeout(fn,ms){const id=++sequence;timers.set(id,{at:time+ms,fn});return id;},clearTimeout(id){timers.delete(id);},navigator:{geolocation:{getCurrentPosition(ok,fail){geoOk=ok;geoFail=fail;}}},fetch:(url,options)=>new Promise((resolve,reject)=>{calls.push({url,options,resolve,reject});})};
- if(withMap)context.L={geoJSON:feature=>({getBounds(){return feature.geometry.coordinates;},addTo(){return this;}}),map:()=>map,tileLayer:()=>({on(){return this;},addTo(){}}),marker:()=>({addTo(){return this;},on(){},setLatLng(){}})};
- for(const file of ['atok-boundary.js','location-picker.js'])vm.runInNewContext(fs.readFileSync(__dirname+'/../assets/js/'+file,'utf8'),context);
+ if(withMap)context.L={divIcon:options=>options,geoJSON:feature=>({getBounds(){return feature.geometry.coordinates;},addTo(){return this;}}),map:()=>map,tileLayer:()=>({on(){return this;},addTo(){}}),marker:()=>({addTo(){return this;},on(){},setLatLng(){}})};
+ for(const file of ['atok-boundary.js','map-icons.js','location-picker.js'])vm.runInNewContext(fs.readFileSync(__dirname+'/../assets/js/'+file,'utf8'),context);
  const flush=async()=>{for(let i=0;i<8;i++)await Promise.resolve();};
  async function tick(ms){time+=ms;for(const [id,t] of [...timers])if(t.at<=time){timers.delete(id);t.fn();}await flush();}
  function select(lat='16.6272',lng='120.7672'){map.click({latlng:{lat:Number(lat),lng:Number(lng)}});}

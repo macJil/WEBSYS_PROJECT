@@ -198,12 +198,13 @@ require __DIR__ . "/../includes/errors.php";
                 <option value="<?= e($value) ?>" <?= $data['incident_type'] === $value ? 'selected' : '' ?>><?= e($label) ?></option>
             <?php endforeach; ?>
         </select></label>
-    <?php foreach (['reporter_name' => ['Reporter/contact name',100], 'contact_phone' => ['Contact number',13], 'location_description' => ['Location description / purok / nearby landmark',255]] as $key => $field): ?>
+    <?php foreach (['reporter_name' => ['Reporter/contact name',100], 'contact_phone' => ['Contact number',13]] as $key => $field): ?>
         <label class="d-block mb-3"><?= e($field[0]) ?><input class="form-control" name="<?= e($key) ?>" maxlength="<?= $field[1] ?>" value="<?= e($data[$key]) ?>" required /></label>
     <?php endforeach; ?>
     <label class="d-block mb-3">Describe what happened<textarea class="form-control" name="description" maxlength="10000" required >
 <?= e($data['description']) ?></textarea> </label>
     <?php
+    $pickerKind = 'incidents';
     $point = $data;
     require __DIR__ . "/../includes/location-picker.php";
     ?>

@@ -95,12 +95,6 @@ require __DIR__ . "/includes/errors.php";
                 <li>You and MDRRM staff can open your full report. Eligible incident pins also appear on the community map.</li>
                 <li>Forgot your password? Contact MDRRM staff for account assistance.</li>
             </ul>
-            <?php if (!empty($settings['demo_logins'])): ?>
-                <details><summary>Classroom demo logins</summary>
-                    <p>Staff: staff@demo.example.invalid · AtokDemoStaff26!</p>
-                    <p>Resident: resident@demo.example.invalid · AtokDemoResident26!</p>
-                </details>
-            <?php endif; ?>
         </div>
     </section>
 </div>

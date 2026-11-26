@@ -30,13 +30,6 @@
         road_obstruction: "Road obstruction",
         other: "Other emergency",
     };
-    const incidentIcons = { flood: "≈", fire: "🔥", landslide: "◩", road_obstruction: "⛔", other: "⚠" };
-    const symbols = {
-        households: ["household", "🏠"],
-        incidents: ["incident", "⚠"],
-        centers: ["center-open", "⌂"],
-        relief_locations: ["relief", "▣"],
-    };
     const boxes = document.querySelectorAll("[data-layer]");
     boxes.forEach((box) => {
         groups[box.dataset.layer] = L.featureGroup().addTo(map);
@@ -97,7 +90,7 @@
     document.getElementById("map-home").addEventListener("click", () => {
         map.setMinZoom(minimumZoom);
         map.setView(home, zoom);
-        status.textContent = "Atok demo view. Use Show all locations to see saved points outside this view.";
+        status.textContent = "Sayangan view. Use Show all locations to see saved points outside this view.";
     });
     document.getElementById("map-fit").addEventListener("click", () => {
         const bounds = L.latLngBounds([]);
@@ -112,7 +105,7 @@
             map.fitBounds(bounds, { padding: [30, 30], maxZoom: 16 });
             status.textContent = "Showing all saved locations. Select a marker for details.";
         } else {
-            status.textContent = "No saved locations have map points yet. The demo view is unchanged.";
+            status.textContent = "No saved locations have map points yet. Showing the current area.";
         }
     });
     let requestNumber = 0;
@@ -152,17 +145,8 @@
                             Math.abs(lng) > 180
                         )
                             return;
-                        let [color, symbol] = symbols[layer];
-                        if (layer === "incidents") symbol = incidentIcons[row.incident_type] || "⚠";
-                        // Only fixed icon constants enter HTML; database strings use textContent in popup().
-                        const icon = L.divIcon({
-                            className: "map-marker-icon",
-                            html:
-                                '<span class="map-symbol ' + color + '" aria-hidden="true">' + symbol + "</span>",
-                            iconSize: [28, 28],
-                            iconAnchor: [14, 34],
-                            popupAnchor: [0, -32],
-                        });
+                        const type = row.incident_type || row.hazard_type || row.location_type || row.status;
+                        const icon = recordPin(layer, type);
                         L.marker([lat, lng], {
                             icon,
                             title: row.name || types[row.incident_type] || "Household registry",
