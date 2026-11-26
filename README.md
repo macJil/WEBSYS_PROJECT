@@ -27,7 +27,7 @@ WHERE email = 'mdrrmo.atok@example.org' AND is_active = 0;
 
 For everyday enrollment, staff issue resident accounts from verified household records. The running login page never displays credentials. See the [presentation walkthrough](docs/SUBMISSION_CHECK.md).
 
-For Apache hosting, enable mod_rewrite and allow the project’s .htaccess rules. They restrict browser access to database scripts, internal PHP includes, tests and presentation materials. On other hosts, publish only the application pages and assets and configure equivalent access rules. Keep uploaded images outside the web root.
+Use [README_FINAL.md](README_FINAL.md) for the short submission guide. For public hosting, disable directory listing and configure the server to deny browser access to config, includes, tests, repository metadata, database scripts and submission materials. Keep uploaded images outside the web root. The application uses direct PHP URLs without rewrite rules.
 
 For an existing classroom installation, importing a fresh schema does not rotate old logins. Retire unused classroom accounts, rotate the retained accounts’ passwords and keep their IDs so their history remains linked. Use a fresh database for real office records.
 

@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/common.php';
+require_once __DIR__ . '/relief_inventory_function.php';
 requireRole('admin');
 
 function reliefDbStock(int $id, string $type, int $quantity, int $staff, string $notes): void

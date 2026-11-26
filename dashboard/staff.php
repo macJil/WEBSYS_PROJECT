@@ -1,7 +1,7 @@
 <?php
-require_once __DIR__ . '/common.php';
+require_once __DIR__ . '/dashboard_function.php';
 requireRole('admin');
-require_once __DIR__ . '/../incidents/common.php';
+require_once __DIR__ . '/../incidents/incident_function.php';
 $scope = incidentScope();
 $where = ['archived_at IS NULL'];
 $values = [];

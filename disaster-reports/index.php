@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/common.php';
+require_once __DIR__ . '/disaster_report_function.php';
 requireRole('admin');
 require_once __DIR__ . '/../includes/barangays.php';
 

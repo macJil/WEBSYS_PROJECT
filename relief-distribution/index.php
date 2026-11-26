@@ -1,8 +1,8 @@
 <?php
-require_once __DIR__ . '/../relief-inventory/common.php';
+require_once __DIR__ . '/../relief-inventory/relief_inventory_function.php';
 requireRole('admin');
 
-function reliefDbHouseholds(): array
+function reliefHouseholds(): array
 {
     return reliefDbRows(
         'SELECT id,barangay,purok,representative_name FROM households WHERE archived_at IS NULL ORDER BY household_code',
@@ -85,17 +85,12 @@ function reliefDbDistribution(int $id): array
     )[0] ?? [];
 }
 
-function reliefDbDistributedGoods(int $id): array
+function reliefDistributedGoods(int $id): array
 {
     return reliefDbRows(
         'SELECT d.quantity,i.item_name,i.unit FROM relief_distribution_items d JOIN relief_items i ON i.id=d.item_id WHERE d.distribution_id=? ORDER BY d.id',
         [$id],
     );
-}
-
-function reliefHouseholds(): array
-{
-    return reliefDbHouseholds();
 }
 
 function reliefDistribution(int $id): array
@@ -106,11 +101,6 @@ function reliefDistribution(int $id): array
         exit('Distribution not found.');
     }
     return $row;
-}
-
-function reliefDistributedGoods(int $id): array
-{
-    return reliefDbDistributedGoods($id);
 }
 
 function reliefDistribute(): array

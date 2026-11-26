@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/common.php';
+require_once __DIR__ . '/household_function.php';
 $search = is_string($_GET['q'] ?? '') ? trim($_GET['q'] ?? '') : '';
 $search = substr($search, 0, 255);
 $term = '%' . str_replace(['!', '%', '_'], ['!!', '!%', '!_'], $search) . '%';

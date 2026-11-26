@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/common.php';
+require_once __DIR__ . '/evacuation_function.php';
 requireRole('admin');
 
 function evacuationDbHouseholds(string $search): array

@@ -13,7 +13,7 @@ function reliefDbTerm(string $q): string
     return '%' . strtr($q, ['!' => '!!', '%' => '!%', '_' => '!_']) . '%';
 }
 
-function reliefDbItems(string $q = ''): array
+function reliefItems(string $q = ''): array
 {
     return reliefDbRows(
         "SELECT * FROM relief_items WHERE archived_at IS NULL AND (item_name LIKE ? ESCAPE '!' OR unit LIKE ? ESCAPE '!') ORDER BY item_name,unit",
@@ -48,11 +48,6 @@ function reliefRecordId($value): int
 function reliefQueryValue(string $key): string
 {
     return is_string($_GET[$key] ?? null) ? trim($_GET[$key]) : '';
-}
-
-function reliefItems(string $q = ''): array
-{
-    return reliefDbItems($q);
 }
 
 function reliefFailure(Throwable $e): array

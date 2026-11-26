@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../dashboard/common.php';
+require_once __DIR__ . '/../dashboard/dashboard_function.php';
 requireCurrentPassword();
 
 

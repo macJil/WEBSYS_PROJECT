@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/common.php';
+require_once __DIR__ . '/incident_function.php';
 requireCurrentPassword();
 
 function reportDbListing(array $filters, ?int $owner): array
@@ -47,17 +47,12 @@ function reportFilters(): array
     if (
         ($filters['incident_type'] !== '' && !isset(REPORT_TYPES[$filters['incident_type']])) ||
         ($filters['status'] !== '' && !in_array($filters['status'], REPORT_STATUSES, true)) ||
-        ($filters['date'] !== '' && !reportValidDate($filters['date']))
+        ($filters['date'] !== '' && !validDateInput($filters['date']))
     ) {
         http_response_code(400);
         exit('Invalid search filter.');
     }
     return $filters;
-}
-
-function reportValidDate(string $date): bool
-{
-    return validDateInput($date);
 }
 
 function reportListIncidents(array $filters): array

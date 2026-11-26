@@ -4,7 +4,7 @@ Implementation branch: `atok-login-dashboard-improvements`. Starting revision: `
 
 ## Phase 1 — Establish the comparison data
 
-Review `index.php`, both pages in `dashboard/`, `dashboard/common.php`, `includes/dashboard-cards.php`, `includes/weather.php`, and `assets/js/atok-weather.js`. Trace each existing card to its destination. Record which figures include archived records, how active stays are counted, and which filters carry through to incident lists.
+Review `index.php`, both pages in `dashboard/`, `dashboard/dashboard_function.php`, `includes/dashboard-cards.php`, `includes/weather.php`, and `assets/js/atok-weather.js`. Trace each existing card to its destination. Record which figures include archived records, how active stays are counted, and which filters carry through to incident lists.
 
 Prepare two fictional residents, a staff account, open and closed centers, pending and verified reports across two barangays, and a resolved or archived example. Include a first-time resident with no report. Use the existing isolated MySQL runner for repeatable checks. Record the starting counts before adding more records.
 
@@ -20,7 +20,7 @@ Write three short pieces of fixed HTML. Explain that residents can report incide
 
 ## Phase 3 — Organize the staff dashboard and add the review queue
 
-In `dashboard/staff.php`, label the top cards **Current municipal overview**. Place **Awaiting review** immediately below. In `dashboard/common.php`, use one query to select up to five non-archived pending reports ordered by submission time ascending, then ID ascending. Return only the ID, incident type, barangay, and submission time. Display **Awaiting confirmation** for unknown barangay. Each row opens its guarded incident review page. Link **View all pending reports** to the existing pending list.
+In `dashboard/staff.php`, label the top cards **Current municipal overview**. Place **Awaiting review** immediately below. In `dashboard/dashboard_function.php`, use one query to select up to five non-archived pending reports ordered by submission time ascending, then ID ascending. Return only the ID, incident type, barangay, and submission time. Display **Awaiting confirmation** for unknown barangay. Each row opens its guarded incident review page. Link **View all pending reports** to the existing pending list.
 
 Keep the queue municipal and label it accordingly. Put the existing date-period and barangay selectors directly under **Incident reports for the selected period**. Preserve their values when opening type cards. Add a **Relief distribution** shortcut to `relief-distribution/index.php` beside Relief inventory.
 

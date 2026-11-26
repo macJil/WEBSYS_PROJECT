@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/common.php';
+require_once __DIR__ . '/announcement_function.php';
 requireRole('admin');
 
 function announcementDbFind(int $id): array

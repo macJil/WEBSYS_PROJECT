@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/common.php';
+require_once __DIR__ . '/incident_function.php';
 requireCurrentPassword();
 
 function reportDbImage(int $id, ?int $owner)

@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/common.php';
+require_once __DIR__ . '/household_function.php';
 $id = recordId($_GET['member'] ?? null);
 $pdo = db();
 $errors = [];

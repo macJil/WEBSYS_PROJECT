@@ -1,7 +1,7 @@
 <?php
-require_once __DIR__ . '/common.php';
+require_once __DIR__ . '/dashboard_function.php';
 requireRole('resident');
-require_once __DIR__ . '/../incidents/common.php';
+require_once __DIR__ . '/../incidents/incident_function.php';
 
 $reports = dashboardDbRows(
     'SELECT id, incident_type, status, created_at FROM incident_reports

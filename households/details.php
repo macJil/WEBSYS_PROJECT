@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/common.php';
+require_once __DIR__ . '/household_function.php';
 function saveMember(int $householdId, ?int $memberId, array $data)
 {
     if (!isPost()) {

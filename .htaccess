@@ -1,7 +1,0 @@
-# Only application pages and their assets need to be served by Apache.
-Options -Indexes
-RewriteEngine On
-RewriteRule ^(?:config|database|docs|presentation|artifacts|tests|includes|\.[^/]+)(?:/|$) - [F,NC]
-<FilesMatch "(?i)\.(sql|md)$">
-    Require all denied
-</FilesMatch>
