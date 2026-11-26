@@ -45,11 +45,11 @@ function responseSaveTeam(?int $id): array
     $name = input('team_name');
     $phone = input('contact_phone');
     $active = input('is_active');
-    if ($name === '' || strlen($name) > 120) {
-        return ['Team name is required (maximum 120 bytes).'];
+    if ($name === '' || mb_strlen($name) > 120) {
+        return ['Team name is required (maximum 120 characters).'];
     }
-    if ($phone !== '' && !validPhone($phone, 3)) {
-        return ['Enter a valid contact number, or leave it blank.'];
+    if ($phone !== '' && !validPhone($phone)) {
+        return ['Use 09 followed by 9 digits or +639 followed by 9 digits, or leave it blank.'];
     }
     if (!in_array($active, ['0', '1'], true)) {
         return ['Choose active or inactive.'];
@@ -117,7 +117,7 @@ require __DIR__ . "/../includes/errors.php";
 <h2><?= $id ? 'Edit team' : 'Add team' ?></h2>
 <form method="post">
     <label class="d-block mb-3">Team name<input class="form-control" name="team_name" maxlength="120" value="<?= e($team['team_name']) ?>" required /></label>
-    <label class="d-block mb-3">Contact number<input class="form-control" name="contact_phone" maxlength="20" value="<?= e($team['contact_phone']) ?>" /></label>
+    <label class="d-block mb-3">Contact number<input class="form-control" name="contact_phone" maxlength="13" value="<?= e($team['contact_phone']) ?>" /></label>
     <label class="d-block mb-3">Availability<select class="form-select" name="is_active">
             <option value="1" <?= (string)$team['is_active'] === '1' ? 'selected' : '' ?>>Active</option>
             <option value="0" <?= (string)$team['is_active'] === '0' ? 'selected' : '' ?>>Inactive</option>

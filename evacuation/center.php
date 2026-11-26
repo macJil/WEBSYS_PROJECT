@@ -260,14 +260,14 @@ function evacuationHandleStay(int $id): array
                 ];
                 if (
                     $data['full_name'] === '' ||
-                    strlen($data['full_name']) > 100 ||
+                    mb_strlen($data['full_name']) > 100 ||
                     $data['age'] === false ||
                     $data['address_details'] === '' ||
-                    strlen($data['address_details']) > 255 ||
-                    !validPhone($data['contact_phone'], 3)
+                    mb_strlen($data['address_details']) > 255 ||
+                    !validPhone($data['contact_phone'])
                 ) {
                     return [
-                        'For a new walk-in, enter name (up to 100 bytes), age 0–130, home address (up to 255 bytes), and contact number (personal or guardian).',
+                        'For a new walk-in, enter name (up to 100 characters), age 0–130, home address (up to 255 characters), and a phone number starting with 09 or +639 followed by 9 digits.',
                     ];
                 }
             } else {
@@ -341,6 +341,9 @@ require __DIR__ . "/../includes/errors.php";
         <button class="btn btn-outline-secondary">Find</button>
         <?php if ($householdSearch !== ''): ?><a href="?id=<?= $id ?>#household">Clear search</a><?php endif; ?>
     </form>
+    <?php if ($householdSearch !== '' && !$households): ?>
+        <p>No matching household. <a href="<?= e(url('households/add.php')) ?>">Register a household</a> or <a href="#walkin">check in a walk-in</a>.</p>
+    <?php endif; ?>
     <form method="get" action="#household" class="mb-3">
         <input type="hidden" name="id" value="<?= $id ?>">
         <input type="hidden" name="household_q" value="<?= e($householdSearch) ?>">
@@ -380,7 +383,7 @@ require __DIR__ . "/../includes/errors.php";
     <form method="get" action="#walkin" class="mb-3">
         <input type="hidden" name="id" value="<?= $id ?>">
         <label class="form-label">Search returning walk-ins by name or phone
-            <input class="form-control" name="walkin_search" maxlength="100" required value="<?= e($search) ?>">
+            <input class="form-control" name="walkin_search" placeholder="Enter a name or phone number" maxlength="100" required value="<?= e($search) ?>">
         </label>
         <button class="btn btn-outline-secondary">Search walk-ins</button>
     </form>
@@ -408,7 +411,7 @@ require __DIR__ . "/../includes/errors.php";
             <input type="hidden" name="kind" value="new_walkin">
             <fieldset class="border p-3 mb-3">
                 <legend>New walk-in details only</legend>
-                <?php foreach (['full_name' => ['Full name',100],'address_details' => ['Home address / purok',255],'contact_phone' => ['Contact number (personal or guardian)',20]] as $key => $field): ?>
+                <?php foreach (['full_name' => ['Full name',100],'address_details' => ['Home address / purok',255],'contact_phone' => ['Contact number (personal or guardian)',13]] as $key => $field): ?>
                     <label class="d-block mb-2"><?= e($field[0]) ?><input class="form-control" name="<?= e($key) ?>" maxlength="<?= $field[1] ?>" value="<?= e(input($key)) ?>" /></label>
                 <?php endforeach; ?>
                 <label>Age in years<input class="form-control" name="age" type="number" min="0" max="130" value="<?= e(input('age')) ?>" /></label>
@@ -473,7 +476,7 @@ require __DIR__ . "/../includes/errors.php";
                         <?php if ($record['checked_out_at'] === null): ?>
                             <form method="post">
                                 <input type="hidden" name="record_id" value="<?= (int)$record['id'] ?>" />
-                                <button class="btn btn-outline-secondary" name="action" value="checkout">Check out</button>
+                                <button class="btn btn-primary" name="action" value="checkout">Check out</button>
                             </form>
                         <?php endif; ?>
                     </td>

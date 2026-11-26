@@ -45,10 +45,13 @@ function validDateInput(string $value): bool
     $date = DateTimeImmutable::createFromFormat('!Y-m-d', $value);
     return $date !== false && $date->format('Y-m-d') === $value;
 }
-function validPhone(string $value, int $minimum): bool
+function validPhone(string $value): bool
 {
-    $length = strlen($value);
-    return $length >= $minimum && $length <= 20 && strspn($value, '0123456789+() .-') === $length;
+    if (strlen($value) === 11 && str_starts_with($value, '09')) {
+        return strspn($value, '0123456789') === 11;
+    }
+    return strlen($value) === 13 && str_starts_with($value, '+639')
+        && strspn($value, '0123456789', 1) === 12;
 }
 function flash(string $message): void
 {
@@ -82,11 +85,6 @@ function requireRole(string $role): void
     if ($_SESSION['ROLE'] !== $role) {
         http_response_code(403);
         exit('Access denied. This page is not available for your account.');
-    }
-    if (isPost() && (input('action') === 'logout' || isset($_POST['logout']))) {
-        $_SESSION = [];
-        session_destroy();
-        redirect('index.php');
     }
 }
 // Last-resort handling for legacy pages; models always return data or throw.

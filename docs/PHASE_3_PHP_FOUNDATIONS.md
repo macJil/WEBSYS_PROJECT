@@ -1,6 +1,6 @@
 # Atok MDRRM System setup and fictional pilot
 
-1. Use the assessment branch with PHP 8.1 or newer, PDO MySQL, Fileinfo and MySQL supporting the supplied schema. Serve the application through root `index.php`.
+1. Use the assessment branch with PHP 8.1 or newer, PDO MySQL, mbstring, Fileinfo and MySQL supporting the supplied schema. Serve the application through root `index.php`.
 2. For a fresh local installation import `barangay_drrm.sql` into a dedicated fictional database. For an existing plain-PHP assessment installation, back up the database and apply only missing assessment migrations in order (01, 04, 05). Do not import the fresh schema over a populated database.
 3. In `config/config.php`, set the local database credentials, port, base URL path and a writable absolute upload directory outside the document root. For existing configurations set `app_name` to `Atok MDRRM System`. Use an empty base URL at the domain root or the actual subdirectory path.
 4. Prepare the accounts and fictional records using the [submission handoff](SUBMISSION_CHECK.md). Keep each temporary password private.

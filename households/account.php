@@ -34,8 +34,8 @@ try {
         if (!filter_var($email, FILTER_VALIDATE_EMAIL) || strlen($email) > 254) {
             $errors[] = 'Enter a valid resident email.';
         }
-        if ($phone !== '' && !validPhone($phone, 7)) {
-            $errors[] = 'Enter a valid contact number or leave it blank.';
+        if ($phone !== '' && !validPhone($phone)) {
+            $errors[] = 'Use 09 followed by 9 digits or +639 followed by 9 digits or leave it blank.';
         }
         if ($errors) {
             $pdo->rollBack();
@@ -72,7 +72,7 @@ require __DIR__ . '/../includes/header.php';
         <label class="form-label" for="email">Resident email for login</label>
         <input class="form-control mb-3" id="email" type="email" name="email" maxlength="254" required value="<?= e(input('email')) ?>">
         <label class="form-label" for="phone">Resident contact number (optional)</label>
-        <input class="form-control mb-3" id="phone" type="tel" name="phone" maxlength="20" value="<?= e(input('phone')) ?>">
+        <input class="form-control mb-3" id="phone" type="tel" name="phone" maxlength="13" value="<?= e(input('phone')) ?>">
         <label><input type="checkbox" name="confirmed" value="yes" required> I confirmed this member resides in this barangay.</label>
         <button class="btn btn-primary">Create resident account</button>
     </form>

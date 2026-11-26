@@ -78,10 +78,10 @@ function reliefStock(): array
         !in_array($type, ['stock_in', 'stock_out'], true) ||
         $quantity === false ||
         $notes === '' ||
-        strlen($notes) > 255
+        mb_strlen($notes) > 255
     ) {
         return [
-            'Choose stock-in/out, enter a positive whole quantity (up to 1 billion), and notes/reason (up to 255 bytes).',
+            'Choose stock-in/out, enter a positive whole quantity (up to 1 billion), and notes/reason (up to 255 characters).',
         ];
     }
     $id = reliefRecordId(input('item_id'));

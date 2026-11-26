@@ -31,7 +31,7 @@ def check_baseline(query, staff, first, Client):
     query("""INSERT INTO evacuation_centers(name, barangay, status, capacity) VALUES
              ('Demo open shelter','Paoay','open',5), ('Demo closed shelter','Topdac','closed',9)""")
     query("""INSERT INTO evacuation_records(center_id, walkin_name, walkin_contact, recorded_by)
-             VALUES (1,'Fictional arrival','00000000000',1)""")
+             VALUES (1,'Fictional arrival','09000000000',1)""")
     page = '/dashboard/staff.php'
     expected = {'Pending incidents': 2, 'Verified incidents': 1, 'Responding incidents': 0,
                 'Open centers': 1, 'Available capacity (people)': 4, 'People currently evacuated': 1,
@@ -68,7 +68,7 @@ def check_baseline(query, staff, first, Client):
     staff.request(center, dict(action='checkout', record_id=1))
     for name in ['Demo first arrival', 'Demo second arrival']:
         status, body = staff.request(center, dict(action='checkin', kind='new_walkin', full_name=name,
-            age='20', address_details='Fictional landmark', contact_phone='00000000000'))
+            age='20', address_details='Fictional landmark', contact_phone='09000000000'))
         assert status == 200 and 'alert-danger' not in body
     def check_capacity(staying, remaining):
         body = staff.request(page)[1]
@@ -85,7 +85,7 @@ def check_baseline(query, staff, first, Client):
     home = '/dashboard/resident.php'
     staff.request('/response/teams.php', dict(action='save_team', team_name='Demo response', contact_phone='', is_active='1'))
     second.request('/incidents/create.php', dict(action='create_incident', incident_type='flood', barangay='Paoay',
-        reporter_name='Demo B', contact_phone='00000000000', location_description='Demo landmark', description='Fictional rehearsal'))
+        reporter_name='Demo B', contact_phone='09000000000', location_description='Demo landmark', description='Fictional rehearsal'))
     incident = query('SELECT MAX(id) id FROM incident_reports')[0]['id']
     review = '/incidents/view.php?id=' + str(incident)
     assert queue_ids(staff.request(page)[1]) == [str(incident)]
@@ -110,3 +110,16 @@ def check_baseline(query, staff, first, Client):
     assert 'Fixture 050' in filtered and 'Fixture 049' not in filtered and 'Register a new walk-in' in filtered
     assert 'Other open centers with space' in staff.request('/evacuation/center.php?id=2')[1]
     print('PASS filtered pagination, household lookup, direct walk-in form and alternative center')
+
+    queue_rows = ["(2,'other','Queue limit exercise','pending')"] * 101
+    query('INSERT INTO incident_reports(reported_by, incident_type, description, status) VALUES ' + ','.join(queue_rows))
+    report_list = '/incidents/list.php?search=Queue+limit+exercise'
+    staff_list = staff.request(report_list)[1]
+    assert staff_list.count('href="/incidents/view.php?id=') == 100
+    assert '100 most recent' in staff_list
+    assert 'No matching reports.' in second.request(report_list)[1]
+    assert 'No matching household' in staff.request(center + '&household_q=absent')[1]
+    oldest = staff.request(report_list + '&sort=oldest')[1]
+    assert '100 oldest' in oldest
+    assert re.findall(r'/incidents/view.php\?id=(\d+)', oldest)[0] != re.findall(r'/incidents/view.php\?id=(\d+)', staff_list)[0]
+    print('PASS busiest incident list limit, ownership and household search fallback')

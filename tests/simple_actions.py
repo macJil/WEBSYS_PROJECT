@@ -41,7 +41,9 @@ def check_actions(admin, resident, query, prefix):
     save('relief-inventory/index.php', dict(action='save_item', item_name='Fictional Packs', unit='packs'), 'relief-inventory/index.php')
     save('relief-inventory/index.php?edit=1', dict(action='save_item', item_name='Fictional Food Packs', unit='packs'), 'relief-inventory/index.php')
     save('relief-inventory/movements.php', dict(action='stock', item_id='1', movement_type='stock_in', quantity='10', notes='Fictional stock'), 'relief-inventory/movements.php')
-    save('relief-distribution/index.php', {'action':'distribute','household_id':'1','received_by':'Fictional Receiver','notes':'Demo','goods[1]':'2'}, 'relief-distribution/index.php?id=1')
+    receipt = save('relief-distribution/index.php', {'action':'distribute','household_id':'1','location_id':'1','received_by':'Fictional Receiver','notes':'Demo','goods[1]':'2'}, 'relief-distribution/index.php?id=1')
+    assert query('SELECT relief_location_id FROM relief_distributions WHERE id=1')[0]['relief_location_id'] == 1
+    assert 'Distribution point' in receipt
     save('announcements/index.php', dict(action='save_draft', title='Fictional Notice', message='Fictional reminder'), 'announcements/index.php')
     save('announcements/edit.php?id=1', dict(action='publish', title='Fictional Notice', message='Fictional reminder'), 'announcements/index.php')
     values = dict(action='save_draft', title='Fictional Notice', message='Fictional reminder')

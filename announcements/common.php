@@ -97,8 +97,8 @@ function announcementSave(?int $id): array
     if (!in_array($action, ['save_draft', 'publish'], true)) {
         return ['Choose Save draft / withdraw or Publish.'];
     }
-    if ($title === '' || strlen($title) > 150 || $message === '' || strlen($message) > 10000) {
-        return ['Enter a title (up to 150 bytes) and message (up to 10,000 bytes).'];
+    if ($title === '' || mb_strlen($title) > 150 || $message === '' || mb_strlen($message) > 10000) {
+        return ['Enter a title (up to 150 characters) and message (up to 10,000 characters).'];
     }
     try {
         announcementDbSave($id, $title, $message, $action === 'publish' ? 1 : 0, (int) $_SESSION['ID']);

@@ -128,15 +128,15 @@ function reportCreate(array $data): array
         ]
         as $key => $max
     ) {
-        if ($data[$key] === '' || strlen($data[$key]) > $max) {
-            $errors[] = ucfirst(str_replace('_', ' ', $key)) . " is required (maximum $max bytes).";
+        if ($data[$key] === '' || mb_strlen($data[$key]) > $max) {
+            $errors[] = ucfirst(str_replace('_', ' ', $key)) . " is required (maximum $max characters).";
         }
     }
     if (!isset(REPORT_TYPES[$data['incident_type']])) {
         $errors[] = 'Choose an incident type.';
     }
-    if ($data['contact_phone'] !== '' && !validPhone($data['contact_phone'], 3)) {
-        $errors[] = 'Enter a valid contact number.';
+    if ($data['contact_phone'] !== '' && !validPhone($data['contact_phone'])) {
+        $errors[] = 'Use 09 followed by 9 digits or +639 followed by 9 digits.';
     }
     $errors = array_merge($errors, locationErrors($data['location_description'], $data['latitude'], $data['longitude']));
     $admin = $_SESSION['ROLE'] === 'admin';
@@ -198,7 +198,7 @@ require __DIR__ . "/../includes/errors.php";
                 <option value="<?= e($value) ?>" <?= $data['incident_type'] === $value ? 'selected' : '' ?>><?= e($label) ?></option>
             <?php endforeach; ?>
         </select></label>
-    <?php foreach (['reporter_name' => ['Reporter/contact name',100], 'contact_phone' => ['Contact number',20], 'location_description' => ['Location description / purok / nearby landmark',255]] as $key => $field): ?>
+    <?php foreach (['reporter_name' => ['Reporter/contact name',100], 'contact_phone' => ['Contact number',13], 'location_description' => ['Location description / purok / nearby landmark',255]] as $key => $field): ?>
         <label class="d-block mb-3"><?= e($field[0]) ?><input class="form-control" name="<?= e($key) ?>" maxlength="<?= $field[1] ?>" value="<?= e($data[$key]) ?>" required /></label>
     <?php endforeach; ?>
     <label class="d-block mb-3">Describe what happened<textarea class="form-control" name="description" maxlength="10000" required >
@@ -208,7 +208,7 @@ require __DIR__ . "/../includes/errors.php";
     require __DIR__ . "/../includes/location-picker.php";
     ?>
     <label class="d-block mb-3">Incident image (optional; JPEG, PNG, WebP; maximum 5 MiB) <input class="form-control" type="file" name="image" accept="image/jpeg,image/png,image/webp" /></label>
-    <p>If a form error occurs, choose the image again before submitting.</p>
+    <p class="alert alert-warning">If a form error occurs, choose the image again before submitting.</p>
     <button class="btn btn-primary" name="action" value="create_incident">Submit report</button>
     <a href="<?= e(url('incidents/list.php')) ?>">Cancel and return to reports</a>
 </form>

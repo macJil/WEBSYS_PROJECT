@@ -7,7 +7,7 @@ if (!isset($form)) {
 $householdFields = [
     'household_code' => ['Household code', 30, true],
     'representative_name' => ['Representative / emergency contact name', 100, true],
-    'contact_phone' => ['Emergency contact number', 20, false],
+    'contact_phone' => ['Emergency contact number', 13, false],
     'purok' => ['Purok / sitio', 100, true],
     'address_details' => ['Address and location description / landmark', 255, false],
 ];
@@ -25,7 +25,7 @@ $householdNotes = [
 $pageTitle = 'Household registry';
 require __DIR__ . '/../includes/header.php';
 ?>
-<h2><?= $id === null ? 'Add household' : 'Edit household' ?></h2>
+<h1><?= $id === null ? 'Add household' : 'Edit household' ?></h1>
 <?php
 require __DIR__ . "/../includes/errors.php";
 ?>
@@ -44,7 +44,8 @@ require __DIR__ . "/../includes/errors.php";
         <?php foreach ($householdFields as $key => $field): ?>
             <div class="col-md-6 mb-3">
                 <label for="<?= e($key) ?>" class="form-label"><?= e($field[0]) ?><?= $field[2] ? ' *' : '' ?></label>
-                <input class="form-control" id="<?= e($key) ?>" name="<?= e($key) ?>" maxlength="<?= $field[1] ?>" <?= $field[2] ? 'required' : '' ?> value="<?= e($form[$key]) ?>" />
+                <?php $missing = !empty($errors) && $field[2] && $form[$key] === ''; ?>
+                <input class="form-control<?= $missing ? ' is-invalid' : '' ?>" <?= $missing ? 'aria-invalid="true"' : '' ?> id="<?= e($key) ?>" name="<?= e($key) ?>" maxlength="<?= $field[1] ?>" <?= $field[2] ? 'required' : '' ?> value="<?= e($form[$key]) ?>" />
             </div>
         <?php endforeach; ?>
     <?php

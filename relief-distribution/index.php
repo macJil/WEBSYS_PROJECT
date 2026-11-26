@@ -9,7 +9,7 @@ function reliefDbHouseholds(): array
     );
 }
 
-function reliefDbDistribute(int $household, string $receiver, string $notes, array $goods, int $staff): int
+function reliefDbDistribute(int $household, string $receiver, string $notes, array $goods, int $staff, ?int $location): int
 {
     if (!$goods) {
         throw new DomainException('Choose at least one good.');
@@ -28,6 +28,9 @@ function reliefDbDistribute(int $household, string $receiver, string $notes, arr
         ) {
             throw new DomainException('Select a registered household.');
         }
+        if ($location !== null && !reliefDbRows("SELECT id FROM relief_locations WHERE id=? AND archived_at IS NULL AND location_type IN ('both','distribution') FOR UPDATE", [$location])) {
+            throw new DomainException('Choose an active distribution point.');
+        }
         // Lock in the same item order for every distribution to reduce deadlocks.
         ksort($goods, SORT_NUMERIC);
         foreach ($goods as $id => $quantity) {
@@ -42,9 +45,9 @@ function reliefDbDistribute(int $household, string $receiver, string $notes, arr
             }
         }
         $stmt = db()->prepare(
-            'INSERT INTO relief_distributions (household_id,received_by,distributed_by,notes) VALUES (?,?,?,?)',
+            'INSERT INTO relief_distributions (household_id,received_by,distributed_by,notes,relief_location_id) VALUES (?,?,?,?,?)',
         );
-        $stmt->execute([$household, $receiver, $staff, $notes]);
+        $stmt->execute([$household, $receiver, $staff, $notes, $location]);
         $distribution = (int) db()->lastInsertId();
         foreach ($goods as $id => $quantity) {
             $stmt = db()->prepare(
@@ -65,10 +68,11 @@ function reliefDbDistribute(int $household, string $receiver, string $notes, arr
     }
 }
 
-function reliefDbDistributions(string $q): array
+function reliefDbDistributions(string $q, int $page): array
 {
+    $offset = ($page - 1) * 50;
     return reliefDbRows(
-        "SELECT d.*,h.household_code,u.full_name FROM relief_distributions d JOIN households h ON h.id=d.household_id JOIN users u ON u.id=d.distributed_by WHERE (h.household_code LIKE ? ESCAPE '!' OR d.received_by LIKE ? ESCAPE '!') ORDER BY d.id DESC",
+        "SELECT d.*,h.household_code,u.full_name FROM relief_distributions d JOIN households h ON h.id=d.household_id JOIN users u ON u.id=d.distributed_by WHERE (h.household_code LIKE ? ESCAPE '!' OR d.received_by LIKE ? ESCAPE '!') ORDER BY d.id DESC LIMIT 51 OFFSET $offset",
         [reliefDbTerm($q), reliefDbTerm($q)],
     );
 }
@@ -76,7 +80,7 @@ function reliefDbDistributions(string $q): array
 function reliefDbDistribution(int $id): array
 {
     return reliefDbRows(
-        'SELECT d.*,h.household_code,u.full_name FROM relief_distributions d JOIN households h ON h.id=d.household_id JOIN users u ON u.id=d.distributed_by WHERE d.id=?',
+        'SELECT d.*,h.household_code,u.full_name,l.name AS location FROM relief_distributions d JOIN households h ON h.id=d.household_id JOIN users u ON u.id=d.distributed_by LEFT JOIN relief_locations l ON l.id=d.relief_location_id WHERE d.id=?',
         [$id],
     )[0] ?? [];
 }
@@ -92,11 +96,6 @@ function reliefDbDistributedGoods(int $id): array
 function reliefHouseholds(): array
 {
     return reliefDbHouseholds();
-}
-
-function reliefDistributions(string $q): array
-{
-    return reliefDbDistributions($q);
 }
 
 function reliefDistribution(int $id): array
@@ -125,11 +124,11 @@ function reliefDistribute(): array
     if (
         input('action') !== 'distribute' ||
         $receiver === '' ||
-        strlen($receiver) > 100 ||
-        strlen($notes) > 255 ||
+        mb_strlen($receiver) > 100 ||
+        mb_strlen($notes) > 255 ||
         !is_array($raw)
     ) {
-        return ['Enter receiving representative (up to 100 bytes), notes (up to 255 bytes), and goods.'];
+        return ['Enter receiving representative (up to 100 characters), notes (up to 255 characters), and goods.'];
     }
     $goods = [];
     foreach ($raw as $key => $value) {
@@ -149,8 +148,9 @@ function reliefDistribute(): array
         return ['Select at least one good by entering its quantity.'];
     }
     $household = reliefRecordId(input('household_id'));
+    $location = input('location_id') === '' ? null : reliefRecordId(input('location_id'));
     try {
-        $id = reliefDbDistribute($household, $receiver, $notes, $goods, (int) $_SESSION['ID']);
+        $id = reliefDbDistribute($household, $receiver, $notes, $goods, (int) $_SESSION['ID'], $location);
     } catch (Throwable $e) {
         return reliefFailure($e);
     }
@@ -168,8 +168,18 @@ if ($id && isPost()) {
 $errors = $id ? [] : reliefDistribute();
 $items = $id ? reliefDistributedGoods($id) : reliefItems();
 $households = $id ? [] : reliefHouseholds();
+$locations = $id ? [] : reliefDbRows("SELECT id,name FROM relief_locations WHERE archived_at IS NULL AND location_type IN ('both','distribution') ORDER BY name");
 $q = reliefQueryValue("q");
-$history = $id ? [] : reliefDistributions($q);
+$page = filter_var($_GET['page'] ?? 1, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1, 'max_range' => 1000000]]);
+if (!$page) {
+    http_response_code(400);
+    exit('Invalid page.');
+}
+$history = $id ? [] : reliefDbDistributions($q, $page);
+$hasNext = count($history) > 50;
+if ($hasNext) {
+    array_pop($history);
+}
 $pageTitle = "Relief distributions";
 require __DIR__ . "/../includes/header.php";
 require __DIR__ . "/../includes/errors.php";
@@ -180,9 +190,9 @@ require __DIR__ . "/../includes/errors.php";
 <?php if ($distribution): ?>
     <h2>Distribution #<?= (int)$id ?></h2>
     <dl>
-        <?php foreach (['household_code' => 'Household','received_by' => 'Receiving representative','full_name' => 'Staff','distributed_at' => 'Date/time','notes' => 'Notes'] as $key => $label): ?>
+        <?php foreach (['household_code' => 'Household','location' => 'Distribution point','received_by' => 'Receiving representative','full_name' => 'Staff','distributed_at' => 'Date/time','notes' => 'Notes'] as $key => $label): ?>
             <dt><?= e($label) ?></dt>
-            <dd><?= e($distribution[$key]) ?></dd>
+            <dd><?= e($distribution[$key] ?? 'Not recorded') ?></dd>
         <?php endforeach; ?>
     </dl>
     <div class="table-responsive" tabindex="0" role="region" aria-label="Scrollable records">
@@ -214,6 +224,14 @@ require __DIR__ . "/../includes/errors.php";
                     <option value="<?= (int)$household['id'] ?>" <?= input('household_id') === (string)$household['id']?'selected':'' ?>><?= e($household['representative_name'] . ' — ' . ($household['barangay'] ?? 'Unconfirmed barangay') . ' — ' . $household['purok']) ?></option>
                 <?php endforeach; ?>
             </select></label>
+        <label class="d-block mb-3">Distribution point (optional)
+            <select class="form-select" name="location_id">
+                <option value="">No point recorded</option>
+                <?php foreach ($locations as $location): ?>
+                    <option value="<?= (int)$location['id'] ?>" <?= input('location_id') === (string)$location['id'] ? 'selected' : '' ?>><?= e($location['name']) ?></option>
+                <?php endforeach; ?>
+            </select>
+        </label>
         <label class="d-block mb-3">Receiving representative<input class="form-control" name="received_by" maxlength="100" value="<?= e(input('received_by')) ?>" required /></label>
         <label class="d-block mb-3">Notes<textarea class="form-control" name="notes" maxlength="255">
 <?= e(input('notes')) ?></textarea> </label>
@@ -236,13 +254,24 @@ require __DIR__ . "/../includes/errors.php";
                         <td><?= e($item['unit']) ?></td>
                         <td><?= (int)$item['quantity_on_hand'] ?></td>
                         <td>
-                            <input aria-label="<?= e('Quantity of ' . $item['item_name']) ?>" type="number" min="0" max="1000000000" name="goods[<?= (int)$item['id'] ?>]" value="<?= e(is_scalar($value)?$value:'') ?>" />
+                            <input aria-label="<?= e('Quantity of ' . $item['item_name']) ?>" type="number" min="0" max="<?= min(1000000000, (int)$item['quantity_on_hand']) ?>" placeholder="0" data-good-quantity="<?= e($item['item_name']) ?>" name="goods[<?= (int)$item['id'] ?>]" value="<?= e(is_scalar($value)?$value:'') ?>" />
                         </td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>
         </table>
     </div>
+    <p id="goods-selected" aria-live="polite"></p>
+    <script>
+        const quantities = document.querySelectorAll('[data-good-quantity]');
+        function showSelectedGoods() {
+            const selected = Array.from(quantities).filter(input => input.valueAsNumber > 0);
+            const lines = selected.map(input => input.dataset.goodQuantity + ' × ' + input.value);
+            document.getElementById('goods-selected').textContent = 'Goods selected: ' + (lines.join(', ') || 'none');
+        }
+        quantities.forEach(input => input.addEventListener('input', showSelectedGoods));
+        showSelectedGoods();
+    </script>
     <button class="btn btn-primary" name="action" value="distribute">Save distribution and deduct stock</button>
     <a href="<?= e(url('relief-inventory/index.php')) ?>">Cancel and return to relief inventory</a>
 </form>
@@ -281,6 +310,13 @@ require __DIR__ . "/../includes/errors.php";
         </tbody>
     </table>
 </div>
+<?php if ($page > 1 || $hasNext): ?>
+    <nav aria-label="Distribution history pages">
+        <?php if ($page > 1): ?><a href="?<?= e(http_build_query(['q' => $q, 'page' => $page - 1])) ?>">Previous</a><?php endif; ?>
+        Page <?= $page ?>
+        <?php if ($hasNext): ?><a href="?<?= e(http_build_query(['q' => $q, 'page' => $page + 1])) ?>">Next</a><?php endif; ?>
+    </nav>
+<?php endif; ?>
 <?php endif; ?>
 <?php
 require __DIR__ . "/../includes/footer.php";

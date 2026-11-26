@@ -13,11 +13,11 @@ function saveMember(int $householdId, ?int $memberId, array $data)
         member($memberId, $householdId);
     }
     $errors = [];
-    if ($data['full_name'] === '' || strlen($data['full_name']) > 100) {
-        $errors[] = 'Enter a member name of up to 100 bytes.';
+    if ($data['full_name'] === '' || mb_strlen($data['full_name']) > 100) {
+        $errors[] = 'Enter a member name of up to 100 characters.';
     }
-    if (strlen($data['notes']) > 255) {
-        $errors[] = 'Member notes must fit within 255 bytes.';
+    if (mb_strlen($data['notes']) > 255) {
+        $errors[] = 'Member notes must fit within 255 characters.';
     }
     $age =
         $data['age'] === ''

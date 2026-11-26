@@ -126,6 +126,7 @@ foreach ($summary["centers"] as $center) {
     $occupancy += (int) $center["occupancy"];
     $available += (int) $center["available"];
 }
+$generatedAt = (new DateTimeImmutable('now', new DateTimeZone('Asia/Manila')))->format('Y-m-d H:i:s');
 $pageTitle = "Disaster reports and summaries";
 require __DIR__ . "/../includes/header.php";
 ?>
@@ -146,9 +147,9 @@ require __DIR__ . "/../includes/header.php";
     <button class="btn btn-outline-secondary" type="button" id="print-summary">Print / Save as PDF</button>
 </form>
 <p>Barangay: <strong><?= e($areaLabel) ?></strong> · Selected period: <strong><?= e($period['from']) ?> through <?= e($period['to']) ?></strong> (both dates included).</p>
-<p>Generated <?= e((new DateTimeImmutable('now', new DateTimeZone('Asia/Manila')))->format('Y-m-d H:i:s')) ?> Asia/Manila.</p>
+<p>Generated <?= e($generatedAt) ?> Asia/Manila.</p>
 <h2>Current affected households</h2>
-<p><strong><?= $summary['affected'] ?></strong> households currently marked “affected” or “both” in the registry.</p>
+<p><strong><?= $summary['affected'] ?></strong> households as of <strong><?= e($generatedAt) ?> Philippine time</strong>, marked “affected” or “both” in the registry.</p>
 <p>This is the current registry designation, not a count of households affected during the selected period. The date filter does not apply to this number.</p>
 <h2>Current evacuation centers</h2>
 <p>Occupancy counts individual stays without a checkout timestamp. These are current figures; the date filter does not apply. Available capacity includes only open, non-archived centers, including those without map points.</p>

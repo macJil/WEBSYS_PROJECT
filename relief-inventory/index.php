@@ -57,8 +57,8 @@ function reliefSaveItem(?int $id): array
     }
     $name = input('item_name');
     $unit = input('unit');
-    if ($name === '' || strlen($name) > 120 || $unit === '' || strlen($unit) > 30) {
-        return ['Enter an item name (up to 120 bytes) and unit (up to 30 bytes).'];
+    if ($name === '' || mb_strlen($name) > 120 || $unit === '' || mb_strlen($unit) > 30) {
+        return ['Enter an item name (up to 120 characters) and unit (up to 30 characters).'];
     }
     try {
         reliefDbSaveItem($id, $name, $unit);

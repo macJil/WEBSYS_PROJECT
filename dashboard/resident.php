@@ -34,7 +34,7 @@ require __DIR__ . "/../includes/weather.php";
 ?>
 <p><a class="btn btn-primary" href="<?= e(url('map/map.php')) ?>">Open map</a></p>
 <ul>
-    <li><a href="<?= e(url('incidents/list.php')) ?>">View my incident reports</a></li>
+    <li><a href="<?= e(url('incidents/list.php')) ?>">View my incident reports (<?= array_sum($overview['incidents']) ?>)</a></li>
     <li><a href="<?= e(url('announcements/published.php')) ?>">Read emergency announcements</a></li>
 </ul>
 <p>Submitting a report does not guarantee an immediate emergency response.</p>

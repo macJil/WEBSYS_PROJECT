@@ -1,6 +1,6 @@
 # Classroom submission and demonstration
 
-Use the **atok-workflow-usability** branch. On the presentation Mac, open MAMP and visit http://localhost:8888/WEBSYS_PROJECT/. Use separate browser sessions for staff and resident. Keep the barangay administrator's handoff account separate from the classroom demonstration.
+Use the **atok-staff-workflow-review** branch for the revised screens. On the presentation Mac, open MAMP and visit http://localhost:8888/WEBSYS_PROJECT/. Use separate browser sessions for staff and resident. Keep the barangay administrator's handoff account separate from the classroom demonstration.
 
 ## Accounts and records
 
@@ -11,6 +11,8 @@ Import the full `barangay_drrm.sql` into an empty classroom database. It include
 | barangay.admin@atok.example.invalid | AtokDemoAdmin26! | Administrator |
 | staff@demo.example.invalid | AtokDemoStaff26! | Staff |
 | resident@demo.example.invalid | AtokDemoResident26! | Resident |
+
+The login page shows classroom logins when `demo_logins` is enabled in config/config.php. Disable that setting outside the classroom. Set `emergency_hotline` after the office confirms its number.
 
 These published credentials are for fictional classroom data only. The email addresses are website login names. Create private credentials before any operational deployment. Newly enrolled residents still change their temporary passwords. The ready-made presentation accounts open their dashboards directly.
 
@@ -30,6 +32,10 @@ The fresh demo has ten reports across all eight Atok barangays: two each for flo
 | Dashboard, map and summaries | Filter by Paoay, review the center and incident, then print the summary and the resident's incident. | Active stays agree with the center. The resident map omits households and pending incidents. The resident incident copy omits internal history. |
 
 These are **starting values for the named records**. Municipal totals can include earlier records on the same installation. The longer nine-member script uses a fresh household and an additional stock delivery; rehearse either scenario from its stated starting balances.
+
+## Staff workflow branch checks · 26 November 2026
+
+The fictional HTTP suite exercised all eight modules. A 101-report fixture verified the 100-result limit, both sort orders and resident ownership. A distribution saved its chosen relief point with its stock movements. Browser checks opened the login page, ten staff pages and four resident pages at 390 and 1280 pixels without horizontal page overflow. The household entry screen was given a primary heading after the first browser pass. Delete confirmation, both mobile-number formats, the shared map and its location picker were checked separately.
 
 ## Review results
 

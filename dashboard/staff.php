@@ -9,7 +9,7 @@ incidentScopeConditions($scope, $where, $values);
 $sql = 'SELECT incident_type, COUNT(*) AS total FROM incident_reports WHERE ' . implode(' AND ', $where) . ' GROUP BY incident_type';
 $typeCounts = array_column(dashboardDbRows($sql, $values), 'total', 'incident_type');
 $overview = dashboardDashboardData();
-$pending = dashboardDbRows("SELECT id, incident_type, barangay, created_at
+$pending = dashboardDbRows("SELECT id, incident_type, barangay, created_at, LEFT(description, 81) AS snippet
     FROM incident_reports WHERE status='pending' AND archived_at IS NULL
     ORDER BY created_at, id LIMIT 5");
 $pageTitle = "Staff dashboard";
@@ -20,8 +20,8 @@ require __DIR__ . "/../includes/header.php";
 </div>
 <h2>Current municipal overview</h2>
 <?php require __DIR__ . '/../includes/dashboard-cards.php'; ?>
-<h2>Awaiting review (<?= (int)$overview['incidents']['pending'] ?>)</h2>
-<p>Five oldest pending reports across Atok.</p>
+<h2>Awaiting review across Atok (<?= (int)$overview['incidents']['pending'] ?>)</h2>
+<p>Up to five oldest pending reports. The incident filters below apply to the type counts.</p>
 <?php if ($pending): ?>
     <div class="table-responsive mb-3">
         <table class="table">
@@ -29,7 +29,7 @@ require __DIR__ . "/../includes/header.php";
             <tbody>
                 <?php foreach ($pending as $report): ?>
                     <tr>
-                        <td>#<?= (int)$report['id'] ?> · <?= e(REPORT_TYPES[$report['incident_type']]) ?></td>
+                        <td>#<?= (int)$report['id'] ?> · <?= e(REPORT_TYPES[$report['incident_type']]) ?><br><small><?= e(mb_strimwidth($report['snippet'], 0, 80, '…')) ?></small></td>
                         <td><?= e($report['barangay'] ?? 'Awaiting confirmation') ?></td>
                         <td><?= relativeTime($report['created_at']) ?></td>
                         <td><a class="btn btn-primary btn-sm" href="<?= e(url('incidents/view.php?id=' . $report['id'])) ?>" aria-label="Review incident #<?= (int)$report['id'] ?>">Review</a></td>
@@ -46,14 +46,14 @@ require __DIR__ . "/../includes/header.php";
 <?php if ($overview['centers']): ?>
     <div class="table-responsive mb-3">
         <table class="table">
-            <thead><tr><th>Center</th><th>People staying</th><th>Capacity (people)</th><th>Places remaining</th></tr></thead>
+            <thead><tr><th>Center</th><th>People staying</th><th>Capacity (people)</th><th>Places remaining</th><th>Capacity used</th></tr></thead>
             <tbody>
                 <?php foreach ($overview['centers'] as $center): ?>
                     <tr>
                         <td><a href="<?= e(url('evacuation/center.php?id=' . $center['id'])) ?>"><?= e($center['name']) ?></a></td>
                         <td><?= (int)$center['occupancy'] ?></td>
                         <td><?= (int)$center['capacity'] ?></td>
-                        <td><?= (int)$center['available'] ?></td>
+                        <td><?= (int)$center['available'] ?></td><td><?= capacityBar((int)$center['occupancy'], (int)$center['capacity']) ?></td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>

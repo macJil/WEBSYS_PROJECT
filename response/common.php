@@ -6,7 +6,7 @@ const RESPONSE_STATUSES = ['assigned', 'completed', 'cancelled'];
 
 function responseDbTeams(): array
 {
-    return db()->query('SELECT * FROM responders WHERE is_active=1 ORDER BY team_name')->fetchAll();
+    return db()->query("SELECT r.*, (SELECT COUNT(*) FROM incident_assignments a WHERE a.responder_id=r.id AND a.status IN ('assigned','on_scene')) AS workload FROM responders r WHERE r.is_active=1 ORDER BY r.team_name")->fetchAll();
 }
 
 function responseDbAssignmentStatus(int $incidentId): ?string

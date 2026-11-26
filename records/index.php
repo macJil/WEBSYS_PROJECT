@@ -413,7 +413,7 @@ require __DIR__ . "/../includes/errors.php";
         <a href="?<?= e(http_build_query(array_replace($params, ['page' => $page + 1]))) ?>">Next</a>
     <?php endif; ?>
 </p>
-<script src="<?= e(url('assets/js/record-selection.js?v=record-actions')) ?>"></script>
+<script src="<?= e(url('assets/js/record-selection.js?v=delete-confirm')) ?>"></script>
 <?php
 require __DIR__ . "/../includes/footer.php";
 ?>

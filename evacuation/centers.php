@@ -87,14 +87,14 @@ function evacuationSaveCenter(?int $id): array
     ];
     if (
         $data['name'] === '' ||
-        strlen($data['name']) > 150 ||
+        mb_strlen($data['name']) > 150 ||
         $data['address_details'] === '' ||
-        strlen($data['address_details']) > 255 ||
+        mb_strlen($data['address_details']) > 255 ||
         $capacity === false ||
         !in_array($data['status'], ['open', 'closed'], true)
     ) {
         return [
-            'Enter name (up to 150 bytes), address (up to 255 bytes), whole-person capacity (0–1,000,000), and valid status.',
+            'Enter name (up to 150 characters), address (up to 255 characters), whole-person capacity (0–1,000,000), and valid status.',
         ];
     }
     if ($data['barangay'] !== null && !in_array($data['barangay'], ATOK_BARANGAYS, true)) {

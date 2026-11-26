@@ -17,7 +17,7 @@ require __DIR__ . "/../includes/header.php";
 <h1>Emergency announcements</h1>
 <form method="get" class="filter-form mb-4">
     <label>Search title <input class="form-control" placeholder="Search title" maxlength="150" name="q" value="<?= e(announcementQueryValue('q')) ?>" /></label>
-    <label>Created date <input class="form-control" type="date" name="date" value="<?= e(announcementQueryValue('date')) ?>" /></label>
+    <label>Created on (exact date) <input class="form-control" type="date" name="date" value="<?= e(announcementQueryValue('date')) ?>" /></label>
     <button class="btn btn-outline-secondary">Search</button> <a class="btn btn-outline-secondary" href="<?= e(url('announcements/published.php')) ?>">Clear</a>
 </form>
 <?php if (!$announcements): ?>
@@ -26,7 +26,7 @@ require __DIR__ . "/../includes/header.php";
 <?php foreach ($announcements as $announcement): ?>
     <article class="notice-card">
         <h2><?= e($announcement['title']) ?></h2>
-        <p class="small">Published notice · Created <?= relativeTime($announcement['created_at']) ?></p>
+        <p class="small">Created <?= relativeTime($announcement['created_at']) ?></p>
         <button type="button" class="btn btn-outline-secondary btn-sm no-print" onclick="printNotice(this)">Print notice</button>
         <div class="preserve-text"><?= e($announcement['message']) ?></div>
     </article>

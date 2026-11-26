@@ -51,9 +51,9 @@ function reliefLocationSave(?int $id): array
     if (
         input('action') !== 'save_location' ||
         $data['name'] === '' ||
-        strlen($data['name']) > 150 ||
+        mb_strlen($data['name']) > 150 ||
         $data['address_details'] === '' ||
-        strlen($data['address_details']) > 255 ||
+        mb_strlen($data['address_details']) > 255 ||
         !in_array($data['location_type'], ['storage', 'distribution', 'both'], true)
     ) {
         return ['Enter name, address, and valid location type.'];

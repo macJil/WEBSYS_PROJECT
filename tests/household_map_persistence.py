@@ -59,7 +59,7 @@ with tempfile.TemporaryDirectory(prefix='bayanready-address-') as temporary:
         password_hash = subprocess.check_output([PHP, '-r', "echo password_hash('DemoPass123!', PASSWORD_DEFAULT);"]).decode()
         query("INSERT INTO users(full_name,username,email,password,role) VALUES " +
               ','.join("('Fictional " + role + "','" + role + "','" + role + "@example.invalid','" + password_hash + "','" + role + "')" for role in ['admin', 'resident']))
-        query("UPDATE users SET phone='00000000001' WHERE role='resident'")
+        query("UPDATE users SET phone='09000000001' WHERE role='resident'")
         config = subprocess.check_output(['git', 'show', ':config/config.php'], cwd=ROOT, text=True).replace("'base_url' => '/WEBSYS_PROJECT'", "'base_url' => ''")
         config = config.replace("'host' => '127.0.0.1'", "'host' => 'localhost'").replace("'database' => 'barangay_drrm'", "'database' => '" + DB_NAME + "'").replace("'password' => getenv('ATOK_DB_PASSWORD') ?: ''", "'password' => 'root'")
         config = config.replace("'incident_upload_dir' => ''", "'incident_upload_dir' => '" + str(folder / 'images') + "'")
@@ -102,7 +102,7 @@ with tempfile.TemporaryDirectory(prefix='bayanready-address-') as temporary:
             check_baseline(query, admin, resident, Client)
             raise SystemExit(0)
         cases = [
-            (resident, 'incidents/create.php', 'incident_reports', 'location_description', 'incidents/view.php', dict(action='create_incident', incident_type='other', description='Fictional exercise', reporter_name='Fictional person', contact_phone='0000000000')),
+            (resident, 'incidents/create.php', 'incident_reports', 'location_description', 'incidents/view.php', dict(action='create_incident', incident_type='other', description='Fictional exercise', reporter_name='Fictional person', contact_phone='09000000000')),
             (admin, 'households/index.php', 'households', 'address_details', 'households/details.php', dict(action='create_household', barangay='Paoay', household_code='DEMO-ADDR', representative_name='Fictional person', contact_phone='', purok='Demo', registry_reason='monitored', hazard_type='unassessed', hazard_notes='', vulnerability_category='unassessed', vulnerability_notes='', evacuation_status='at_home')),
             (admin, 'evacuation/centers.php', 'evacuation_centers', 'address_details', 'evacuation/center.php', dict(action='save_center', name='Fictional center', capacity='5', status='open')),
             (admin, 'relief-inventory/locations.php', 'relief_locations', 'address_details', 'relief-inventory/location.php', dict(action='save_location', name='Fictional relief point', location_type='distribution')),
@@ -113,7 +113,7 @@ with tempfile.TemporaryDirectory(prefix='bayanready-address-') as temporary:
             code, body = client.request(page_url)
             assert code == 200 and 'data-address-status' in body and 'location-picker.js' in body
             if table == 'incident_reports':
-                assert 'value="Fictional resident"' in body and 'value="00000000001"' in body
+                assert 'value="Fictional resident"' in body and 'value="09000000001"' in body
             values.update({field: 'Fictional suggested road, Demo locality', 'latitude': '16.6272000', 'longitude': '120.7672000'})
             outside = dict(values, latitude='16.4', longitude='120.6')
             before = query('SELECT COUNT(*) AS total FROM ' + table)
@@ -126,7 +126,7 @@ with tempfile.TemporaryDirectory(prefix='bayanready-address-') as temporary:
             if table == 'incident_reports':
                 assert row['reporter_name'] == values['reporter_name'] and row['contact_phone'] == values['contact_phone']
                 profile = query("SELECT id,full_name,phone FROM users WHERE role='resident'")[0]
-                assert row['reported_by'] == profile['id'] and profile['phone'] == '00000000001' and profile['full_name'] == 'Fictional resident'
+                assert row['reported_by'] == profile['id'] and profile['phone'] == '09000000001' and profile['full_name'] == 'Fictional resident'
             assert row[field] == values[field] and row['latitude'] == values['latitude'] and row['longitude'] == values['longitude'], row
             code, body = client.request(prefix + detail + '?id=' + str(row['id']))
             assert code == 200 and values[field] in body and values['latitude'] in body

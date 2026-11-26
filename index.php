@@ -50,7 +50,6 @@ function handlePost()
             'ROLE' => $user['role'],
             'CHANGE_PASSWORD' => (bool) $user['must_change_password'],
         ];
-        flash('You are now signed in.');
         redirect(dashboardPath());
     } catch (PDOException $error) {
         return ['The database is unavailable. Please try again later.'];
@@ -64,7 +63,10 @@ require __DIR__ . "/includes/header.php";
 <div class="page-intro">
     <p class="eyebrow">Municipality of Atok · Benguet</p>
     <h1><?= e($settings['app_name']) ?></h1>
-    <p>Incident reporting and evacuation information for Atok residents and staff. Classroom pilot.</p>
+    <?php if (!empty($settings['emergency_hotline'])): ?>
+        <p>Emergency hotline: <strong><?= e($settings['emergency_hotline']) ?></strong></p>
+    <?php endif; ?>
+    <p>Incident reporting and evacuation information for Atok residents and staff.</p>
 </div>
 <?php
 require __DIR__ . "/includes/errors.php";
@@ -78,7 +80,7 @@ require __DIR__ . "/includes/errors.php";
                 <label for="login-email" class="form-label">Email</label>
                 <input id="login-email" class="form-control mb-3" type="email" name="email" required maxlength="254" autocomplete="email" value="<?= input('action') === 'login' ? e(input('email')) : '' ?>" />
                 <label for="login-password" class="form-label">Password</label>
-                <input id="login-password" class="form-control mb-3" type="password" name="password" required autocomplete="current-password" />
+                <input id="login-password" class="form-control mb-3" type="password" name="password" maxlength="72" required autocomplete="current-password" />
                 <button class="btn btn-primary">Sign in</button>
             </form>
         </div>
@@ -87,10 +89,18 @@ require __DIR__ . "/includes/errors.php";
         <div class="panel h-100">
             <h2 id="resident-guide">Resident guide</h2>
             <p>Sign in to report an incident, follow its status, read notices, or find an open evacuation center.</p>
-            <h3 class="h5 border-top pt-3">How to get an account</h3>
-            <p>Ask MDRRM staff to verify your household record and issue a temporary password. Choose your own password the first time you sign in.</p>
-            <h3 class="h5 border-top pt-3">Before you report an incident</h3>
-            <p>Have your barangay, nearest landmark, contact number, and a short description ready. A photo and map pin are optional.</p>
+            <ul>
+                <li><strong>How to get an account</strong> · Ask MDRRM staff to verify your household record. Choose a password on your first sign-in.</li>
+                <li><strong>Before you report an incident</strong> · Have your barangay, nearest landmark, phone number and a short description ready.</li>
+                <li>You and MDRRM staff can open your full report. Eligible incident pins also appear on the community map.</li>
+                <li>Forgot your password? Contact MDRRM staff for account assistance.</li>
+            </ul>
+            <?php if (!empty($settings['demo_logins'])): ?>
+                <details><summary>Classroom demo logins</summary>
+                    <p>Staff: staff@demo.example.invalid · AtokDemoStaff26!</p>
+                    <p>Resident: resident@demo.example.invalid · AtokDemoResident26!</p>
+                </details>
+            <?php endif; ?>
         </div>
     </section>
 </div>

@@ -1,5 +1,6 @@
 <?php
 $signedIn = !empty($_SESSION["ID"]);
+$currentPath = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH);
 $links = [];
 if ($signedIn && empty($_SESSION['CHANGE_PASSWORD'])) {
     $links = ["Home" => dashboardPath(), "Map" => "map/map.php"];
@@ -41,7 +42,7 @@ if ($signedIn && empty($_SESSION['CHANGE_PASSWORD'])) {
             <div class="collapse navigation-collapse" id="main-navigation">
                 <nav class="nav-links" aria-label="Main navigation">
                     <?php foreach ($links as $navLabel => $navPath): ?>
-                        <a href="<?= e(url($navPath)) ?>" <?= parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH) === url($navPath)?'aria-current="page"':'' ?>><?= e($navLabel) ?></a>
+                        <a href="<?= e(url($navPath)) ?>" <?= $currentPath === url($navPath)?'aria-current="page"':'' ?>><?= e($navLabel) ?></a>
                     <?php endforeach; ?>
                 </nav>
             </div>

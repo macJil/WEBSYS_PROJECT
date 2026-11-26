@@ -21,8 +21,8 @@
             event.preventDefault();
             alert("Select at least one record.");
         } else {
-            const action = event.submitter?.textContent.trim();
-            if (!action || !confirm(action + " " + selected + " selected record(s)?")) {
+            const action = event.submitter?.value;
+            if (!action || (action === "delete" && !confirm("Permanently delete " + selected + " selected record(s)? This cannot be undone."))) {
                 event.preventDefault();
             }
         }

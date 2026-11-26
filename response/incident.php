@@ -120,8 +120,8 @@ function responseRecord(int $id): array
     if (!in_array($action, ['assign_team', 'update_assignment'], true)) {
         return ['Unknown form action.'];
     }
-    if ($notes === '' || strlen($notes) > 2000) {
-        return ['Describe the action taken (maximum 2,000 bytes).'];
+    if ($notes === '' || mb_strlen($notes) > 2000) {
+        return ['Describe the action taken (maximum 2,000 characters).'];
     }
     $teamId = $action === 'assign_team' ? responseRecordId(input('team_id')) : null;
     $assignmentId = $action === 'update_assignment' ? responseRecordId(input('assignment_id')) : null;
@@ -172,7 +172,7 @@ require __DIR__ . "/../includes/errors.php";
         <label class="d-block">Team<select class="form-select" name="team_id" required>
                 <option value="">Choose a team</option>
                 <?php foreach ($teams as $team): ?>
-                    <option value="<?= (int)$team['id'] ?>" <?= input('team_id') === (string)$team['id'] ? 'selected' : '' ?>><?= e($team['team_name']) ?></option>
+                    <option value="<?= (int)$team['id'] ?>" <?= input('team_id') === (string)$team['id'] ? 'selected' : '' ?>><?= e($team['team_name']) ?> (active: <?= (int)$team['workload'] ?>)</option>
                 <?php endforeach; ?>
             </select></label>
         <label class="d-block my-2">Dispatch instructions / action taken<textarea class="form-control" name="notes" maxlength="2000" required >

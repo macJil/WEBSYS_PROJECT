@@ -27,10 +27,11 @@ function reportDbListing(array $filters, ?int $owner): array
             $values[] = '%' . strtr($filters[$key], ['!' => '!!', '%' => '!%', '_' => '!_']) . '%';
         }
     }
+    $order = $filters['sort'] === 'oldest' ? 'created_at ASC, id ASC' : 'created_at DESC, id DESC';
     $stmt = db()->prepare(
         'SELECT * FROM incident_reports WHERE ' .
             implode(' AND ', $where) .
-            ' ORDER BY created_at DESC, id DESC',
+            " ORDER BY $order LIMIT 101",
     );
     $stmt->execute($values);
     return $stmt->fetchAll();
@@ -39,6 +40,7 @@ function reportDbListing(array $filters, ?int $owner): array
 function reportFilters(): array
 {
     $filters = incidentScope();
+    $filters['sort'] = ($_GET['sort'] ?? '') === 'oldest' ? 'oldest' : 'newest';
     foreach (['incident_type', 'status', 'date', 'location', 'search'] as $key) {
         $filters[$key] = is_string($_GET[$key] ?? null) ? trim($_GET[$key]) : '';
     }
@@ -65,6 +67,10 @@ function reportListIncidents(array $filters): array
 
 $filters = reportFilters();
 $reports = reportListIncidents($filters);
+$moreReports = count($reports) > 100;
+if ($moreReports) {
+    array_pop($reports);
+}
 $pageTitle = $_SESSION["ROLE"] === "admin" ? "Incident reports" : "My incident reports";
 require __DIR__ . "/../includes/header.php";
 ?>
@@ -82,6 +88,10 @@ require __DIR__ . "/../includes/header.php";
                 <option value="<?= e($value) ?>" <?= $filters['incident_type'] === $value ? 'selected' : '' ?>><?= e($label) ?></option>
             <?php endforeach; ?>
         </select></label>
+    <label class="col-md-3">Order<select class="form-select" name="sort">
+            <option value="newest">Newest first</option>
+            <option value="oldest" <?= $filters['sort'] === 'oldest' ? 'selected' : '' ?>>Oldest first</option>
+        </select></label>
     <label class="col-md-3">Status<select class="form-select" name="status">
             <option value="">All statuses</option>
             <?php foreach (REPORT_STATUSES as $value): ?>
@@ -96,6 +106,7 @@ require __DIR__ . "/../includes/header.php";
         <a href="<?= e(url('incidents/list.php')) ?>">Clear filters</a>
     </div>
 </form>
+<?php if ($moreReports): ?><p>Showing the 100 <?= $filters['sort'] === 'oldest' ? 'oldest' : 'most recent' ?> matches. Narrow your filters to find other reports.</p><?php endif; ?>
 <div class="table-responsive" tabindex="0" role="region" aria-label="Scrollable records">
     <table class="table">
         <thead>

@@ -1,6 +1,8 @@
 <?php
 // Change connection settings locally for your installation. Keep passwords out of Git.
 return [
+    'demo_logins' => true, // Classroom database only. Disable for an operational site.
+    'emergency_hotline' => '', // Enter the number confirmed by the office.
     'app_name' => 'Atok MDRRM System',
     'base_url' => '/WEBSYS_PROJECT', // Use '' when served at localhost root.
     'host' => '127.0.0.1',

@@ -41,21 +41,21 @@ function prepareHousehold(array &$data, ?array $old)
         $errors[] = 'Choose an Atok barangay.';
     }
     foreach (['household_code' => 30, 'representative_name' => 100, 'purok' => 100] as $field => $max) {
-        if ($data[$field] === '' || strlen($data[$field]) > $max) {
+        if ($data[$field] === '' || mb_strlen($data[$field]) > $max) {
             $errors[] =
                 str_replace('_', ' ', ucfirst($field)) .
                 ' is required and must fit within ' .
                 $max .
-                ' bytes.';
+                ' characters.';
         }
     }
     foreach (['address_details', 'hazard_notes', 'vulnerability_notes'] as $field) {
-        if (strlen($data[$field]) > 255) {
-            $errors[] = str_replace('_', ' ', ucfirst($field)) . ' must fit within 255 bytes.';
+        if (mb_strlen($data[$field]) > 255) {
+            $errors[] = str_replace('_', ' ', ucfirst($field)) . ' must fit within 255 characters.';
         }
     }
-    if ($data['contact_phone'] !== '' && !validPhone($data['contact_phone'], 7)) {
-        $errors[] = 'Enter a valid emergency contact number (7–20 characters), or leave it blank.';
+    if ($data['contact_phone'] !== '' && !validPhone($data['contact_phone'])) {
+        $errors[] = 'Use 09 followed by 9 digits or +639 followed by 9 digits, or leave it blank.';
     }
     foreach (
         [

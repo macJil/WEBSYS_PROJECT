@@ -151,16 +151,16 @@ function reportUpdateLocation(int $id): array
     $lat = input('latitude');
     $lng = input('longitude');
     $errors = locationErrors($description, $lat, $lng);
-    if ($description === '' || strlen($description) > 255) {
-        $errors[] = 'Enter a written location of up to 255 bytes.';
+    if ($description === '' || mb_strlen($description) > 255) {
+        $errors[] = 'Enter a written location of up to 255 characters.';
     }
     $barangay = isset($_POST['barangay']) ? input('barangay') : (reportGetIncident($id)['barangay'] ?? '');
     if ($barangay !== '' && !in_array($barangay, ATOK_BARANGAYS, true)) {
         $errors[] = 'Choose an Atok barangay or leave it awaiting confirmation.';
     }
     $notes = input('location_notes');
-    if ($notes === '' || strlen($notes) > 255) {
-        $errors[] = 'Enter a correction reason of up to 255 bytes.';
+    if ($notes === '' || mb_strlen($notes) > 255) {
+        $errors[] = 'Enter a correction reason of up to 255 characters.';
     }
     if ($errors) {
         return $errors;
@@ -193,8 +193,8 @@ function reportReview(int $id): array
     }
     $action = input('action');
     $notes = input('notes');
-    if ($notes === '' || strlen($notes) > 255) {
-        return ['Enter review notes (maximum 255 bytes).'];
+    if ($notes === '' || mb_strlen($notes) > 255) {
+        return ['Enter review notes (maximum 255 characters).'];
     }
     $teamId = null;
     if ($action === 'verify_assign') {
@@ -270,6 +270,37 @@ require __DIR__ . "/../includes/errors.php";
 <?php endforeach; ?>
 <?php if ($admin): ?>
     <p class="mt-3"><a class="btn btn-outline-secondary" href="<?= e(url('response/incident.php?id=' . $id)) ?>">Manage team assignments</a></p>
+    <?php if ($report['archived_at'] === null && $report['status'] === 'pending'): ?>
+        <h2 class="mt-4">Staff review</h2>
+        <form method="post">
+            <label class="d-block">Response team for dispatch
+                <select class="form-select" name="team_id">
+                    <option value="">Choose a team for Verify and assign</option>
+                    <?php foreach (responseDbTeams() as $team): ?>
+                        <option value="<?= (int) $team['id'] ?>" <?= input('team_id') === (string) $team['id'] ? 'selected' : '' ?>><?= e($team['team_name']) ?> (active: <?= (int)$team['workload'] ?>)</option>
+                    <?php endforeach; ?>
+                </select>
+            </label>
+            <label class="d-block my-3">Review notes
+                <textarea class="form-control" name="notes" maxlength="255" placeholder="Describe what you checked and the outcome" required><?= e(input('notes')) ?></textarea>
+            </label>
+            <button name="action" value="verify_assign" class="btn btn-primary">Verify and assign</button>
+            <button name="action" value="verify_only" class="btn btn-outline-secondary">Confirm report only</button>
+            <button name="action" value="reject" class="btn btn-outline-danger">Reject</button>
+        </form>
+    <?php elseif ($report['archived_at'] === null && responseDbAssignmentStatus($id) === null && in_array($report['status'], ['verified', 'resolved', 'rejected'], true)): ?>
+        <h2 class="mt-4">Staff review</h2>
+        <form method="post">
+            <label class="d-block my-3">Reason
+                <textarea class="form-control" name="notes" maxlength="255" placeholder="Describe what you checked and the outcome" required><?= e(input('notes')) ?></textarea>
+            </label>
+            <?php if ($report['status'] === 'verified'): ?>
+                <button class="btn btn-outline-secondary" name="action" value="resolve">Mark resolved (no team needed)</button>
+            <?php else: ?>
+                <button class="btn btn-outline-secondary" name="action" value="reopen">Reopen for dispatch</button>
+            <?php endif; ?>
+        </form>
+    <?php endif; ?>
     <?php if ($report['archived_at'] === null): ?>
         <h2>Correct incident location</h2>
         <p>Confirm the written location and pin. A correction is recorded in staff history. The shared map uses this saved point when the incident is eligible.</p>
@@ -289,37 +320,6 @@ require __DIR__ . "/../includes/errors.php";
             ?>
             <label class="d-block mb-3">Reason for correction<input class="form-control" name="location_notes" maxlength="255" required value="<?= e(input('location_notes')) ?>" /></label>
             <button class="btn btn-primary" name="action" value="update_location">Save location correction</button>
-        </form>
-    <?php endif; ?>
-    <?php if ($report['archived_at'] === null && $report['status'] === 'pending'): ?>
-        <h2 class="mt-4">Staff review</h2>
-        <form method="post">
-            <label class="d-block">Response team for dispatch
-                <select class="form-select" name="team_id">
-                    <option value="">Choose a team for Verify and assign</option>
-                    <?php foreach (responseDbTeams() as $team): ?>
-                        <option value="<?= (int) $team['id'] ?>" <?= input('team_id') === (string) $team['id'] ? 'selected' : '' ?>><?= e($team['team_name']) ?></option>
-                    <?php endforeach; ?>
-                </select>
-            </label>
-            <label class="d-block my-3">Review notes
-                <textarea class="form-control" name="notes" maxlength="255" required><?= e(input('notes')) ?></textarea>
-            </label>
-            <button name="action" value="verify_assign" class="btn btn-primary">Verify and assign</button>
-            <button name="action" value="verify_only" class="btn btn-outline-secondary">Verify only</button>
-            <button name="action" value="reject" class="btn btn-outline-danger">Reject</button>
-        </form>
-    <?php elseif ($report['archived_at'] === null && responseDbAssignmentStatus($id) === null && in_array($report['status'], ['verified', 'resolved', 'rejected'], true)): ?>
-        <h2 class="mt-4">Staff review</h2>
-        <form method="post">
-            <label class="d-block my-3">Reason
-                <textarea class="form-control" name="notes" maxlength="255" required><?= e(input('notes')) ?></textarea>
-            </label>
-            <?php if ($report['status'] === 'verified'): ?>
-                <button class="btn btn-outline-secondary" name="action" value="resolve">Resolve without dispatch</button>
-            <?php else: ?>
-                <button class="btn btn-outline-secondary" name="action" value="reopen">Reopen as verified</button>
-            <?php endif; ?>
         </form>
     <?php endif; ?>
     <h2 class="mt-4">Staff review log</h2>

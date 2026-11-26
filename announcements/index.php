@@ -13,7 +13,7 @@ require __DIR__ . "/../includes/errors.php";
 <p class="return-link no-print"><a class="btn btn-outline-secondary" href="<?= e(url(dashboardPath())) ?>">Back to dashboard</a></p>
 <h1>Emergency announcements</h1>
 <p><a class="btn btn-outline-secondary" href="<?= e(url('records/index.php?type=announcements')) ?>">Manage records</a></p>
-<p>Save a draft to finish later. Publish when residents should see the notice.</p>
+<p>Save a draft to finish later. Publishing immediately shows the notice to all signed-in residents.</p>
 <h2>Create announcement</h2>
 <?php
 $announcement = ["title" => "", "message" => "", "is_published" => 0];
@@ -27,7 +27,7 @@ require __DIR__ . "/editor.php";
                 <option value="<?= e($key) ?>" <?= announcementQueryValue('status') === $key?'selected':'' ?>><?= e($label) ?></option>
             <?php endforeach; ?>
         </select></label>
-    <label>Created date <input class="form-control" type="date" name="date" value="<?= e(announcementQueryValue('date')) ?>" /></label>
+    <label>Created on (exact date) <input class="form-control" type="date" name="date" value="<?= e(announcementQueryValue('date')) ?>" /></label>
     <button class="btn btn-outline-secondary">Search</button> <a class="btn btn-outline-secondary" href="<?= e(url('announcements/index.php')) ?>">Clear</a>
 </form>
 <div class="table-responsive" tabindex="0" role="region" aria-label="Scrollable records">
