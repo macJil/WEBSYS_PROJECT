@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/includes/helpers.php';
+require_once __DIR__ . '/includes/session.php';
 requireLogin();
 if (empty($_SESSION['CHANGE_PASSWORD'])) {
     redirect(dashboardPath());

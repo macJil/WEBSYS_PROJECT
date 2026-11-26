@@ -1,6 +1,6 @@
 <?php
-require_once __DIR__ . "/../includes/helpers.php";
-session_checker();
+require_once __DIR__ . "/../includes/session.php";
+requireCurrentPassword();
 $boundary = atokBoundary();
 requireRole($_SESSION["ROLE"]);
 header("Cache-Control: private, no-store");

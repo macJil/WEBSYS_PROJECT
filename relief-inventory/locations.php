@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/location-fields.php';
+require_once __DIR__ . '/common.php';
 requireRole('admin');
 
 function reliefLocationDbAll(): array

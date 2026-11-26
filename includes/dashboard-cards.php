@@ -1,6 +1,6 @@
 <?php
-require_once __DIR__ . "/helpers.php";
-session_checker();
+require_once __DIR__ . "/session.php";
+requireCurrentPassword();
 if (!isset($overview)) {
     http_response_code(404);
     exit();

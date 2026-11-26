@@ -286,14 +286,20 @@ with tempfile.TemporaryDirectory(prefix='bayanready-address-') as temporary:
         notice = dict(title=title, message='Fictional notice', action='save_draft')
         admin.request('/announcements/index.php', notice)
         notice_id = query('SELECT MAX(id) id FROM announcements')[0]['id']
-        edit = '/announcements/edit.php?id=' + str(notice_id)
+        edit = '/announcements/index.php?id=' + str(notice_id)
+        legacy_edit = '/announcements/edit.php?id=' + str(notice_id)
+        assert title in admin.request(legacy_edit)[1]
+        assert resident.request(edit, dict(notice, action='publish'))[0] == 403
+        assert admin.request('/announcements/index.php?id=bad')[0] == 400
         def check_notice(visible):
             for page in ['/announcements/published.php', '/dashboard/resident.php']:
                 assert (title in resident.request(page)[1]) == visible
         check_notice(False)
         admin.request(edit, dict(notice, action='publish'))
         check_notice(True)
-        admin.request(edit, dict(notice, confirm_withdraw='1'))
+        assert 'Confirm withdrawal' in admin.request(edit, notice)[1]
+        check_notice(True)
+        admin.request(legacy_edit, dict(notice, confirm_withdraw='1'))
         check_notice(False)
         print('PASS draft, publication and withdrawal on resident list and dashboard')
         center_url = '/evacuation/center.php?id=2'

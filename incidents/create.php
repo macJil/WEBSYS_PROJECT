@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/common.php';
-session_checker();
+requireCurrentPassword();
 
 function reportDbCreate(array $data, ?array $image): int
 {

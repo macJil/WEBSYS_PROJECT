@@ -10,12 +10,12 @@ with tempfile.TemporaryDirectory(prefix='bayanready-config-') as tmp:
     config = copy/'config/config.php'
     settings = config.read_text()
     config.unlink()
-    for code in ["require 'includes/helpers.php';", "require 'config/db.php'; db();"]:
+    for code in ["require 'includes/session.php';"]:
         r=run(copy,code)
         assert 'Setup required:' in r.stdout and 'Warning:' not in r.stdout and 'Fatal error:' not in r.stdout,r
     print('PASS missing config produces controlled setup message for pages and database')
     config.write_text(settings)
-    r=run(copy,"$s=require 'config/config.php'; if(!is_array($s)||!isset($s['host'],$s['database'],$s['base_url']))exit(1);")
+    r=run(copy,"require 'config/config.php'; $s=$settings; if(!is_array($s)||!isset($s['host'],$s['database'],$s['base_url']))exit(1);")
     assert r.returncode==0,r.stderr
     r=run(copy,"$_SERVER['REQUEST_METHOD']='GET'; require 'index.php';")
     assert r.returncode==0 and 'Atok MDRRM System' in r.stdout and '<h2>Login</h2>' in r.stdout and 'Warning:' not in r.stdout,r.stderr

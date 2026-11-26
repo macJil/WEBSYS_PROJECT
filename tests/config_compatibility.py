@@ -32,18 +32,16 @@ with tempfile.TemporaryDirectory(prefix='bayanready-config-regression-') as temp
     for folder in ['assets', 'includes']:
         shutil.copytree(ROOT / folder, site / folder)
     (site / 'config').mkdir()
-    for name in ['db.php']:
-        shutil.copyfile(ROOT / 'config' / name, site / 'config' / name)
     shutil.copyfile(ROOT / 'index.php', site / 'index.php')
     example = subprocess.check_output(['git', 'show', ':config/config.php'], cwd=ROOT, text=True)
     for label, config, base in [('array', example.replace('/WEBSYS_PROJECT', '/fictional-demo/'), '/fictional-demo')]:
         # A counter also verifies that db() does not execute config.php again.
         config = config.replace('<?php', "<?php\n$GLOBALS['config_loads'] = ($GLOBALS['config_loads'] ?? 0) + 1;", 1)
         (site / 'config/config.php').write_text(config)
-        for first, second in [('includes/helpers.php', 'config/db.php'),
-                              ('config/db.php', 'includes/helpers.php')]:
+        for first, second in [('includes/session.php', 'config/config.php'),
+                              ('config/config.php', 'includes/session.php')]:
             output = run(site, f'''require_once '{first}'; require_once '{second}';
-require_once 'config/db.php';
+require_once 'config/config.php';
 if ($GLOBALS['config_loads'] !== 1) throw new Exception('Config loaded more than once');
 if (url('index.php') !== '{base}/index.php') throw new Exception('Incorrect URL');
 if ($settings['app_name'] !== 'Atok MDRRM System') throw new Exception('Missing app name');
@@ -54,7 +52,7 @@ if (db() !== $databaseConnection || db()->query('SELECT 1')->fetchColumn() != 1)
 }}
 $_SERVER['REQUEST_METHOD'] = 'GET'; require 'index.php';
 $_SESSION['ID'] = 1; $_SESSION['ROLE'] = 'resident';
-require 'includes/location-picker.php';
+$pickerKind = 'incidents'; $point = []; require 'includes/location-picker.php';
 if ($GLOBALS['config_loads'] !== 1) throw new Exception('Page reloaded config');
 ''')
             assert '<h2>Login</h2>' in output and 'data-zoom="14"' in output
@@ -68,7 +66,7 @@ if ($GLOBALS['config_loads'] !== 1) throw new Exception('Page reloaded config');
         config = config.replace("'password' => getenv('ATOK_DB_PASSWORD') ?: ''", "'password' => 'root'")
         for label, config in [('array', config)]:
             (site / 'config/config.php').write_text(config)
-            for first, second in [('includes/helpers.php', 'config/db.php'), ('config/db.php', 'includes/helpers.php')]:
+            for first, second in [('includes/session.php', 'config/config.php'), ('config/config.php', 'includes/session.php')]:
                 output = run(site, f"""require_once '{first}'; require_once '{second}';
 $connection = db();
 if ($connection->query('SELECT 1')->fetchColumn() != 1 || $connection !== db()) {{
@@ -81,6 +79,6 @@ echo 'connected';
 
     for invalid in ['<?php return 1;', "<?php return ['base_url' => []];"]:
         (site / 'config/config.php').write_text(invalid)
-        output = run(site, "require 'config/db.php';")
+        output = run(site, "require 'includes/session.php';")
         assert 'Setup required:' in output
     print('PASS malformed configuration returns controlled setup message')

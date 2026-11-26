@@ -1,6 +1,5 @@
 <?php
-require_once __DIR__ . '/../includes/helpers.php';
-require_once __DIR__ . '/../config/db.php';
+require_once __DIR__ . '/../includes/session.php';
 
 function reliefDbRows(string $sql, array $args = []): array
 {
@@ -74,4 +73,21 @@ function reliefQuantity($value)
             'options' => ['min_range' => 1, 'max_range' => 1000000000],
         ])
         : false;
+}
+
+function reliefLocationDbFind(int $id): array
+{
+    $stmt = db()->prepare('SELECT * FROM relief_locations WHERE id=?');
+    $stmt->execute([$id]);
+    return $stmt->fetch() ?: [];
+}
+
+function reliefLocationFind(int $id): array
+{
+    $location = reliefLocationDbFind($id);
+    if (!$location) {
+        http_response_code(404);
+        exit('Location not found.');
+    }
+    return $location;
 }

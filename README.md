@@ -31,9 +31,29 @@ For Apache hosting, enable mod_rewrite and allow the project’s .htaccess rules
 
 For an existing classroom installation, importing a fresh schema does not rotate old logins. Retire unused classroom accounts, rotate the retained accounts’ passwords and keep their IDs so their history remains linked. Use a fresh database for real office records.
 
+## Where to start reading this branch
+
+Follow one form from its role check through its POST handling and prepared statement to its redirect. The same page shows entered values again on validation errors.
+
+| Workflow | Starting page | What to follow |
+| --- | --- | --- |
+| Sign in or out | `index.php`, `logout.php` | Email and password verification, active account, session, required first-password change, then role dashboard. Logout accepts POST. |
+| Households | `households/index.php` | Registry → household → member → staff-issued account. |
+| Incident reporting | `incidents/create.php` | Submission → private incident detail. Image delivery and printing have separate access checks. |
+| Response | `response/incident.php` | Assignment → team progress → incident status. |
+| Evacuation | `evacuation/center.php` | Selected center → arriving people → active stays and remaining capacity. |
+| Inventory | `relief-inventory/movements.php` | Incoming or outgoing goods → quantity and movement history. |
+| Distribution | `relief-distribution/index.php` | Household and goods → one transaction for distribution and stock. |
+| Announcements | `announcements/index.php` | Create, edit, publish, or withdraw. Residents read published notices at `announcements/published.php`. |
+| Disaster summaries | `disaster-reports/index.php` | Date and barangay filters → totals → printable summary. |
+
+A protected page loads `includes/session.php` directly or through its module’s shared file and calls its role guard before processing a request. Shared input checks and escaping live in `includes/form.php`, coordinate checks in `includes/atok-boundary.php`, and display functions in `includes/display.php`. The shared header loads the display functions. The map picker serves all location forms.
+
+**Switching an existing installation to this branch:** Keep the branch’s version of `config/config.php` and transfer your local database settings, base URL, hotline, and private upload path into its settings array. The file now defines `db()` as well. Replacing it with the entire configuration file from an older branch will display a setup message. There is no database migration for this revision.
+
 ## Presentation and verification
 
-Use the [nine-presenter walkthrough](presentation/LIVE_DEMO_PRESENTATION_SCRIPT.md) for this branch. The eight module folders are `households/`, `incidents/`, `response/`, `evacuation/`, `relief-inventory/`, `relief-distribution/`, `announcements/`, and `disaster-reports/`. Shared markup, session helpers, and the capacity calculation live in `includes/`. Stylesheets, JavaScript, and Leaflet files live in `assets/`. The running site loads settings through `config/config.php` and connects through `config/db.php`. Staff and residents open their own pages in `dashboard/`.
+Use the [nine-presenter walkthrough](presentation/LIVE_DEMO_PRESENTATION_SCRIPT.md) for this branch. The eight module folders are `households/`, `incidents/`, `response/`, `evacuation/`, `relief-inventory/`, `relief-distribution/`, `announcements/`, and `disaster-reports/`. Shared markup, session helpers, and the capacity calculation live in `includes/`. Stylesheets, JavaScript, and Leaflet files live in `assets/`. The settings array and the shared PDO connection are in `config/config.php`. Staff and residents open their own pages in `dashboard/`.
 
 The current fictional HTTP acceptance runner is `tests/household_map_persistence.py`. It creates a disposable database and removes it after the checks. Set `TEST_PHP` and `TEST_MYSQL_SOCKET` for your local test installation. Earlier phase documents and historical tests describe their respective branch versions.
 

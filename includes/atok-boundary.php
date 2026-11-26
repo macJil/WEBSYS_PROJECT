@@ -22,3 +22,42 @@ function insideAtok(float $lat, float $lng): bool
     }
     return $inside;
 }
+
+function locationErrors(string $description, string $lat, string $lng): array
+{
+    if (!is_string($_POST['latitude'] ?? '') || !is_string($_POST['longitude'] ?? '')) {
+        return ['Enter a numeric coordinate pair or clear both fields.'];
+    }
+    if (($lat === '') !== ($lng === '')) {
+        return ['Enter both coordinates or clear both.'];
+    }
+    if (
+        $lat !== '' &&
+        (!is_numeric($lat) ||
+            !is_numeric($lng) ||
+            !is_finite((float) $lat) ||
+            !is_finite((float) $lng) ||
+            abs((float) $lat) > 90 ||
+            abs((float) $lng) > 180 ||
+            trim($description) === '')
+    ) {
+        return ['Enter valid coordinates and a written location.'];
+    }
+    if ($lat !== '' && !insideAtok(round((float) $lat, 7), round((float) $lng, 7))) {
+        return ['Choose a point inside the approximate Atok boundary, or enter the address without a pin.'];
+    }
+    return [];
+}
+
+// Match the map's coordinate rules without treating zero as a missing value.
+function hasMapPoint(array $record): bool
+{
+    $lat = $record['latitude'] ?? null;
+    $lng = $record['longitude'] ?? null;
+    return is_numeric($lat) &&
+        is_numeric($lng) &&
+        is_finite((float) $lat) &&
+        is_finite((float) $lng) &&
+        abs((float) $lat) <= 90 &&
+        abs((float) $lng) <= 180;
+}

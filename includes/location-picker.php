@@ -1,6 +1,6 @@
 <?php
-require_once __DIR__ . '/helpers.php';
-session_checker();
+require_once __DIR__ . '/session.php';
+requireCurrentPassword();
 $boundary = atokBoundary();
 $addressField = $pickerKind === 'incidents' ? 'location_description' : 'address_details';
 ?>

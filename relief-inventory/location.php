@@ -1,7 +1,6 @@
 <?php
-require_once __DIR__ . '/location-fields.php';
-requireRole('admin');
 require_once __DIR__ . '/common.php';
+requireRole('admin');
 
 
 

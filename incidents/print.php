@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/common.php';
-session_checker();
+requireCurrentPassword();
 $id = reportIncidentId();
 $owner = reportOwner();
 $sql = 'SELECT id, incident_type, status, created_at, occurred_at, barangay, location_description,

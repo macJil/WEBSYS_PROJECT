@@ -1,7 +1,6 @@
 <?php
-require_once __DIR__ . '/../includes/helpers.php';
+require_once __DIR__ . '/../includes/session.php';
 requireRole('admin');
-require_once __DIR__ . '/../config/db.php';
 
 const HOUSEHOLD_VULNERABILITY = [
     'unassessed' => 'Not yet assessed',

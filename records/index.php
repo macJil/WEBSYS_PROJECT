@@ -1,6 +1,5 @@
 <?php
-require_once __DIR__ . '/../includes/helpers.php';
-require_once __DIR__ . '/../config/db.php';
+require_once __DIR__ . '/../includes/session.php';
 requireRole('admin');
 const RECORD_TYPES = [
         'households' => [
@@ -45,7 +44,7 @@ const RECORD_TYPES = [
             'announcements',
             'title',
             'Announcements',
-            'announcements/edit.php?id=',
+            'announcements/index.php?id=',
         ],
     ];
 function recordQuery(string $sql, array $args = []): array

@@ -1,14 +1,10 @@
 <?php
-require_once __DIR__ . "/includes/helpers.php";
-require_once __DIR__ . "/config/db.php";
+require_once __DIR__ . "/includes/session.php";
 if (!empty($_SESSION["ID"])) {
     redirect(dashboardPath());
 }
-function handlePost()
+function signIn()
 {
-    if (!isPost()) {
-        return [];
-    }
     $action = input('action');
     if ($action !== 'login') {
         return ['Invalid form action.'];
@@ -56,7 +52,7 @@ function handlePost()
     }
 }
 
-$errors = handlePost();
+$errors = isPost() ? signIn() : [];
 $pageTitle = "Login";
 require __DIR__ . "/includes/header.php";
 ?>

@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/common.php';
-session_checker();
+requireCurrentPassword();
 require_once __DIR__ . '/../response/common.php';
 
 function reportDbFind(int $id, ?int $owner)
