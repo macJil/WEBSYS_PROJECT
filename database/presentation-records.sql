@@ -1,3 +1,6 @@
+-- Classroom sign-ins for this fictional dataset only:
+-- Email: mdrrmo.atok@example.org | Password: ClassroomStaff!842
+-- Email: maria.santos@example.org | Password: ClassroomResident!613
 -- Optional fictional records. Use only in a fresh, separate presentation database.
 START TRANSACTION;
 
@@ -88,4 +91,6 @@ VALUES (@demo_report,2,'Duplicate exercise alarm.','pending','rejected',@demo_da
 INSERT INTO incident_reports
 (reported_by,report_source,reporter_name,barangay,incident_type,description,location_description,latitude,longitude,status,reviewed_by,reviewed_at,created_at)
 VALUES (2,'phone','Elena Cruz','Topdac','other','Drill: a power interruption was reported at a drill station.','Radio post',16.558,120.714,'pending',NULL,NULL,@demo_day - INTERVAL 35 HOUR);
+UPDATE users SET password='$2y$10$z9G3i16ffk5iQdmTmiFe4.tpW9LFK0wVV7L.xpwOVqYE/AEv81UMO',is_active=1 WHERE is_active=0 AND password='' AND email='mdrrmo.atok@example.org';
+UPDATE users SET password='$2y$10$rLnPTWpAedpHipdqYMTDJep.bb0d1t3xzF1Nb1cQepnLwZiVPlJxO',is_active=1 WHERE is_active=0 AND password='' AND email='maria.santos@example.org';
 COMMIT;

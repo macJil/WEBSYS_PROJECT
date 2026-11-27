@@ -10,7 +10,7 @@ Atok MDRRM System uses plain PHP pages grouped by module, shared session checks,
 
 Import [barangay_drrm.sql](barangay_drrm.sql) into an empty database. It creates one inactive office account, **MDRRMO**. Before activating it, set a private password and confirm the office login address. The example.org addresses are website usernames.
 
-For a classroom copy only, separately import [presentation-records.sql](database/presentation-records.sql) into the same fresh database. It adds records for the eight modules and one inactive sample resident, **Maria Santos**. Existing databases should use their migration history instead of reimporting either file.
+For a classroom copy only, separately import [presentation-records.sql](database/presentation-records.sql) into the same fresh database. It adds records for the eight modules and a sample resident, **Maria Santos**. On a fresh database, both classroom sign-ins use the credentials in the SQL header. Existing databases should use their migration history instead of reimporting either file.
 
 Generate a unique password and PHP hash for each initial account on a trusted local terminal. Store the displayed password privately.
 
@@ -18,7 +18,7 @@ Generate a unique password and PHP hash for each initial account on a trusted lo
 php -r '$p = bin2hex(random_bytes(16)); echo $p, PHP_EOL, password_hash($p, PASSWORD_DEFAULT), PHP_EOL;'
 ```
 
-In your local database administrator, replace the placeholder below with that account’s generated hash. Repeat with its own hash and email for `maria.santos@example.org` only on a presentation installation.
+In your local database administrator, replace the placeholder below with that account’s generated hash. The optional classroom SQL handles activation for a fresh presentation installation.
 
 ```sql
 UPDATE users SET password = 'PASTE_GENERATED_HASH', is_active = 1

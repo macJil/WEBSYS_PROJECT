@@ -19,7 +19,7 @@ PHP 8.3 with PDO MySQL, mbstring and fileinfo, MySQL 8, and a local web server s
 1. Place the project in your server’s web directory. For MAMP, use `htdocs/WEBSYS_PROJECT`.
 2. Import `barangay_drrm.sql` into a fresh MySQL database. For a classroom demonstration, also import `database/presentation-records.sql`.
 3. Set the database connection, base URL, and private image upload directory in `config/config.php`.
-4. Set a private password and activate the initial MDRRMO account using the [account setup instructions](README.md#fresh-installation-and-sign-in).
+4. For the presentation, use the sign-ins in the comments at the top of the presentation SQL. For the office installation, set a private password and activate the initial MDRRMO account using the [account setup instructions](README.md#fresh-installation-and-sign-in).
 5. Open [the MAMP login page](http://localhost:8888/WEBSYS_PROJECT/) and sign in.
 
 ## Usage
